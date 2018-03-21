@@ -81,14 +81,33 @@ class NetworkUtility:
         weights = [ scale * x / norm for x in  weights ]
         edges = dict(source=u, target=v, xs=xs, ys=ys, weights=weights)
         return edges
-   
+
     @staticmethod
-    def get_nodes(network, layout, node_list = None):
+    def filter_by_weight(G, threshold):
+        ''' Note: threshold is percent of max weight '''
+        max_weight = max(1.0, max(nx.get_edge_attributes(G, 'weight').values()))
+        filter_edges = [(u, v) for u, v, d in G.edges(data=True) \
+                        if d['weight'] >= (threshold * max_weight)]
+        tng = G.edge_subgraph(filter_edges)
+        return tng
+
+    @staticmethod
+    def get_node_attributes(network, layout, node_list = None):
+
         layout_items = layout.items() if node_list is None else [ x for x in layout.items() if x[0] in node_list ]
+
         nodes, nodes_coordinates = zip(*sorted(layout_items))
+
         xs, ys = list(zip(*nodes_coordinates))
-        return dict(x=xs, y=ys, name=nodes, node_id=nodes)
-    
+
+        list_of_attribs = [ network.nodes[k] for k in nodes ]
+
+        attrib_lists = dict(zip(list_of_attribs[0],zip(*[d.values() for d in list_of_attribs])))
+
+        attrib_lists.update(dict(x=xs, y=ys, name=nodes, node_id=nodes))
+
+        return attrib_lists
+
     @staticmethod
     def create_network(df, source_field='source', target_field='target', weight='weight'):
 
@@ -134,6 +153,8 @@ class GraphToolUtility():
     @staticmethod
     def get_prop_type(value, key=None):
         """
+        Original source found at gist https://gist.github.com/bbengfort/a430d460966d64edc6cad71c502d7005
+
         Performs typing and value conversion for the graph_tool PropertyMap class.
         If a key is provided, it also ensures the key is in a format that can be
         used with the PropertyMap. Returns a tuple, (type name, value, key)
@@ -171,6 +192,7 @@ class GraphToolUtility():
     def nx2gt(nxG):
         """
         Converts a networkx graph to a graph-tool graph.
+        Original source found at gist https://gist.github.com/bbengfort/a430d460966d64edc6cad71c502d7005
         """
         # Phase 0: Create a directed or undirected graph-tool Graph
         gtG = gt.Graph(directed=nxG.is_directed())
