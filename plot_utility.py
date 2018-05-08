@@ -196,6 +196,29 @@ def nx_normalize_layout(layout):
     return layout
 
 class BokehPlotNetworkUtility:
+
+    @staticmethod
+    def get_edge_data(G, layout, weight_scale, normalize_weights):
+        edges = NetworkUtility.get_edges(G, layout, scale=weight_scale, normalize=normalize_weights)
+        edges = { k: list(edges[k]) for k in edges}
+        return edges
+    
+    @staticmethod
+    def get_node_data(G, layout, node_size, node_size_range):
+        
+        nodes = NetworkUtility.get_node_attributes(G, layout)
+
+        if node_size in nodes.keys() and node_size_range is not None:
+            nodes['clamped_size'] = clamp_values(nodes[node_size], node_size_range)
+            node_size = 'clamped_size'
+            
+        label_y_offset = 'y_offset' if node_size in nodes.keys() else node_size + 8
+        if label_y_offset == 'y_offset':
+            nodes['y_offset'] = [ y + r for (y, r) in zip(nodes['y'], [ r / 2.0 + 8 for r in nodes[node_size] ]) ]
+            
+        nodes = { k: list(nodes[k]) for k in nodes}
+
+        return nodes
     
     @staticmethod
     def plot(

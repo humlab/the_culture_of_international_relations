@@ -48,7 +48,7 @@ def extract_sheets(path, sheets):
         
     for sheet_name in data.keys():
 
-        if not sheet_name in file['sheets']:
+        if not sheet_name in data.keys():
             continue
 
         df = data[sheet_name]

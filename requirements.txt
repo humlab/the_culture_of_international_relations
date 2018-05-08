@@ -1,0 +1,14 @@
+wordcloud==1.4.1
+bokeh==0.12.14
+graphviz==0.8.2
+pydotplus==2.0.2
+pandas==0.22.0
+networkx==2.1
+requests==2.12.4
+ipywidgets==7.1.2
+numpy==1.12.1
+python_louvain==0.10
+matplotlib==2.2.2
+ipython==6.3.1
+community==1.0.0b1
+graph_tool==2.11
