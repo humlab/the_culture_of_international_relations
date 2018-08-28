@@ -13,6 +13,12 @@ __cwd__ = os.path.abspath(__file__) if '__file__' in globals() else os.getcwd()
 
 sys.path.append(__cwd__)
 
+def getLogger(name):
+    logging.basicConfig(format="%(asctime)s : %(levelname)s : %(message)s", level=logging.ERROR)
+    logger = logging.getLogger(name)
+    logger.setLevel(logging.ERROR)
+    return logger
+
 class Utility:
 
     @staticmethod

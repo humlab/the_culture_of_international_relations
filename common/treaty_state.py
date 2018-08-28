@@ -2,20 +2,24 @@ import os
 import pandas as pd
 import numpy as np
 import re
+import warnings
+import logging
 
-class TreatyState:
-    
-    def __init__(self, data_folder='./data', divisions=None, skip_columns=None):
-        self.data_folder = data_folder
-        self.period_divisions = divisions or [
-            [ (1919, 1939), (1940, 1944), (1945, 1955), (1956, 1966), (1967, 1972) ],
-            [ (1919, 1944), (1945, 1955), (1956, 1966), (1967, 1972) ]
-        ]
-        self.treaties_skip_columns = skip_columns or [
-            'extra_entry', 'dbflag', 'dummy1', 'english', 'french', 'ispartyof4', 'other',
-            'regis', 'regisant', 'vol', 'page', 'force', 'group1', 'group2'
-        ]
-        self.treaties_columns = [
+warnings.simplefilter(action='ignore', category=FutureWarning)
+
+logger = logging.getLogger(__name__)
+
+default_treaties_skip_columns = [
+    'extra_entry', 'dbflag', 'english', 'french', 'ispartyof4', 'other',
+    'regis', 'regisant', 'vol', 'page', 'force', 'group1', 'group2'
+]
+
+default_divisions = [
+	[ (1919, 1939), (1940, 1944), (1945, 1955), (1956, 1966), (1967, 1972) ],
+    [ (1919, 1944), (1945, 1955), (1956, 1966), (1967, 1972) ]
+]
+
+default_treaties_columns = [
             'sequence',
             'treaty_id',
             'is_cultural_yesno',
@@ -41,9 +45,16 @@ class TreatyState:
             'title',
             'extra_entry',
             'dbflag',
-            'ispartyof4',
-            'dummy1'
+            'ispartyof4'
         ]
+
+class TreatyState:
+    
+    def __init__(self, data_folder='./data', divisions=default_divisions, skip_columns=default_treaties_skip_columns):
+        self.data_folder = data_folder
+        self.period_divisions = divisions
+        self.treaties_skip_columns = skip_columns
+        self.treaties_columns = default_treaties_columns
         self.csv_files = [
             ('Treaties_Master_List_Treaties.csv', 'treaties', None),
             ('country_continent.csv', 'country_continent', None),
@@ -87,7 +98,9 @@ class TreatyState:
         treaties['headnote'] = treaties.headnote.fillna('').astype(str).str.upper()
 
         # Drop columns not used
-        treaties.drop(self.treaties_skip_columns, axis=1, inplace=True)
+        if self.treaties_skip_columns is not None:
+            treaties.drop(self.treaties_skip_columns, axis=1, inplace=True)
+			
         treaties = treaties.set_index(['treaty_id'])
         return treaties
 
@@ -183,13 +196,18 @@ class TreatyState:
         
         return parties
     
+    def get_countries_list(self):
+        parties = self.get_parties()
+        parties = parties.loc[~parties.group_no.isin([0,8,11])]
+        return list(parties.index)
+
     def get_party_name(self, party, party_name_column):
         try:
             if party in self.parties.index:
                 return self.parties.loc[party, party_name_column]
             return party
         except:
-            print('Warning: {} not in curated parties list'.format(party))
+            logger.warning('Warning: {} not in curated parties list'.format(party))
             return party
         
     def process(self):
@@ -223,3 +241,13 @@ class TreatyState:
         if tags is None:
             return self.tagged_headnotes
         return self.tagged_headnotes.loc[(self.tagged_headnotes.pos.isin(tags))]
+	
+def load_treaty_state(data_folder, divisions=default_divisions, skip_columns=default_treaties_skip_columns):
+    try:
+        state = TreatyState(data_folder, divisions, skip_columns).process()
+        logger.info("Data loaded!")
+        return state
+    except Exception as ex:
+        logger.error(ex)
+        logger.info('Load failed! Have you run setup cell above?')
+        return None
