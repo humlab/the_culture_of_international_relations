@@ -4,14 +4,14 @@ import numpy as np
 import re
 import warnings
 import logging
+import datetime
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
 logger = logging.getLogger(__name__)
 
 default_treaties_skip_columns = [
-    'extra_entry', 'dbflag', 'english', 'french', 'ispartyof4', 'other',
-    'regis', 'regisant', 'vol', 'page', 'force', 'group1', 'group2'
+    'extra_entry', 'dbflag', 'regis', 'regisant', 'vol', 'page', 'force', 'group1', 'group2'
 ]
 
 default_divisions = [
@@ -19,7 +19,7 @@ default_divisions = [
     [ (1919, 1944), (1945, 1955), (1956, 1966), (1967, 1972) ]
 ]
 
-default_treaties_columns = [
+treaties_column_names = [
             'sequence',
             'treaty_id',
             'is_cultural_yesno',
@@ -53,8 +53,8 @@ class TreatyState:
     def __init__(self, data_folder='./data', divisions=default_divisions, skip_columns=default_treaties_skip_columns):
         self.data_folder = data_folder
         self.period_divisions = divisions
-        self.treaties_skip_columns = skip_columns
-        self.treaties_columns = default_treaties_columns
+        self.treaties_skip_columns = (skip_columns or []) + ['sequence', 'is_cultural_yesno']
+        self.treaties_columns = treaties_column_names
         self.csv_files = [
             ('Treaties_Master_List_Treaties.csv', 'treaties', None),
             ('country_continent.csv', 'country_continent', None),
@@ -62,19 +62,47 @@ class TreatyState:
             ('parties_curated_continent.csv', 'continent', None),
             ('parties_curated_group.csv', 'group', None)
         ]
-        self.data = self.read_data(data_folder)
-        self.treaty_headnote_corpus = None
+        self.data = self._read_data(data_folder)
         
-    def read_data(self, data_folder):
+        self.treaty_headnote_corpus = None
+        self.tagged_headnotes = None
+        
+        self.groups = self.get_groups()
+        self.continents = self.get_continents()
+        self.parties = self.get_parties()
+        
+        self._treaties = None
+        self._stacked_treaties = None
+        
+    @property
+    def treaties(self):
+        if self._treaties is None:
+            self._treaties = self._process_treaties()
+        return self._treaties
+    
+    @property
+    def stacked_treaties(self):
+        if self._stacked_treaties is None:
+            self._stacked_treaties = self._get_stacked_treaties()
+        return self._stacked_treaties
+        
+    @property
+    def cultural_treaties(self):
+        return self.treaties[self.treaties.is_cultural]
+    
+    @property
+    def cultural_treaties_of_interest(self):
+        return self.cultural_treaties[(self.cultural_treaties.signed_period != 'other')]    
+        
+    def _read_data(self, data_folder):
         data = {}
         for (filename, key, dtype) in self.csv_files:
             path = os.path.join(self.data_folder, filename)
             data[key] = pd.read_csv(path, sep='\t', low_memory=False)
-            print('Imported: {}'.format(filename))
-            
+            logger.info('Imported: {}'.format(filename))
         return data
     
-    def process_treaties(self):
+    def _process_treaties(self):
 
         def get_period(division, year):
             match = [ p for p in division if p[0] <= year <= p[1]]
@@ -98,13 +126,14 @@ class TreatyState:
         treaties['headnote'] = treaties.headnote.fillna('').astype(str).str.upper()
 
         # Drop columns not used
-        if self.treaties_skip_columns is not None:
-            treaties.drop(self.treaties_skip_columns, axis=1, inplace=True)
-			
-        treaties = treaties.set_index(['treaty_id'])
+        skip_columns = list(set(treaties.columns).intersection(set(self.treaties_skip_columns)))
+        if skip_columns is not None and len(skip_columns) > 0:
+            treaties.drop(skip_columns, axis=1, inplace=True)
+            
+        treaties = treaties.set_index('treaty_id')
         return treaties
 
-    def get_stacked_treaties(self):
+    def _get_stacked_treaties(self):
         '''
         Returns a bi-directional (duplicated) and processed version of the treaties master list.
         Each treaty has two records where party1 and party2 are reversed:
@@ -142,9 +171,6 @@ class TreatyState:
         # Add fields for party_other's country, continent and WTI group
         parties.columns = ['party_other_country', 'party_other_continent', 'party_other_group']
         treaties = treaties.merge(parties,how='left', left_on='party_other', right_index=True)
-        
-        # Drop columns
-        treaties = treaties.drop(['sequence', 'is_cultural_yesno'], axis=1)
         
         # set 7CULT as topic when it is secondary topic
         treaties.loc[treaties.topic2=='7CULT', 'topic'] = '7CULT'
@@ -210,27 +236,6 @@ class TreatyState:
             logger.warning('Warning: {} not in curated parties list'.format(party))
             return party
         
-    def process(self):
-        
-        self.groups = self.get_groups()
-        self.continents = self.get_continents()
-        self.parties = self.get_parties()
-        
-        self.treaties = self.process_treaties()
-        self.stacked_treaties = self.get_stacked_treaties()
-        
-        self.cultural_treaties = self.treaties[self.treaties.is_cultural]
-        self.cultural_treaties_of_interest = self.cultural_treaties[(self.cultural_treaties.signed_period != 'other')]
-        
-        print('Number of treaties loaded: {}'.format(len(self.treaties)))
-        print('Number of cultural treaties: {} (total), {} within periods'.format(
-            len(self.cultural_treaties),
-            len(self.cultural_treaties_of_interest)
-        ))
-        
-        self.tagged_headnotes = None
-        return self
-
     def get_headnotes(self):
         return self.treaties.headnote.fillna('').astype(str)
     
@@ -241,10 +246,24 @@ class TreatyState:
         if tags is None:
             return self.tagged_headnotes
         return self.tagged_headnotes.loc[(self.tagged_headnotes.pos.isin(tags))]
-	
+    
+    def get_treaty_subset(self, options, language):
+        lang_field = {'en': 'english', 'fr': 'french', 'de': 'other', 'it': 'other' }.get(language, None)
+        df = self.treaties
+        df = df.loc[df[lang_field]==language]
+        if options.get('source', None) is not None:
+            df = df.loc[df.source.isin(options.get('source', None))]
+        if options.get('from_year', None) is not None:
+            df = df.loc[df.signed >= datetime.date(options['from_year'], 1, 1)]
+        if options.get('to_year', None) is not None:
+            df = df.loc[df.signed < datetime.date(options['to_year']+1, 1, 1)]
+        if options.get('parties', None) is not None:
+            df = df.loc[df.party1.isin(options['parties'])|df.party2.isin(options['parties'])]
+        return df #.set_index('treaty_id')	
+    
 def load_treaty_state(data_folder, divisions=default_divisions, skip_columns=default_treaties_skip_columns):
     try:
-        state = TreatyState(data_folder, divisions, skip_columns).process()
+        state = TreatyState(data_folder, divisions, skip_columns)
         logger.info("Data loaded!")
         return state
     except Exception as ex:

@@ -18,20 +18,23 @@ logger = logging.getLogger(__name__)
 
 class CompressedFileReader(object):
 
-    def __init__(self, zip_archive, filename_pattern='*.txt', filenames=None):
+    def __init__(self, zip_archive, pattern='*.txt', filenames=None):
         self.zip_archive = zip_archive
-        self.filename_pattern = filename_pattern
-        self.filenames = filenames or self._get_filenames(filename_pattern)
+        self.filename_pattern = pattern
+        self.archive_filenames = self.get_archive_filenames(pattern)
+        self.filenames = filenames or self.archive_filenames
 
-    def _get_filenames(self, pattern):
+    def get_archive_filenames(self, pattern):
         with zipfile.ZipFile(self.zip_archive) as zf:
             return [ name for name in zf.namelist() if fnmatch.fnmatch(name, pattern) ]
-
+    
     def __iter__(self):
 
         with zipfile.ZipFile(self.zip_archive) as zip_file:
             for filename in self.filenames:
                 try:
+                    if filename not in self.archive_filenames:
+                        continue
                     with zip_file.open(filename, 'rU') as text_file:
                         content = text_file.read()
                         content = gensim.utils.to_unicode(content, 'utf8', errors='ignore')
