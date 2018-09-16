@@ -1,9 +1,16 @@
 # from __future__ import print_function
 import ipywidgets as widgets
+import logging
+
 from bokeh.models import ColumnDataSource, CustomJS
 
-import logging
-logger = logging.getLogger(__name__)
+def getLogger(name='cultural_treaties', level=logging.INFO):
+    logging.basicConfig(format="%(asctime)s : %(levelname)s : %(message)s", level=level)
+    logger = logging.getLogger(name)
+    logger.setLevel(logging.ERROR)
+    return logger
+
+logger = getLogger(__name__)
 
 BUTTON_STYLE = dict(description_width='initial', button_color='lightgreen')
 

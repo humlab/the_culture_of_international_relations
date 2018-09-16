@@ -5,9 +5,32 @@ import time
 import pandas as pd
 import shutil
 import zipfile
-
 import logging
-logger = logging.getLogger(__name__)
+import inspect
+
+from itertools import product
+
+if 'extend' not in globals():
+    extend = lambda a,b: a.update(b) or a
+    
+if 'filter_kwargs' not in globals():
+    filter_kwargs = lambda f, args: { k:args[k] for k in args.keys() if k in inspect.getargspec(f).args }
+
+if 'flatten' not in globals():
+    flatten = lambda l: [item for sublist in l for item in sublist]
+    
+def getLogger(name='cultural_treaties', level=logging.INFO):
+    logging.basicConfig(format="%(asctime)s : %(levelname)s : %(message)s", level=level)
+    logger = logging.getLogger(name)
+    logger.setLevel(level)
+    return logger
+
+logger = getLogger(__name__)
+    
+def dict_subset(d, keys):
+    if keys is None:
+        return d
+    return { k:v for (k,v) in d.items() if k in keys }
 
 __cwd__ = os.path.abspath(__file__) if '__file__' in globals() else os.getcwd()
 
@@ -139,3 +162,29 @@ class ColorGradient:
                     gradient_dict[k] += next[k][1:]
 
         return gradient_dict
+    
+import seaborn as sns
+import numpy as np
+from itertools import cycle, islice
+
+class StaticColorMap():
+    
+    def __init__(self, palette=sns.color_palette("Paired")):
+        sns.set()
+        self.color_map = { }
+        self.palette = palette
+        
+    def add_categories(self, categories):
+        categories = list(set(categories) - set(self.color_map.keys() - { np.nan }))
+        if len(categories) == 0:
+            return
+        colors = list(islice(cycle(self.palette), None, len(categories)))
+        self.color_map.update({ v: colors[i] for i, v in enumerate(categories) })
+        return self
+    
+    #unique_categories = list(set(flatten([ list(category_group_settings[k].keys()) for k in category_group_settings.keys() ])))
+
+    def get_palette(self, categories):
+        # add new categories
+        self.add_categories(categories)
+        return [ self.color_map[k] for k in categories ]
