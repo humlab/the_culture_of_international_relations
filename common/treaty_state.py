@@ -18,7 +18,7 @@ default_period_specification = [
     {
         'title': 'Year',
         'column': 'signed_year',
-        'periods': None
+        'periods': list(range(1919, 1973))
     },
     {
         'title': 'Default division',
@@ -32,8 +32,8 @@ default_period_specification = [
     },
     {
         'title': '1945-1972',
-        'column': 'signed_post_war',
-        'periods': [ (1945, 1972) ]
+        'column': 'signed_year',
+        'periods': list(range(1945, 1973))
     }
 ]
     
