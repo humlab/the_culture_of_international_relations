@@ -1,0 +1,143 @@
+from itertools import product
+import pandas as pd
+
+def complete_missing_data_points(data, period_group, category_column='Party', value_column='Count'):
+    
+    categories = data[category_column].unique()
+    
+    if len(categories) == 0:
+        return data
+        
+    periods = period_group['periods'] \
+        if period_group['type'] == 'range' else [ '{} to {}'.format(x[0], x[1])
+            for x in period_group['periods']]
+
+    period_categories = pd.DataFrame(
+        list(product(periods, categories)),
+        columns=['Period', category_column])\
+    .set_index(['Period', category_column])
+
+    dx = pd.merge(period_categories, data, right_on=['Period', category_column], left_index=True, how='outer')
+    df = pd.concat([data, dx[dx[value_column].isna()]], axis=0, ignore_index=True, copy=False)
+
+    return df.fillna(0)
+
+class QuantityByParty():
+    
+    @staticmethod
+    def get_top_parties(stacked_treaties, period_group, party_name, n_top=3):
+        period_column = period_group['column']
+        # data = stacked_treaties.merge(state.parties, how='inner', left_on='party', right_index=True)
+        xd = stacked_treaties.groupby([period_column, party_name]).size().rename('TopCount').reset_index()
+        top_list = xd.groupby([period_column]).apply(lambda x: x.nlargest(n_top, 'TopCount'))\
+            .reset_index(level=0, drop=True)\
+            .set_index([period_column, party_name])
+        return top_list
+
+    @staticmethod
+    def get_treaties_statistics(
+        state=None,
+        period_group=None,
+        party_name='party_name',
+        parties=None,
+        treaty_filter='',
+        extra_category='',
+        n_top=0):
+
+        period_column = period_group['column']
+
+        treaty_subset = state.get_treaties_within_division(state.treaties, period_group, treaty_filter)
+
+        # Skapa urvalet från stacked_treaties så att vi kan gruppera på valda parties via column "party"
+        # Regel: Filterera ut på treaty_ids, och forcera att "party" måste finnas i valda parter (vi vill inte gruppera på motpart såvida den inte finns i parties)
+        # Ger överträffar för valda parties som har fördrag mellan varandra
+
+        df = state.stacked_treaties.loc[treaty_subset.index] #  state.stacked_treaties[state.stacked_treaties.index.isin(treaty_subset.index)]
+
+        if isinstance(parties, list) and len(parties) > 0:
+            treaty_ids = treaty_subset[(treaty_subset.party1.isin(parties))|((treaty_subset.party2.isin(parties)))].index
+            treaties_of_parties = df[df.index.isin(treaty_ids)&df.party.isin(parties)] # de avtal som vars länder valts
+        else:
+            df_top = QuantityByParty.get_top_parties(df, period_group=period_group, party_name=party_name, n_top=n_top)\
+                        .drop(['TopCount'], axis=1)
+            treaties_of_parties = df.merge(df_top, how='inner', left_on=[period_column, party_name], right_index=True)
+
+        df_extra = None
+        if extra_category == 'other_category':
+            extra_ids = treaty_subset[~treaty_subset.index.isin(treaties_of_parties.index)].index
+            df_extra = df[df.index.isin(extra_ids)&(df.reversed==False)]
+            extra_party = state.get_party('ALL OTHER')
+
+        elif extra_category == 'all_category':
+            df_extra = df[df.index.isin(treaty_subset.index)&(df.reversed==False)]                        
+            extra_party = state.get_party('ALL')
+
+        if df_extra is not None:
+            df_extra = df_extra.assign(party=extra_party['party'],
+                                       party_name=extra_party['party_name'],
+                                       party_short_name=extra_party['short_name'],
+                                       party_country=extra_party['country'])
+
+            treaties_of_parties = pd.concat([treaties_of_parties, df_extra])
+
+        data = treaties_of_parties.groupby([period_column, party_name]).size().reset_index()\
+                .rename(columns={ period_column: 'Period', party_name: 'Party', 0: 'Count' })
+
+        data = complete_missing_data_points(data, period_group, category_column='Party', value_column='Count')
+
+        return data
+
+class QuantityByTopic():
+    
+    @staticmethod
+    def get_quantity_of_categorized_treaties(treaties, period_group, topic_category, recode_is_cultural):
+
+        if period_group['column'] != 'signed_year':
+            df = treaties[treaties[period_group['column']]!='other']
+        else:
+            df = treaties[treaties.signed_year.isin(period_group['periods'])]
+
+        if recode_is_cultural:
+            df.loc[df.is_cultural, 'topic1'] = '7CORR'
+
+        df['topic_category'] = df.apply(lambda x: topic_category.get(x['topic1'], 'OTHER'), axis=1)
+
+        return df
+
+    @staticmethod
+    def get_treaty_topic_quantity_stat(treaties, period_group, topic_category, party_group, recode_is_cultural, extra_other_category):
+
+        parties = party_group['parties']
+
+        categorized_treaties = QuantityByTopic.get_quantity_of_categorized_treaties(
+            treaties, period_group, topic_category, recode_is_cultural
+        )
+
+        if not extra_other_category:
+            categorized_treaties = categorized_treaties[categorized_treaties.topic_category!='OTHER']
+
+        #if len(parties) == 0:
+        #    print('Please select one or more parties!')
+
+        mask = (categorized_treaties.party1.isin(parties)|(categorized_treaties.party2.isin(parties)))
+        if party_group['label'] == 'ALL':
+            parties_treaties = categorized_treaties
+        elif party_group['label'] == 'ALL OTHER':
+            parties_treaties = categorized_treaties.loc[~mask]
+        else:
+            parties_treaties = categorized_treaties.loc[mask]
+
+        if parties_treaties.shape[0] == 0:
+            print('No data for: ' + ','.join(parties))
+            return
+
+        data = parties_treaties\
+                .groupby([period_group['column'], 'topic_category'])\
+                .size()\
+                .reset_index()\
+                .rename(columns={ period_group['column']: 'Period', 'topic_category': 'Category', 0: 'Count' })
+
+        data = complete_missing_data_points(data, period_group, category_column='Category', value_column='Count')
+
+        return data
+    

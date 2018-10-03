@@ -1,8 +1,11 @@
-import wordcloud
+import os
+
+os.sys.path = os.sys.path if '.' in os.sys.path else os.sys.path + ['.']
+
 import inspect
 import matplotlib.pyplot as plt
-from network_utility import NetworkMetricHelper, NetworkUtility, GraphToolUtility
-from widgets_utility import WidgetUtility
+
+from .network_utility import NetworkUtility, GraphToolUtility
 import networkx as nx
 import bokeh.palettes
 import bokeh.models as bm
@@ -195,6 +198,31 @@ def nx_normalize_layout(layout):
     layout = { n: (layout[n][0]/max_xy, layout[n][1]/max_xy) for n in layout.keys() }
     return layout
 
+class WidgetUtility:
+
+    @staticmethod
+    def glyph_hover_js_code(element_id, id_name, text_name, glyph_name='glyph', glyph_data='glyph_data'):
+        return """
+            var indices = cb_data.index['1d'].indices;
+            var current_id = -1;
+            if (indices.length > 0) {
+                var index = indices[0];
+                var id = parseInt(""" + glyph_name + """.data.""" + id_name + """[index]);
+                if (id !== current_id) {
+                    current_id = id;
+                    var text = """ + glyph_data + """.data.""" + text_name + """[id];
+                    $('.""" + element_id + """').html('ID ' + id.toString() + ': ' + text);
+                }
+        }
+        """
+
+    @staticmethod
+    def glyph_hover_callback(glyph_source, glyph_id, text_ids, text, element_id):
+        source = ColumnDataSource(dict(text_id=text_ids, text=text))
+        code = WidgetUtility.glyph_hover_js_code(element_id, glyph_id, 'text', glyph_name='glyph', glyph_data='glyph_data')
+        callback = CustomJS(args={'glyph': glyph_source, 'glyph_data': source}, code=code)
+        return callback
+    
 class BokehPlotNetworkUtility:
 
     @staticmethod
@@ -274,7 +302,7 @@ class BokehPlotNetworkUtility:
         if 'fill_color' in nodes.keys():
             r_nodes.glyph.fill_color = 'fill_color'
 
-        if node_description is not None:
+        if node_description is not None and hover_callback is not None:
             p.add_tools(bm.HoverTool(renderers=[r_nodes], tooltips=None, callback=WidgetUtility.\
                 glyph_hover_callback(nodes_source, 'node_id', text_ids=node_description.index, \
                                      text=node_description, element_id=element_id))

@@ -149,6 +149,7 @@ class BaseWidgetUtility():
     def next_topic_id_clicked(self, b): self.topic_id.value = (self.topic_id.value + 1) % self.n_topics
     def prev_topic_id_clicked(self, b): self.topic_id.value = (self.topic_id.value - 1) % self.n_topics
 
+    
 class TopicWidgets(BaseWidgetUtility):
 
     def __init__(self, n_topics, years=None, word_count=None, text_id=None):

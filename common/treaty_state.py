@@ -18,21 +18,25 @@ default_period_specification = [
     {
         'title': 'Year',
         'column': 'signed_year',
+        'type': 'range',
         'periods': list(range(1919, 1973))
     },
     {
         'title': 'Default division',
         'column': 'signed_period',
+        'type': 'divisions',
         'periods': [ (1919, 1939), (1940, 1944), (1945, 1955), (1956, 1966), (1967, 1972) ]
     },
     {
         'title': 'Alt. division',
         'column': 'signed_period_alt',
+        'type': 'divisions',
         'periods': [ (1919, 1944), (1945, 1955), (1956, 1966), (1967, 1972) ]
     },
     {
         'title': '1945-1972',
         'column': 'signed_year',
+        'type': 'range',
         'periods': list(range(1945, 1973))
     }
 ]
@@ -274,7 +278,8 @@ class TreatyState:
         parties['group_no'] = parties.group_no.astype(np.int32)
         parties['party_name'] = parties.party_name.apply(lambda x: re.sub(r'\(.*\)', '', x))
         parties['short_name'] = parties.short_name.apply(lambda x: re.sub(r'\(.*\)', '', x))
-
+        parties[['party_name', 'short_name']] = parties[['party_name', 'short_name']].apply(lambda x: x.str.strip())
+        
         parties.loc[(parties.group_no==8), ['country', 'country_code', 'country_code3']] = ''
 
         parties = pd.merge(parties, self.groups, how='left', left_on='group_no', right_index=True)
@@ -338,6 +343,18 @@ class TreatyState:
             df = df.loc[df.party1.isin(options['parties'])|df.party2.isin(options['parties'])]
         return df #.set_index('treaty_id')	
     
+    def get_treaties_within_division(self, treaties, period_group, treaty_filter):
+        period_column = period_group['column']
+        if period_column != 'signed_year':
+            treaties_within_division = treaties[treaties[period_column]!='other']
+        else:
+            treaties_within_division = treaties[treaties.signed_year.isin(period_group['periods'])]
+
+        treaty_subset = treaties_within_division.loc[(treaties_within_division.is_cultural==True)] if treaty_filter == 'is_cultural'\
+            else (treaties_within_division.loc[(treaties_within_division.topic1=='7CULT')]  if treaty_filter == 'is_7cult' else treaties_within_division)
+
+        return treaty_subset
+
 def load_treaty_state(data_folder, skip_columns=default_treaties_skip_columns, period_specification=default_period_specification):
     try:
         state = TreatyState(data_folder, skip_columns, period_specification)

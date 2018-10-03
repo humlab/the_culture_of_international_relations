@@ -163,21 +163,31 @@ class ColorGradient:
 
         return gradient_dict
     
-import seaborn as sns
 import numpy as np
 from itertools import cycle, islice
 
 class StaticColorMap():
     
-    def __init__(self, palette=sns.color_palette("Paired")):
-        sns.set()
+    def __init__(self, palette):
         self.color_map = { }
         self.palette = palette
+        self.color_index = 0
+        
+    def next_color(self):
+        self.color_index = (self.color_index + 1) % len(self.palette)
+        return self.palette[self.color_index]
         
     def add_categories(self, categories):
         categories = list(set(categories) - set(self.color_map.keys() - { np.nan }))
         if len(categories) == 0:
-            return
+            return self
+        self.color_map.update({ v: self.next_color() for v in categories })
+        return self
+    
+    def add_categories2(self, categories):
+        categories = list(set(categories) - set(self.color_map.keys() - { np.nan }))
+        if len(categories) == 0:
+            return self
         colors = list(islice(cycle(self.palette), None, len(categories)))
         self.color_map.update({ v: colors[i] for i, v in enumerate(categories) })
         return self
