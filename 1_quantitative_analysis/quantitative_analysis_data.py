@@ -27,7 +27,7 @@ class QuantityByParty():
     @staticmethod
     def get_top_parties(stacked_treaties, period_group, party_name, n_top=3):
         period_column = period_group['column']
-        # data = stacked_treaties.merge(state.parties, how='inner', left_on='party', right_index=True)
+        # data = stacked_treaties.merge(wti_index.parties, how='inner', left_on='party', right_index=True)
         xd = stacked_treaties.groupby([period_column, party_name]).size().rename('TopCount').reset_index()
         top_list = xd.groupby([period_column]).apply(lambda x: x.nlargest(n_top, 'TopCount'))\
             .reset_index(level=0, drop=True)\
@@ -36,7 +36,7 @@ class QuantityByParty():
 
     @staticmethod
     def get_treaties_statistics(
-        state=None,
+        wti_index=None,
         period_group=None,
         party_name='party_name',
         parties=None,
@@ -46,13 +46,13 @@ class QuantityByParty():
 
         period_column = period_group['column']
 
-        treaty_subset = state.get_treaties_within_division(state.treaties, period_group, treaty_filter)
+        treaty_subset = wti_index.get_treaties_within_division(wti_index.treaties, period_group, treaty_filter)
 
         # Skapa urvalet från stacked_treaties så att vi kan gruppera på valda parties via column "party"
         # Regel: Filterera ut på treaty_ids, och forcera att "party" måste finnas i valda parter (vi vill inte gruppera på motpart såvida den inte finns i parties)
         # Ger överträffar för valda parties som har fördrag mellan varandra
 
-        df = state.stacked_treaties.loc[treaty_subset.index] #  state.stacked_treaties[state.stacked_treaties.index.isin(treaty_subset.index)]
+        df = wti_index.stacked_treaties.loc[treaty_subset.index] #  wti_index.stacked_treaties[wti_index.stacked_treaties.index.isin(treaty_subset.index)]
 
         if isinstance(parties, list) and len(parties) > 0:
             treaty_ids = treaty_subset[(treaty_subset.party1.isin(parties))|((treaty_subset.party2.isin(parties)))].index
@@ -66,11 +66,11 @@ class QuantityByParty():
         if extra_category == 'other_category':
             extra_ids = treaty_subset[~treaty_subset.index.isin(treaties_of_parties.index)].index
             df_extra = df[df.index.isin(extra_ids)&(df.reversed==False)]
-            extra_party = state.get_party('ALL OTHER')
+            extra_party = wti_index.get_party('ALL OTHER')
 
         elif extra_category == 'all_category':
             df_extra = df[df.index.isin(treaty_subset.index)&(df.reversed==False)]                        
-            extra_party = state.get_party('ALL')
+            extra_party = wti_index.get_party('ALL')
 
         if df_extra is not None:
             df_extra = df_extra.assign(party=extra_party['party'],
@@ -105,38 +105,65 @@ class QuantityByTopic():
         return df
 
     @staticmethod
-    def get_treaty_topic_quantity_stat(treaties, period_group, topic_category, party_group, recode_is_cultural, extra_other_category):
+    def get_treaty_topic_quantity_stat(
+        wti_index,
+        period_group,
+        topic_category,
+        party_group,
+        recode_is_cultural,
+        extra_other_category,
+        target_quantity='topic'
+    ):
 
+        treaties = wti_index.treaties.copy()
         parties = party_group['parties']
-
-        categorized_treaties = QuantityByTopic.get_quantity_of_categorized_treaties(
-            treaties, period_group, topic_category, recode_is_cultural
+        
+        categorized_treaties = wti_index.get_categorized_treaties(
+            treaties, period_group=period_group,
+            treaty_filter='',
+            recode_is_cultural=recode_is_cultural,
+            topic_category=topic_category
         )
 
         if not extra_other_category:
             categorized_treaties = categorized_treaties[categorized_treaties.topic_category!='OTHER']
 
-        #if len(parties) == 0:
-        #    print('Please select one or more parties!')
-
-        mask = (categorized_treaties.party1.isin(parties)|(categorized_treaties.party2.isin(parties)))
-        if party_group['label'] == 'ALL':
+        if party_group['label'] == 'ALL' or parties is None:
             parties_treaties = categorized_treaties
-        elif party_group['label'] == 'ALL OTHER':
-            parties_treaties = categorized_treaties.loc[~mask]
         else:
-            parties_treaties = categorized_treaties.loc[mask]
+            mask = (categorized_treaties.party1.isin(parties)|(categorized_treaties.party2.isin(parties)))
+            if party_group['label'] == 'ALL OTHER':
+                parties_treaties = categorized_treaties.loc[~mask]
+            else:
+                parties_treaties = categorized_treaties.loc[mask]
 
         if parties_treaties.shape[0] == 0:
             print('No data for: ' + ','.join(parties))
-            return
+            return None
 
-        data = parties_treaties\
-                .groupby([period_group['column'], 'topic_category'])\
-                .size()\
-                .reset_index()\
-                .rename(columns={ period_group['column']: 'Period', 'topic_category': 'Category', 0: 'Count' })
-
+        if target_quantity == 'topic':
+            
+            '''
+            Primary case - Compute sum of treaty count over all parties for each topic in selected topic group 
+            '''            
+            data = parties_treaties\
+                    .groupby([period_group['column'], 'topic_category'])\
+                    .size()\
+                    .reset_index()\
+                    .rename(columns={ period_group['column']: 'Period', 'topic_category': 'Category', 0: 'Count' })
+            
+        else:
+            
+            '''
+            Special case - Compute treaty count per party for treaties with topic in selected treaty group
+            '''
+            stacked_treaties = pd.merge(wti_index.stacked_treaties[['party']], categorized_treaties, left_on='treaty_id', right_index=True, how='inner')
+            data = stacked_treaties.loc[stacked_treaties.party.isin(parties)]\
+                    .groupby([period_group['column'], 'party'])\
+                    .size()\
+                    .reset_index()\
+                    .rename(columns={ period_group['column']: 'Period', 'party': 'Category', 0: 'Count' })
+            
         data = complete_missing_data_points(data, period_group, category_column='Category', value_column='Count')
 
         return data

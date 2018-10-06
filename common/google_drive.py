@@ -86,15 +86,6 @@ def process_files(files_to_download):
     
     for file in files_to_download:
         process_file(file)
-    
-    # import sys
-    # if len(sys.argv) is not 3:
-    #    print("Usage: python google_drive.py drive_file_id destination_file_path")
-    # else:
-    #     # TAKE ID FROM SHAREABLE LINK
-    #     file_id = sys.argv[1]
-    #     # DESTINATION FILE ON YOUR DISK
-    #     destination = sys.argv[2]
-    #     download_file_from_google_drive(file_id, destination)
+
     
 

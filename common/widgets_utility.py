@@ -4,31 +4,24 @@ import logging
 
 from bokeh.models import ColumnDataSource, CustomJS
 
-def getLogger(name='cultural_treaties', level=logging.INFO):
-    logging.basicConfig(format="%(asctime)s : %(levelname)s : %(message)s", level=level)
-    logger = logging.getLogger(name)
-    logger.setLevel(logging.ERROR)
-    return logger
-
-logger = getLogger(__name__)
-
 BUTTON_STYLE = dict(description_width='initial', button_color='lightgreen')
 
 if 'extend' not in globals():
     extend = lambda a, b: a.update(b) or a
 
-def create_js_callback(axis, attribute, source):
-    return CustomJS(args=dict(source=source), code="""
-        var data = source.data;
-        var start = cb_obj.start;
-        var end = cb_obj.end;
-        data['""" + axis + """'] = [start + (end - start) / 2];
-        data['""" + attribute + """'] = [end - start];
-        source.change.emit();
-    """)
-
-class WidgetUtility:
-
+class WidgetUtility():
+    
+    @staticmethod
+    def create_js_callback(axis, attribute, source):
+        return CustomJS(args=dict(source=source), code="""
+            var data = source.data;
+            var start = cb_obj.start;
+            var end = cb_obj.end;
+            data['""" + axis + """'] = [start + (end - start) / 2];
+            data['""" + attribute + """'] = [end - start];
+            source.change.emit();
+        """)
+    
     @staticmethod
     def glyph_hover_js_code(element_id, id_name, text_name, glyph_name='glyph', glyph_data='glyph_data'):
         return """
@@ -51,10 +44,7 @@ class WidgetUtility:
         code = WidgetUtility.glyph_hover_js_code(element_id, glyph_id, 'text', glyph_name='glyph', glyph_data='glyph_data')
         callback = CustomJS(args={'glyph': glyph_source, 'glyph_data': source}, code=code)
         return callback
-
-
-class BaseWidgetUtility():
-
+    
     def __init__(self, **kwargs):
         for key, value in kwargs.items():
             setattr(self, key, value)
@@ -150,7 +140,7 @@ class BaseWidgetUtility():
     def prev_topic_id_clicked(self, b): self.topic_id.value = (self.topic_id.value - 1) % self.n_topics
 
     
-class TopicWidgets(BaseWidgetUtility):
+class TopicWidgets(WidgetUtility):
 
     def __init__(self, n_topics, years=None, word_count=None, text_id=None):
 
@@ -166,7 +156,7 @@ class TopicWidgets(BaseWidgetUtility):
         self.next_topic_id = self.create_next_button(self.next_topic_id_clicked)
 
 
-class TopTopicWidgets(BaseWidgetUtility):
+class TopTopicWidgets(WidgetUtility):
 
     def __init__(self, n_topics=0, years=None, aggregates=None, text_id='text_id', layout_algorithms=None):
 
@@ -181,4 +171,4 @@ class TopTopicWidgets(BaseWidgetUtility):
         self.layout_algorithm = self.layout_algorithm_widget(layout_algorithms, default='Fruchterman-Reingold') \
             if layout_algorithms is not None else None
 
-wf = BaseWidgetUtility()
+wf = WidgetUtility()

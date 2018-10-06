@@ -1,48 +1,8 @@
+import networkx as nx
+import community
 
-
-def network_edges_to_dicts(network, layout):
-    LD = [ extend(dict(source=u,target=v,xs=[layout[u][0], layout[v][0]], ys=[layout[u][1], layout[v][1]]), d) for u, v, d in G.edges(data=True) ]
-    LD.sort(key=lambda x: x['signed'])
-    edges = dict(zip(LD[0],zip(*[d.values() for d in LD])))
-    return edges
-
-def pandas_to_network_edges(data):
-    return [ (x[0], x[1], { y: x[j] for j, y in enumerate(data.columns)}) for i, x in data.iterrows() ]
-    
-def get_party_network_data(state=None, period_group=None, party_name='party_name', parties=None, treaty_filter='', extra_category='', n_top=0):
-
-    period_column = period_group['column']
-    
-    treaty_subset = state.get_treaties_within_division(state.treaties, period_group, treaty_filter)
-    xxx = state.stacked_treaties.loc[treaty_subset.index] #  state.stacked_treaties[state.stacked_treaties.index.isin(treaty_subset.index)]
-
-    data = state.stacked_treaties.copy()
-
-    data = data.loc[(data.signed_period!='other')]
-
-    if only_is_cultural:
-        data = data.loc[(data.is_cultural==True)]
-
-    if isinstance(parties, list):
-        data = data.loc[(data.party.isin(parties))]
-    else:
-        data = data.loc[(data.reversed==False)]
-
-    data = data.loc[(data.signed_period != period)]
-    data = data.loc[(data.signed_year.between(period[0], period[1]))]
-    data = data.sort_values('signed')
-
-    # data = data.groupby(['party', 'party_other']).size().reset_index().rename(columns={0: 'weight'})
-    
-    data = data[[ 'party', 'party_other', 'signed', 'topic', 'headnote']]
-
-    if party_name != 'party':
-        for column in ['party', 'party_other']:
-            data[column] = data[column].apply(lambda x: state.get_party_name(x, party_name))
-
-    data['weight'] = 1.0
-            
-    return data
+from common.network.networkx_utility import pandas_to_network_edges
+from common.utility import clamp_values
 
 def create_party_network(data, K, node_partition, palette): #, multigraph=True):
 

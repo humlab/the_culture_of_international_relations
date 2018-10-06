@@ -1,11 +1,11 @@
 import ipywidgets as widgets
 import common.widgets_config as wc
-from common.widgets_utility import BaseWidgetUtility
+from common.widgets_utility import WidgetUtility
 import common.config as config
 
 def quantitative_analysis_party_main(state, fn):
 
-    tw = BaseWidgetUtility(
+    tw = WidgetUtility(
         period_group=wc.period_group_widget(),
         party_name=wc.party_name_widget(),
         normalize_values=wc.normalize_widget(),

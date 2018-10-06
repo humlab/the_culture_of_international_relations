@@ -1,5 +1,5 @@
 
-category_group_settings = {
+default_topic_groups = {
     '7CULT, 7SCIEN, and 7EDUC': {
         '7CULT': ['7CULT'],
         '7SCIEN': ['7SCIEN'],
@@ -63,9 +63,9 @@ category_group_settings = {
     },
 }
 
-category_group_maps = { 
-    category_name: { v: k for k in category_group_settings[category_name].keys() for v in category_group_settings[category_name][k]  }
-        for category_name in category_group_settings.keys()
+topic_group_maps = { 
+    group_name: { v: k for k in default_topic_groups[group_name].keys() for v in default_topic_groups[group_name][k]  }
+        for group_name in default_topic_groups.keys()
 }
 
 
@@ -105,8 +105,6 @@ output_formats = {
     'Plot vertical bar, stacked': 'plot_bar_stacked',
     'Plot horisontal bar, stacked': 'plot_barh_stacked',
     'Plot line': 'plot_line',
-    # 'Plot stacked line': 'plot_line_stacked',
-    # 'Chart ': 'chart',
     'Table': 'table',
     'Pivot': 'pivot'
 }

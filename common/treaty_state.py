@@ -95,6 +95,71 @@ default_extra_parties = {
     }
 }
 
+party_correction_map = {
+    'ABLANI': 'ALBANI',
+    'AMBASS': 'IGNORE',
+    'AMBASS CONF': 'IGNORE',
+    'AMBASS. CONF.': 'IGNORE',
+    'ASIAN BANK': 'IGNORE',
+    'BARBBAD': 'BARBAD',
+    'BEGIU': 'BELGIU',
+    'BEL-LUX. EC U': 'BNLXEC',
+    'BEL-LUX. EC. U': 'BNLXEC',
+    'BEL. LUX. EC. U': 'BNLXEC',
+    'BELGIUM': 'BELGIU',
+    'BLEGIU': 'BELGIU',
+    'BRIT. INDIA': 'BRIT.INDIA',
+    'BULGARI': 'BULGAR',
+    'CAMBOD': 'KAMPUC',
+    'CAMBODIA': 'KAMPUC',
+    'CANDA': 'CANADA',
+    'CAPEVER': 'CAPVER',
+    'CENTRAL-AMERICAN COMMISSION ON ENVIRONMENT AND DEVELOPMENT': 'IGNORE',
+    'CEZCHO': 'CZECHO',
+    'COLOLMB': 'COLOMB',
+    'COMMISSION FOR THE CONSERVATION OF SOUTHERN BLUEFIN TUNA': 'IGNORE',
+    'EAST ATLANTIC FISHERIES COMMISSION': 'IGNORE',
+    'ESTONIA': 'ESTONI',
+    'EUROPEAN COMMUNITIES AND THEIR MEMBER STATES': 'IGNORE',
+    'EUROPEAN MONETARY INSTITUTE': 'IGNORE',
+    'GERMW*': 'GERMW',
+    'HUNGARY': 'HUNGAR',
+    'INTER-AMERICAN INSTITUTE FOR GLOBAL CHANGE RESEARCH': 'IGNORE',
+    'INTERGOVERNMENTAL AUTHORITY ON DEVELOPMENT': 'IGNORE',
+    'INTERGOVERNMENTAL AUTHORITY ON DROUGHT AND DEVELOPMENT': 'IGNORE',
+    'INTERPOL': 'IGNORE',
+    'IRELAND': 'IRELAN',
+    'LATVI': 'LATVIA',
+    'MACAU': 'MACAO',
+    'MULTINATIONAL FORCE AND OBSERVERS': 'MFO',
+    'NEGERI': 'NIGERI',
+    'NETHR': 'NETHER',
+    'PALISTINE': 'PALESTINE',
+    'PARAGUA': 'PARAGU',
+    'PORTUGAL': 'PORTUG',
+    'PROTUG': 'PORTUG',
+    'RELIEF BONDS': 'IGNORE',
+    'SECRETARIAT OF THE CONVENTION ON BIOLOGICAL DIVERSITY': 'IGNORE',
+    'SOUTH AFRICAN DEVELOPMENT COMMUNITY': 'IGNORE',
+    'SOUTHERN AFRICAN DEVELOPMENT COMMUNITY': 'IGNORE',
+    'ST. LUCIA': 'STLUC',
+    'STRAITS': 'STRAIT',
+    'SWEDE': 'SWEDEN',
+    'TERKME': 'TURKME',
+    'TJIKI': 'TAJIKI',
+    'TRANS- JORDAN': 'TJORD',
+    'TUKEY': 'TURKEY',
+    'UN ECONOMIC COMMISSION FOR AFRICA': 'IGNORE',
+    'UN UNIVERSITY': 'IGNORE',
+    'UN*': 'IGNORE',
+    'UNEP*': 'UNEP',
+    'UNTAET': 'IGNORE',
+    'UPEACE*': 'IGNORE',
+    'US': 'USA',
+    'VIETS(N)': 'VIETN',
+    'W ALLIES': 'IGNORE'
+}
+
 class TreatyState:
     
     def __init__(self, data_folder='./data', skip_columns=default_treaties_skip_columns, period_specification=default_period_specification):
@@ -122,6 +187,15 @@ class TreatyState:
         self._stacked_treaties = None
         self._get_countries_list = None
         
+    def check_party(self):
+        #party1 = self.treaties[~self.treaties.group1.isin([0, 8])].party1.unique().tolist()
+        #party2 = self.treaties[~self.treaties.group2.isin([0, 8])].party2.unique().tolist()
+        party1 = self.treaties.party1.unique().tolist()
+        party2 = self.treaties.party2.unique().tolist()
+        df_party = pd.DataFrame({ 'party': list(set(party1 + party2)) })
+        df = df_party.merge(self.parties, left_on='party', right_index=True, how='left')
+        return df[df.group_no.isna()].party.tolist()
+
     @property
     def treaties(self):
         if self._treaties is None:
@@ -147,7 +221,7 @@ class TreatyState:
         for (filename, key, dtype) in self.csv_files:
             path = os.path.join(self.data_folder, filename)
             data[key] = pd.read_csv(path, sep='\t', low_memory=False)
-            logger.info('Imported: {}'.format(filename))
+            # logger.info('Imported: {}'.format(filename))
         return data
     
     def _process_treaties(self):
@@ -171,10 +245,16 @@ class TreatyState:
         
         treaties['force'] = pd.to_datetime(treaties.force, errors='coerce')
         treaties['sequence'] = treaties.sequence.astype('int', errors='ignore')
-        treaties['group1'] = treaties.group1.fillna(0).astype('int', errors='ignore')
-        treaties['group2'] = treaties.group2.fillna(0).astype('int', errors='ignore')
+        #treaties['group1'] = treaties.group1.fillna(0).astype('int', errors='ignore')
+        #treaties['group2'] = treaties.group2.fillna(0).astype('int', errors='ignore')
         treaties['is_cultural'] = treaties.is_cultural_yesno.apply(lambda x: x.lower() == 'yes')
         treaties['headnote'] = treaties.headnote.fillna('').astype(str).str.upper()
+        
+        treaties['party1'] = treaties.party1.fillna('').astype(str).str.upper()
+        treaties['party2'] = treaties.party2.fillna('').astype(str).str.upper()
+        
+        treaties['party1'] = treaties.party1.apply(lambda x: party_correction_map.get(x, x))
+        treaties['party2'] = treaties.party2.apply(lambda x: party_correction_map.get(x, x))
         
         treaties.loc[(treaties.topic1=='7CULT')|(treaties.topic2=='7CULT'), 'topic'] = '7CULT'
         
@@ -343,19 +423,71 @@ class TreatyState:
             df = df.loc[df.party1.isin(options['parties'])|df.party2.isin(options['parties'])]
         return df #.set_index('treaty_id')	
     
-    def get_treaties_within_division(self, treaties, period_group, treaty_filter):
+    def filter_by_is_cultural(self, df, treaty_filter):
+        
+        if treaty_filter == 'is_cultural':
+            return df.loc[(df.is_cultural==True)] 
+
+        if treaty_filter == 'is_7cult':
+            return df.loc[(df.topic1=='7CULT')]
+        
+        return df
+    
+    def get_topic_category(self, df, topic_category, topic_column='topic1'):
+        if topic_column not in df.columns:
+            raise Exception("Column {} not found i DataFrame".format(topic_column))
+        if topic_category is not None:
+            return df.apply(lambda x: topic_category.get(x[topic_column], 'OTHER'), axis=1)
+        return df[topic_column]
+            
+    def get_treaties_within_division(self, treaties=None, period_group=None, treaty_filter='', recode_is_cultural=False, parties=None):
+        
+        if treaties is None:
+            treaties = self.treaties
+            
         period_column = period_group['column']
+        
         if period_column != 'signed_year':
-            treaties_within_division = treaties[treaties[period_column]!='other']
+            df = treaties[treaties[period_column]!='other']
         else:
-            treaties_within_division = treaties[treaties.signed_year.isin(period_group['periods'])]
+            df = treaties[treaties.signed_year.isin(period_group['periods'])]
+            
+        if isinstance(parties, list):
+            df = df.loc[(df.party1.isin(parties))|(df.party2.isin(parties))]
+            
+        df = self.filter_by_is_cultural(df, treaty_filter)
 
-        treaty_subset = treaties_within_division.loc[(treaties_within_division.is_cultural==True)] if treaty_filter == 'is_cultural'\
-            else (treaties_within_division.loc[(treaties_within_division.topic1=='7CULT')]  if treaty_filter == 'is_7cult' else treaties_within_division)
+        if recode_is_cultural:
+            df.loc[df.is_cultural, 'topic1'] = '7CORR'
 
-        return treaty_subset
+        return df
+    
+    def get_categorized_treaties(self, treaties=None, topic_category=None, **kwargs):
+        
+        df = self.get_treaties_within_division(treaties, **kwargs)
+        df['topic_category'] = self.get_topic_category(df, topic_category, topic_column='topic1')
+        return df
 
-def load_treaty_state(data_folder, skip_columns=default_treaties_skip_columns, period_specification=default_period_specification):
+    def get_party_network(self, party_name, topic_category, parties, **kwargs):
+        
+        treaty_ids = self.get_treaties_within_division(parties=parties, **kwargs).index
+
+        treaties = self.stacked_treaties.loc[treaty_ids]
+
+        mask = treaties.party.isin(parties) if isinstance(parties, list) else ~treaties.reversed
+
+        treaties = treaties.loc[mask]
+
+        party_other_name = party_name.replace('party', 'party_other')
+        treaties = treaties[[ party_name, party_other_name, 'signed', 'topic', 'headnote']]
+        treaties.columns = [ 'party', 'party_other', 'signed', 'topic', 'headnote']
+
+        treaties['weight'] = 1.0
+        treaties['category'] = self.get_topic_category(treaties, topic_category, topic_column='topic')
+        
+        return treaties.sort_values('signed')
+    
+def load_wti_index(data_folder, skip_columns=default_treaties_skip_columns, period_specification=default_period_specification):
     try:
         state = TreatyState(data_folder, skip_columns, period_specification)
         logger.info("Data loaded!")
@@ -365,3 +497,5 @@ def load_treaty_state(data_folder, skip_columns=default_treaties_skip_columns, p
         raise
         logger.info('Load failed! Have you run setup cell above?')
         return None
+    
+load_treaty_state = load_wti_index

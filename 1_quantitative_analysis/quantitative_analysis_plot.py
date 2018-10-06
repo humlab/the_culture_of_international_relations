@@ -1,6 +1,8 @@
-import bokeh
+import bokeh.palettes
 import matplotlib
 import holoviews as hv
+
+default_palette = bokeh.palettes.Category20_20
 
 def quantity_plot(
     data,
@@ -18,7 +20,7 @@ def quantity_plot(
     xlim=None,
     ylim=None,
     dpi=48,
-    colors=bokeh.palettes.Category20[20],
+    colors=default_palette,
     **kwargs):
 
     matplotlib.style.use(plot_style)
@@ -169,6 +171,17 @@ def create_party_name_map(parties, palette=bokeh.palettes.Category20[20]):
 
     return party_name_map, party_color_map
 
+def vstepper(vmax):
+    if vmax < 15:
+        return 1
+    if vmax < 30:
+        return 5
+    if vmax < 500:
+        return 10
+    if vmax < 2000:
+        return 100
+    return 500
+    
 def prepare_plot_kwargs(data, chart_type, normalize_values, period_group):
     
     kwargs = dict(
@@ -187,7 +200,7 @@ def prepare_plot_kwargs(data, chart_type, normalize_values, period_group):
         ticklabels = [ '{} to {}'.format(x[0], x[1]) for x in period_group['periods'] ]
     vmax = data.max().max()
 
-    vstep = 1 if vmax < 15 else (5 if vmax < 30 else 10)
+    vstep = vstepper(vmax)
     
     kwargs.setdefault('%sticks' %(c,), list(data.index))
     kwargs.setdefault('%sticks' %(v,), list(range(0,vmax+vstep, vstep)))

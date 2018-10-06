@@ -6,13 +6,35 @@ import logging
 #if __package__:
 #    print('Package named {!r}; __name__ is {!r}'.format(__package__, __name__))
     
-import common.treaty_state as treaty_state
-import common.config as config
+from common import extend    
+from common.treaty_state import default_period_specification
+from common.config import topic_group_maps, matplotlib_plot_styles, chart_types
 
-def extend(a, b):
-    x = dict(a)
-    return x.update(b) or x
+def kwargser(d):
+    args = dict(d)
+    kwargs = args['kwargs']
+    del args['kwargs']
+    args.update(kwargs)
+    return args
+
+def toggle(description, value, **kwargs):
+    return widgets.ToggleButton(**kwargser(locals()))
     
+def dropdown(description, options, value, **kwargs):
+    return widgets.Dropdown(**kwargser(locals()))
+
+def slider(description, min, max, value, **kwargs):
+    return widgets.IntSlider(**kwargser(locals()))
+
+def rangeslider(description, min, max, value, **kwargs):
+    return widgets.IntRangeSlider(**kwargser(locals()))
+
+def sliderf(description, min, max, step, value, **kwargs):
+    return widgets.FloatSlider(**kwargser(locals()))
+
+def progress(min, max, step, value, **kwargs):
+    return widgets.IntProgress(**kwargser(locals()))
+
 def treaty_filter_widget(**kwopts):
     default_opts = dict(
         options={ 'Is Cultural': 'is_cultural', 'Topic is 7CULT': 'is_7cult', 'No filter': '' },
@@ -32,9 +54,9 @@ def treaty_filter_widget(**kwopts):
 def period_group_widget(**kwopts):
     default_opts = dict(
         options= {
-            x['title']: x for x in treaty_state.default_period_specification
+            x['title']: x for x in default_period_specification
         },
-        value=treaty_state.default_period_specification[-1],
+        value=default_period_specification[-1],
         description='Divisions',
         layout=widgets.Layout(width='200px')
     )
@@ -75,15 +97,24 @@ def parties_widget(**kwopts):
         
 def topic_groups_widget(**kwopts):
     default_opts=dict(
-        options=config.category_group_maps.keys(),
+        options=topic_group_maps.keys(),
         description='Category:',
-        layout=widgets.Layout(width='300px')
+        layout=widgets.Layout(width='200px')
     )
     return widgets.Dropdown(**extend(default_opts, kwopts))
-   
+
+def topic_groups_widget2(**kwopts):
+    default_opts=dict(
+        options=topic_group_maps,
+        value=topic_group_maps['7CULTURE'],
+        description='Category:',
+        layout=widgets.Layout(width='200px')
+    )
+    return widgets.Dropdown(**extend(default_opts, kwopts))
+
 def plot_style_widget(**kwopts):
     default_opts=dict(
-        options=[ x for x in config.matplotlib_plot_styles if 'seaborn' in x ],
+        options=[ x for x in matplotlib_plot_styles if 'seaborn' in x ],
         value='seaborn-pastel',
         description='Style:',
         layout=widgets.Layout(width='200px')
@@ -93,8 +124,8 @@ def plot_style_widget(**kwopts):
 def chart_type_widget(**kwopts):
     default_opts=dict(
             description='Output',
-            options=[(x.description, x) for x in config.chart_types],
-            value=config.chart_types[0],
+            options=[(x.description, x) for x in chart_types],
+            value=chart_types[0],
             layout=widgets.Layout(width='200px')
     )
     return widgets.Dropdown(**extend(default_opts, kwopts))
