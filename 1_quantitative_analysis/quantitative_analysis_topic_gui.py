@@ -1,6 +1,7 @@
 import ipywidgets as widgets
 import common.widgets_config as wc
 import common.config as config
+from IPython.display import display
 
 def quantitative_analysis_topic_main(wti_index, callback):
 

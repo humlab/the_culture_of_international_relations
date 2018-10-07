@@ -1,5 +1,4 @@
 import networkx as nx
-import graphviz
 import pydotplus
 
 from IPython.display import Image
@@ -41,19 +40,18 @@ styles = {
         'fontcolor': 'white',
     }
 }
-    
-def plot(G, **kwargs):
 
-    P=nx.nx_pydot.to_pydot(G)
+def plot(G, **kwargs):   # pylint: disable=W0613
+
+    P = nx.nx_pydot.to_pydot(G)
     P.format = 'svg'
-    #if root is not None :
+    # if root is not None :
     #    P.set("root",make_str(root))
-    D=P.create_dot(prog='circo')
-    if D=="":
+    D = P.create_dot(prog='circo')
+    if D == "":
         return None
-    Q=pydotplus.graph_from_dot_data(D)
-    #Q = apply_styles(Q, styles)
-    from IPython.display import Image
+    Q = pydotplus.graph_from_dot_data(D)
+    # Q = apply_styles(Q, styles)
+    # FIXME Don't return Image
     I = Image(Q.create_png())
     return I
-

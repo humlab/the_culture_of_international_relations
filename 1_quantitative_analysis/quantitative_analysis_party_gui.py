@@ -2,6 +2,10 @@ import ipywidgets as widgets
 import common.widgets_config as wc
 from common.widgets_utility import WidgetUtility
 import common.config as config
+from common.utility import getLogger
+from IPython.display import display
+
+logger = getLogger('qa')
 
 def quantitative_analysis_party_main(state, fn):
 

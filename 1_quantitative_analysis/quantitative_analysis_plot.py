@@ -1,8 +1,11 @@
 import bokeh.palettes
 import matplotlib
 import holoviews as hv
+from bokeh.palettes import Category20_20
+from IPython.display import display
 
-default_palette = bokeh.palettes.Category20_20
+default_palette = Category20_20
+
 
 def quantity_plot(
     data,
@@ -86,7 +89,7 @@ def plot_treaties_per_period_holoviews(
     yticklabels=None,
     xlim=None,
     ylim=None,
-    colors=bokeh.palettes.Category20[20]):
+    colors=default_palette):
     
     plot_opts = dict(
         tools=['hover'],
@@ -154,7 +157,7 @@ def plot_treaties_per_period_holoviews(
             #.sort(['Period'])
         display(p)
         
-def create_party_name_map(parties, palette=bokeh.palettes.Category20[20]):
+def create_party_name_map(parties, palette=default_palette):
     
     rev_dict = lambda d: {v: k for k, v in d.items()}
 

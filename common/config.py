@@ -24,15 +24,15 @@ default_topic_groups = {
     },
     '7CULT + 2WELFARE': {
         '7CULT': ['7CULT'],
-        '2WELFARE': [ '2HEW', '2HUMAN','2LABOR', '2NARK', '2REFUG', '2SANIT', '2SECUR', '2WOMEN' ]
+        '2WELFARE': [ '2HEW', '2HUMAN', '2LABOR', '2NARK', '2REFUG', '2SANIT', '2SECUR', '2WOMEN' ]
     },
     '7CULT + 3ECONOMIC': {
         '7CULT': ['7CULT'],
-        'ECONOMIC': ['3CLAIM', '3COMMO', '3CUSTO', '3ECON', '3INDUS', '3INVES', '3MOSTF', '3PATEN', '3PAYMT', '3PROD', '3TAXAT', '3TECH', '3TOUR','3TRADE','3TRAPA']
+        'ECONOMIC': ['3CLAIM', '3COMMO', '3CUSTO', '3ECON', '3INDUS', '3INVES', '3MOSTF', '3PATEN', '3PAYMT', '3PROD', '3TAXAT', '3TECH', '3TOUR', '3TRADE', '3TRAPA']
     },
     '7CULT + 4AID': {
         '7CULT': ['7CULT'],
-        '4AID': ['4AGRIC','4AID', '4ATOM', '4EDUC', '4LOAN', '4MEDIC', '4MILIT', '4PCOR', '4RESOU', '4TECA', '4UNICE']
+        '4AID': ['4AGRIC', '4AID', '4ATOM', '4EDUC', '4LOAN', '4MEDIC', '4MILIT', '4PCOR', '4RESOU', '4TECA', '4UNICE']
     },
     '7CULT + 5TRANSPORT': {
         '7CULT': ['7CULT'],
@@ -63,15 +63,16 @@ default_topic_groups = {
     },
 }
 
-topic_group_maps = { 
-    group_name: { v: k for k in default_topic_groups[group_name].keys() for v in default_topic_groups[group_name][k]  }
-        for group_name in default_topic_groups.keys()
+topic_group_maps = {
+    group_name: {
+        v: k for k in default_topic_groups[group_name].keys() for v in default_topic_groups[group_name][k]
+    } for group_name in default_topic_groups.keys()
 }
 
 
 default_graph_tools = "pan,wheel_zoom,box_zoom,reset,hover,previewsave"
 
-matplotlib_plot_styles =[
+matplotlib_plot_styles = [
     'ggplot',
     'bmh',
     'seaborn-notebook',
@@ -114,7 +115,7 @@ import collections
 class BunchOfStuff:
     def __init__(self, **kwds):
         self.__dict__.update(kwds)
-        
+
 KindOfChart = collections.namedtuple('KindOfChart', 'description name kind stacked horizontal')
 
 chart_types = [
@@ -131,4 +132,3 @@ chart_type_map = { x.name: x for x in chart_types }
 output_charts = ([x.description for x in chart_types], chart_types)
 
 parties_of_interest = ['FRANCE', 'GERMU', 'ITALY', 'GERMAN', 'UK', 'GERME', 'GERMW', 'INDIA', 'GERMA' ]
-    

@@ -1,15 +1,9 @@
 # -*- coding: utf-8 -*-
 import os
 import sys
-import time
-import pandas as pd
-import shutil
-import zipfile
 import logging
 import inspect
 
-from itertools import product
-        
 def getLogger(name='cultural_treaties', level=logging.INFO):
     logging.basicConfig(format="%(asctime)s : %(levelname)s : %(message)s", level=level)
     logger = logging.getLogger(name)
@@ -25,7 +19,7 @@ sys.path.append(__cwd__)
 def extend(target, source):
     target.update(source)
     return target
-    
+
 def ifextend(target, source, p):
     return extend(target, source) if p else target
 
@@ -36,7 +30,7 @@ def extend_single(target, source, name):
 
 def flatten(l):
     return [item for sublist in l for item in sublist]
-    
+
 def project_series_to_range(series, low, high):
     norm_series = series / series.max()
     return norm_series.apply(lambda x: low + (high - low) * x)
@@ -50,7 +44,7 @@ def clamp_values(values, low_high):
 
 def filter_kwargs(f, args):
     try:
-        return { k:args[k] for k in args.keys() if k in inspect.getargspec(f).args }
+        return { k: args[k] for k in args.keys() if k in inspect.getargspec(f).args }
     except:
         return args
 
@@ -63,6 +57,9 @@ def cpif_deprecated(source, target, name):
 def dict_subset(d, keys):
     if keys is None:
         return d
-    return { k:v for (k,v) in d.items() if k in keys }
+    return { k: v for (k, v) in d.items() if k in keys }
 
-
+def dict_split(d, fn):
+    """Splits a dictionary into two parts based on predicate """
+    true_keys = { k for k in d.keys() if fn(d, k) }
+    return { k: d[k] for k in true_keys }, { k: d[k] for k in set(d.keys()) - true_keys }
