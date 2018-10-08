@@ -73,5 +73,5 @@ def plot_network(
         edges_source=edges_source,
         nodes_source=nodes_source,
         nodes=nodes,
-        edges=edges,
+        edges=edges
     )

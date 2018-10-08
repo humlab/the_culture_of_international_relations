@@ -67,13 +67,14 @@ SLICE_TYPE_OPTIONS, SLICE_TYPE_DEFAULT = {
 
 def display_partial_party_network(plot_data, slice_range, slice_range_type, callback):
 
-    nodes, edges = slice_network_datasorce(plot_data.edges, plot_data.nodes, slice_range, slice_range_type)
+    slice_nodes, slice_edges = slice_network_datasorce(plot_data.edges, plot_data.nodes, slice_range, slice_range_type)
 
-    plot_data.edges_source.data.update(edges)
-    plot_data.nodes_source.data.update(nodes)
-
-    min_year, max_year = min(plot_data.edges_source.data['signed']).year, max(
-        plot_data.edges_source.data['signed']).year
+    plot_data.edges_source.data.update(slice_edges)
+    plot_data.nodes_source.data.update(slice_nodes)
+    plot_data.slice_range = slice_range
+    plot_data.slice_range_type = slice_range_type
+    
+    min_year, max_year = min(plot_data.edges_source.data['signed']).year, max(plot_data.edges_source.data['signed']).year
 
     callback(min_year, max_year)
 
@@ -98,7 +99,6 @@ def display_network_analyis_gui(wti_index, display_function, plot_data):
         palette=widgets_config.dropdown('Color', PALETTE_OPTIONS, None, layout=lw()),
         node_size=widgets_config.dropdown('Node size', NODE_SIZE_OPTIONS, None, layout=lw()),
         node_size_range=widgets_config.rangeslider('Range', 5, 100, [20, 49], step=1, layout=box),
-        slice_range_type=widgets_config.dropdown('Slice Type', SLICE_TYPE_OPTIONS, SLICE_TYPE_DEFAULT, layout=lw()),
         
         C=widgets_config.slider('C', 0, 100, 1, step=1, layout=box),
         K=widgets_config.sliderf('K', 0.01, 1.0, 0.01, 0.10, layout=box),
@@ -111,7 +111,9 @@ def display_network_analyis_gui(wti_index, display_function, plot_data):
         refresh=widgets_config.toggle('Refresh', False, tooltip='Update plot'),
         node_partition=widgets_config.dropdown('Partition', COMMUNITY_OPTIONS, None, layout=lw()),
         simple_mode=widgets_config.toggle('Simple', False, tooltip='Simple view'),
-        time_travel_range=widgets_config.rangeslider('Time travel', 0, 100, [0, 100], layout=lw('80%')),
+        
+        slice_range_type=widgets_config.dropdown('Slice Type', SLICE_TYPE_OPTIONS, SLICE_TYPE_DEFAULT, layout=lw()),
+        time_travel_range=widgets_config.rangeslider('Time travel', 0, 100, [0, 100], layout=lw('60%')),
         time_travel_label=widgets.Label(value="")
     )
 
@@ -130,13 +132,6 @@ def display_network_analyis_gui(wti_index, display_function, plot_data):
 
     zn.simple_mode.observe(on_simple_mode_value_change, names='value')
     zn.simple_mode.value = True
-    
-    def on_slice_range_type_change(change):
-        slice_range_type = change['new']
-        if slice_range_type == 1:  # sequence
-            
-        
-    zn.slice_range_type.observe(on_slice_range_type_change, names='value')
 
     wn = widgets.interactive(
         display_function,
@@ -180,9 +175,6 @@ def display_network_analyis_gui(wti_index, display_function, plot_data):
                 ]),
                 widgets.VBox([
                     zn.K, zn.C, zn.p, zn.fig_width, zn.fig_height, zn.node_size_range
-                ]),
-                widgets.VBox([
-                    zn.slice_range_type
                 ])
             ])
         ])
@@ -194,6 +186,14 @@ def display_network_analyis_gui(wti_index, display_function, plot_data):
 
     def slice_callback(min_year, max_year):
         zn.time_travel_range.description = '{}-{}'.format(min_year, max_year)
+    
+    def on_slice_range_type_change(change):
+        slice_range_type = change['new']
+        if slice_range_type == 1:  # sequence
+            zn.time_travel_range.min = plot_data.eg
+            zn.time_travel_range.max = 10
+                    
+    zn.slice_range_type.observe(on_slice_range_type_change, names='value')
 
     iw_time_travel = widgets.interactive(
         display_partial_party_network,
@@ -202,9 +202,9 @@ def display_network_analyis_gui(wti_index, display_function, plot_data):
         plot_data=widgets.fixed(plot_data),
         callback=widgets.fixed(slice_callback)
     )
-
+                    
     time_travel_box = widgets.VBox([
-        widgets.VBox([zn.time_travel_label, zn.time_travel_range]),
+        widgets.VBox([zn.time_travel_label, zn.time_travel_range, zn.slice_range_type]),
         iw_time_travel.children[-1]])
 
     display(time_travel_box)
