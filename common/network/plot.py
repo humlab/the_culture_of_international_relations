@@ -37,7 +37,17 @@ def plot(  # pylint: disable=W0102
     if threshold > 0:
         network = get_sub_network(network, threshold)
 
-    edges = get_positioned_edges(network, layout, weight_scale=weight_scale, normalize_weights=normalize_weights)
+    edges = get_positioned_edges(network, layout)
+    
+    if normalize_weights and 'weight' in edges.keys():
+        max_weight = max(edges['weight'])
+        edges['weight'] = [ float(x) / max_weight for x in edges['weight'] ]
+
+    if weight_scale != 1.0 and 'weight' in edges.keys():
+        edges['weight'] = [ weight_scale * float(x) for x in edges['weight'] ]
+
+    edges = dict(source=u, target=v, xs=xs, ys=ys, weights=weights)
+    
     nodes = get_positioned_nodes(network, layout)
 
     if node_size in nodes.keys() and node_size_range is not None:

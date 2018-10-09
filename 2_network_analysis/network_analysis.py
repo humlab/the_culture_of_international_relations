@@ -4,12 +4,12 @@ import community
 import datetime
 
 from enum import Enum
-from common.network.networkx_utility import pandas_to_network_edges
+from common.network.networkx_utility import df_to_nx_edge_format
 from common.utility import clamp_values
 
-def create_party_network(data, K, node_partition, palette):  # , multigraph=True):
+def create_party_network(df_party_data, K, node_partition, palette):  # , multigraph=True):
 
-    edges_data = pandas_to_network_edges(data)
+    edges_data = df_to_nx_edge_format(df_party_data)
 
     G = nx.MultiGraph(K=K)
     G.add_edges_from(edges_data)
@@ -29,7 +29,7 @@ def create_party_network(data, K, node_partition, palette):  # , multigraph=True
 
     return G
 
-def slice_network_datasorce(edges, nodes, slice_range, slice_range_type):
+def slice_network_datasource(edges, nodes, slice_range, slice_range_type):
     """Retrieves slice of network data defined by range of sequence's index (low, high)
 
         Parameters
@@ -57,7 +57,7 @@ def slice_network_datasorce(edges, nodes, slice_range, slice_range_type):
     if slice_range_type == 1:  # sequence
         df_edges = df_edges.loc[slice_range[0]:slice_range[1]]
     else:
-        lower, upper = datetime.date(slice_range[0],1,1), datetime.date(slice_range[1],1,1)
+        lower, upper = datetime.date(slice_range[0], 1, 1), datetime.date(slice_range[1] + 1, 1, 1)
         df_edges = df_edges[(df_edges.signed >= lower) & (df_edges.signed < upper)]
 
     nodes_indices = set(df_edges.source.unique()) | set(df_edges.target.unique())
@@ -69,6 +69,9 @@ def slice_network_datasorce(edges, nodes, slice_range, slice_range_type):
     return sliced_nodes, sliced_edges
 
 def setup_node_size(nodes, node_size, node_size_range):
+    
+    if node_size is None:
+        node_size = node_size_range[0]
 
     if node_size in nodes.keys() and node_size_range is not None:
         nodes['clamped_size'] = clamp_values(nodes[node_size], node_size_range)

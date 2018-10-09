@@ -1,105 +1,8 @@
 """ NetworkX utility functions """
 import networkx as nx
-from common.utility import clamp_values, extend
+from common.utility import clamp_values, extend, list_of_dicts_to_dict_of_lists
 
-def _compile_edges_coordinates(network, layout):
-    """Compiles coordinates for edges in a networkx graph based on node coordinates.
-
-        Parameters
-        ----------
-        network : nx.Graph
-            The networkx graph.
-
-        layout : dict of node to [x,y] items
-            A dictionary that contains coordinates for all nodes (which are keys).
-
-        Returns
-        -------
-        list of tuples (node, node, [[x1,y1], [x2,y2]]) for all edges in the graph
-
-    """
-    data = [ (u, v, d['weight'], [layout[u][0], layout[v][0]], [layout[u][1], layout[v][1]])
-                for u, v, d in network.edges(data=True) ]
-
-    return zip(*data)
-
-def get_positioned_edges(network, layout, weight_scale=1.0, normalize_weights=False):
-    """Returns edges assigned position from (nodes' position in) given layout
-
-        Parameters
-        ----------
-        network : nx.Graph
-            The networkx graph.
-
-        layout : dict of node to [x,y] items
-            A dictionary that contains coordinates for all nodes (which are keys).
-
-        weight_scale : float
-            Scale factor for weights.
-
-        normalize_weights : bool
-            Specifies if data should be normalized such that max(weight) is 1.
-
-        Returns
-        -------
-            Dict containing edges, source and target nodes with coordinates and weights
-
-    """
-    u, v, weights, xs, ys = _compile_edges_coordinates(network, layout)
-    norm = max(weights) if normalize_weights else 1.0
-    weights = [ weight_scale * x / norm for x in weights ]
-    edges = dict(source=u, target=v, xs=xs, ys=ys, weights=weights)
-    return edges
-
-def get_sub_network(G, threshold):
-    """Creates a subgraph of G of all edges having a weight equal to or above h.
-
-        Parameters
-        ----------
-        network : nx.Graph
-            The networkx graph.
-
-        threshold : float
-            A dictionary that contains coordinates for all nodes (which are keys).
-
-        Returns
-        -------
-            A networkx sub-greaph
-
-    """
-    max_weight = max(1.0, max(nx.get_edge_attributes(G, 'weight').values()))
-    filter_edges = [(u, v) for u, v, d in G.edges(data=True) if d['weight'] >= (threshold * max_weight)]
-    tng = G.edge_subgraph(filter_edges)
-    return tng
-
-def get_positioned_nodes(network, layout, nodes=None):
-    """Returns nodes assigned position from given layout.
-
-        Parameters
-        ----------
-        network : nx.Graph
-            The networkx graph.
-
-        layout : dict of node + point pairs i.e. (node, [x,y])
-            A dictionary that contains coordinates for all nodes.
-
-        nodes : optional list of str
-            Subset of nodes to return.
-
-        Returns
-        -------
-            Positioned nodes (x, y, nodes, node_id) and any additional found node attributes
-
-    """
-    layout_items = layout.items() if nodes is None else [ x for x in layout.items() if x[0] in nodes ]
-    nodes, nodes_coordinates = zip(*sorted(layout_items))
-    xs, ys = list(zip(*nodes_coordinates))
-    list_of_attribs = [ network.nodes[k] for k in nodes ]
-    attrib_lists = dict(zip(list_of_attribs[0], zip(*[d.values() for d in list_of_attribs])))
-    attrib_lists.update(dict(x=xs, y=ys, name=nodes, node_id=nodes))
-    return attrib_lists
-
-def create_network(df, source_field='source', target_field='target', weight='weight'):
+def create_nx_graph(df, source_field='source', target_field='target', weight='weight'):
     """Creates a new networkx graph from values in a dataframe.
 
         Parameters
@@ -128,31 +31,140 @@ def create_network(df, source_field='source', target_field='target', weight='wei
     G.add_edges_from(edges)
     return G
 
-def get_positioned_edges_as_dict(G, layout, weight_scale, normalize_weights):
-    """Returns edges assigned position from (nodes' position in) in given layout
+def create_nx_subgraph(G, attribute='weight', threshold=0.0):
+    """Creates a subgraph of G of all edges having a weight equal to or above h.
 
         Parameters
         ----------
         network : nx.Graph
             The networkx graph.
 
-        layout : dict of node to [x,y] items
-            A dictionary that contains coordinates for all nodes (which are keys).
-
-        weight_scale : float
-            Scale factor for weights.
-
-        normalize_weights : bool
-            Specifies if data should be normalized such that max(weight) is 1.
+        threshold : float
+            Threshold in percent where max attribute value = 100%
 
         Returns
         -------
-            TODO
+            A networkx sub-graph
 
     """
-    edges = get_positioned_edges(G, layout, weight_scale, normalize_weights)
-    edges = { k: list(edges[k]) for k in edges}
-    return edges
+    max_weight = max(1.0, max(nx.get_edge_attributes(G, attribute).values()))
+    filter_edges = [(u, v) for u, v, d in G.edges(data=True) if d[attribute] >= (threshold * max_weight)]
+    tng = G.edge_subgraph(filter_edges)
+    return tng
+
+def get_positioned_nodes(network, layout, nodes=None):
+    """Returns nodes assigned position from given layout.
+
+        Parameters
+        ----------
+        network : nx.Graph
+            The networkx graph.
+
+        layout : dict of node + point pairs i.e. (node, [x,y])
+            A dictionary that contains coordinates for all nodes.
+
+        nodes : optional list of str
+            Subset of nodes to return.
+
+        Returns
+        -------
+            Positioned nodes (x, y, nodes, node_id, ...attributes) and any additional found attributes
+
+    """
+    layout_items = layout.items() if nodes is None else [ x for x in layout.items() if x[0] in nodes ]
+    nodes, nodes_coordinates = zip(*sorted(layout_items))
+    xs, ys = list(zip(*nodes_coordinates))
+    list_of_attribs = [ network.nodes[k] for k in nodes ]
+    attrib_lists = dict(zip(list_of_attribs[0], zip(*[d.values() for d in list_of_attribs])))
+    attrib_lists.update(dict(x=xs, y=ys, name=nodes, node_id=nodes))
+    return attrib_lists
+
+def get_positioned_edges(network, layout, sort_attr=None):
+    """Extracts network edge attributes and assigns coordinates to endpoints, and computes midpont coordinate
+
+        Parameters
+        ----------
+        network : nx.Graph
+            The networkx graph.
+
+        layout : dict of node + point pairs i.e. (node, [x,y])
+            A dictionary that contains coordinates for all nodes.
+            
+        Returns
+        -------
+            Return list of dicts
+             i.e. {
+                 source:  source node,
+                 target:  target-node,
+                 xs:      [x1, x2],           
+                 ys:      [y1, y2],           # Y-coordinate
+                 m_x:     (x1 + x2) / 2,
+                 y_x:     (y1 + y2) / 2,
+                 attr-1:  value of attr-1
+                 ...      
+                 attr-n:  value of attr-n
+            }
+            
+            x1, y1     source node's coordinate
+            x2, y2     target node's coordinate
+            m_x, m_y   midpoint coordinare
+            
+    """
+    list_of_dicts = [
+        extend(
+            dict(
+                source=u,
+                target=v,
+                xs=[layout[u][0], layout[v][0]],
+                ys=[layout[u][1], layout[v][1]],
+                m_x=[(layout[u][0] + layout[v][0])/2.0],
+                m_y=[(layout[u][1] + layout[v][1])/2.0]),
+            d)
+        for u, v, d in network.edges(data=True)
+    ]
+    
+    if sort_attr is not None:
+        list_of_dicts.sort(key=lambda x: x[sort_attr])
+
+    return list_of_dicts
+
+def get_positioned_edges2(network, layout, sort_attr=None):
+    """ Returns positioned edges as and all associated attributes.
+
+        Is simply a reformat of result from get_layout_edges_attributes
+        
+        Parameters
+        ----------
+        network : nx.Graph
+            The networkx graph.
+
+        layout : dict of node + point pairs i.e. (node, [x,y])
+            A dictionary that contains coordinates for all nodes.
+            
+        Returns
+        -------
+            
+            Positioned edges as a dict of edge-attribute lists
+             i.e. {
+                 source:  [list of source nodes],
+                 target:  [list of target nodes],
+                 xs:      [list of [x1, x2]],
+                 ys:      [list of [y1, y2]],
+                 m_x:     [list of (x2-x1)],
+                 y_x:     [list of (y2-y1)],
+                 weight:  [list of weights],
+                 ...attrs lists of any additional attributes found
+            }
+            
+            m_x, m_y = (x_target + x_source) / 2, (y_target + y_source) / 2
+                computed by midpoint formula
+            
+    """
+    list_of_dicts = get_positioned_edges(network, layout, sort_attr)
+    
+    dict_of_lists = list_of_dicts_to_dict_of_lists(list_of_dicts)
+
+    return dict_of_lists
 
 def get_positioned_nodes_as_dict(G, layout, node_size, node_size_range):
 
@@ -185,7 +197,7 @@ def get_bipartite_node_set(network, bipartite=0):
     others = set(network) - nodes
     return list(nodes), list(others)
 
-def create_network_from_xyw_list(values):
+def create_nx_graph_from_weighted_edges(values):
     """A simple wrapper for networkx factory function add_weighted_edges_from
 
         Parameters
@@ -200,26 +212,7 @@ def create_network_from_xyw_list(values):
     G.add_weighted_edges_from(values)
     return G
 
-def network_edges_to_dicts(G, layout):
-    """TODO
-
-        Parameters
-        ----------
-        G : nx.Graph
-
-        layout : dict of node to [x,y] items
-            A dictionary that contains coordinates for all nodes (which are keys).
-
-        Returns
-        -------
-            TODO
-    """
-    LD = [ extend(dict(source=u, target=v, xs=[layout[u][0], layout[v][0]], ys=[layout[u][1], layout[v][1]]), d) for u, v, d in G.edges(data=True) ]
-    LD.sort(key=lambda x: x['signed'])
-    edges = dict(zip(LD[0], zip(*[d.values() for d in LD])))
-    return edges
-
-def pandas_to_network_edges(data):
+def df_to_nx_edge_format(data, source_index=0, target_index=1):
     """Transform a dataframe's edge data into nx style i.e. as a list of (source, target, attributes) triplets
 
         The source and target nodes are assumed to be the first to columns.
@@ -229,10 +222,18 @@ def pandas_to_network_edges(data):
         ----------
         data : DataFrame
             A pandas dataframe that contains edges i.e. source/target/weight columns.
+                df.columns = ['source', 'target', 'attr_1', 'attr_2', 'attr_n']
 
+        source_index, target_index: int
+            Source and target column index.
+            
         Returns
         -------
             Edges represented in nx style as a list of (source, target, attributes) triplets
+                i.e [ ('source-node', 'target-node', { 'attr_1': value, ...., 'attr-n': value })]
 
     """
-    return [ (x[0], x[1], { y: x[j] for j, y in enumerate(data.columns)}) for i, x in data.iterrows() ]
+    return [
+        (x[source_index], x[target_index], { y: x[j] for j, y in enumerate(data.columns)}) 
+        for i, x in data.iterrows()
+    ]

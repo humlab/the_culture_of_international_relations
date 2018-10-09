@@ -441,7 +441,7 @@ class TreatyState:
         return df[topic_column]
             
     def get_treaties_within_division(self, treaties=None, period_group=None, treaty_filter='', recode_is_cultural=False, parties=None):
-        
+  
         if treaties is None:
             treaties = self.treaties
             
@@ -463,13 +463,13 @@ class TreatyState:
         return df
     
     def get_categorized_treaties(self, treaties=None, topic_category=None, **kwargs):
-        
+
         df = self.get_treaties_within_division(treaties, **kwargs)
         df['topic_category'] = self.get_topic_category(df, topic_category, topic_column='topic1')
         return df
 
     def get_party_network(self, party_name, topic_category, parties, **kwargs):
-        
+
         treaty_ids = self.get_treaties_within_division(parties=parties, **kwargs).index
 
         treaties = self.stacked_treaties.loc[treaty_ids]
@@ -478,6 +478,12 @@ class TreatyState:
 
         treaties = treaties.loc[mask]
 
+        if treaties.shape[0] == 0:
+            return None
+
+        if kwargs.get('recode_is_cultural', False):
+            treaties.loc[treaties.is_cultural, 'topic'] = '7CORR'
+            
         party_other_name = party_name.replace('party', 'party_other')
         treaties = treaties[[ party_name, party_other_name, 'signed', 'topic', 'headnote']]
         treaties.columns = [ 'party', 'party_other', 'signed', 'topic', 'headnote']

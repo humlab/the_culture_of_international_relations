@@ -2,7 +2,7 @@ import types
 from bokeh.models import ColumnDataSource, HoverTool, LabelSet
 from bokeh.plotting import show, figure
 from bokeh.palettes import all_palettes, RdYlBu, Set1  # pylint: disable=E0611
-from common.utility import extend
+from common.utility import extend, dict_subset
 from common.widgets_utility import WidgetUtility
 from common.config import default_topic_groups
 
@@ -22,7 +22,15 @@ TOOLS = "pan,wheel_zoom,box_zoom,reset,previewsave"
 
 DFLT_NODE_OPTS = dict(color='green', level='overlay', alpha=1.0)
 DFLT_EDGE_OPTS = dict(color='black', alpha=0.2)
-DFLT_TEXT_OPTS = dict(x='x', y='y', text='name', level='overlay', text_align='center', text_baseline='middle')
+DFLT_LABEL_OPTS = dict(
+    level='overlay',
+    text_align='center',
+    text_baseline='middle',
+    render_mode='canvas',
+    text_font="Tahoma",
+    text_font_size="9pt",
+    text_color='black'
+)
 
 def plot_network(
     nodes,
@@ -31,9 +39,12 @@ def plot_network(
     node_size=5,
     node_opts=None,
     line_opts=None,
-    text_opts=None,
     element_id='nx_id3',
     figsize=(900, 900),
+    node_label='name',
+    node_label_opts=None,
+    edge_label='name',
+    edge_label_opts=None,
     tools=None,
     **figkwargs
 ):
@@ -63,15 +74,21 @@ def plot_network(
             glyph_hover_callback(nodes_source, 'node_id', text_ids=node_description.index,
                                  text=node_description, element_id=element_id)))
 
-    label_opts = extend(DFLT_TEXT_OPTS, text_opts or {})
 
-    p.add_layout(LabelSet(source=nodes_source, **label_opts))
+    if node_label is not None and node_label in nodes.keys(): 
+        label_opts = extend({}, DFLT_LABEL_OPTS, node_label_opts or {})
+        p.add_layout(LabelSet(source=nodes_source, x='x', y='y', text=node_label, **label_opts))
+
+    if edge_label is not None and edge_label in edges.keys(): 
+        label_opts = extend({}, DFLT_LABEL_OPTS, edge_label_opts or {})
+        p.add_layout(LabelSet(source=edges_source, x='m_x', y='m_y', text=edge_label, **label_opts))
 
     handle = show(p, notebook_handle=True)
-    return types.SimpleNamespace(
+    
+    return dict(
         handle=handle,
-        edges_source=edges_source,
-        nodes_source=nodes_source,
+        edges=edges,
         nodes=nodes,
-        edges=edges
+        edges_source=edges_source,
+        nodes_source=nodes_source     
     )

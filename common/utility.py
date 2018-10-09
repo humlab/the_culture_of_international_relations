@@ -3,6 +3,7 @@ import os
 import sys
 import logging
 import inspect
+import types
 
 def getLogger(name='cultural_treaties', level=logging.INFO):
     logging.basicConfig(format="%(asctime)s : %(levelname)s : %(message)s", level=level)
@@ -16,8 +17,11 @@ __cwd__ = os.path.abspath(__file__) if '__file__' in globals() else os.getcwd()
 
 sys.path.append(__cwd__)
 
-def extend(target, source):
-    target.update(source)
+def extend(target, *args, **kwargs):
+    target = dict(target)
+    for source in args:
+        target.update(source)
+    target.update(kwargs)
     return target
 
 def ifextend(target, source, p):
@@ -27,6 +31,14 @@ def extend_single(target, source, name):
     if name in source:
         target[name] = source[name]
     return target
+
+class SimpleStruct(types.SimpleNamespace):
+    
+    def __init__(self, **kwargs):
+        super(SimpleStruct, self).__init__(**kwargs)
+        
+    def update(self, **kwargs):
+        self.__dict__.update(kwargs)
 
 def flatten(l):
     return [item for sublist in l for item in sublist]
@@ -63,3 +75,7 @@ def dict_split(d, fn):
     """Splits a dictionary into two parts based on predicate """
     true_keys = { k for k in d.keys() if fn(d, k) }
     return { k: d[k] for k in true_keys }, { k: d[k] for k in set(d.keys()) - true_keys }
+
+def list_of_dicts_to_dict_of_lists(list_of_dicts):
+    dict_of_lists = dict(zip(list_of_dicts[0], zip(*[d.values() for d in list_of_dicts])))
+    return dict_of_lists
