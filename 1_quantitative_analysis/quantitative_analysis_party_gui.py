@@ -8,9 +8,20 @@ from IPython.display import display
 logger = getLogger('qa')
 
 def quantitative_analysis_party_main(state, fn):
-
+    
+    def period_group_year_window(period_group):
+        
+        periods = period_group['periods']\
+            if period['column'] == 'signed_years' else list(map(max, periods))
+        
+        return min(periods), max(periods)
+        
+    period_group_widget = wc.period_group_widget()
+    min_year, max_year = period_group_year_window(period_group_widget.value)
+    
+    year_window_widget = wc.rangeslider('Window', min_year, max_year, [min_year, max_year], layout=lw('90%'), continuous_update=False)
+    
     tw = WidgetUtility(
-        period_group=wc.period_group_widget(),
         party_name=wc.party_name_widget(),
         normalize_values=wc.normalize_widget(),
         chart_type=wc.chart_type_widget(),
@@ -51,12 +62,14 @@ def quantitative_analysis_party_main(state, fn):
             icon='',
             value=True,
             layout=widgets.Layout(width='100px', left='0')
-        )
+        ),
+
     )
 
     itw = widgets.interactive(
         fn,
-        period_group=tw.period_group,
+        period_group=period_group_widget,
+        year_window=year_window_widget,
         party_name=tw.party_name,
         parties=tw.parties,
         treaty_filter=tw.treaty_filter,
@@ -65,7 +78,7 @@ def quantitative_analysis_party_main(state, fn):
         chart_type=tw.chart_type,
         plot_style=tw.plot_style,
         top_n_parties=tw.top_n_parties,
-        overlay=tw.overlay_option,
+        overlay=tw.overlay_option
         # holoviews_backend=tw.holoviews_backend
     )
 
@@ -100,15 +113,22 @@ def quantitative_analysis_party_main(state, fn):
         except Exception as ex:
             logger.info(ex)
 
+    def on_period_change(change):
+        min_year, max_year = period_group_year_window(change['new'])
+        year_window_widget.min, year_window_widget.max = min_year, max_year
+        year_window_widget.value = (min_year, max_year)
+        
     tw.parties.observe(on_parties_change, names='value')
-    tw.top_n_parties.observe(on_top_n_parties_change, names='value')
-
-    column_boxes =  widgets.HBox([
+    tw.period_group.observe(on_period_change, names='value')
+    
+    on_period_change(tw.period_group.value)
+    
+    boxes =  widgets.HBox([
         widgets.VBox([ tw.period_group, tw.party_name, tw.top_n_parties, tw.party_preset]),
         widgets.VBox([ tw.parties ]),
         widgets.VBox([ tw.treaty_filter, tw.extra_category]),
         widgets.VBox([ tw.chart_type, tw.plot_style]),
-        widgets.VBox([ tw.normalize_values, tw.overlay_option ]) #, tw.holoviews_backend ])
+        widgets.VBox([ tw.normalize_values, tw.overlay_option ]), #, tw.holoviews_backend ])
     ])
-    display(widgets.VBox([column_boxes, itw.children[-1]]))
+    display(widgets.VBox([boxes, year_window_widget, itw.children[-1]]))
     itw.update()

@@ -51,6 +51,9 @@ default_topic_groups = {
         '7SEMIN': ['7SEMIN'],
         '7SPACE': ['7SPACE']
     },
+    '7CORR': {
+        '7CORR': ['7CORR']
+    },
     '7CULT': {
         '7CULT': ['7CULT', '7CORR']
     },

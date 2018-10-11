@@ -140,7 +140,16 @@ def display_network_analyis_gui(wti_index, display_party_network, display_partia
     
     zn.simple_mode.observe(on_simple_mode_value_change, names='value')
     zn.simple_mode.value = True
-           
+
+    def on_layout_type_change(change):
+        layout = change['new']
+        gv = [ 'graphviz_neato', 'graphviz_dot', 'graphviz_circo', 'graphviz_fdp', 'graphviz_sfdp' ]
+        #zn.C.layout.display = '' if layout in ['graphtool_sfdp', 'graphtool_arf', 'graphtool_fr'] else 'none'
+        #zn.K.layout.display = '' if layout in ['graphtool_sfdp', 'graphtool_arf', 'graphtool_fr', 'nx_spring_layout'] + gv
+        #zn.p.layout.display = '' if layout in ['graphtool_sfdp', ]
+            
+    zn.layout_algorithm.observe(on_layout_type_change, names='value')
+
     wn = widgets.interactive(
         display_party_network,
         parties=zn.parties,
