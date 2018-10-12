@@ -5,8 +5,7 @@ import ipywidgets as widgets
 #    print('Package named {!r}; __name__ is {!r}'.format(__package__, __name__))
 
 from common import extend
-from common.treaty_state import default_period_specification
-from common.config import topic_group_maps, matplotlib_plot_styles, chart_types
+import common.config as config
 
 def kwargser(d):
     args = dict(d)
@@ -73,12 +72,12 @@ def treaty_filter_widget(**kwopts):
     )
     return widgets.ToggleButtons(**extend(default_opts, kwopts))
 
-def period_group_widget(**kwopts):
+def period_group_widget(index_as_value=False, **kwopts):
     default_opts = dict(
         options={
-            x['title']: x for x in default_period_specification
+            x['title']: i if index_as_value else x for i, x in enumerate(config.DEFAULT_PERIOD_GROUPS)
         },
-        value=default_period_specification[-1],
+        value=len(config.DEFAULT_PERIOD_GROUPS) -  1 if index_as_value else config.DEFAULT_PERIOD_GROUPS[-1],
         description='Divisions',
         layout=widgets.Layout(width='200px')
     )
@@ -137,7 +136,7 @@ def parties_widget(**kwopts):
 
 def topic_groups_widget(**kwopts):
     default_opts = dict(
-        options=topic_group_maps.keys(),
+        options=config.topic_group_maps.keys(),
         description='Category:',
         layout=widgets.Layout(width='200px')
     )
@@ -146,7 +145,7 @@ def topic_groups_widget(**kwopts):
 def topic_groups_widget2(**kwopts):
     default_opts = dict(
         options=topic_group_maps,
-        value=topic_group_maps['7CULTURE'],
+        value=config.topic_group_maps['7CULTURE'],
         description='Category:',
         layout=widgets.Layout(width='200px')
     )
@@ -154,7 +153,7 @@ def topic_groups_widget2(**kwopts):
 
 def plot_style_widget(**kwopts):
     default_opts = dict(
-        options=[ x for x in matplotlib_plot_styles if 'seaborn' in x ],
+        options=[ x for x in config.matplotlib_plot_styles if 'seaborn' in x ],
         value='seaborn-pastel',
         description='Style:',
         layout=widgets.Layout(width='200px')
@@ -164,8 +163,8 @@ def plot_style_widget(**kwopts):
 def chart_type_widget(**kwopts):
     default_opts = dict(
         description='Output',
-        options=[(x.description, x) for x in chart_types],
-        value=chart_types[0],
+        options=[(x.description, x) for x in config.chart_types],
+        value=config.chart_types[0],
         layout=widgets.Layout(width='200px')
     )
     return widgets.Dropdown(**extend(default_opts, kwopts))

@@ -8,39 +8,14 @@ import datetime
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
+import common.config as config
+
 logger = logging.getLogger(__name__)
 
 default_treaties_skip_columns = [
     'extra_entry', 'dbflag', 'regis', 'regisant', 'vol', 'page', 'force', 'group1', 'group2'
 ]
-
-default_period_specification = [
-    {
-        'title': 'Year',
-        'column': 'signed_year',
-        'type': 'range',
-        'periods': list(range(1919, 1973))
-    },
-    {
-        'title': 'Default division',
-        'column': 'signed_period',
-        'type': 'divisions',
-        'periods': [ (1919, 1939), (1940, 1944), (1945, 1955), (1956, 1966), (1967, 1972) ]
-    },
-    {
-        'title': 'Alt. division',
-        'column': 'signed_period_alt',
-        'type': 'divisions',
-        'periods': [ (1919, 1944), (1945, 1955), (1956, 1966), (1967, 1972) ]
-    },
-    {
-        'title': '1945-1972',
-        'column': 'signed_year',
-        'type': 'range',
-        'periods': list(range(1945, 1973))
-    }
-]
-    
+   
 treaties_column_names = [
     'sequence',
     'treaty_id',
@@ -162,7 +137,7 @@ party_correction_map = {
 
 class TreatyState:
     
-    def __init__(self, data_folder='./data', skip_columns=default_treaties_skip_columns, period_specification=default_period_specification):
+    def __init__(self, data_folder='./data', skip_columns=default_treaties_skip_columns, period_specification=config.DEFAULT_PERIOD_GROUPS):
         self.data_folder = data_folder
         self.period_specification = period_specification
         self.treaties_skip_columns = (skip_columns or []) + ['sequence', 'is_cultural_yesno']
@@ -224,11 +199,42 @@ class TreatyState:
             # logger.info('Imported: {}'.format(filename))
         return data
     
+    def get_treaty_period_group_categories(self, period_group, treaties=None):
+        '''Returns treaties categorized according to given period group's divisions
+        
+        Parameters
+        ----------
+        treaties : DataFrame
+            WTI Treaties. If none then entire self.treaties are categorized 
+            
+        period_group: dict
+            Period group that 
+            
+        Returns
+        -------
+        A series indexed by treaty_id, and values assigned category division label
+            e.g. '1939 to 1945' if division is (1939, 1945)
+        
+        '''
+        periods = period_group['periods']
+        column = period_group['column']
+
+        if column in treaties.columns:
+            return treaties[column]
+
+        year_map = {
+            year: '{} to {}'.format(d[0], d[1]) for d in periods for year in list(range(d[0], d[1]+1))
+        }
+
+        series = treaties.signed_year.apply(lambda x: year_map.get(x, 'OTHER'))
+    
+        return series
+    
     def _process_treaties(self):
 
-        def get_period(division, year):
-            match = [ p for p in division if p[0] <= year <= p[1]]
-            return '{} to {}'.format(match[0][0], match[0][1]) if len(match) > 0 else 'other'
+        # def get_period(division, year):
+        #    match = [ p for p in division if p[0] <= year <= p[1]]
+        #    return '{} to {}'.format(match[0][0], match[0][1]) if len(match) > 0 else 'other'
     
         treaties = self.data['treaties']
         treaties.columns = self.treaties_columns
@@ -239,9 +245,11 @@ class TreatyState:
         treaties['is_cultural_yesno'] = treaties.is_cultural_yesno.astype(str)
         treaties['signed_year'] = treaties.signed.apply(lambda x: x.year)
 
-        for definition in self.period_specification:
-            if not definition['column'] in treaties.columns:
-                treaties[definition['column']] = treaties.signed.apply(lambda x: get_period(definition['periods'], x.year))
+        for period_group in self.period_specification:
+            column = period_group['column']
+            if not column in treaties.columns:
+                treaties[column] = self.get_treaty_period_group_categories(period_group, treaties)
+                # treaties[column] = treaties.signed.apply(lambda x: get_period(definition['periods'], x.year))
         
         treaties['force'] = pd.to_datetime(treaties.force, errors='coerce')
         treaties['sequence'] = treaties.sequence.astype('int', errors='ignore')
@@ -373,12 +381,16 @@ class TreatyState:
 
         return parties
     
-    def get_countries_list(self):
-        if self._get_countries_list is not None:
-            return self._get_countries_list
-        parties = self.get_parties()
-        parties = parties.loc[~parties.group_no.isin([0,8,11])]
-        self._get_countries_list = list(parties.index)
+    def get_countries_list(self, excludes=None):
+        
+        if self._get_countries_list is None:
+            parties = self.get_parties()
+            parties = parties.loc[~parties.group_no.isin([0,8,11])]
+            self._get_countries_list = list(parties.index)
+
+        if len(excludes or []) > 0:
+            return [x for x in self._get_countries_list if x not in excludes ]
+        
         return self._get_countries_list
 
     def get_party_name(self, party, party_name_column):
@@ -439,19 +451,28 @@ class TreatyState:
         if topic_category is not None:
             return df.apply(lambda x: topic_category.get(x[topic_column], 'OTHER'), axis=1)
         return df[topic_column]
-            
-    def get_treaties_within_division(self, treaties=None, period_group=None, treaty_filter='', recode_is_cultural=False, parties=None):
+    
+    def get_treaties_within_division(self, treaties=None, period_group=None, treaty_filter='', recode_is_cultural=False, parties=None, year_limit=None):
   
         if treaties is None:
             treaties = self.treaties
-            
+        
+        assert period_group is not None, 'get_treaties_within_division: got None as period_group'
+
         period_column = period_group['column']
+        assert period_column in treaties.columns, 'get_treaties_within_division: got unknown %r as period_group' % period_column
         
         if period_column != 'signed_year':
-            df = treaties[treaties[period_column]!='other']
+            df = treaties[treaties[period_column] != 'OTHER']
         else:
             df = treaties[treaties.signed_year.isin(period_group['periods'])]
-            
+        
+        if year_limit is not None:
+            if isinstance(year_limit, tuple) and len(year_limit) == 2:
+                df = treaties[(treaties.signed_year>=year_limit[0])&(treaties.signed_year <= year_limit[1])]
+            else:
+                df = treaties[treaties.signed_year.isin(year_limit)]
+                
         if isinstance(parties, list):
             df = df.loc[(df.party1.isin(parties))|(df.party2.isin(parties))]
             
@@ -493,7 +514,7 @@ class TreatyState:
         
         return treaties.sort_values('signed')
     
-def load_wti_index(data_folder, skip_columns=default_treaties_skip_columns, period_specification=default_period_specification):
+def load_wti_index(data_folder, skip_columns=default_treaties_skip_columns, period_specification=config.DEFAULT_PERIOD_GROUPS):
     try:
         state = TreatyState(data_folder, skip_columns, period_specification)
         logger.info("Data loaded!")

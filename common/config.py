@@ -1,4 +1,31 @@
 
+DEFAULT_PERIOD_GROUPS = [
+    {
+        'title': 'Year',
+        'column': 'signed_year',
+        'type': 'range',
+        'periods': list(range(1919, 1973))
+    },
+    {
+        'title': 'Default division',
+        'column': 'signed_period',
+        'type': 'divisions',
+        'periods': [ (1919, 1939), (1940, 1944), (1945, 1955), (1956, 1966), (1967, 1972) ]
+    },
+    {
+        'title': 'Alt. division',
+        'column': 'signed_period_alt',
+        'type': 'divisions',
+        'periods': [ (1919, 1944), (1945, 1955), (1956, 1966), (1967, 1972) ]
+    },
+    {
+        'title': '1945-1972',
+        'column': 'signed_year',
+        'type': 'range',
+        'periods': list(range(1945, 1973))
+    }
+]
+
 default_topic_groups = {
     '7CULT, 7SCIEN, and 7EDUC': {
         '7CULT': ['7CULT', '7CORR'],
@@ -132,7 +159,10 @@ chart_types = [
     KindOfChart(description='Table', name='table', kind=None, stacked=False, horizontal=False),
     KindOfChart(description='Pivot', name='pivot', kind=None, stacked=False, horizontal=False)
 ]
+
 chart_type_map = { x.name: x for x in chart_types }
+CHART_TYPE_OPTIONS = { x.name: x.name for x in chart_types }
+
 output_charts = ([x.description for x in chart_types], chart_types)
 
 parties_of_interest = ['FRANCE', 'GERMU', 'ITALY', 'GERMAN', 'UK', 'GERME', 'GERMW', 'INDIA', 'GERMA' ]

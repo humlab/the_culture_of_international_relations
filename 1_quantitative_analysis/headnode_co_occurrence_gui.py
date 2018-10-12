@@ -1,5 +1,6 @@
 
 import ipywidgets as widgets
+from IPython.display import display
 from common.widgets_utility import WidgetUtility
 import common.widgets_config as widgets_config
 

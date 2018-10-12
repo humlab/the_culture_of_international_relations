@@ -42,11 +42,13 @@ class QuantityByParty():
         parties=None,
         treaty_filter='',
         extra_category='',
-        n_top=0):
+        n_top=0,
+        year_limit=None
+    ):
 
         period_column = period_group['column']
 
-        treaty_subset = wti_index.get_treaties_within_division(wti_index.treaties, period_group, treaty_filter)
+        treaty_subset = wti_index.get_treaties_within_division(wti_index.treaties, period_group, treaty_filter, year_limit=year_limit)
 
         # Skapa urvalet från stacked_treaties så att vi kan gruppera på valda parties via column "party"
         # Regel: Filterera ut på treaty_ids, och forcera att "party" måste finnas i valda parter (vi vill inte gruppera på motpart såvida den inte finns i parties)
@@ -54,8 +56,11 @@ class QuantityByParty():
 
         df = wti_index.stacked_treaties.loc[treaty_subset.index] #  wti_index.stacked_treaties[wti_index.stacked_treaties.index.isin(treaty_subset.index)]
 
-        if isinstance(parties, list) and len(parties) > 0:
+        if 'ALL' in parties:
+            treaties_of_parties = df[(df.reversed==False)]
+        elif isinstance(parties, list) and len(parties) > 0:
             treaty_ids = treaty_subset[(treaty_subset.party1.isin(parties))|((treaty_subset.party2.isin(parties)))].index
+            # FIXME Why df.party.isin(parties)?
             treaties_of_parties = df[df.index.isin(treaty_ids)&df.party.isin(parties)] # de avtal som vars länder valts
         else:
             df_top = QuantityByParty.get_top_parties(df, period_group=period_group, party_name=party_name, n_top=n_top)\

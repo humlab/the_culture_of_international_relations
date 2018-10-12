@@ -194,6 +194,7 @@ def prepare_plot_kwargs(data, chart_type, normalize_values, period_group):
     label = 'Number of treaties' if not normalize_values else 'Share%'
 
     c, v = ('x', 'y') if not chart_type.horizontal else ('y', 'x')
+    
     kwargs.setdefault('%slabel' %(v,), label)
     
     if period_group['type'] == 'range':
@@ -201,12 +202,15 @@ def prepare_plot_kwargs(data, chart_type, normalize_values, period_group):
         
     else:
         ticklabels = [ '{} to {}'.format(x[0], x[1]) for x in period_group['periods'] ]
+        
     vmax = data.max().max()
 
     vstep = vstepper(vmax)
     
     kwargs.setdefault('%sticks' %(c,), list(data.index))
-    kwargs.setdefault('%sticks' %(v,), list(range(0,vmax+vstep, vstep)))
+    
+    if not normalize_values:
+        kwargs.setdefault('%sticks' %(v,), list(range(0,vmax+vstep, vstep)))
         
     if ticklabels is not None:
         kwargs.setdefault('%sticklabels' %(c,), ticklabels)
