@@ -26,7 +26,7 @@ DEFAULT_PERIOD_GROUPS = [
     }
 ]
 
-default_topic_groups = {
+DEFAULT_TOPIC_GROUPS = {
     '7CULT, 7SCIEN, and 7EDUC': {
         '7CULT': ['7CULT', '7CORR'],
         '7SCIEN': ['7SCIEN'],
@@ -94,16 +94,16 @@ default_topic_groups = {
     },
 }
 
-topic_group_maps = {
+TOPIC_GROUP_MAPS = {
     group_name: {
-        v: k for k in default_topic_groups[group_name].keys() for v in default_topic_groups[group_name][k]
-    } for group_name in default_topic_groups.keys()
+        v: k for k in DEFAULT_TOPIC_GROUPS[group_name].keys() for v in DEFAULT_TOPIC_GROUPS[group_name][k]
+    } for group_name in DEFAULT_TOPIC_GROUPS.keys()
 }
 
 
 default_graph_tools = "pan,wheel_zoom,box_zoom,reset,hover,previewsave"
 
-matplotlib_plot_styles = [
+MATPLOTLIB_PLOT_STYLES = [
     'ggplot',
     'bmh',
     'seaborn-notebook',
@@ -149,20 +149,44 @@ class BunchOfStuff:
 
 KindOfChart = collections.namedtuple('KindOfChart', 'description name kind stacked horizontal')
 
-chart_types = [
+CHART_TYPES = [
+    KindOfChart(description='Area', name='plot_area', kind='area', stacked=False, horizontal=False),
+    KindOfChart(description='Area (stacked)', name='plot_stacked_area', kind='area', stacked=True, horizontal=False),
     KindOfChart(description='Bar', name='plot_bar', kind='bar', stacked=False, horizontal=False),
     KindOfChart(description='Line', name='plot_line', kind='line', stacked=False, horizontal=False),
-    KindOfChart(description='Bar (stacked)', name='plot_bar_stacked', kind='bar', stacked=True, horizontal=False),
-    KindOfChart(description='Line (stacked)', name='plot_line_stacked', kind='line', stacked=True, horizontal=False),
+    KindOfChart(description='Bar (stacked)', name='plot_stacked_bar', kind='bar', stacked=True, horizontal=False),
+    KindOfChart(description='Line (stacked)', name='plot_stacked_line', kind='line', stacked=True, horizontal=False),
     KindOfChart(description='Bar (horizontal)', name='plot_barh', kind='bar', stacked=False, horizontal=True),
-    KindOfChart(description='Bar (horizontal, stacked)', name='plot_barh_stacked', kind='bar', stacked=True, horizontal=True),
+    KindOfChart(description='Bar (horizontal, stacked)', name='plot_stacked_barh', kind='bar', stacked=True, horizontal=True),
+    # KindOfChart(description='Scatter', name='plot_scatter', kind='scatter', stacked=False, horizontal=False),
+    # KindOfChart(description='Histogram', name='plot_hist', kind='hist', stacked=False, horizontal=False),
     KindOfChart(description='Table', name='table', kind=None, stacked=False, horizontal=False),
     KindOfChart(description='Pivot', name='pivot', kind=None, stacked=False, horizontal=False)
 ]
 
-chart_type_map = { x.name: x for x in chart_types }
-CHART_TYPE_OPTIONS = { x.name: x.name for x in chart_types }
+CHART_TYPE_MAP = { x.name: x for x in CHART_TYPES }
+CHART_TYPE_OPTIONS = { x.name: x.name for x in CHART_TYPES }
+CHART_TYPE_NAME_OPTIONS = [ (x.description, x.name) for x in CHART_TYPES ]
 
-output_charts = ([x.description for x in chart_types], chart_types)
+# output_charts = ([x.description for x in CHART_TYPES], CHART_TYPES)
 
 parties_of_interest = ['FRANCE', 'GERMU', 'ITALY', 'GERMAN', 'UK', 'GERME', 'GERMW', 'INDIA', 'GERMA' ]
+
+TREATY_FILTER_OPTIONS = {
+    'Is Cultural': 'is_cultural',
+    'Topic is 7CULT': 'is_7cult',
+    'No filter': ''
+}
+
+TREATY_FILTER_TOOLTIPS = [
+    'Include ONLY treaties marked as "is cultural"',
+    'Include all treaties where topic is 7CULT (disregard "is cultural" flag)',
+    'Include ALL treaties (no topic filter)'
+]
+
+PARTY_NAME_OPTIONS = {
+    'WTI Code': 'party',
+    'WTI Name': 'party_name',
+    'WTI Short': 'party_short_name',
+    'Country': 'party_country'
+}

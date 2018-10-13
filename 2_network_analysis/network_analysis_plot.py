@@ -1,10 +1,9 @@
-import types
 from bokeh.models import ColumnDataSource, HoverTool, LabelSet
 from bokeh.plotting import show, figure
 from bokeh.palettes import all_palettes, RdYlBu, Set1  # pylint: disable=E0611
-from common.utility import extend, dict_subset
+from common.utility import extend
 from common.widgets_utility import WidgetUtility
-from common.config import default_topic_groups
+import common.config as config
 
 def get_palette(palette_name):
     if palette_name not in all_palettes.keys():
@@ -14,7 +13,7 @@ def get_palette(palette_name):
 
 def get_line_color(data, topic_group_name):
     line_palette = Set1[8]
-    group_keys = default_topic_groups[topic_group_name].keys()
+    group_keys = config.DEFAULT_TOPIC_GROUPS[topic_group_name].keys()
     line_palette_map = { k: i % len(line_palette) for i, k in enumerate(group_keys) }
     return data.category.apply(lambda x: line_palette[line_palette_map[x]])
 
@@ -74,21 +73,20 @@ def plot_network(
             glyph_hover_callback(nodes_source, 'node_id', text_ids=node_description.index,
                                  text=node_description, element_id=element_id)))
 
-
-    if node_label is not None and node_label in nodes.keys(): 
+    if node_label is not None and node_label in nodes.keys():
         label_opts = extend({}, DFLT_LABEL_OPTS, node_label_opts or {})
         p.add_layout(LabelSet(source=nodes_source, x='x', y='y', text=node_label, **label_opts))
 
-    if edge_label is not None and edge_label in edges.keys(): 
+    if edge_label is not None and edge_label in edges.keys():
         label_opts = extend({}, DFLT_LABEL_OPTS, edge_label_opts or {})
         p.add_layout(LabelSet(source=edges_source, x='m_x', y='m_y', text=edge_label, **label_opts))
 
     handle = show(p, notebook_handle=True)
-    
+
     return dict(
         handle=handle,
         edges=edges,
         nodes=nodes,
         edges_source=edges_source,
-        nodes_source=nodes_source     
+        nodes_source=nodes_source
     )

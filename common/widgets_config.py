@@ -20,7 +20,7 @@ def kwargser(d):
 def toggle(description, value, **kwargs):  # pylint: disable=W0613
     return widgets.ToggleButton(**kwargser(locals()))
 
-def toggles(description, options, value, **kwopts):
+def toggles(description, options, value, **kwopts):  # pylint: disable=W0613
     return widgets.ToggleButtons(**kwargser(locals()))
 
 def dropdown(description, options, value, **kwargs):  # pylint: disable=W0613
@@ -58,15 +58,10 @@ def glyph_hover_js_code(element_id, id_name, text_name, glyph_name='glyph', glyp
 
 def treaty_filter_widget(**kwopts):
     default_opts = dict(
-        options={ 'Is Cultural': 'is_cultural', 'Topic is 7CULT': 'is_7cult', 'No filter': '' },
+        options=config.TREATY_FILTER_OPTIONS,
         description='Topic filter:',
-        disabled=False,
         button_style='',
-        tooltips=[
-            'Include ONLY treaties marked as "is cultural"',
-            'Include all treaties where topic is 7CULT (disregard "is cultural" flag)',
-            'Include ALL treaties (no topic filter)'
-        ],
+        tooltips=config.TREATY_FILTER_TOOLTIPS,
         value='is_cultural',
         layout=widgets.Layout(width='200px')
     )
@@ -77,7 +72,7 @@ def period_group_widget(index_as_value=False, **kwopts):
         options={
             x['title']: i if index_as_value else x for i, x in enumerate(config.DEFAULT_PERIOD_GROUPS)
         },
-        value=len(config.DEFAULT_PERIOD_GROUPS) -  1 if index_as_value else config.DEFAULT_PERIOD_GROUPS[-1],
+        value=len(config.DEFAULT_PERIOD_GROUPS) - 1 if index_as_value else config.DEFAULT_PERIOD_GROUPS[-1],
         description='Divisions',
         layout=widgets.Layout(width='200px')
     )
@@ -85,12 +80,7 @@ def period_group_widget(index_as_value=False, **kwopts):
 
 def party_name_widget(**kwopts):
     default_opts = dict(
-        options={
-            'WTI Code': 'party',
-            'WTI Name': 'party_name',
-            'WTI Short': 'party_short_name',
-            'Country': 'party_country'
-        },
+        options=config.PARTY_NAME_OPTIONS,
         value='party_name',
         description='Name',
         layout=widgets.Layout(width='200px')
@@ -115,14 +105,6 @@ def years_widget(**kwopts):
     )
     return widgets.Dropdown(**extend(default_opts, kwopts))
 
-def normalize_widget(**kwopts):
-    default_opts = dict(
-        description='Display %',
-        icon='',
-        layout=widgets.Layout(width='100px', left='0')
-    )
-    return widgets.ToggleButton(**extend(default_opts, kwopts))
-
 def parties_widget(**kwopts):
     default_opts = dict(
         options=[],
@@ -136,16 +118,17 @@ def parties_widget(**kwopts):
 
 def topic_groups_widget(**kwopts):
     default_opts = dict(
-        options=config.topic_group_maps.keys(),
+        options=config.TOPIC_GROUP_MAPS.keys(),
         description='Category:',
+        value='7CORR',
         layout=widgets.Layout(width='200px')
     )
     return widgets.Dropdown(**extend(default_opts, kwopts))
 
 def topic_groups_widget2(**kwopts):
     default_opts = dict(
-        options=topic_group_maps,
-        value=config.topic_group_maps['7CULTURE'],
+        options=config.TOPIC_GROUP_MAPS,
+        value=config.TOPIC_GROUP_MAPS['7CORR'],
         description='Category:',
         layout=widgets.Layout(width='200px')
     )
@@ -153,21 +136,21 @@ def topic_groups_widget2(**kwopts):
 
 def plot_style_widget(**kwopts):
     default_opts = dict(
-        options=[ x for x in config.matplotlib_plot_styles if 'seaborn' in x ],
+        options=[ x for x in config.MATPLOTLIB_PLOT_STYLES if 'seaborn' in x ],
         value='seaborn-pastel',
         description='Style:',
         layout=widgets.Layout(width='200px')
     )
     return widgets.Dropdown(**extend(default_opts, kwopts))
 
-def chart_type_widget(**kwopts):
-    default_opts = dict(
-        description='Output',
-        options=[(x.description, x) for x in config.chart_types],
-        value=config.chart_types[0],
-        layout=widgets.Layout(width='200px')
-    )
-    return widgets.Dropdown(**extend(default_opts, kwopts))
+# def chart_type_name_widget(**kwopts):
+#     default_opts = dict(
+#         description='Output',
+#         options=config.CHART_TYPE_NAME_OPTIONS,
+#         value="plot_stacked_bar",
+#         layout=widgets.Layout(width='200px')
+#     )
+#     return widgets.Dropdown(**extend(default_opts, kwopts))
 
 def recode_7corr_widget(**kwopts):
     default_opts = dict(
@@ -178,11 +161,11 @@ def recode_7corr_widget(**kwopts):
     )
     return widgets.ToggleButton(**extend(default_opts, kwopts))
 
-def add_other_category_widget(**kwopts):
-    default_opts = dict(
-        description='Add OTHER topics',
-        tooltip='Add summed up category "OTHER" for all other topic (and for selected parties)',
-        layout=widgets.Layout(width='120px'),
-        value=False
-    )
-    return widgets.ToggleButton(**extend(default_opts, kwopts))
+# def add_other_category_widget(**kwopts):
+#     default_opts = dict(
+#         description='Add OTHER topics',
+#         tooltip='Add summed up category "OTHER" for all other topic (and for selected parties)',
+#         layout=widgets.Layout(width='120px'),
+#         value=False
+#     )
+#     return widgets.ToggleButton(**extend(default_opts, kwopts))
