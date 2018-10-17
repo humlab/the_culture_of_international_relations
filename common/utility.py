@@ -17,6 +17,9 @@ __cwd__ = os.path.abspath(__file__) if '__file__' in globals() else os.getcwd()
 
 sys.path.append(__cwd__)
 
+def remove_snake_case(snake_str):
+    return ' '.join(x.title() for x in snake_str.split('_'))
+
 def noop(*args):  # pylint: disable=W0613
     pass
 
