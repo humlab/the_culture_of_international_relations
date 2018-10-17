@@ -1,4 +1,5 @@
 import ipywidgets as widgets
+import itertools
 import common.widgets_config as widgets_config
 import common.config as config
 from common.utility import getLogger
@@ -31,8 +32,8 @@ def display_gui(wti_index, fn):
 
         periods = period_group['periods']
 
-        if period_group['column'] != 'signed_year':
-            periods = list(map(max, periods))
+        if period_group['type'] == 'divisions':
+            periods = list(itertools.chain(*periods))
 
         return min(periods), max(periods)
 
@@ -45,6 +46,7 @@ def display_gui(wti_index, fn):
     party_name_widget = widgets_config.party_name_widget()
     normalize_values_widget = widgets_config.toggle('Display %', False, icon='', layout=lw('100px'))
     chart_type_name_widget = widgets_config.dropdown('Output', config.CHART_TYPE_NAME_OPTIONS, "plot_stacked_bar", layout=lw('200px'))
+    
     plot_style_widget = widgets_config.plot_style_widget()
     top_n_parties_widget = widgets_config.slider('Top #', 0, 10, 0, continuous_update=False, layout=lw(width='200px'))
     party_preset_widget = widgets_config.dropdown('Presets', PARTY_PRESET_OPTIONS, None, layout=lw(width='200px'))
@@ -108,17 +110,25 @@ def display_gui(wti_index, fn):
         except Exception as ex:  # pylint: disable=W0703
             logger.info(ex)
 
-    def set_years_window(period_group):
-        min_year, max_year = period_group_window(period_group)
+    def set_years_window(period_group_index):
+        min_year, max_year = period_group_window(period_group_index)
         year_limit_widget.min, year_limit_widget.max = min_year, max_year
         year_limit_widget.value = (min_year, max_year)
+        period_group = config.DEFAULT_PERIOD_GROUPS[period_group_index]
+        year_limit_widget.disabled = (period_group['type']  != 'range')
 
     def on_period_change(change):
-        set_years_window(change['new'])
-
+        period_group_index = change['new']
+        set_years_window(period_group_index)
+        
+    #def on_year_limit_change(change):
+    #    period_group = config.DEFAULT_PERIOD_GROUPS[period_group_index_widget.value]
+    #    if period_group['type'] == 'divisions':
+            
     parties_widget.observe(on_parties_change, names='value')
     period_group_index_widget.observe(on_period_change, names='value')
-
+    #year_limit_widget.observe(on_year_limit_change, names='value')
+    
     set_years_window(period_group_index_widget.value)
 
     boxes =  widgets.HBox([

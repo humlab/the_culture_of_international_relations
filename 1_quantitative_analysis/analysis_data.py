@@ -133,7 +133,7 @@ class QuantityByTopic():
         if not extra_other_category:
             categorized_treaties = categorized_treaties[categorized_treaties.topic_category!='OTHER']
 
-        if party_group['label'] == 'ALL' or parties is None:
+        if party_group['label'] == 'ALL' or parties is None or 'ALL' in parties:
             parties_treaties = categorized_treaties
         else:
             mask = (categorized_treaties.party1.isin(parties)|(categorized_treaties.party2.isin(parties)))
@@ -159,9 +159,12 @@ class QuantityByTopic():
         else:
 
             # Special case - Compute treaty count per party for treaties with topic in selected treaty group
-
             stacked_treaties = pd.merge(wti_index.stacked_treaties[['party']], categorized_treaties, left_on='treaty_id', right_index=True, how='inner')
-            data = stacked_treaties.loc[stacked_treaties.party.isin(parties)]\
+            
+            if not 'ALL' in parties:
+                 stacked_treaties = stacked_treaties.loc[stacked_treaties.party.isin(parties)]
+                    
+            data = stacked_treaties\
                     .groupby([period_group['column'], 'party'])\
                     .size()\
                     .reset_index()\

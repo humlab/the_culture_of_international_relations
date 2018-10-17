@@ -173,14 +173,9 @@ def create_party_name_map(parties, palette=default_palette):
     return party_name_map, party_color_map
 
 def vstepper(vmax):
-    if vmax < 15:
-        return 1
-    if vmax < 30:
-        return 5
-    if vmax < 500:
-        return 10
-    if vmax < 2000:
-        return 100
+    for step, value in [ (1, 15), (5, 30), (10, 250), (25, 500), (100, 2000)]:
+        if vmax < value:
+            return step
     return 500
 
 def prepare_plot_kwargs(data, chart_type, normalize_values, period_group):
@@ -194,19 +189,20 @@ def prepare_plot_kwargs(data, chart_type, normalize_values, period_group):
     c, v = ('x', 'y') if not chart_type.horizontal else ('y', 'x')
 
     kwargs.setdefault('%slabel' %(v,), label)
-
+    
     if period_group['type'] == 'range':
         ticklabels = [ str(x) for x in period_group['periods'] ]
-
     else:
         ticklabels = [ '{} to {}'.format(x[0], x[1]) for x in period_group['periods'] ]
 
-    vmax = data.max().max()
-
-    vstep = vstepper(vmax)
-
     kwargs.setdefault('%sticks' %(c,), list(data.index))
 
+    if chart_type.stacked:
+        vmax = data.sum(axis=1).max()
+    else:
+        vmax = data.max().max()    
+        
+    vstep = vstepper(vmax)
     if not normalize_values:
         kwargs.setdefault('%sticks' %(v,), list(range(0,vmax+vstep, vstep)))
 

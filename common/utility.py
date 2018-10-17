@@ -121,3 +121,9 @@ def dict_split(d, fn):
 def list_of_dicts_to_dict_of_lists(list_of_dicts):
     dict_of_lists = dict(zip(list_of_dicts[0], zip(*[d.values() for d in list_of_dicts])))
     return dict_of_lists
+
+def uniquify(sequence):
+    """ Removes duplicates from a list whilst still preserving order """
+    seen = set()
+    seen_add = seen.add
+    return [ x for x in sequence if not (x in seen or seen_add(x)) ]
