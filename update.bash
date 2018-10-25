@@ -15,7 +15,7 @@ source_dir="/home/roger/notebooks/the_culture_of_international_relations"
 target_dir="/home/${target_username}/notebooks/the_culture_of_international_relations"
 backup_dir="/home/${target_username}/"
 
-#find $target_dir -name "*.py"  -o -name "*.ipynb" -o -name "*.md" | grep -v checkpoints | tar -cf ${backup_dir}/"$(date +"%Y%m%d_%H%M%S")".tar.gz -T -
+find $target_dir -name "*.py"  -o -name "*.ipynb" -o -name "*.md" | grep -v checkpoints | tar -cf ${backup_dir}/"$(date +"%Y%m%d_%H%M%S")".tar.gz -T -
 
 #declare -a soft_link_dirs=("common" "corpora" "data" "images")
 #for i in "${soft_link_dirs[@]}"

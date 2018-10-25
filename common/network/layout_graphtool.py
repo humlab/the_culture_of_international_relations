@@ -31,7 +31,7 @@ def fruchterman_reingold_args(G_gt, **kwargs):
 
 def layout_network(G, **kwargs):
 
-    setup = _get_layout_setup([kwargs['layout_algorithm']])
+    setup = _get_layout_setup(kwargs['layout_algorithm'])
 
     g_gt = nx2gt(G)
     g_gt.set_directed(False)

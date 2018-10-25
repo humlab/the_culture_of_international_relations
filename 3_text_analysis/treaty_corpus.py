@@ -6,13 +6,8 @@ import gensim
 import zipfile
 import fnmatch
 import logging
-
+import re
 from gensim.corpora.textcorpus import TextCorpus
-
-sort_chained = lambda x, f: list(x).sort(key=f) or x
-    
-def ls_sorted(path):
-    return sort_chained(list(filter(os.path.isfile, glob.glob(path))), os.path.getmtime)
 
 logger = logging.getLogger(__name__)
 
@@ -24,7 +19,7 @@ class CompressedFileReader(object):
         self.archive_filenames = self.get_archive_filenames(pattern)
         self.filenames = filenames or self.archive_filenames
 
-    def get_archive_filenames(self, pattern):
+    def get_archive_filenames(self, pattern=None):
         with zipfile.ZipFile(self.zip_archive) as zf:
             return [ name for name in zf.namelist() if fnmatch.fnmatch(name, pattern) ]
     
@@ -43,7 +38,9 @@ class CompressedFileReader(object):
                 except:
                     print('Unicode error: {}'.format(filename))
                     raise
-                        
+                    
+valid_filename = re.compile(r"^([a-zA-Z0-9]*)\_(en|fr|de|it).*\.txt$")
+
 class TreatyCorpus(TextCorpus):
 
     def __init__(self,
@@ -56,7 +53,15 @@ class TreatyCorpus(TextCorpus):
                  bigram_transform=False
     ):
         self.content_iterator = content_iterator
+        self.filenames = None
+        self.documents = None
+        self.length = None
         
+        #if 'filenames' in content_iterator.__dict__:
+        #    self.filenames = content_iterator.filenames
+        #    self.document_names = self._compile_documents()
+        #    self.length = len(self.filenames)
+            
         token_filters = [
            (lambda tokens: [ x.lower() for x in tokens ]),
            (lambda tokens: [ x for x in tokens if any(map(lambda x: x.isalpha(), x)) ])
@@ -90,13 +95,12 @@ class TreatyCorpus(TextCorpus):
         After generator end - initialize self.length attribute.
         """
         filenames = []
-        num_texts = 0
         for filename, content in self.content_iterator:
             yield content
             filenames.append(filename)
-        self.length = num_texts
+        self.length = len(filenames)
         self.filenames = filenames
-        self.document_names = self._compile_document_names()
+        self.documents = self._compile_documents()
                  
     def get_texts(self):
         '''
@@ -107,14 +111,17 @@ class TreatyCorpus(TextCorpus):
             
     def preprocess_text(self, text):
             """Apply `self.character_filters`, `self.tokenizer`, `self.token_filters` to a single text document.
+            
             Parameters
             ---------
             text : str
                 Document read from plain-text file.
-            Return
+                
+            Returns
             ------
             list of str
                 List of tokens extracted from `text`.
+                
             """
             for character_filter in self.character_filters:
                 text = character_filter(text)
@@ -124,21 +131,34 @@ class TreatyCorpus(TextCorpus):
                 tokens = token_filter(tokens)
 
             return tokens
+
+    def get_document_info(self, filename):
+        parts = valid_filename.match(filename)
+        if not parts:
+            return {
+            'document_name': filename,
+            'treaty_id': None,
+            'language': None
+        }
+        return {
+            'document_name': filename,
+            'treaty_id': parts.groups(0)[0],
+            'language': parts.groups(0)[1]
+        }
+
+    def _compile_documents(self):
         
-    def _compile_document_names(self):
+        document_data = map(self.get_document_info, self.filenames)
         
-        document_names = pd.DataFrame(dict(
-            document_name=self.filenames,
-            treaty_id=[ x.split('_')[0] for x in self.filenames ]
-        )).reset_index().rename(columns={'index': 'document_id'})
+        documents = pd.DataFrame(list(document_data))
+        documents.index.names = ['document_id']
         
-        document_names = document_names.set_index('document_id')   
-        dupes = document_names.groupby('treaty_id').size().loc[lambda x: x > 1]
+        dupes = documents.groupby(['treaty_id', 'language']).size().loc[lambda x: x > 1]
         
         if len(dupes) > 0:
             logger.critical('Warning! Duplicate treaties found in corpus: {}'.format(' '.join(list(dupes.index))))
             
-        return document_names
+        return documents
 
 class MmCorpusStatisticsService():
     

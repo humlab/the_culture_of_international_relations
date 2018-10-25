@@ -1,10 +1,16 @@
 import nltk
 import pandas as pd
-from common.utility import uniquify
+import common.utility as utility
+
+logger = utility.getLogger(name='title_analysis')
+
+uniquify = utility.uniquify
 
 class HeadnoteTokenCorpus():
     
     def __init__(self, treaties, tokenize=None, stopwords=None, lemmatize=None, min_word_length=2, ignore_word_count=True):
+        
+        logger.info('Please wait, preparing headnote corpus...')
         
         self.min_word_length = min_word_length
         
@@ -38,4 +44,25 @@ class HeadnoteTokenCorpus():
         
         self.tokens = tokens.merge(self.vocabulary, left_on='token', right_index=True, how='inner').set_index(['treaty_id', 'sequence_id'])
 
+        logger.info('Done!')
+        
+    def get_tokens_for(self, treaty_ids):
+        """Returns tokens for given list of treaty ids
+        
+        Parameters:
+        ----------
+         treaty_ids : str list (or Pandas Index)
+             List of treaty ids.
+        Returns:
+        --------
+          Subset of self.tokens for given treaty ids, with stopwords removed.
+        """
+        tokens = self.tokens
+        
+        if not treaty_ids is None:
+            tokens = tokens[tokens.index.get_level_values(0).isin(treaty_ids)]
+            
+        tokens = tokens.loc[tokens.is_stopword==False]
+        
+        return tokens
     

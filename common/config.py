@@ -1,30 +1,36 @@
 
 DEFAULT_PERIOD_GROUPS = [
     {
+        'id': 'years_1919-1972',
         'title': 'Year',
         'column': 'signed_year',
         'type': 'range',
         'periods': list(range(1919, 1973))
     },
     {
+        'id': 'default_division',
         'title': 'Default division',
         'column': 'signed_period',
         'type': 'divisions',
         'periods': [ (1919, 1939), (1940, 1944), (1945, 1955), (1956, 1966), (1967, 1972) ]
     },
     {
+        'id': 'alt_default_division',
         'title': 'Alt. division',
         'column': 'signed_period_alt',
         'type': 'divisions',
         'periods': [ (1919, 1944), (1945, 1955), (1956, 1966), (1967, 1972) ]
     },
     {
+        'id': 'years_1945-1972',
         'title': '1945-1972',
         'column': 'signed_year',
         'type': 'range',
         'periods': list(range(1945, 1973))
     }
 ]
+
+PERIOD_GROUPS_ID_MAP = { x['id']: x for x in DEFAULT_PERIOD_GROUPS }
 
 DEFAULT_TOPIC_GROUPS = {
     '7CULT, 7SCIEN, and 7EDUC': {
@@ -99,7 +105,6 @@ TOPIC_GROUP_MAPS = {
         v: k for k in DEFAULT_TOPIC_GROUPS[group_name].keys() for v in DEFAULT_TOPIC_GROUPS[group_name][k]
     } for group_name in DEFAULT_TOPIC_GROUPS.keys()
 }
-
 
 default_graph_tools = "pan,wheel_zoom,box_zoom,reset,hover,previewsave"
 
@@ -189,4 +194,11 @@ PARTY_NAME_OPTIONS = {
     'WTI Name': 'party_name',
     'WTI Short': 'party_short_name',
     'Country': 'party_country'
+}
+
+PARTY_PRESET_OPTIONS = {
+    'PartyOf5': parties_of_interest,
+    'Germany (all)': [ 'GERMU', 'GERMAN', 'GERME', 'GERMW', 'GERMA' ],
+    'Select all': [ 'SELECT_ALL', 'ALL_PARTIES', 'ALL' ],
+    'Unselect all': [ ]
 }

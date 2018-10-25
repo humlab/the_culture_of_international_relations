@@ -112,6 +112,8 @@ party_correction_map = {
     'W ALLIES': 'IGNORE'
 }
 
+from common.treaty_utility import trim_period_group, period_group_years, QueryUtility
+
 class TreatyState:
 
     def __init__(self, data_folder='./data', skip_columns=default_treaties_skip_columns, period_groups=None): # pylint: disable=W0102
@@ -146,7 +148,12 @@ class TreatyState:
         party2 = self.treaties.party2.unique().tolist()
         df_party = pd.DataFrame({ 'party': list(set(party1 + party2)) })
         df = df_party.merge(self.parties, left_on='party', right_index=True, how='left')
-        return df[df.group_no.isna()].party.tolist()
+        
+        unknown_parties = df[df.group_no.isna()].party.tolist()
+        if len(unknown_parties) > 0:
+            logger.warning('[{} UNKNOWN PARTIES] '.format(len(unknown_parties)) + (' '.join([ '"' + str(x) + '"' for x in unknown_parties])))
+
+        return unknown_parties
 
     @property
     def treaties(self):
@@ -426,42 +433,77 @@ class TreatyState:
         return df[topic_column]
 
     def get_treaties_within_division(self, treaties=None, period_group=None, treaty_filter='', recode_is_cultural=False, parties=None, year_limit=None):
+        """Returns treaties filtered by given set of parameters.
 
+        Parameters
+        ----------
+        treaties : DataFrame
+            Optional. Treaty source to use instead of main WTI treaty index
+
+        period_group: [dict]
+            Period grouping to use for filtering. Treaties with signed year outside of group are filtered out.
+
+        treaty_filter: str in [ 'is_cultural',  'is_7cult', '' ]
+            Optional. 'is_cultural' filters out treaties where is_cultural is False, 'is_7cult' filters out treaties where topic1 is not '7cult'
+
+        recode_is_cultural: Boolean
+            Optional. Sets topic1 to '7CORR' for treaties having 'is_cultural' equal to true 
+            
+        parties: [str]
+            Optional. Filters out treaties where neither of party1, party2 is in 'parties' list
+
+        year_limit: tuple or list of ints
+            Optional. Filters out treaties where signed_year is outside of given limit
+            
+        Returns
+        -------
+        DataFrame
+        
+            Remaining treaties after filters are applied.
+
+        """
         if treaties is None:
             treaties = self.treaties
 
         assert period_group is not None, 'get_treaties_within_division: got None as period_group'
 
         period_column = period_group['column']
-        assert period_column in treaties.columns, 'get_treaties_within_division: got unknown %r as period_group' % period_column
+        
+        assert period_column in treaties.columns, 'get_treaties_within_division: got unknown %r as column' % period_column
 
-        if period_column != 'signed_year':
-            df = treaties[treaties[period_column] != 'OTHER']
-        else:
-            df = treaties[treaties.signed_year.isin(period_group['periods'])]
+        if period_group is not None:
+            treaties = QueryUtility.query_treaties(treaties, QueryUtility.period_group_mask(period_group))
+        #if period_column != 'signed_year':
+        #    df = treaties[treaties[period_column] != 'OTHER']
+        #else:
+        #    df = treaties[treaties.signed_year.isin(period_group['periods'])]
 
         if year_limit is not None:
+            #treaties = QueryUtility.query_treaties(treaties, QueryUtility.years_mask(year_limit))
             if isinstance(year_limit, tuple) and len(year_limit) == 2:
-                df = treaties[(treaties.signed_year>=year_limit[0])&(treaties.signed_year <= year_limit[1])]
+                print(year_limit)
+                treaties = treaties[(year_limit[0]<=treaties.signed_year)&(treaties.signed_year <= year_limit[1])]
             else:
-                df = treaties[treaties.signed_year.isin(year_limit)]
+                treaties = treaties[treaties.signed_year.isin(year_limit)]
 
         if isinstance(parties, list):
-            df = df.loc[(df.party1.isin(parties))|(df.party2.isin(parties))]
+            #treaties = QueryUtility.query_treaties(treaties, QueryUtility.parties_mask(parties))
+            treaties = treaties.loc[(treaties.party1.isin(parties))|(treaties.party2.isin(parties))]
 
-        df = self.filter_by_is_cultural(df, treaty_filter)
+        #if (treaty_filter or '') != '':
+        treaties = self.filter_by_is_cultural(treaties, treaty_filter)
 
         if recode_is_cultural:
-            df.loc[df.is_cultural, 'topic1'] = '7CORR'
+            treaties.loc[treaties.is_cultural, 'topic1'] = '7CORR'
 
-        return df
+        return treaties
 
     def get_categorized_treaties(self, treaties=None, topic_category=None, **kwargs):
 
         df = self.get_treaties_within_division(treaties, **kwargs)
         df['topic_category'] = self.get_topic_category(df, topic_category, topic_column='topic1')
         return df
-
+   
     def get_party_network(self, party_name, topic_category, parties, **kwargs):
 
         treaty_ids = self.get_treaties_within_division(parties=parties, **kwargs).index
@@ -486,6 +528,38 @@ class TreatyState:
         treaties['category'] = self.get_topic_category(treaties, topic_category, topic_column='topic')
 
         return treaties.sort_values('signed')
+    
+    def get_treaty_text_languages(self):
+        '''Returns avaliable treaty text languages for treaties having a language mark in the wti-index.
+    
+            The languages of the compiled text are marked in columns 'english', 'french' and 'other'
+            
+            The only allowed value for each column are:
+                'english': 'en'
+                'french':  'fr'
+                'other': 'it', 'de' or both
+                
+            The retrieval needs to handle the case when a treaty has two values in 'other' column.
+            This is solved with the apply(split).apply(pd.Series).stack() chaining.
+            
+        Parameters:
+        -----------
+        
+        Returns:
+        -------
+            DataFrame: index = treaty_id, columns = { 'language': 'en|fr|de|it' }
+            
+        '''
+        treaties = self.treaties
+        treaty_langs = pd.concat([treaties.english, treaties.french, treaties.other], axis=0)\
+            .dropna()\
+            .apply(lambda x: x.lower().replace(' ','').split(','))\
+            .apply(pd.Series)\
+            .stack()\
+            .reset_index()[['treaty_id', 0]]\
+            .rename(columns={0: 'language'})
+        return treaty_langs
+
 
 def load_wti_index(data_folder, skip_columns=default_treaties_skip_columns, period_groups=None):
     try:

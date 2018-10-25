@@ -94,6 +94,7 @@ class QuantityByParty():
 
 class QuantityByTopic():
 
+    # FIXME: DEPRECATE THIS FUNCTION!
     @staticmethod
     def get_quantity_of_categorized_treaties(treaties, period_group, topic_category, recode_is_cultural):
 

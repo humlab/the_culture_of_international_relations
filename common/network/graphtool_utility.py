@@ -123,7 +123,7 @@ def nx2gt(nxG):
 
         # Add the edge properties
         for key, value in data.items():
-            print((key, value))
+            # print((key, value))
             gtG.ep[key][e] = value  # ep is short for edge_properties
 
     # Done, finally!

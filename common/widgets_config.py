@@ -41,6 +41,9 @@ def progress(min, max, step, value, **kwargs):  # pylint: disable=W0613, W0622
 def itext(min, max, value, **kwargs):  # pylint: disable=W0613, W0622
     return widgets.BoundedIntText(**kwargser(locals()))
 
+def button(description):
+    return widgets.Button(**kwargser(locals()))
+
 def glyph_hover_js_code(element_id, id_name, text_name, glyph_name='glyph', glyph_data='glyph_data'):
     return """
         var indices = cb_data.index['1d'].indices;

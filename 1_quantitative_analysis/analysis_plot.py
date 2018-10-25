@@ -1,7 +1,5 @@
 import matplotlib
-from bokeh.palettes import Category20_20  # pylint: disable=E0611
-
-default_palette = Category20_20
+import common.color_utility as color_utility
 
 def quantity_plot(
     data,
@@ -19,7 +17,7 @@ def quantity_plot(
     xlim=None,
     ylim=None,
     dpi=48,
-    colors=default_palette,
+    colors=color_utility.DEFAULT_PALETTE,
     **kwargs):  # pylint: disable=W0613
 
     matplotlib.style.use(plot_style)
@@ -155,7 +153,7 @@ def quantity_plot(
 #             #.sort(['Period'])
 #         display(p)
 
-def create_party_name_map(parties, palette=default_palette):
+def create_party_name_map(parties, palette=color_utility.DEFAULT_PALETTE):
 
     rev_dict = lambda d: {v: k for k, v in d.items()}
 

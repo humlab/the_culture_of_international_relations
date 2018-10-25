@@ -4,6 +4,8 @@ import sys
 import logging
 import inspect
 import types
+import glob
+import re
 
 def getLogger(name='cultural_treaties', level=logging.INFO):
     logging.basicConfig(format="%(asctime)s : %(levelname)s : %(message)s", level=level)
@@ -23,6 +25,12 @@ def remove_snake_case(snake_str):
 def noop(*args):  # pylint: disable=W0613
     pass
 
+def filter_dict(d, keys=None, filter_out=False):
+    keys = set(d.keys()) - set(keys or []) if filter_out else (keys or [])
+    return {
+        k: v for k, v in d.items() if k in keys
+    }
+        
 def extend(target, *args, **kwargs):
     """Returns dictionary 'target' extended by supplied dictionaries (args) or named keywords
 
@@ -130,3 +138,12 @@ def uniquify(sequence):
     seen = set()
     seen_add = seen.add
     return [ x for x in sequence if not (x in seen or seen_add(x)) ]
+
+sort_chained = lambda x, f: list(x).sort(key=f) or x
+    
+def ls_sorted(path):
+    return sort_chained(list(filter(os.path.isfile, glob.glob(path))), os.path.getmtime)
+
+def split(delimiters, string, maxsplit=0):
+    regexPattern = '|'.join(map(re.escape, delimiters))
+    return re.split(regexPattern, string, maxsplit)

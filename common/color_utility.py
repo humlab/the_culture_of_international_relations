@@ -2,6 +2,13 @@
 from itertools import cycle, islice
 import numpy as np
 import random
+
+from bokeh.palettes import all_palettes, Category20_20, Set1_8  # pylint: disable=E0611
+
+DEFAULT_ALL_PALETTES = all_palettes
+DEFAULT_PALETTE = Category20_20
+DEFAULT_LINE_PALETTE = Set1_8
+
 class ColorGradient:
 
     @staticmethod
@@ -100,3 +107,11 @@ class StaticColorMap():
         # add new categories
         self.add_categories(categories)
         return [ self.color_map[k] for k in categories ]
+
+static_color_map = None
+
+def get_static_color_map(palette=DEFAULT_PALETTE):
+    global static_color_map
+    if static_color_map is None:
+        static_color_map = StaticColorMap(palette)
+    return static_color_map
