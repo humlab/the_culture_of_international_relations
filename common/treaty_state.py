@@ -481,7 +481,6 @@ class TreatyState:
         if year_limit is not None:
             #treaties = QueryUtility.query_treaties(treaties, QueryUtility.years_mask(year_limit))
             if isinstance(year_limit, tuple) and len(year_limit) == 2:
-                print(year_limit)
                 treaties = treaties[(year_limit[0]<=treaties.signed_year)&(treaties.signed_year <= year_limit[1])]
             else:
                 treaties = treaties[treaties.signed_year.isin(year_limit)]

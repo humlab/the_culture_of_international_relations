@@ -40,3 +40,4 @@ do
   sudo -u $target_username -g $target_group cp ${source_dir}/${i}/*.*py* ${target_dir}/${i}/
 done
 
+sudo -u $target_username -g $target_group cp ${source_dir}/*.*py* ${target_dir}/

@@ -125,7 +125,8 @@ class QuantityByTopic():
         parties = party_group['parties']
 
         categorized_treaties = wti_index.get_categorized_treaties(
-            treaties, period_group=period_group,
+            treaties,
+            period_group=period_group,
             treaty_filter='',
             recode_is_cultural=recode_is_cultural,
             topic_category=topic_category

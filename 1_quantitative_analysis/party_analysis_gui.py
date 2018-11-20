@@ -154,7 +154,6 @@ def display_gui(wti_index, print_args=False):
 
     itw = widgets.interactive(
         display_quantity_by_party,
-        plot_data=widgets.fixed(plot_data),
         period_group_index=period_group_index_widget,
         year_limit=year_limit_widget,
         party_name=party_name_widget,

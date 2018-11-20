@@ -103,7 +103,7 @@ def display_topic_quantity_groups(
     topic_groups = [ topic_group ]
     wti_parties = [ x for x in parties if x not in ['ALL OTHER' ] ]
     
-    if target_quantity == 'party':
+    if target_quantity in ['party', 'region']:
         party_groups = [ { 'label': topic_group_name, 'parties': wti_parties } ]
         if chart_per_category:
             topic_groups = [ { k: { k: topic_group[k] }} for k in topic_group.keys() ]
@@ -151,7 +151,7 @@ def display_gui(wti_index, print_args=False):
     chart_per_category_widget = widgets_config.toggle('Chart per Qty', False,
         tooltip='Display one chart per selected quantity category', layout=lw())
     extra_other_category_widget = widgets_config.toggle('Add OTHER topics', False, layout=lw())
-    target_quantity_widget = widgets_config.dropdown('Quantity', ['topic', 'party'], 'topic', layout=lw(width='200px'))
+    target_quantity_widget = widgets_config.dropdown('Quantity', ['topic', 'party', 'region'], 'topic', layout=lw(width='200px'))
     progress_widget = widgets_config.progress(0, 5, 1, 0, layout=lw())
 
     def stepper(step=None):

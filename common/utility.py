@@ -6,6 +6,7 @@ import inspect
 import types
 import glob
 import re
+import time
 
 def getLogger(name='cultural_treaties', level=logging.INFO):
     logging.basicConfig(format="%(asctime)s : %(levelname)s : %(message)s", level=level)
@@ -147,3 +148,30 @@ def ls_sorted(path):
 def split(delimiters, string, maxsplit=0):
     regexPattern = '|'.join(map(re.escape, delimiters))
     return re.split(regexPattern, string, maxsplit)
+
+HYPHEN_REGEXP = re.compile(r'\b(\w+)-\s*\r?\n\s*(\w+)\b', re.UNICODE)
+
+def dehyphen(text):
+    result = re.sub(HYPHEN_REGEXP, r"\1\2\n", text)
+    return result
+
+path = types.SimpleNamespace()
+
+def path_add_suffix(path, suffix, new_extension=None):
+    basename, extension = os.path.splitext(path)
+    suffixed_path = basename + suffix + (extension if new_extension is None else new_extension)
+    return suffixed_path
+
+def path_add_timestamp(path, format="%Y%m%d%H%M"):
+    suffix = '_{}'.format(time.strftime("%Y%m%d%H%M"))
+    return path_add_suffix(path, suffix) 
+
+import zipfile
+
+def zip_get_filenames(zip_filename, extension='.txt'):
+    with zipfile.ZipFile(zip_filename, mode='r') as zf:
+        return [ x for x in zf.namelist() if x.endswith(extension) ]
+    
+def zip_get_text(zip_filename, filename):
+    with zipfile.ZipFile(zip_filename, mode='r') as zf:
+        return zf.read(filename).decode(encoding='utf-8')

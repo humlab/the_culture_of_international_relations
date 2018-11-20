@@ -7,40 +7,95 @@ import zipfile
 import fnmatch
 import logging
 import re
+import typing.re
 from gensim.corpora.textcorpus import TextCorpus
 
 logger = logging.getLogger(__name__)
 
-class CompressedFileReader(object):
+HYPHEN_REGEXP = re.compile(r'\b(\w+)-\s*\r?\n\s*(\w+)\b', re.UNICODE)
+TREATY_FILENAME = re.compile(r"^([a-zA-Z0-9]*)\_(en|fr|de|it).*\.txt$")
 
-    def __init__(self, zip_archive, pattern='*.txt', filenames=None):
-        self.zip_archive = zip_archive
-        self.filename_pattern = pattern
-        self.archive_filenames = self.get_archive_filenames(pattern)
-        self.filenames = filenames or self.archive_filenames
-
-    def get_archive_filenames(self, pattern=None):
-        with zipfile.ZipFile(self.zip_archive) as zf:
-            return [ name for name in zf.namelist() if fnmatch.fnmatch(name, pattern) ]
+def language_filename_pattern(language):
+    return re.compile("^(\w*)\_" + language + "([\_\-]corr)?\.txt$") 
     
+def dehyphen(text):
+    result = re.sub(HYPHEN_REGEXP, r"\1\2\n", text)
+    return result
+
+def list_treaty_archive_files(archivename, pattern):
+
+    px = lambda x: pattern.match(x) if isinstance(pattern, typing.re.Pattern) else fnmatch.fnmatch(x, pattern)
+    
+    with zipfile.ZipFile(archivename) as zf:
+        return [ name for name in zf.namelist() if px(name) ]
+        
+def get_treaty_filename_lookup(archivename, language):
+    pattern = language_filename_pattern(language)
+    filenames = list_treaty_archive_files(archivename, pattern)
+    treaty_lookup = { x.split('_')[0]: x for x in filenames }
+    return treaty_lookup
+    
+class CompressedFileReader:
+    
+    def __init__(self, archive_name, pattern='*.txt', itemfilter=None):
+        self.archive_name = archive_name
+        self.filename_pattern = pattern
+        self.archive_filenames = list_treaty_archive_files(archive_name, pattern)
+        filenames = None
+        if itemfilter is not None:
+            if isinstance(itemfilter, list):
+                filenames = [ x for x in itemfilter if x in self.archive_filenames ]
+            elif callable(itemfilter):
+                filenames = [ x for x in self.archive_filenames if itemfilter(self.archive_filenames, x) ]
+            else:
+                assert False
+        self.filenames = filenames or self.archive_filenames
+        self.iterator = None
+
     def __iter__(self):
-
-        with zipfile.ZipFile(self.zip_archive) as zip_file:
-            for filename in self.filenames:
-                try:
-                    if filename not in self.archive_filenames:
-                        continue
-                    with zip_file.open(filename, 'rU') as text_file:
-                        content = text_file.read()
-                        content = gensim.utils.to_unicode(content, 'utf8', errors='ignore')
-                        content = content.replace('-\r\n', '').replace('-\n', '')
-                        yield os.path.basename(filename), content
-                except:
-                    print('Unicode error: {}'.format(filename))
-                    raise
+        return self
+    
+    def __next__(self):
+        if self.iterator is None:
+            self.iterator = self.file_iterator()
+        return next(self.iterator)
+    
+    def get_file(self, filename):
+        
+        if filename not in self.filenames:
+            yield  os.path.basename(filename), None
+            
+        with zipfile.ZipFile(self.archive_name) as zip_file:
+            yield os.path.basename(filename), self._read_content(zip_file, filename)
                     
-valid_filename = re.compile(r"^([a-zA-Z0-9]*)\_(en|fr|de|it).*\.txt$")
+    def file_iterator(self):
+        with zipfile.ZipFile(self.archive_name) as zip_file:
+            for filename in self.filenames:
+                yield os.path.basename(filename), self._read_content(zip_file, filename)
+                    
+    def _read_content(self, zip_file, filename):
+        with zip_file.open(filename, 'rU') as text_file:
+            content = text_file.read()
+            content = gensim.utils.to_unicode(content, 'utf8', errors='ignore')
+            content = dehyphen(content)
+            return content
+        
+class TreatyCompressedFileReader(CompressedFileReader):
 
+    def __init__(self, archive_name, language, treaty_ids):
+        lookup = get_treaty_filename_lookup(archive_name, language)
+        pattern = language_filename_pattern(language)
+        self.treaty_ids = [ x for x in treaty_ids if x in lookup ]
+        filenames = [ lookup[x] for x in self.treaty_ids ]
+        CompressedFileReader.__init__(self, archive_name, pattern=pattern, itemfilter=filenames)
+        
+    def __next__(self):
+        filename, content = super(TreatyCompressedFileReader, self).__next__()
+        m = TREATY_FILENAME.match(filename)
+        treaty_id = m.groups(1)[0]
+        language = m.groups(1)[1]
+        return treaty_id, language, filename, content
+    
 class TreatyCorpus(TextCorpus):
 
     def __init__(self,
@@ -133,7 +188,7 @@ class TreatyCorpus(TextCorpus):
             return tokens
 
     def get_document_info(self, filename):
-        parts = valid_filename.match(filename)
+        parts = TREATY_FILENAME.match(filename)
         if not parts:
             return {
             'document_name': filename,
