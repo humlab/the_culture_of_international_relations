@@ -1,0 +1,368 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Genererad av Microsoft Visio, SVG-export w2v-workflow-prepare.svg Page-5 -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ev="http://www.w3.org/2001/xml-events"
+		xmlns:v="http://schemas.microsoft.com/visio/2003/SVGExtensions/" width="9.02666in" height="6.19784in"
+		viewBox="0 0 649.919 446.244" xml:space="preserve" color-interpolation-filters="sRGB" class="st29">
+	<v:documentProperties v:langID="1033" v:metric="true" v:viewMarkup="false">
+		<v:userDefs>
+			<v:ud v:nameU="msvSubprocessMaster" v:prompt="" v:val="VT4(Rectangle)"/>
+			<v:ud v:nameU="msvNoAutoConnect" v:val="VT0(1):26"/>
+		</v:userDefs>
+	</v:documentProperties>
+
+	<style type="text/css">
+	<![CDATA[
+		.st1 {visibility:visible}
+		.st2 {fill:#5b9bd5;fill-opacity:0.25;filter:url(#filter_2);stroke:#5b9bd5;stroke-opacity:0.25}
+		.st3 {fill:#4f87bb;stroke:#40709c;stroke-width:0.75}
+		.st4 {fill:#feffff;font-family:Verdana;font-size:0.833336em}
+		.st5 {font-size:1em}
+		.st6 {marker-end:url(#mrkr4-13);stroke:#5b9bd5;stroke-dasharray:3,3;stroke-linecap:round;stroke-linejoin:round;stroke-width:1}
+		.st7 {fill:#5b9bd5;fill-opacity:1;stroke:#5b9bd5;stroke-opacity:1;stroke-width:0.28409090909091}
+		.st8 {fill:#ffffff;stroke:none;stroke-linecap:butt;stroke-width:7.2}
+		.st9 {fill:#4f87bb;font-family:Calibri;font-size:0.499992em}
+		.st10 {fill:#70ad47;fill-opacity:0.22;filter:url(#filter_2);stroke:#70ad47;stroke-opacity:0.22}
+		.st11 {fill:#70ad47;stroke:#c7c8c8;stroke-width:0.25}
+		.st12 {stroke:#c8c8c8;stroke-width:0.25}
+		.st13 {fill:#000000;font-family:Verdana;font-size:0.666664em;font-weight:bold}
+		.st14 {font-size:1em;font-weight:normal}
+		.st15 {marker-end:url(#mrkr4-13);stroke:#5b9bd5;stroke-linecap:round;stroke-linejoin:round;stroke-width:1}
+		.st16 {fill:#4f87bb;font-family:Calibri;font-size:0.833336em}
+		.st17 {fill:url(#grad0-112)}
+		.st18 {stroke:#5b9bd5;stroke-width:0.75}
+		.st19 {fill:#ffffff;stroke:none;stroke-linecap:butt}
+		.st20 {fill:none;stroke:none;stroke-width:0.25}
+		.st21 {fill:#7f7f7f;font-family:Calibri;font-size:0.666664em}
+		.st22 {fill:#759fcc;fill-opacity:0.22;filter:url(#filter_2);stroke:#759fcc;stroke-opacity:0.22}
+		.st23 {fill:#759fcc;stroke:#c7c8c8;stroke-width:0.25}
+		.st24 {fill:#feffff;font-family:Verdana;font-size:0.499992em}
+		.st25 {fill:#5b9bd5;fill-opacity:0.22;filter:url(#filter_2);stroke:#5b9bd5;stroke-opacity:0.22}
+		.st26 {fill:#5b9bd5;stroke:#5b9bd5;stroke-width:0.25}
+		.st27 {fill:#f2f2f2;fill-opacity:0.27;stroke:#4f87bb;stroke-dasharray:5.25,3.75;stroke-width:0.75}
+		.st28 {fill:#4f87bb;font-family:Calibri;font-size:0.75em;font-weight:bold}
+		.st29 {fill:none;fill-rule:evenodd;font-size:12px;overflow:visible;stroke-linecap:square;stroke-miterlimit:3}
+	]]>
+	</style>
+
+	<defs id="Patterns_And_Gradients">
+		<linearGradient id="grad0-112" x1="0" y1="0" x2="1" y2="0" gradientTransform="rotate(60 0.5 0.5)">
+			<stop offset="0" stop-color="#e9eff7" stop-opacity="1"/>
+			<stop offset="0.24" stop-color="#f4f7fb" stop-opacity="1"/>
+			<stop offset="0.54" stop-color="#feffff" stop-opacity="1"/>
+		</linearGradient>
+	</defs>
+	<defs id="Markers">
+		<g id="lend4">
+			<path d="M 2 1 L 0 0 L 2 -1 L 2 1 " style="stroke:none"/>
+		</g>
+		<marker id="mrkr4-13" class="st7" v:arrowType="4" v:arrowSize="2" v:setback="7.04" refX="-7.04" orient="auto"
+				markerUnits="strokeWidth" overflow="visible">
+			<use xlink:href="#lend4" transform="scale(-3.52,-3.52) "/>
+		</marker>
+	</defs>
+	<defs id="Filters">
+		<filter id="filter_2">
+			<feGaussianBlur stdDeviation="2"/>
+		</filter>
+	</defs>
+	<g v:mID="13" v:index="5" v:groupContext="foregroundPage">
+		<v:userDefs>
+			<v:ud v:nameU="msvThemeOrder" v:val="VT0(0):26"/>
+		</v:userDefs>
+		<title>W2V workflow</title>
+		<v:pageProperties v:drawingScale="0.0393701" v:pageScale="0.0393701" v:drawingUnits="24" v:shadowOffsetX="8.50394"
+				v:shadowOffsetY="-8.50394"/>
+		<v:layer v:name="Connector" v:index="0"/>
+		<g id="shape2-1" v:mID="2" v:groupContext="shape" transform="translate(46.707,-351.542)">
+			<title>Åtgärd</title>
+			<desc>Clean up &#38; add sep.</desc>
+			<v:userDefs>
+				<v:ud v:nameU="visVersion" v:prompt="" v:val="VT0(15):26"/>
+			</v:userDefs>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
+			<v:textRect cx="41.6339" cy="431.504" width="83.27" height="29.4803"/>
+			<g id="shadow2-2" v:groupContext="shadow" v:shadowOffsetX="0.345598" v:shadowOffsetY="-1.97279" v:shadowType="1"
+					transform="matrix(1,0,0,1,0.345598,1.97279)" class="st1">
+				<rect x="0" y="416.764" width="83.2677" height="29.4803" rx="8.50394" ry="8.50394" class="st2"/>
+			</g>
+			<rect x="0" y="416.764" width="83.2677" height="29.4803" rx="8.50394" ry="8.50394" class="st3"/>
+			<text x="14.2" y="428.5" class="st4" v:langID="1053"><v:paragraph v:horizAlign="1"/><v:tabList/>Clean up &#38;<v:newlineChar/><tspan
+						x="20.12" dy="1.2em" class="st5">add sep</tspan>.</text>		</g>
+		<g id="shape5-8" v:mID="5" v:groupContext="shape" v:layerMember="0" transform="translate(129.975,-359.195)">
+			<title>Dynamic connector.11</title>
+			<desc>Text files</desc>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
+			<v:textRect cx="74.104" cy="434.764" width="31.16" height="15.2035"/>
+			<path d="M0 439.16 L100.58 439.16" class="st6"/>
+			<rect v:rectContext="textBkgnd" x="63.2088" y="431.164" width="21.7906" height="7.20016" class="st8"/>
+			<text x="63.21" y="436.56" class="st9" v:langID="1053"><v:paragraph v:horizAlign="1"/><v:tabList/>Text files</text>		</g>
+		<g id="shape7-16" v:mID="7" v:groupContext="shape" transform="translate(236.81,-227.935)">
+			<title>Åtgärd.16</title>
+			<desc>Prepare</desc>
+			<v:userDefs>
+				<v:ud v:nameU="visVersion" v:prompt="" v:val="VT0(15):26"/>
+			</v:userDefs>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
+			<v:textRect cx="41.6339" cy="431.504" width="83.27" height="29.4803"/>
+			<g id="shadow7-17" v:groupContext="shadow" v:shadowOffsetX="0.345598" v:shadowOffsetY="-1.97279" v:shadowType="1"
+					transform="matrix(1,0,0,1,0.345598,1.97279)" class="st1">
+				<rect x="0" y="416.764" width="83.2677" height="29.4803" rx="8.50394" ry="8.50394" class="st10"/>
+			</g>
+			<rect x="0" y="416.764" width="83.2677" height="29.4803" rx="8.50394" ry="8.50394" class="st11"/>
+			<text x="22.28" y="434.5" class="st4" v:langID="1053"><v:paragraph v:horizAlign="1"/><v:tabList/>Prepare</text>		</g>
+		<g id="shape10-22" v:mID="10" v:groupContext="shape" transform="translate(349.283,-214.896)">
+			<title>Linje med text</title>
+			<desc>CORPUS CONFIGURATION 1. Tokenizer, set of stopwords 2. Bigram...</desc>
+			<v:userDefs>
+				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
+			</v:userDefs>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
+			<v:textRect cx="118.198" cy="418.243" width="236.4" height="56.0034"/>
+			<path d="M0 390.24 L0 446.24" class="st12"/>
+			<text x="4" y="401.44" class="st13" v:langID="1053"><v:paragraph/><v:tabList/>CORPUS CONFIGURATION<v:newlineChar/><tspan
+						x="4" dy="1.2em" class="st14">1</tspan><tspan class="st14">. </tspan><tspan class="st14">Tokenizer</tspan><tspan
+						class="st14">, </tspan><tspan class="st14">set of stopwords<v:newlineChar/></tspan><tspan x="4" dy="1.2em"
+						class="st14">2</tspan><tspan class="st14">. </tspan><tspan class="st14">Bigram strategy<v:newlineChar/></tspan><tspan
+						x="4" dy="1.2em" class="st14">3</tspan><tspan class="st14">. </tspan><tspan class="st14">Context strategy</tspan><tspan
+						class="st14">: </tspan><tspan class="st14">sentence</tspan><tspan class="st14">, </tspan><tspan
+						class="st14">chuck</tspan><tspan class="st14">, </tspan><tspan class="st14">document<v:newlineChar/></tspan><tspan
+						x="4" dy="1.2em" class="st14">4</tspan><tspan class="st14">. </tspan><tspan class="st14">Token transformers</tspan><tspan
+						class="st14">: </tspan><tspan class="st14">lowercase</tspan></text>		</g>
+		<g id="shape11-48" v:mID="11" v:groupContext="shape" transform="translate(236.81,-149.983)">
+			<title>Åtgärd.41</title>
+			<desc>Compute</desc>
+			<v:userDefs>
+				<v:ud v:nameU="visVersion" v:prompt="" v:val="VT0(15):26"/>
+			</v:userDefs>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
+			<v:textRect cx="41.6339" cy="431.504" width="83.27" height="29.4803"/>
+			<g id="shadow11-49" v:groupContext="shadow" v:shadowOffsetX="0.345598" v:shadowOffsetY="-1.97279" v:shadowType="1"
+					transform="matrix(1,0,0,1,0.345598,1.97279)" class="st1">
+				<rect x="0" y="416.764" width="83.2677" height="29.4803" rx="8.50394" ry="8.50394" class="st10"/>
+			</g>
+			<rect x="0" y="416.764" width="83.2677" height="29.4803" rx="8.50394" ry="8.50394" class="st11"/>
+			<text x="19.02" y="434.5" class="st4" v:langID="1053"><v:paragraph v:horizAlign="1"/><v:tabList/>Compute</text>		</g>
+		<g id="shape12-54" v:mID="12" v:groupContext="shape" v:layerMember="0" transform="translate(271.357,-227.935)">
+			<title>Dynamic connector.43</title>
+			<desc>CORPUS</desc>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
+			<v:textRect cx="7.4619" cy="471.473" width="50" height="20.0036"/>
+			<path d="M7.09 446.24 L7.09 487.68" class="st15"/>
+			<rect v:rectContext="textBkgnd" x="-9.31785" y="465.473" width="33.5597" height="12.0001" class="st8"/>
+			<text x="-9.32" y="474.47" class="st16" v:langID="1053"><v:paragraph v:horizAlign="1"/><v:tabList/>CORPUS</text>		</g>
+		<g id="shape13-61" v:mID="13" v:groupContext="shape" transform="translate(351.306,-135.346)">
+			<title>Linje med text.49</title>
+			<desc>COMPUTE CONFIGURATION 1. Method: Skip-Gram or CBOW 2. Window ...</desc>
+			<v:userDefs>
+				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
+			</v:userDefs>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
+			<v:textRect cx="78.4676" cy="418.243" width="156.94" height="56.0034"/>
+			<path d="M0 390.24 L0 446.24" class="st12"/>
+			<text x="4" y="401.44" class="st13" v:langID="1053"><v:paragraph/><v:tabList/>COMPUTE CONFIGURATION<v:newlineChar/><tspan
+						x="4" dy="1.2em" class="st14">1</tspan><tspan class="st14">. </tspan><tspan class="st14">Method</tspan><tspan
+						class="st14">: </tspan><tspan class="st14">Skip</tspan><tspan class="st14">-</tspan><tspan class="st14">Gram or CBOW<v:newlineChar/></tspan><tspan
+						x="4" dy="1.2em" class="st14">2</tspan><tspan class="st14">. </tspan><tspan class="st14">Window size<v:newlineChar/></tspan><tspan
+						x="4" dy="1.2em" class="st14">3</tspan><tspan class="st14">. </tspan><tspan class="st14">Number of dimensions<v:newlineChar/></tspan><tspan
+						x="4" dy="1.2em" class="st14">4</tspan><tspan class="st14">. </tspan><tspan class="st14">Stopword filter</tspan><tspan
+						class="st14">: </tspan><tspan class="st14">yes</tspan><tspan class="st14">/</tspan><tspan class="st14">no</tspan></text>		</g>
+		<g id="shape14-85" v:mID="14" v:groupContext="shape" v:layerMember="0" transform="translate(286.422,-398.33)">
+			<title>Dynamic connector.54</title>
+			<path d="M-6.98 446.24 L-7.11 456.51" class="st15"/>
+		</g>
+		<g id="shape17-90" v:mID="17" v:groupContext="shape" v:layerMember="0" transform="translate(259.346,-77.9826)">
+			<title>Dynamic connector.60</title>
+			<desc>FOR EACH CONFIG</desc>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
+			<v:textRect cx="-53.0823" cy="238.465" width="85.5" height="20.0036"/>
+			<path d="M-6.32 446.24 L-6.32 458.46 A12.2143 12.2143 0 0 1 -18.54 470.67 L-77.18 470.67 A14.1732 14.1732 0 0 1 -91.35
+						 456.5 L-91.35 259.89 A14.1732 14.1732 0 0 1 -77.18 245.72 L-18.4 245.72 A10.5473 10.5473 0 0 1 -7.85 256.26
+						 L-7.85 259.77" class="st15"/>
+			<rect v:rectContext="textBkgnd" x="-90.697" y="232.465" width="75.2297" height="12.0001" class="st8"/>
+			<text x="-90.7" y="241.47" class="st16" v:langID="1053"><v:paragraph v:horizAlign="1"/><v:tabList/>FOR EACH CONFIG</text>		</g>
+		<g id="shape18-97" v:mID="18" v:groupContext="shape" v:layerMember="0" transform="translate(130.364,-235.589)">
+			<title>Dynamic connector.61</title>
+			<desc>CONFIGS</desc>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
+			<v:textRect cx="70.6383" cy="432.491" width="50" height="20.0036"/>
+			<path d="M0 439.16 L29.12 439.16 A14.1732 14.1732 -180 0 0 36.42 437.13 A2.3622 2.3622 0 0 1 38.85 437.13 A14.1732 14.1732
+						 -180 0 0 46.15 439.16 L99.41 439.16" class="st6"/>
+			<rect v:rectContext="textBkgnd" x="52.4253" y="426.491" width="36.4257" height="12.0001" class="st8"/>
+			<text x="52.43" y="435.49" class="st16" v:langID="1053"><v:paragraph v:horizAlign="1"/><v:tabList/>CONFIGS</text>		</g>
+		<g id="shape19-104" v:mID="19" v:groupContext="shape" v:layerMember="0" transform="translate(271.357,-77.9826)">
+			<title>Dynamic connector.62</title>
+			<path d="M7.09 446.24 L7.09 464.62" class="st15"/>
+		</g>
+		<g id="shape20-109" v:mID="20" v:groupContext="shape" transform="translate(272.359,-40.4)">
+			<title>Sista nod.63</title>
+			<v:userDefs>
+				<v:ud v:nameU="visVersion" v:prompt="" v:val="VT0(15):26"/>
+			</v:userDefs>
+			<path d="M10.95 440.16 A4.86749 4.86749 -180 1 0 1.22 440.16 A4.86749 4.86749 -180 1 0 10.95 440.16 Z" class="st17"/>
+			<path d="M12.17 440.16 A6.08436 6.08436 -180 1 0 -0 440.16 A6.08436 6.08436 -180 1 0 12.17 440.16" class="st18"/>
+			<path d="M10.95 440.16 A4.86749 4.86749 -180 1 0 1.22 440.16 A4.86749 4.86749 -180 1 0 10.95 440.16" class="st18"/>
+		</g>
+		<g id="shape21-115" v:mID="21" v:groupContext="shape" transform="translate(236.81,-77.9826)">
+			<title>Åtgärd.64</title>
+			<desc>Store</desc>
+			<v:userDefs>
+				<v:ud v:nameU="visVersion" v:prompt="" v:val="VT0(15):26"/>
+			</v:userDefs>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
+			<v:textRect cx="41.6339" cy="431.504" width="83.27" height="29.4803"/>
+			<g id="shadow21-116" v:groupContext="shadow" v:shadowOffsetX="0.345598" v:shadowOffsetY="-1.97279" v:shadowType="1"
+					transform="matrix(1,0,0,1,0.345598,1.97279)" class="st1">
+				<rect x="0" y="416.764" width="83.2677" height="29.4803" rx="8.50394" ry="8.50394" class="st10"/>
+			</g>
+			<rect x="0" y="416.764" width="83.2677" height="29.4803" rx="8.50394" ry="8.50394" class="st11"/>
+			<text x="28.1" y="434.5" class="st4" v:langID="1053"><v:paragraph v:horizAlign="1"/><v:tabList/>Store</text>		</g>
+		<g id="shape22-121" v:mID="22" v:groupContext="shape" v:layerMember="0" transform="translate(271.357,-149.983)">
+			<title>Dynamic connector.65</title>
+			<desc>WORD2VEC MODEL</desc>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
+			<v:textRect cx="7.4619" cy="467.504" width="91" height="20.0036"/>
+			<path d="M7.09 446.24 L7.09 481.72" class="st15"/>
+			<rect v:rectContext="textBkgnd" x="-32.9019" y="461.504" width="80.7278" height="12.0001" class="st19"/>
+			<text x="-32.9" y="470.5" class="st16" v:langID="1053"><v:paragraph v:horizAlign="1"/><v:tabList/>WORD2VEC MODEL</text>		</g>
+		<g id="shape23-128" v:mID="23" v:groupContext="shape" transform="translate(351.306,-54.5352)">
+			<title>Linje med text.67</title>
+			<desc>RESULT FOR EACH CONFIGURATION 1. Word2Vec model 2. TensorFlow...</desc>
+			<v:userDefs>
+				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
+			</v:userDefs>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
+			<v:textRect cx="92.6408" cy="413.443" width="185.29" height="65.6034"/>
+			<path d="M0 380.64 L0 446.24" class="st12"/>
+			<text x="4" y="391.84" class="st13" v:langID="1053"><v:paragraph/><v:tabList/>RESULT FOR EACH CONFIGURATION<v:newlineChar/><tspan
+						x="4" dy="1.2em" class="st14">1</tspan><tspan class="st14">. </tspan><tspan class="st14">Word</tspan><tspan
+						class="st14">2</tspan><tspan class="st14">Vec model<v:newlineChar/></tspan><tspan x="4" dy="1.2em"
+						class="st14">2</tspan><tspan class="st14">. </tspan><tspan class="st14">TensorFlow visualization data<v:newlineChar/></tspan><tspan
+						x="4" dy="1.2em" class="st14">3</tspan><tspan class="st14">. </tspan><tspan class="st14">Rudimentery statistics<v:newlineChar/></tspan><tspan
+						x="4" dy="1.2em" class="st14">4</tspan><tspan class="st14">. </tspan><tspan class="st14">Notebook </tspan><tspan
+						class="st14">”</tspan><tspan class="st14">friendly</tspan><tspan class="st14">” </tspan><tspan class="st14">data </tspan><tspan
+						class="st14">(</tspan><tspan class="st14">TSV</tspan><tspan class="st14">)</tspan><v:newlineChar/> </text>		</g>
+		<g id="shape24-153" v:mID="24" v:groupContext="shape" transform="translate(46.707,-386.141)">
+			<title>Ark.24</title>
+			<desc>Daedalus volumes</desc>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
+			<v:textRect cx="33.9849" cy="442.276" width="67.97" height="7.93701"/>
+			<rect x="0" y="438.307" width="67.9698" height="7.93701" class="st20"/>
+			<text x="4.43" y="444.68" class="st21" v:langID="1053"><v:paragraph v:horizAlign="1"/><v:tabList/>Daedalus volumes</text>		</g>
+		<g id="shape25-156" v:mID="25" v:groupContext="shape" transform="translate(47.0965,-227.935)">
+			<title>Åtgärd.71</title>
+			<desc>Select configs</desc>
+			<v:userDefs>
+				<v:ud v:nameU="visVersion" v:prompt="" v:val="VT0(15):26"/>
+			</v:userDefs>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
+			<v:textRect cx="41.6339" cy="431.504" width="83.27" height="29.4803"/>
+			<g id="shadow25-157" v:groupContext="shadow" v:shadowOffsetX="0.345598" v:shadowOffsetY="-1.97279" v:shadowType="1"
+					transform="matrix(1,0,0,1,0.345598,1.97279)" class="st1">
+				<rect x="0" y="416.764" width="83.2677" height="29.4803" rx="8.50394" ry="8.50394" class="st2"/>
+			</g>
+			<rect x="0" y="416.764" width="83.2677" height="29.4803" rx="8.50394" ry="8.50394" class="st3"/>
+			<text x="6.9" y="434.5" class="st4" v:langID="1053"><v:paragraph v:horizAlign="1"/><v:tabList/>Select configs</text>		</g>
+		<g id="shape26-162" v:mID="26" v:groupContext="shape" transform="translate(237.592,-351.542)">
+			<title>Åtgärd.113</title>
+			<desc>Split</desc>
+			<v:userDefs>
+				<v:ud v:nameU="visVersion" v:prompt="" v:val="VT0(15):26"/>
+			</v:userDefs>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
+			<v:textRect cx="41.6339" cy="431.504" width="83.27" height="29.4803"/>
+			<g id="shadow26-163" v:groupContext="shadow" v:shadowOffsetX="0.345598" v:shadowOffsetY="-1.97279" v:shadowType="1"
+					transform="matrix(1,0,0,1,0.345598,1.97279)" class="st1">
+				<rect x="0" y="416.764" width="83.2677" height="29.4803" rx="8.50394" ry="8.50394" class="st10"/>
+			</g>
+			<rect x="0" y="416.764" width="83.2677" height="29.4803" rx="8.50394" ry="8.50394" class="st11"/>
+			<text x="30.39" y="434.5" class="st4" v:langID="1053"><v:paragraph v:horizAlign="1"/><v:tabList/>Split</text>		</g>
+		<g id="shape27-168" v:mID="27" v:groupContext="shape" v:layerMember="0" transform="translate(272.139,-351.542)">
+			<title>Dynamic connector.114</title>
+			<desc>ARTICLES (TEXT)</desc>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
+			<v:textRect cx="7.39863" cy="469.504" width="48.82" height="15.2035"/>
+			<path d="M7.09 446.24 L7.09 487.78" class="st15"/>
+			<rect v:rectContext="textBkgnd" x="-12.3311" y="465.904" width="39.4596" height="7.20016" class="st8"/>
+			<text x="-12.33" y="471.3" class="st9" v:langID="1053"><v:paragraph v:horizAlign="1"/><v:tabList/>ARTICLES (TEXT)</text>		</g>
+		<g id="shape31-175" v:mID="31" v:groupContext="shape" transform="translate(543.159,-73.1637)">
+			<title>Action.215</title>
+			<desc>RESEARCHER</desc>
+			<v:userDefs>
+				<v:ud v:nameU="Sharpness" v:val="VT0(0.125):26"/>
+				<v:ud v:nameU="State" v:val="VT0(6):26"/>
+				<v:ud v:nameU="TextPosition" v:val="VT0(2):26"/>
+				<v:ud v:nameU="TextWidth" v:val="VT0(0.75):1"/>
+				<v:ud v:nameU="TextOffSet" v:val="VT0(0.038194444444444):29"/>
+				<v:ud v:nameU="SetHeight" v:val="VT0(0):26"/>
+				<v:ud v:nameU="SetShapeHeight" v:val="VT0(0):26"/>
+				<v:ud v:nameU="TextWidth" v:prompt="" v:val="VT0(1.1811023622047):1"/>
+				<v:ud v:nameU="TextOffSet" v:prompt="" v:val="VT0(0.03827809852474):29"/>
+			</v:userDefs>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
+			<v:textRect cx="42.5197" cy="432.732" width="50.92" height="15.2035"/>
+			<g id="shadow31-176" v:groupContext="shadow" v:shadowOffsetX="0.345598" v:shadowOffsetY="-1.97279" v:shadowType="1"
+					transform="matrix(1,0,0,1,0.345598,1.97279)" class="st1">
+				<path d="M-0 439.49 A6.75602 6.75602 -180 0 0 6.76 446.24 L78.28 446.24 A6.75602 6.75602 -180 0 0 85.04 439.49 L85.04
+							 425.98 A6.75602 6.75602 -180 0 0 78.28 419.22 L6.76 419.22 A6.75602 6.75602 -180 0 0 -0 425.98 L0 439.49
+							 Z" class="st22"/>
+			</g>
+			<path d="M-0 439.49 A6.75602 6.75602 -180 0 0 6.76 446.24 L78.28 446.24 A6.75602 6.75602 -180 0 0 85.04 439.49 L85.04
+						 425.98 A6.75602 6.75602 -180 0 0 78.28 419.22 L6.76 419.22 A6.75602 6.75602 -180 0 0 -0 425.98 L0 439.49
+						 Z" class="st23"/>
+			<text x="22.12" y="434.53" class="st24" v:langID="1053"><v:paragraph v:horizAlign="1"/><v:tabList/>RESEARCHER</text>		</g>
+		<g id="shape32-181" v:mID="32" v:groupContext="shape" transform="translate(543.159,-115.683)">
+			<title>Action.216</title>
+			<desc>Script programmer</desc>
+			<v:userDefs>
+				<v:ud v:nameU="Sharpness" v:val="VT0(0.125):26"/>
+				<v:ud v:nameU="State" v:val="VT0(6):26"/>
+				<v:ud v:nameU="TextPosition" v:val="VT0(2):26"/>
+				<v:ud v:nameU="TextWidth" v:val="VT0(0.75):1"/>
+				<v:ud v:nameU="TextOffSet" v:val="VT0(0.038194444444444):29"/>
+				<v:ud v:nameU="SetHeight" v:val="VT0(0):26"/>
+				<v:ud v:nameU="SetShapeHeight" v:val="VT0(0):26"/>
+				<v:ud v:nameU="TextWidth" v:prompt="" v:val="VT0(1.1811023622047):1"/>
+				<v:ud v:nameU="TextOffSet" v:prompt="" v:val="VT0(0.038901134575738):29"/>
+			</v:userDefs>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
+			<v:textRect cx="42.5197" cy="432.643" width="47.77" height="22.4034"/>
+			<g id="shadow32-182" v:groupContext="shadow" v:shadowOffsetX="0.345598" v:shadowOffsetY="-1.97279" v:shadowType="1"
+					transform="matrix(1,0,0,1,0.345598,1.97279)" class="st1">
+				<path d="M0 439.44 A6.80088 6.80088 -180 0 0 6.8 446.24 L78.24 446.24 A6.80088 6.80088 -180 0 0 85.04 439.44 L85.04
+							 425.84 A6.80088 6.80088 -180 0 0 78.24 419.04 L6.8 419.04 A6.80088 6.80088 -180 0 0 0 425.84 L0 439.44
+							 Z" class="st10"/>
+			</g>
+			<path d="M0 439.44 A6.80088 6.80088 -180 0 0 6.8 446.24 L78.24 446.24 A6.80088 6.80088 -180 0 0 85.04 439.44 L85.04 425.84
+						 A6.80088 6.80088 -180 0 0 78.24 419.04 L6.8 419.04 A6.80088 6.80088 -180 0 0 0 425.84 L0 439.44 Z"
+					class="st11"/>
+			<text x="33.75" y="430.84" class="st24" v:langID="1053"><v:paragraph v:horizAlign="1"/><v:tabList/>Script<v:newlineChar/><tspan
+						x="23.7" dy="1.2em" class="st5">programmer</tspan></text>		</g>
+		<g id="shape33-188" v:mID="33" v:groupContext="shape" transform="translate(273.342,-398.33)">
+			<title>Första nod.40</title>
+			<v:userDefs>
+				<v:ud v:nameU="visVersion" v:prompt="" v:val="VT0(15):26"/>
+			</v:userDefs>
+			<g id="shadow33-189" v:groupContext="shadow" v:shadowOffsetX="0.345598" v:shadowOffsetY="-1.97279" v:shadowType="1"
+					transform="matrix(1,0,0,1,0.345598,1.97279)" class="st1">
+				<ellipse cx="6.10461" cy="440.14" rx="6.10461" ry="6.10461" class="st25"/>
+			</g>
+			<ellipse cx="6.10461" cy="440.14" rx="6.10461" ry="6.10461" class="st26"/>
+		</g>
+		<g id="shape35-193" v:mID="35" v:groupContext="shape" transform="translate(18.75,-299.935)">
+			<title>Ark.35</title>
+			<desc>SHARED WITH TOPIC MODEL WORKFLOW</desc>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197" v:verticalAlign="0"/>
+			<v:textRect cx="180" cy="382.465" width="360" height="127.559"/>
+			<path d="M0 446.24 L360 446.24 L360 318.69 L0 318.69 L0 446.24 Z" class="st27"/>
+			<text x="4" y="330.79" class="st28" v:langID="1053"><v:paragraph/><v:tabList/>SHARED WITH TOPIC MODEL WORKFLOW</text>		</g>
+		<g id="shape36-196" v:mID="36" v:groupContext="shape" v:layerMember="0" transform="translate(271.357,-299.935)">
+			<title>Dynamic connector.36</title>
+			<desc>ARTICLES</desc>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
+			<v:textRect cx="7.4619" cy="468.375" width="50" height="20.0036"/>
+			<path d="M7.09 446.24 L7.09 481.72" class="st15"/>
+			<rect v:rectContext="textBkgnd" x="-11.3492" y="462.375" width="37.6221" height="12.0001" class="st8"/>
+			<text x="-11.35" y="471.37" class="st16" v:langID="1053"><v:paragraph v:horizAlign="1"/><v:tabList/>ARTICLES</text>		</g>
+	</g>
+</svg>

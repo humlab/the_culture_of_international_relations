@@ -1,0 +1,382 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<!-- Genererad av Microsoft Visio, SVG-export text_analysis_workflow.svg Page-6 -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:ev="http://www.w3.org/2001/xml-events"
+		xmlns:v="http://schemas.microsoft.com/visio/2003/SVGExtensions/" width="8.86094in" height="6.68574in"
+		viewBox="0 0 637.988 481.373" xml:space="preserve" color-interpolation-filters="sRGB" class="st18">
+	<v:documentProperties v:langID="1033" v:metric="true" v:viewMarkup="false">
+		<v:userDefs>
+			<v:ud v:nameU="msvSubprocessMaster" v:prompt="" v:val="VT4(Rectangle)"/>
+			<v:ud v:nameU="msvNoAutoConnect" v:val="VT0(1):26"/>
+		</v:userDefs>
+	</v:documentProperties>
+
+	<style type="text/css">
+	<![CDATA[
+		.st1 {visibility:visible}
+		.st2 {fill:#5b9bd5;fill-opacity:0.22;filter:url(#filter_2);stroke:#5b9bd5;stroke-opacity:0.22}
+		.st3 {fill:#5b9bd5;stroke:#c7c8c8;stroke-width:0.25}
+		.st4 {fill:#feffff;font-family:Verdana;font-size:0.666664em}
+		.st5 {stroke:#c8c8c8;stroke-width:0.25}
+		.st6 {fill:#000000;font-family:Verdana;font-size:0.666664em;font-weight:bold}
+		.st7 {font-size:1em;font-weight:normal}
+		.st8 {fill:#70ad47;fill-opacity:0.22;filter:url(#filter_2);stroke:#70ad47;stroke-opacity:0.22}
+		.st9 {fill:#70ad47;stroke:#c7c8c8;stroke-width:0.25}
+		.st10 {marker-end:url(#mrkr4-35);stroke:#5b9bd5;stroke-linecap:round;stroke-linejoin:round;stroke-width:1}
+		.st11 {fill:#5b9bd5;fill-opacity:1;stroke:#5b9bd5;stroke-opacity:1;stroke-width:0.28409090909091}
+		.st12 {fill:#ffffff;stroke:none;stroke-linecap:butt;stroke-width:7.2}
+		.st13 {fill:#4f87bb;font-family:Calibri;font-size:0.75em}
+		.st14 {fill:#5b9bd5;stroke:#5b9bd5;stroke-width:0.25}
+		.st15 {stroke:#7f7f7f;stroke-linecap:round;stroke-linejoin:round;stroke-width:0.5}
+		.st16 {stroke:#c8c8c8;stroke-width:0.5}
+		.st17 {marker-end:url(#mrkr4-35);marker-start:url(#mrkr4-282);stroke:#5b9bd5;stroke-linecap:round;stroke-linejoin:round;stroke-width:1}
+		.st18 {fill:none;fill-rule:evenodd;font-size:12px;overflow:visible;stroke-linecap:square;stroke-miterlimit:3}
+	]]>
+	</style>
+
+	<defs id="Markers">
+		<g id="lend4">
+			<path d="M 2 1 L 0 0 L 2 -1 L 2 1 " style="stroke:none"/>
+		</g>
+		<marker id="mrkr4-35" class="st11" v:arrowType="4" v:arrowSize="2" v:setback="7.04" refX="-7.04" orient="auto"
+				markerUnits="strokeWidth" overflow="visible">
+			<use xlink:href="#lend4" transform="scale(-3.52,-3.52) "/>
+		</marker>
+		<marker id="mrkr4-282" class="st11" v:arrowType="4" v:arrowSize="2" v:setback="6.68" refX="6.68" orient="auto"
+				markerUnits="strokeWidth" overflow="visible">
+			<use xlink:href="#lend4" transform="scale(3.52) "/>
+		</marker>
+	</defs>
+	<defs id="Filters">
+		<filter id="filter_2">
+			<feGaussianBlur stdDeviation="2"/>
+		</filter>
+	</defs>
+	<g v:mID="16" v:index="2" v:groupContext="foregroundPage">
+		<v:userDefs>
+			<v:ud v:nameU="msvThemeOrder" v:val="VT0(0):26"/>
+		</v:userDefs>
+		<title>Simple workflow</title>
+		<v:pageProperties v:drawingScale="0.0393701" v:pageScale="0.0393701" v:drawingUnits="24" v:shadowOffsetX="8.50394"
+				v:shadowOffsetY="-8.50394"/>
+		<v:layer v:name="Connector" v:index="0"/>
+		<g id="shape9-1" v:mID="9" v:groupContext="shape" transform="translate(232.599,-381.205)">
+			<title>Åtgärd.16</title>
+			<desc>IDENTIFY</desc>
+			<v:userDefs>
+				<v:ud v:nameU="visVersion" v:prompt="" v:val="VT0(15):26"/>
+			</v:userDefs>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
+			<v:textRect cx="41.6339" cy="466.633" width="83.27" height="29.4803"/>
+			<g id="shadow9-2" v:groupContext="shadow" v:shadowOffsetX="0.345598" v:shadowOffsetY="-1.97279" v:shadowType="1"
+					transform="matrix(1,0,0,1,0.345598,1.97279)" class="st1">
+				<rect x="0" y="451.893" width="83.2677" height="29.4803" rx="8.50394" ry="8.50394" class="st2"/>
+			</g>
+			<rect x="0" y="451.893" width="83.2677" height="29.4803" rx="8.50394" ry="8.50394" class="st3"/>
+			<text x="22.44" y="469.03" class="st4" v:langID="1053"><v:paragraph v:horizAlign="1"/><v:tabList/>IDENTIFY</text>		</g>
+		<g id="shape12-7" v:mID="12" v:groupContext="shape" transform="translate(415.431,-381.973)">
+			<title>Linje med text</title>
+			<desc>IDENTIFY / SPECIFY / PROVENANCE Identity and assess data sour...</desc>
+			<v:userDefs>
+				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
+			</v:userDefs>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
+			<v:textRect cx="102.279" cy="448.571" width="204.56" height="65.6034"/>
+			<path d="M0 415.77 L0 481.37" class="st5"/>
+			<text x="4" y="426.97" class="st6" v:langID="1053"><v:paragraph/><v:tabList/>IDENTIFY / SPECIFY / PROVENANCE<v:newlineChar/><v:paragraph/><tspan
+						x="4" dy="1.2em" class="st7">Identity and assess data source </tspan><tspan class="st7">(</tspan><tspan
+						class="st7">provenance</tspan><tspan class="st7">)<v:newlineChar/></tspan><tspan x="4" dy="1.2em"
+						class="st7">Assess quality of data<v:newlineChar/></tspan><tspan x="4" dy="1.2em" class="st7">Select data </tspan><tspan
+						class="st7">(</tspan><tspan class="st7">include</tspan><tspan class="st7">/</tspan><tspan class="st7">exclude</tspan><tspan
+						class="st7">)<v:newlineChar/></tspan><tspan x="4" dy="1.2em" class="st7">Read and learn<v:newlineChar/></tspan><tspan
+						x="4" dy="1.2em" class="st7">Acquire source data</tspan></text>		</g>
+		<g id="shape13-24" v:mID="13" v:groupContext="shape" transform="translate(232.599,-303.252)">
+			<title>Åtgärd.41</title>
+			<desc>COLLECT</desc>
+			<v:userDefs>
+				<v:ud v:nameU="visVersion" v:prompt="" v:val="VT0(15):26"/>
+			</v:userDefs>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
+			<v:textRect cx="41.6339" cy="466.633" width="83.27" height="29.4803"/>
+			<g id="shadow13-25" v:groupContext="shadow" v:shadowOffsetX="0.345598" v:shadowOffsetY="-1.97279" v:shadowType="1"
+					transform="matrix(1,0,0,1,0.345598,1.97279)" class="st1">
+				<rect x="0" y="451.893" width="83.2677" height="29.4803" rx="8.50394" ry="8.50394" class="st8"/>
+			</g>
+			<rect x="0" y="451.893" width="83.2677" height="29.4803" rx="8.50394" ry="8.50394" class="st9"/>
+			<text x="23.45" y="469.03" class="st4" v:langID="1053"><v:paragraph v:horizAlign="1"/><v:tabList/>COLLECT</text>		</g>
+		<g id="shape14-30" v:mID="14" v:groupContext="shape" v:layerMember="0" transform="translate(267.146,-381.205)">
+			<title>Dynamic connector.43</title>
+			<desc>SPECIFICATION</desc>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
+			<v:textRect cx="7.4619" cy="506.602" width="65.12" height="18.8036"/>
+			<path d="M7.09 481.37 L7.09 522.81" class="st10"/>
+			<rect v:rectContext="textBkgnd" x="-20.0765" y="501.202" width="55.0767" height="10.7998" class="st12"/>
+			<text x="-20.08" y="509.3" class="st13" v:langID="1053"><v:paragraph v:horizAlign="1"/><v:tabList/>SPECIFICATION</text>		</g>
+		<g id="shape15-38" v:mID="15" v:groupContext="shape" transform="translate(415.431,-309.582)">
+			<title>Linje med text.49</title>
+			<desc>COLLECT / EXTRACT Collect source data OCR text Extract digiti...</desc>
+			<v:userDefs>
+				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
+			</v:userDefs>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
+			<v:textRect cx="78.4676" cy="453.371" width="156.94" height="56.0034"/>
+			<path d="M0 425.37 L0 481.37" class="st5"/>
+			<text x="4" y="436.57" class="st6" v:langID="1053"><v:paragraph/><v:tabList/>COLLECT / EXTRACT<v:newlineChar/><tspan
+						x="4" dy="1.2em" class="st7">Collect source data<v:newlineChar/></tspan><tspan x="4" dy="1.2em" class="st7">OCR text<v:newlineChar/></tspan><tspan
+						x="4" dy="1.2em" class="st7">Extract digitized text<v:newlineChar/></tspan><tspan x="4" dy="1.2em"
+						class="st7">Assess quality of digitized text</tspan></text>		</g>
+		<g id="shape20-46" v:mID="20" v:groupContext="shape" transform="translate(268.128,-435.367)">
+			<title>Första nod.56</title>
+			<v:userDefs>
+				<v:ud v:nameU="visVersion" v:prompt="" v:val="VT0(15):26"/>
+			</v:userDefs>
+			<g id="shadow20-47" v:groupContext="shadow" v:shadowOffsetX="0.345598" v:shadowOffsetY="-1.97279" v:shadowType="1"
+					transform="matrix(1,0,0,1,0.345598,1.97279)" class="st1">
+				<ellipse cx="6.10461" cy="475.269" rx="6.10461" ry="6.10461" class="st2"/>
+			</g>
+			<ellipse cx="6.10461" cy="475.269" rx="6.10461" ry="6.10461" class="st14"/>
+		</g>
+		<g id="shape21-51" v:mID="21" v:groupContext="shape" v:layerMember="0" transform="translate(267.146,-435.367)">
+			<title>Dynamic connector.57</title>
+			<path d="M7.09 481.37 L7.09 499.01" class="st10"/>
+		</g>
+		<g id="shape26-56" v:mID="26" v:groupContext="shape" transform="translate(232.599,-231.252)">
+			<title>Åtgärd.64</title>
+			<desc>PREPARE</desc>
+			<v:userDefs>
+				<v:ud v:nameU="visVersion" v:prompt="" v:val="VT0(15):26"/>
+			</v:userDefs>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
+			<v:textRect cx="41.6339" cy="466.633" width="83.27" height="29.4803"/>
+			<g id="shadow26-57" v:groupContext="shadow" v:shadowOffsetX="0.345598" v:shadowOffsetY="-1.97279" v:shadowType="1"
+					transform="matrix(1,0,0,1,0.345598,1.97279)" class="st1">
+				<rect x="0" y="451.893" width="83.2677" height="29.4803" rx="8.50394" ry="8.50394" class="st8"/>
+			</g>
+			<rect x="0" y="451.893" width="83.2677" height="29.4803" rx="8.50394" ry="8.50394" class="st9"/>
+			<text x="23.45" y="469.03" class="st4" v:langID="1053"><v:paragraph v:horizAlign="1"/><v:tabList/>PREPARE</text>		</g>
+		<g id="shape27-62" v:mID="27" v:groupContext="shape" v:layerMember="0" transform="translate(274.233,-303.252)">
+			<title>Dynamic connector.65</title>
+			<desc>TEXT DATA</desc>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
+			<v:textRect cx="-17.9536" cy="498.845" width="50.25" height="18.8036"/>
+			<path d="M0 481.37 L0 486.69 A5.31496 5.31496 0 0 1 -5.31 492 L-11.64 492 A14.1732 14.1732 -180 0 0 -25.82 506.18 L-25.82
+						 516.85" class="st10"/>
+			<rect v:rectContext="textBkgnd" x="-38.0586" y="493.445" width="40.21" height="10.7998" class="st12"/>
+			<text x="-38.06" y="501.55" class="st13" v:langID="1053"><v:paragraph v:horizAlign="1"/><v:tabList/>TEXT DATA</text>		</g>
+		<g id="shape41-69" v:mID="41" v:groupContext="shape" v:layerMember="0" transform="translate(315.867,-395.945)">
+			<title>Dynamic connector</title>
+			<path d="M0 481.37 L99.56 462.54" class="st15"/>
+		</g>
+		<g id="shape42-72" v:mID="42" v:groupContext="shape" v:layerMember="0" transform="translate(415.431,-337.583)">
+			<title>Dynamic connector.42</title>
+			<path d="M0 481.37 L-99.88 507.01" class="st15"/>
+		</g>
+		<g id="shape48-75" v:mID="48" v:groupContext="shape" v:layerMember="0" transform="translate(142.917,-310.501)">
+			<title>Dynamic connector.48</title>
+			<desc>SOURCE DATA</desc>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
+			<v:textRect cx="46.402" cy="473.506" width="62.36" height="18.8036"/>
+			<path d="M0 474.69 L0 474.29 a0.404949 0.404949 0 0 1 0.404949 -0.404949 L82.64 473.88" class="st10"/>
+			<rect v:rectContext="textBkgnd" x="20.2413" y="468.107" width="52.3213" height="10.7998" class="st12"/>
+			<text x="20.24" y="476.21" class="st13" v:langID="1053"><v:paragraph v:horizAlign="1"/><v:tabList/>SOURCE DATA</text>		</g>
+		<g id="shape49-82" v:mID="49" v:groupContext="shape" transform="translate(415.431,-198.791)">
+			<title>Linje med text.49</title>
+			<desc>PREPARE / STRUCTURE / TRANSFORM Identify tokens, sentences, d...</desc>
+			<v:userDefs>
+				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
+			</v:userDefs>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
+			<v:textRect cx="92.6408" cy="434.172" width="185.29" height="94.4033"/>
+			<path d="M0 386.97 L0 481.37" class="st16"/>
+			<text x="4" y="398.17" class="st6" v:langID="1053"><v:paragraph/><v:tabList/>PREPARE / STRUCTURE / TRANSFORM<v:newlineChar/><tspan
+						x="4" dy="1.2em" class="st7">Identify tokens</tspan><tspan class="st7">, </tspan><tspan class="st7">sentences</tspan><tspan
+						class="st7">, </tspan><tspan class="st7">documents<v:newlineChar/></tspan><tspan x="4" dy="1.2em"
+						class="st7">Handle hyphenations<v:newlineChar/></tspan><tspan x="4" dy="1.2em" class="st7">Part</tspan><tspan
+						class="st7">-</tspan><tspan class="st7">of</tspan><tspan class="st7">-</tspan><tspan class="st7">speech tagging </tspan><tspan
+						class="st7">(</tspan><tspan class="st7">PoS</tspan><tspan class="st7">)<v:newlineChar/></tspan><tspan x="4"
+						dy="1.2em" class="st7">Transform to phrases</tspan><tspan class="st7">, </tspan><tspan class="st7">n</tspan><tspan
+						class="st7">-</tspan><tspan class="st7">grams<v:newlineChar/></tspan><tspan x="4" dy="1.2em" class="st7">Filter words by length</tspan><tspan
+						class="st7">, </tspan><tspan class="st7">PoS</tspan><tspan class="st7">, </tspan><tspan class="st7">stopwords</tspan><tspan
+						class="st7">,</tspan><tspan class="st7">...<v:newlineChar/></tspan><tspan x="4" dy="1.2em" class="st7">Normalize </tspan><tspan
+						class="st7">(</tspan><tspan class="st7">lowercase</tspan><tspan class="st7">, </tspan><tspan class="st7">lemma</tspan><tspan
+						class="st7">, </tspan><tspan class="st7">TF</tspan><tspan class="st7">-</tspan><tspan class="st7">IDF</tspan><tspan
+						class="st7">)<v:newlineChar/></tspan><tspan x="4" dy="1.2em" class="st7">Build vocabulary<v:newlineChar/></tspan><tspan
+						x="4" dy="1.2em" class="st7">Create corpus </tspan><tspan class="st7">(</tspan><tspan class="st7">linear text</tspan><tspan
+						class="st7">, </tspan><tspan class="st7">BOW</tspan><tspan class="st7">, </tspan><tspan class="st7">VSM</tspan><tspan
+						class="st7">, </tspan><tspan class="st7">…</tspan><tspan class="st7">)</tspan></text>		</g>
+		<g id="shape50-133" v:mID="50" v:groupContext="shape" v:layerMember="0" transform="translate(415.431,-238.906)">
+			<title>Dynamic connector.50</title>
+			<path d="M0 474.29 L-99.56 474.29" class="st15"/>
+		</g>
+		<g id="shape53-136" v:mID="53" v:groupContext="shape" v:layerMember="0" transform="translate(274.233,-231.252)">
+			<title>Dynamic connector.53</title>
+			<path d="M0 481.37 L0 495.56 A14.1732 14.1732 0 0 1 -14.17 509.74 L-51.71 509.74 A14.1732 14.1732 -180 0 0 -65.88 523.91
+						 L-65.88 535.06" class="st10"/>
+		</g>
+		<g id="shape54-141" v:mID="54" v:groupContext="shape" transform="translate(166.718,-141.041)">
+			<title>Åtgärd.54</title>
+			<desc>DESCRIBE</desc>
+			<v:userDefs>
+				<v:ud v:nameU="visVersion" v:prompt="" v:val="VT0(15):26"/>
+			</v:userDefs>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
+			<v:textRect cx="41.6339" cy="466.633" width="83.27" height="29.4803"/>
+			<g id="shadow54-142" v:groupContext="shadow" v:shadowOffsetX="0.345598" v:shadowOffsetY="-1.97279" v:shadowType="1"
+					transform="matrix(1,0,0,1,0.345598,1.97279)" class="st1">
+				<rect x="0" y="451.893" width="83.2677" height="29.4803" rx="8.50394" ry="8.50394" class="st8"/>
+			</g>
+			<rect x="0" y="451.893" width="83.2677" height="29.4803" rx="8.50394" ry="8.50394" class="st9"/>
+			<text x="20.76" y="469.03" class="st4" v:langID="1053"><v:paragraph v:horizAlign="1"/><v:tabList/>DESCRIBE</text>		</g>
+		<g id="shape55-147" v:mID="55" v:groupContext="shape" transform="translate(415.431,-107.2)">
+			<title>Line with text.49</title>
+			<desc>MODEL / CLASSIFY Classify text (TM, SVM) Model topics, trends...</desc>
+			<v:userDefs>
+				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
+			</v:userDefs>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
+			<v:textRect cx="92.6408" cy="443.772" width="185.29" height="75.2033"/>
+			<path d="M0 406.17 L0 481.37" class="st5"/>
+			<text x="4" y="417.37" class="st6" v:langID="1053"><v:paragraph/><v:tabList/>MODEL / CLASSIFY<v:newlineChar/><tspan
+						x="4" dy="1.2em" class="st7">Classify text </tspan><tspan class="st7">(</tspan><tspan class="st7">TM</tspan><tspan
+						class="st7">, </tspan><tspan class="st7">SVM</tspan><tspan class="st7">)<v:newlineChar/></tspan><tspan
+						x="4" dy="1.2em" class="st7">Model topics</tspan><tspan class="st7">, </tspan><tspan class="st7">trends</tspan><tspan
+						class="st7">, </tspan><tspan class="st7">themes<v:newlineChar/></tspan><tspan x="4" dy="1.2em" class="st7">Model text similarity<v:newlineChar/></tspan><tspan
+						x="4" dy="1.2em" class="st7">Model discourse </tspan><tspan class="st7">(</tspan><tspan class="st7">themes</tspan><tspan
+						class="st7">)<v:newlineChar/></tspan><tspan x="4" dy="1.2em" class="st7">Model </tspan><tspan class="st7">”</tspan><tspan
+						class="st7">meaning</tspan><tspan class="st7">”</tspan><tspan class="st7">, </tspan><tspan class="st7">sentiments</tspan><tspan
+						class="st7">, </tspan><tspan class="st7">opinions<v:newlineChar/></tspan><tspan x="4" dy="1.2em"
+						class="st7">Model entities </tspan><tspan class="st7">(</tspan><tspan class="st7">location</tspan><tspan
+						class="st7">, </tspan><tspan class="st7">time</tspan><tspan class="st7">, </tspan><tspan class="st7">persons</tspan><tspan
+						class="st7">)</tspan></text>		</g>
+		<g id="shape56-183" v:mID="56" v:groupContext="shape" transform="translate(303.96,-141.041)">
+			<title>Åtgärd.56</title>
+			<desc>MODEL</desc>
+			<v:userDefs>
+				<v:ud v:nameU="visVersion" v:prompt="" v:val="VT0(15):26"/>
+			</v:userDefs>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
+			<v:textRect cx="41.6339" cy="466.633" width="83.27" height="29.4803"/>
+			<g id="shadow56-184" v:groupContext="shadow" v:shadowOffsetX="0.345598" v:shadowOffsetY="-1.97279" v:shadowType="1"
+					transform="matrix(1,0,0,1,0.345598,1.97279)" class="st1">
+				<rect x="0" y="451.893" width="83.2677" height="29.4803" rx="8.50394" ry="8.50394" class="st8"/>
+			</g>
+			<rect x="0" y="451.893" width="83.2677" height="29.4803" rx="8.50394" ry="8.50394" class="st9"/>
+			<text x="27.28" y="469.03" class="st4" v:langID="1053"><v:paragraph v:horizAlign="1"/><v:tabList/>MODEL</text>		</g>
+		<g id="shape58-189" v:mID="58" v:groupContext="shape" v:layerMember="0" transform="translate(274.233,-231.252)">
+			<title>Dynamic connector.58</title>
+			<desc>TEXT CORPUS</desc>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
+			<v:textRect cx="-5.68434E-014" cy="491.517" width="60.12" height="18.8036"/>
+			<path d="M0 481.37 L0 496.54 A14.1732 14.1732 -180 0 0 14.17 510.72 L57.19 510.72 A14.1732 14.1732 0 0 1 71.36 524.89
+						 L71.36 535.06" class="st10"/>
+			<rect v:rectContext="textBkgnd" x="-25.0379" y="486.118" width="50.0757" height="10.7998" class="st12"/>
+			<text x="-25.04" y="494.22" class="st13" v:langID="1053"><v:paragraph v:horizAlign="1"/><v:tabList/>TEXT CORPUS</text>		</g>
+		<g id="shape59-196" v:mID="59" v:groupContext="shape" transform="translate(304.846,-32.3201)">
+			<title>Åtgärd.59</title>
+			<desc>ANALYZE</desc>
+			<v:userDefs>
+				<v:ud v:nameU="visVersion" v:prompt="" v:val="VT0(15):26"/>
+			</v:userDefs>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
+			<v:textRect cx="41.6339" cy="466.633" width="83.27" height="29.4803"/>
+			<g id="shadow59-197" v:groupContext="shadow" v:shadowOffsetX="0.345598" v:shadowOffsetY="-1.97279" v:shadowType="1"
+					transform="matrix(1,0,0,1,0.345598,1.97279)" class="st1">
+				<rect x="0" y="451.893" width="83.2677" height="29.4803" rx="8.50394" ry="8.50394" class="st2"/>
+			</g>
+			<rect x="0" y="451.893" width="83.2677" height="29.4803" rx="8.50394" ry="8.50394" class="st3"/>
+			<text x="23.22" y="469.03" class="st4" v:langID="1053"><v:paragraph v:horizAlign="1"/><v:tabList/>ANALYZE</text>		</g>
+		<g id="shape61-202" v:mID="61" v:groupContext="shape" transform="translate(-327.203,306.768) rotate(-90)">
+			<title>Kommentar med sidolinje</title>
+			<desc>DESCRIBE / STATS Metrics (sizes, averages etc.) Pointwise Mut...</desc>
+			<v:userDefs>
+				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
+			</v:userDefs>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
+			<v:textRect cx="42.4017" cy="413.288" width="136.18" height="84.8033" transform="rotate(90)"/>
+			<path d="M-4.08 509.74 L42.4 481.37" class="st15"/>
+			<path d="M0 481.37 L84.8 481.37" class="st15"/>
+			<rect v:rectContext="textBkgnd" x="355.792" y="-80.8013" width="121.581" height="76.7994" transform="rotate(90)"
+					class="st12"/>
+			<text x="392.14" y="-73.6" transform="rotate(90)" class="st6" v:langID="1053"><v:paragraph v:horizAlign="2"/><v:tabList/>DESCRIBE / STATS<v:newlineChar/><tspan
+						x="359.22" dy="1.2em" class="st7">Metrics </tspan><tspan class="st7">(</tspan><tspan class="st7">sizes</tspan><tspan
+						class="st7">, </tspan><tspan class="st7">averages etc</tspan><tspan class="st7">.)<v:newlineChar/></tspan><tspan
+						x="359.6" dy="1.2em" class="st7">Pointwise Mutual Information<v:newlineChar/></tspan><tspan x="357.65"
+						dy="1.2em" class="st7">Top lists </tspan><tspan class="st7">(</tspan><tspan class="st7">common words etc</tspan><tspan
+						class="st7">)<v:newlineChar/></tspan><tspan x="355.79" dy="1.2em" class="st7">Keywords </tspan><tspan
+						class="st7">(</tspan><tspan class="st7">TF</tspan><tspan class="st7">-</tspan><tspan class="st7">IDF model etc</tspan><tspan
+						class="st7">).<v:newlineChar/></tspan><tspan x="384.48" dy="1.2em" class="st7">KWIC</tspan><tspan
+						class="st7">, </tspan><tspan class="st7">concordance</tspan><tspan class="st7">, </tspan><tspan class="st7">...<v:newlineChar/></tspan><tspan
+						x="360.76" dy="1.2em" class="st7">Co</tspan><tspan class="st7">-</tspan><tspan class="st7">occurrances </tspan><tspan
+						class="st7">(</tspan><tspan class="st7">HAL</tspan><tspan class="st7">, </tspan><tspan class="st7">Glove</tspan><tspan
+						class="st7">)<v:newlineChar/></tspan><tspan x="360.41" dy="1.2em" class="st7">Complexity </tspan><tspan
+						class="st7">(</tspan><tspan class="st7">vocabulary size</tspan><tspan class="st7">)</tspan></text>		</g>
+		<g id="shape63-242" v:mID="63" v:groupContext="shape" v:layerMember="0" transform="translate(415.431,-143.205)">
+			<title>Dynamic connector.63</title>
+			<path d="M0 479.78 L-28.2 468.8" class="st15"/>
+		</g>
+		<g id="shape65-245" v:mID="65" v:groupContext="shape" transform="translate(168.093,-32.3201)">
+			<title>Åtgärd.65</title>
+			<desc>VISUALIZE</desc>
+			<v:userDefs>
+				<v:ud v:nameU="visVersion" v:prompt="" v:val="VT0(15):26"/>
+			</v:userDefs>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
+			<v:textRect cx="41.6339" cy="466.633" width="83.27" height="29.4803"/>
+			<g id="shadow65-246" v:groupContext="shadow" v:shadowOffsetX="0.345598" v:shadowOffsetY="-1.97279" v:shadowType="1"
+					transform="matrix(1,0,0,1,0.345598,1.97279)" class="st1">
+				<rect x="0" y="451.893" width="83.2677" height="29.4803" rx="8.50394" ry="8.50394" class="st8"/>
+			</g>
+			<rect x="0" y="451.893" width="83.2677" height="29.4803" rx="8.50394" ry="8.50394" class="st9"/>
+			<text x="19.64" y="469.03" class="st4" v:langID="1053"><v:paragraph v:horizAlign="1"/><v:tabList/>VISUALIZE</text>		</g>
+		<g id="shape67-251" v:mID="67" v:groupContext="shape" v:layerMember="0" transform="translate(275.614,-96.8911)">
+			<title>Dynamic connector.67</title>
+			<path d="M0 481.37 L0 487.3 A5.92696 5.92696 0 0 1 -5.93 493.23 L-54.27 493.23 A11.6184 11.6184 -180 0 0 -65.89 504.85
+						 L-65.89 509.42" class="st10"/>
+		</g>
+		<g id="shape68-256" v:mID="68" v:groupContext="shape" v:layerMember="0" transform="translate(275.614,-96.8911)">
+			<title>Dynamic connector.68</title>
+			<path d="M0 481.37 L0 486.69 A5.31496 5.31496 -180 0 0 5.31 492 L58.64 492 A12.2304 12.2304 0 0 1 70.87 504.23 L70.87
+						 509.42" class="st10"/>
+		</g>
+		<g id="shape69-261" v:mID="69" v:groupContext="shape" transform="translate(240.181,-96.8911)">
+			<title>Gaffelnod</title>
+			<v:userDefs>
+				<v:ud v:nameU="visVersion" v:prompt="" v:val="VT0(15):26"/>
+			</v:userDefs>
+			<g id="shadow69-262" v:groupContext="shadow" v:shadowOffsetX="0.345598" v:shadowOffsetY="-1.97279" v:shadowType="1"
+					transform="matrix(1,0,0,1,0.345598,1.97279)" class="st1">
+				<rect x="0" y="477.224" width="70.8661" height="4.14966" class="st2"/>
+			</g>
+			<rect x="0" y="477.224" width="70.8661" height="4.14966" class="st3"/>
+		</g>
+		<g id="shape70-266" v:mID="70" v:groupContext="shape" v:layerMember="0" transform="translate(208.352,-141.041)">
+			<title>Dynamic connector.70</title>
+			<path d="M0 481.37 L0 486.69 A5.31496 5.31496 -180 0 0 5.31 492 L53.09 492 A14.1732 14.1732 0 0 1 67.26 506.18 L67.26
+						 514.33" class="st10"/>
+		</g>
+		<g id="shape71-271" v:mID="71" v:groupContext="shape" v:layerMember="0" transform="translate(345.594,-141.041)">
+			<title>Dynamic connector.71</title>
+			<path d="M0 481.37 L0 486.69 A5.31496 5.31496 0 0 1 -5.31 492 L-55.81 492 A14.1732 14.1732 -180 0 0 -69.98 506.18 L-69.98
+						 514.33" class="st10"/>
+		</g>
+		<g id="shape72-276" v:mID="72" v:groupContext="shape" v:layerMember="0" transform="translate(304.846,-39.9737)">
+			<title>Dynamic connector.72</title>
+			<path d="M-6.68 474.29 L-7.04 474.29 L-46.45 474.29" class="st17"/>
+		</g>
+		<g id="shape73-284" v:mID="73" v:groupContext="shape" transform="translate(-322.473,391.125) rotate(-90)">
+			<title>Kommentar med sidolinje.73</title>
+			<desc>VISUALIZE Tables, Charts, Maps, Networks</desc>
+			<v:userDefs>
+				<v:ud v:nameU="visVersion" v:val="VT0(15):26"/>
+			</v:userDefs>
+			<v:textBlock v:margins="rect(4,4,4,4)" v:tabSpace="42.5197"/>
+			<v:textRect cx="13.6018" cy="413.288" width="136.18" height="27.2035" transform="rotate(90)"/>
+			<path d="M-28.45 506.38 L13.6 481.37" class="st15"/>
+			<path d="M0 481.37 L27.2 481.37" class="st15"/>
+			<rect v:rectContext="textBkgnd" x="349.851" y="-23.2015" width="127.522" height="19.1997" transform="rotate(90)"
+					class="st12"/>
+			<text x="428.04" y="-16" transform="rotate(90)" class="st6" v:langID="1053"><v:paragraph v:horizAlign="2"/><v:tabList/>VISUALIZE<v:newlineChar/><tspan
+						x="349.85" dy="1.2em" class="st7">Tables</tspan><tspan class="st7">, </tspan><tspan class="st7">Charts</tspan><tspan
+						class="st7">, </tspan><tspan class="st7">Maps</tspan><tspan class="st7">, </tspan><tspan class="st7">Networks</tspan></text>		</g>
+	</g>
+</svg>
