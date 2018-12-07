@@ -28,7 +28,7 @@ def display_topic_quantity(
     progress=utility.noop
 ):
     try:
-        
+        # print(locals())
         progress()
         
         chart_type = config.CHART_TYPE_MAP[chart_type_name]
@@ -36,7 +36,13 @@ def display_topic_quantity(
         period_column = period_group['column']
         
         data = analysis_data.QuantityByTopic.get_treaty_topic_quantity_stat(
-            wti_index, period_group, topic_group, party_group, recode_is_cultural, extra_other_category, target_quantity
+            wti_index,
+            period_group,
+            topic_group,
+            party_group,
+            recode_is_cultural,
+            extra_other_category,
+            target_quantity
         )
         
         if data is None or data.shape[0] == 0:
@@ -70,7 +76,7 @@ def display_topic_quantity(
         
     except Exception as ex:
         logger.error(ex)
-        raise
+        #raise
     finally:
         progress(0)
 
@@ -132,13 +138,13 @@ def display_topic_quantity_groups(
                 progress=progress
             )
 
-    
-
 def display_gui(wti_index, print_args=False):
 
     def lw(width='120px'):
         return widgets.Layout(width=width)
 
+    party_preset_options = wti_index.get_party_preset_options()
+    
     period_group_index_widget = widgets_config.period_group_widget(index_as_value=True)
     topic_group_name_widget = widgets_config.topic_groups_widget(value='7CULTURE')
     # treaty_filter_widget = widgets_config.treaty_filter_widget()
@@ -147,17 +153,18 @@ def display_gui(wti_index, print_args=False):
     chart_type_name_widget = widgets_config.dropdown('Output', config.CHART_TYPE_NAME_OPTIONS, "plot_stacked_bar", layout=lw('200px'))
     plot_style_widget = widgets_config.plot_style_widget()
     parties_widget = widgets_config.parties_widget(options=[ x for x in wti_index.get_countries_list() if x != 'ALL OTHER' ], value=['FRANCE'])
-    party_preset_widget = widgets_config.dropdown('Presets', config.PARTY_PRESET_OPTIONS, None, layout=lw(width='200px'))
+    party_preset_widget = widgets_config.dropdown('Presets', party_preset_options, None, layout=lw(width='200px'))
     chart_per_category_widget = widgets_config.toggle('Chart per Qty', False,
         tooltip='Display one chart per selected quantity category', layout=lw())
     extra_other_category_widget = widgets_config.toggle('Add OTHER topics', False, layout=lw())
-    target_quantity_widget = widgets_config.dropdown('Quantity', ['topic', 'party', 'region'], 'topic', layout=lw(width='200px'))
+    target_quantity_widget = widgets_config.dropdown('Quantity', ['topic', 'party', 'source', 'continent', 'group'], 'topic', layout=lw(width='200px'))
     progress_widget = widgets_config.progress(0, 5, 1, 0, layout=lw())
 
     def stepper(step=None):
         progress_widget.value = progress_widget.value + 1 if step is None else step
         
     def on_party_preset_change(change):  # pylint: disable=W0613
+        
         if party_preset_widget.value is None:
             return
 
@@ -166,8 +173,8 @@ def display_gui(wti_index, print_args=False):
         else:
             parties_widget.value = party_preset_widget.value
             
-        if top_n_parties_widget.value > 0:
-            top_n_parties_widget.value = 0
+        #if top_n_parties_widget.value > 0:
+        #    top_n_parties_widget.value = 0
 
     party_preset_widget.observe(on_party_preset_change, names='value')
     

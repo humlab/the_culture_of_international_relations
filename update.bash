@@ -29,7 +29,7 @@ if [ ! -d ${target_dir} ]; then
   sudo -u $target_username -g $target_group mkdir ${target_dir}
 fi
 
-declare -a notebook_dirs=("1_quantitative_analysis" "2_network_analysis" "3_text_analysis" "3_text_analysis/3.1_topic-model" "common" "common/network")
+declare -a notebook_dirs=("1_quantitative_analysis" "2_network_analysis" "3_text_analysis" "common" "common/network")
 
 for i in "${notebook_dirs[@]}"
 do
@@ -39,5 +39,17 @@ do
   rm -f ${target_dir}/${i}/*.*py*
   sudo -u $target_username -g $target_group cp ${source_dir}/${i}/*.*py* ${target_dir}/${i}/
 done
+
+declare -a data_dirs=("data" "3_text_analysis/images")
+
+for i in "${data_dirs[@]}"
+do
+  if [ ! -d ${target_dir}/"$i" ]; then
+    sudo -u $target_username -g $target_group mkdir ${target_dir}/"$i"
+  fi
+  rm -f ${target_dir}/${i}/*.*
+  sudo -u $target_username -g $target_group cp ${source_dir}/${i}/*.* ${target_dir}/${i}/
+done
+
 
 sudo -u $target_username -g $target_group cp ${source_dir}/*.*py* ${target_dir}/

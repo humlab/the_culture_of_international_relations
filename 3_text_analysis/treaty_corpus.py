@@ -53,11 +53,12 @@ class CompressedFileReader:
         self.iterator = None
 
     def __iter__(self):
+        self.iterator = None
         return self
     
     def __next__(self):
         if self.iterator is None:
-            self.iterator = self.file_iterator()
+            self.iterator = self.get_iterator()
         return next(self.iterator)
     
     def get_file(self, filename):
@@ -68,7 +69,7 @@ class CompressedFileReader:
         with zipfile.ZipFile(self.archive_name) as zip_file:
             yield os.path.basename(filename), self._read_content(zip_file, filename)
                     
-    def file_iterator(self):
+    def get_iterator(self):
         with zipfile.ZipFile(self.archive_name) as zip_file:
             for filename in self.filenames:
                 yield os.path.basename(filename), self._read_content(zip_file, filename)
@@ -99,7 +100,7 @@ class TreatyCompressedFileReader(CompressedFileReader):
 class TreatyCorpus(TextCorpus):
 
     def __init__(self,
-                 content_iterator,
+                 stream,
                  dictionary=None,
                  metadata=False,
                  character_filters=None,
@@ -107,7 +108,7 @@ class TreatyCorpus(TextCorpus):
                  token_filters=None,
                  bigram_transform=False
     ):
-        self.content_iterator = content_iterator
+        self.stream = stream
         self.filenames = None
         self.documents = None
         self.length = None
@@ -149,13 +150,19 @@ class TreatyCorpus(TextCorpus):
         -----
         After generator end - initialize self.length attribute.
         """
-        filenames = []
-        for filename, content in self.content_iterator:
+        
+        document_infos = []
+        for treaty_id, language, filename, content in self.stream:
             yield content
-            filenames.append(filename)
-        self.length = len(filenames)
-        self.filenames = filenames
-        self.documents = self._compile_documents()
+            document_infos.append({
+                'document_name': filename,
+                'treaty_id': treaty_id,
+                'language': language
+            })
+            
+        self.length = len(document_infos)
+        self.documents = pd.DataFrame(document_infos)
+        #self.filenames = list(self.documents.document_name)
                  
     def get_texts(self):
         '''
@@ -187,7 +194,7 @@ class TreatyCorpus(TextCorpus):
 
             return tokens
 
-    def get_document_info(self, filename):
+    def __get_document_info(self, filename):
         parts = TREATY_FILENAME.match(filename)
         if not parts:
             return {
@@ -201,13 +208,12 @@ class TreatyCorpus(TextCorpus):
             'language': parts.groups(0)[1]
         }
 
-    def _compile_documents(self):
+    def ___compile_documents(self):
         
         document_data = map(self.get_document_info, self.filenames)
-        
+
         documents = pd.DataFrame(list(document_data))
         documents.index.names = ['document_id']
-        
         dupes = documents.groupby(['treaty_id', 'language']).size().loc[lambda x: x > 1]
         
         if len(dupes) > 0:

@@ -140,6 +140,7 @@ class TreatyState:
         self._treaties = None
         self._stacked_treaties = None
         self._get_countries_list = None
+        self._party_preset_options = None
 
     def check_party(self):
         # party1 = self.treaties[~self.treaties.group1.isin([0, 8])].party1.unique().tolist()
@@ -177,9 +178,11 @@ class TreatyState:
 
     def _read_data(self):
         data = {}
+        na_values = ['#N/A','N/A', 'NULL', 'NaN', '-NaN']
         for (filename, key, _) in self.csv_files:
             path = os.path.join(self.data_folder, filename)
-            data[key] = pd.read_csv(path, sep='\t', low_memory=False)
+            # data[key] = pd.read_csv(path, sep='\t', low_memory=False, na_filter=False)
+            data[key] = pd.read_csv(path, sep='\t', low_memory=False, keep_default_na=False, na_values=None)
         return data
 
     def get_treaty_period_group_categories(self, period_group, treaties=None):
@@ -311,7 +314,11 @@ class TreatyState:
 
     def get_continents(self):
         '''Returns continent reference data'''
-        df = self.data['continent'].drop(['Unnamed: 0'], axis=1).set_index('country_code2')
+        df = self.data['continent'].set_index('country_code2')
+        if 'Unnamed: 0' in df.columns:
+            df = df.drop(['Unnamed: 0'], axis=1)
+        name_map = { 'AS': 'ASIA', 'AF': 'AFRICA', 'EU': 'EUROPA', 'SA': 'SOUTH AMERICA', 'OC': 'OCEANIA', 'NA': 'NORTH AMERICA' }
+        df['continent'] = df.continent_code.apply(lambda x: name_map.get(x, x))
         return df
 
     def get_groups(self):
@@ -559,6 +566,25 @@ class TreatyState:
             .rename(columns={0: 'language'})
         return treaty_langs
 
+    def get_continent_states(self):
+        df = self.parties[~self.parties.group_no.isin([1, 8])]
+        df = df[['continent']].groupby('continent').apply(lambda x: list(x.index))
+        return df
+    
+    def get_wti_group_states(self):
+        df = self.parties[~self.parties.group_no.isin([1, 8])]
+        df = df[['group_name']].groupby('group_name').apply(lambda x: list(x.index))
+        return df
+    
+    def get_party_preset_options(self):
+        if self._party_preset_options is None:
+            options = [  ]
+            options += [ (x, y) for x,y in config.PARTY_PRESET_OPTIONS.items() ]
+            options += [ (x, y) for x,y in self.get_continent_states().to_dict().items() ]
+            options += [ ('WTI:' + x, y) for x,y in self.get_wti_group_states().to_dict().items() ]
+            options = sorted(options, key=lambda x: x[0])
+            self._party_preset_options = options
+        return self._party_preset_options
 
 def load_wti_index(data_folder, skip_columns=default_treaties_skip_columns, period_groups=None):
     try:

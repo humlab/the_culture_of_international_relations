@@ -128,7 +128,9 @@ def display_gui(wti_index, print_args=False):
             periods = list(itertools.chain(*periods))
 
         return min(periods), max(periods)
-    
+
+    party_preset_options = wti_index.get_party_preset_options()
+
     period_group_index_widget = widgets_config.period_group_widget(index_as_value=True)
 
     min_year, max_year = period_group_window(period_group_index_widget.value)
@@ -141,7 +143,7 @@ def display_gui(wti_index, print_args=False):
     
     plot_style_widget = widgets_config.plot_style_widget()
     top_n_parties_widget = widgets_config.slider('Top #', 0, 10, 0, continuous_update=False, layout=lw(width='200px'))
-    party_preset_widget = widgets_config.dropdown('Presets', config.PARTY_PRESET_OPTIONS, None, layout=lw(width='200px'))
+    party_preset_widget = widgets_config.dropdown('Presets', party_preset_options, None, layout=lw(width='200px'))
     parties_widget = widgets_config.parties_widget(options=wti_index.get_countries_list(excludes=['ALL', 'ALL OTHER']), value=['FRANCE'], rows=8,)
     treaty_filter_widget = widgets_config.dropdown('Filter', config.TREATY_FILTER_OPTIONS, 'is_cultural', layout=lw(width='150px'))
     extra_category_widget = widgets_config.dropdown('Include', OTHER_CATEGORY_OPTIONS, '', layout=lw(width='150px'))
