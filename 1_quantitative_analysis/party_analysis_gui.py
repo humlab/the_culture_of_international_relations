@@ -106,7 +106,7 @@ def display_quantity_by_party(
 
     except Exception as ex:
         logger.error(ex)
-        raise
+        #raise
     finally:
         progress(0)
 

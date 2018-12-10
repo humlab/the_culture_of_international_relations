@@ -41,6 +41,13 @@ def progress(min, max, step, value, **kwargs):  # pylint: disable=W0613, W0622
 def itext(min, max, value, **kwargs):  # pylint: disable=W0613, W0622
     return widgets.BoundedIntText(**kwargser(locals()))
 
+def wrap_id_text(dom_id, value=''):
+    value = "<span class='{}'>{}</span>".format(dom_id, value) if dom_id is not None else value
+    return value
+
+def text(dom_id=None, value=''):
+    return widgets.HTML(value=wrap_id_text(dom_id, value), placeholder='', description='')
+
 def button(description):
     return widgets.Button(**kwargser(locals()))
 
@@ -172,3 +179,10 @@ def recode_7corr_widget(**kwopts):
 #         value=False
 #     )
 #     return widgets.ToggleButton(**extend(default_opts, kwopts))
+
+def increment_button(target_control, max_value, label='>>', increment=1):
+
+    def f(_):
+        target_control.value = (target_control.value + increment) % max_value
+
+    return widgets.Button(description=label, callback=f)

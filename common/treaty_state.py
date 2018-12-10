@@ -567,12 +567,14 @@ class TreatyState:
         return treaty_langs
 
     def get_continent_states(self):
-        df = self.parties[~self.parties.group_no.isin([1, 8])]
+        df = self.parties
+        df = df[~df.continent.isna()]
         df = df[['continent']].groupby('continent').apply(lambda x: list(x.index))
         return df
     
     def get_wti_group_states(self):
-        df = self.parties[~self.parties.group_no.isin([1, 8])]
+        df = self.parties
+        df = df[~df.group_no.isin([1, 8])]
         df = df[['group_name']].groupby('group_name').apply(lambda x: list(x.index))
         return df
     
@@ -585,16 +587,16 @@ class TreatyState:
             options = sorted(options, key=lambda x: x[0])
             self._party_preset_options = options
         return self._party_preset_options
-
+    
 def load_wti_index(data_folder, skip_columns=default_treaties_skip_columns, period_groups=None):
     try:
         period_groups = period_groups or config.DEFAULT_PERIOD_GROUPS
         state = TreatyState(data_folder, skip_columns, period_groups)
-        logger.info("Data loaded!")
+        logger.info("WTI index loaded!")
         return state
     except Exception as ex:
         logger.error(ex)
-        raise
+        #raise
         logger.info('Load failed! Have you run setup cell above?')
         return None
 

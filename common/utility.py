@@ -26,6 +26,13 @@ def remove_snake_case(snake_str):
 def noop(*args):  # pylint: disable=W0613
     pass
 
+def isint(s):
+    try:
+        int(s)
+        return True
+    except:
+        return False
+    
 def filter_dict(d, keys=None, filter_out=False):
     keys = set(d.keys()) - set(keys or []) if filter_out else (keys or [])
     return {
@@ -113,6 +120,14 @@ def filter_kwargs(f, args):
         return { k: args[k] for k in args.keys() if k in inspect.getargspec(f).args }
     except:  # pylint: disable=W0702
         return args
+    
+import string
+
+VALID_CHARS = "-_.() " + string.ascii_letters + string.digits
+
+def filename_whitelist(filename):
+    filename = ''.join(x for x in filename if x in VALID_CHARS)
+    return filename
 
 def cpif_deprecated(source, target, name):
     logger.debug('use of cpif is deprecated')
@@ -166,6 +181,10 @@ def path_add_timestamp(path, format="%Y%m%d%H%M"):
     suffix = '_{}'.format(time.strftime("%Y%m%d%H%M"))
     return path_add_suffix(path, suffix) 
 
+def path_add_date(path, format="%Y%m%d"):
+    suffix = '_{}'.format(time.strftime(format))
+    return path_add_suffix(path, suffix) 
+
 import zipfile
 
 def zip_get_filenames(zip_filename, extension='.txt'):
@@ -175,3 +194,32 @@ def zip_get_filenames(zip_filename, extension='.txt'):
 def zip_get_text(zip_filename, filename):
     with zipfile.ZipFile(zip_filename, mode='r') as zf:
         return zf.read(filename).decode(encoding='utf-8')
+    
+def slim_title(x):
+    try:
+        m = re.match('.*\((.*)\)$', x).groups()
+        if m is not None and len(m) > 0:
+            return m[0]
+        return ' '.join(x.split(' ')[:3]) + '...'
+    except:
+        return x
+    
+def complete_value_range(values, typef=str):
+    """ Create a complete range from min/max range in case values are missing
+
+    Parameters
+    ----------
+    str_values : list
+        List of values to fill 
+
+    Returns
+    -------
+    """
+    
+    if len(values) == 0:
+        return []
+    
+    values = list(map(int, values))
+    values = range(min(values), max(values) + 1)
+    
+    return list(map(typef, values))

@@ -1,3 +1,11 @@
+import re
+import numpy as np
+
+LANGUAGE_MAP = { 'en': 'english', 'fr': 'french', 'it': 'other', 'de': 'other' }
+
+AGGREGATES = { 'mean': np.mean, 'sum': np.sum, 'max': np.max, 'std': np.std }
+
+HYPHEN_REGEXP = re.compile(r'\b(\w+)-\s*\r?\n\s*(\w+)\b', re.UNICODE)
 
 DEFAULT_PERIOD_GROUPS = [
     {
