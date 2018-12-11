@@ -5,6 +5,7 @@ import common.utility as utility
 import logging
 import textacy
 import logging
+import collections
 
 from spacy.language import Language
 
@@ -127,4 +128,23 @@ def get_corpus_documents(corpus):
     df['lang'] = df.filename.str.extract(r'\w{4,6}\_(\w\w)')  #.apply(lambda x: x.split('_')[1][:2])
     return df
 
-    
+
+POS_TO_COUNT = {
+    'SYM': 0, 'PART': 0, 'ADV': 0, 'NOUN': 0, 'CCONJ': 0, 'ADJ': 0, 'DET': 0, 'ADP': 0, 'INTJ': 0, 'VERB': 0, 'NUM': 0, 'PRON': 0, 'PROPN': 0
+}
+
+POS_NAMES = list(sorted(POS_TO_COUNT.keys()))
+
+def _get_pos_statistics(doc):
+    pos_iter = ( x.pos_ for x in doc if x.pos not in [96, 0, 100] )
+    pos_counts = dict(collections.Counter(pos_iter))
+    stats = utility.extend(dict(POS_TO_COUNT), pos_counts)
+    return stats
+
+def get_corpus_documents(corpus):
+    metadata = [ utility.extend({}, doc.metadata, _get_pos_statistics(doc)) for doc in corpus ]
+    df = pd.DataFrame(metadata)[['treaty_id', 'filename', 'signed_year', 'party1', 'party2', 'topic1', 'is_cultural']+POS_NAMES]
+    df['title'] = df.treaty_id
+    df['lang'] = df.filename.str.extract(r'\w{4,6}\_(\w\w)')  #.apply(lambda x: x.split('_')[1][:2])
+    df['words'] = df[POS_NAMES].apply(sum, axis=1)
+    return df

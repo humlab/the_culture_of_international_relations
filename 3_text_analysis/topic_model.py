@@ -1,5 +1,6 @@
 import types
 import textacy
+import pandas as pd
 from gensim import corpora, models, matutils
 
 import common.utility as utility
@@ -101,3 +102,41 @@ def load_model(filename):
     with open(filename, 'rb') as f:
         data = pickle.load(f)
     return data
+
+def compute_topic_proportions(document_topic_weights, doc_length_series):
+
+    '''
+    Topic proportions are computed in the same as in LDAvis.
+
+    Computes topic proportions over entire corpus.
+    The document topic weight (pivot) matrice is multiplies by the length of each document
+      i.e. each weight are multiplies ny the document's length.
+    The topic frequency is then computed by summing up all values over each topic
+    This value i then normalized by total sum of matrice
+
+    theta matrix: with each row containing the probability distribution
+      over topics for a document, with as many rows as there are documents in the
+      corpus, and as many columns as there are topics in the model.
+
+    doc_length integer vector containing token count for each document in the corpus
+
+    '''
+    # compute counts of tokens across K topics (length-K vector):
+    # (this determines the areas of the default topic circles when no term is highlighted)
+    # topic.frequency <- colSums(theta * doc.length)
+    # topic.proportion <- topic.frequency/sum(topic.frequency)
+
+    theta = pd.pivot_table(
+        document_topic_weights,
+        values='weight',
+        index=['document_id'],
+        columns=['topic_id']
+    ) #.set_index('document_id')
+
+    theta_mult_doc_length = theta.mul(doc_length_series.words, axis=0)
+
+    topic_frequency = theta_mult_doc_length.sum()
+    topic_proportion = topic_frequency / topic_frequency.sum()
+
+    return topic_proportion
+    
