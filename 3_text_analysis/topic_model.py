@@ -1,14 +1,25 @@
 import types
 import textacy
 import pandas as pd
-from gensim import corpora, models, matutils
+import gensim
 
 import common.utility as utility
 import textacy_corpus_utility as textacy_utility
 import topic_model_utility
-
+import mallet_service
+    
 # OBS OBS! https://scikit-learn.org/stable/auto_examples/applications/plot_topics_extraction_with_nmf_lda.html
 DEFAULT_VECTORIZE_PARAMS = dict(tf_type='linear', apply_idf=False, idf_type='smooth', norm='l2', min_df=1, max_df=0.95)
+
+# FIXME: Bug somewhere...
+def n_gram_detector(doc_iter, n_gram_size=2, min_count=5, threshold=100):
+    for n_span in range(2, n_gram_size+1):
+        print('Applying {}_gram detector'.format(n_span))
+        n_grams = gensim.models.Phrases(doc_iter(), min_count=min_count, threshold=threshold)
+        ngram_modifier = gensim.models.phrases.Phraser(n_grams)
+        ngram_doc_iter = lambda: ( ngram_modifier[doc] for doc in doc_iter() )
+        doc_iter = ngram_doc_iter
+    return doc_iter
 
 def compute(corpus, tick=utility.noop, method='sklearn_lda', vec_args=None, term_args=None, tm_args=None, **args):
     
@@ -18,6 +29,9 @@ def compute(corpus, tick=utility.noop, method='sklearn_lda', vec_args=None, term
     terms_iter = lambda: (textacy_utility.textacy_filter_terms(doc, term_args) for doc in corpus)
     tick()
     
+    if False:
+        terms_iter = n_gram_detector(terms_iter)
+            
     vectorizer = textacy.Vectorizer(**vec_args)
     doc_term_matrix = vectorizer.fit_transform(terms_iter())
 
@@ -29,19 +43,19 @@ def compute(corpus, tick=utility.noop, method='sklearn_lda', vec_args=None, term
         doc_topic_matrix = tm_model.transform(doc_term_matrix)
         tick()
         tm_id2word = vectorizer.id_to_term
-        tm_corpus = matutils.Sparse2Corpus(doc_term_matrix, documents_columns=False)
+        tm_corpus = gensim.matutils.Sparse2Corpus(doc_term_matrix, documents_columns=False)
         compiled_data = None # FIXME
         
     elif method.startswith('gensim_'):
         
         algorithm = method.split('_')[1].upper()
         doc_topic_matrix = None # ?
-        tm_id2word = corpora.Dictionary(terms_iter())
+        tm_id2word = gensim.corpora.Dictionary(terms_iter())
         tm_corpus = [ tm_id2word.doc2bow(text) for text in terms_iter() ]
         
         algorithms = {
             'LSI': {
-                'engine': models.LsiModel,
+                'engine': gensim.models.LsiModel,
                 'options': {
                     'corpus': tm_corpus, 
                     'num_topics':  tm_args.get('n_topics', 0),
@@ -51,7 +65,7 @@ def compute(corpus, tick=utility.noop, method='sklearn_lda', vec_args=None, term
                 }
             },
             'LDA': {
-                'engine': models.LdaModel,
+                'engine': gensim.models.LdaModel,
                 'options': {
                     'corpus': tm_corpus, 
                     'num_topics':  tm_args.get('n_topics', 0),
@@ -60,8 +74,25 @@ def compute(corpus, tick=utility.noop, method='sklearn_lda', vec_args=None, term
                     'passes': 20,
                     'alpha': 'auto'
                 }
-            }
+            },
+            'MALLETLDA': {
+                'engine': mallet_service.LdaMalletService,
+                'options': {
+                    'corpus': tm_corpus, 
+                    'id2word':  tm_id2word,
+                    'default_mallet_home': '/usr/local/share/mallet-2.0.8/',
+                    
+                    'num_topics':  tm_args.get('n_topics', 0),
+                    'iterations': tm_args.get('max_iter', 0),
+                    'passes': 20,
+                    
+                    'prefix': './data/',
+                    'workers': 4,
+                    'optimize_interval': 10
+                }
+            },
         }
+    
         tm_model = algorithms[algorithm]['engine'](**algorithms[algorithm]['options'])
         documents = textacy_utility.get_corpus_documents(corpus)
         compiled_data = topic_model_utility.compile_metadata(tm_model, tm_corpus, tm_id2word, documents)

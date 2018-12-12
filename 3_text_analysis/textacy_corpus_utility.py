@@ -8,6 +8,7 @@ import logging
 import collections
 
 from spacy.language import Language
+from spacy import attrs
 
 import treaty_corpus
 
@@ -45,20 +46,18 @@ DEFAULT_TERM_PARAMS = dict(
     kwargs=dict(filter_stops=True, filter_punct=True, filter_nums=True, min_freq=1, drop_determiners=True, include_pos=('NOUN', 'PROPN', ))
 )
 
-FIXED_STOPWORDS = []
-
 def textacy_filter_terms(doc, term_args, chunk_size=None, min_length=2):
     
     kwargs = utility.extend({}, DEFAULT_TERM_PARAMS['kwargs'], term_args['kwargs'])
     args = utility.extend({}, DEFAULT_TERM_PARAMS['args'], term_args['args'])
-    
+    extra_stop_words = set(term_args.get('extra_stop_words', None) or [])
     terms = (x for x in doc.to_terms_list(
         args['ngrams'],
         args['named_entities'],
         args['normalize'],
         args['as_strings'],
         **kwargs
-    ) if len(x) >= min_length and x not in FIXED_STOPWORDS)
+    ) if len(x) >= min_length and x not in extra_stop_words)
     return terms
 
 def get_treaty_doc(corpus, treaty_id):
@@ -148,3 +147,39 @@ def get_corpus_documents(corpus):
     df['lang'] = df.filename.str.extract(r'\w{4,6}\_(\w\w)')  #.apply(lambda x: x.split('_')[1][:2])
     df['words'] = df[POS_NAMES].apply(sum, axis=1)
     return df
+
+def textacy_doc_to_bow(doc, target='lemma', weighting='count', as_strings=False, include=None):
+
+    spacy_doc = doc.spacy_doc
+    
+    weighing_keys = { 'count', 'freq' }
+    target_keys = { 'lemma': attrs.LEMMA, 'lower': attrs.LOWER, 'orth': attrs.ORTH }
+    
+    default_exclude = lambda x: x.is_stop or x.is_punct or x.is_space
+    exclude = default_exclude if include is None else lambda x: default_exclude(x) or not include(x)
+    
+    assert weighting in weighing_keys
+    assert target in target_keys
+
+    target_weights = spacy_doc.count_by(target_keys[target], exclude=exclude)
+    
+    if weighting == 'freq':
+        n_tokens = sum(target_weights.values())
+        target_weights = {id_: weight / n_tokens for id_, weight in target_weights.items()}
+
+    if as_strings:
+        bow = { doc.spacy_stringstore[word_id]: count for word_id, count in target_weights.items() }
+    else:
+        bow = { word_id: count for word_id, count in target_weights.items() }
+        
+    return bow
+
+def get_most_frequent_words(corpus, n_top, normalize='lemma', include_pos=None):
+    include_pos = include_pos or [ 'VERB', 'NOUN', 'PROPN' ]
+    include = lambda x: x.pos_ in include_pos
+    word_counts = collections.Counter()
+    for doc in corpus:
+        bow = textacy_doc_to_bow(doc, target=normalize, weighting='count', as_strings=True, include=include)
+        word_counts.update(bow)
+    return word_counts.most_common(n_top)
+
