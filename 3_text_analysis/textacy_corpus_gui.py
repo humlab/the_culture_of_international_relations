@@ -109,11 +109,11 @@ def display_corpus_load_gui(data_folder, wti_index, container):
         language=widgets_config.dropdown(description='Language', options=language_options, value='en', layout=lw('180px')),
         period_group=widgets_config.dropdown('Period', period_group_options, 'years_1945-1972', disabled=True, layout=lw('180px')),
 
-        merge_entities=widgets_config.toggle('Merge NER', True, icon='', layout=lw('100px')),
+        merge_entities=widgets_config.toggle('Merge NER', False, icon='', layout=lw('100px')),
         overwrite=widgets_config.toggle('Force', False, icon='', layout=lw('100px'), tooltip="Force generation of new corpus (even if exists)"),
         
         compute_pos=widgets_config.toggle('POS', True, icon='', layout=lw('100px'), disabled=True, tooltip="Enable Part-of-Speech tagging"),
-        compute_ner=widgets_config.toggle('NER', False, icon='', layout=lw('100px'), disabled=False, tooltip="Enable NER tagging"),
+        compute_ner=widgets_config.toggle('NER', False, icon='', layout=lw('100px'), disabled=True, tooltip="Enable NER tagging"),
         compute_dep=widgets_config.toggle('DEP', False, icon='', layout=lw('100px'), disabled=True, tooltip="Enable dependency parsing"),
         
         compute=widgets.Button(description='Compute', layout=lw('100px'))

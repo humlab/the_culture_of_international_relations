@@ -8,7 +8,10 @@ import topic_model
 import textacy_corpus_utility as textacy_utility
 
 logger = utility.getLogger('corpus_text_analysis')
-    
+
+gensim_logger = logging.getLogger('gensim')
+gensim_logger.setLevel(logging.WARNING)
+
 def compute_topic_model(corpus, gui, *args):
 
     def tick(x=None):
@@ -17,55 +20,96 @@ def compute_topic_model(corpus, gui, *args):
     tick(1)
     gui.output.clear_output()
 
-    with gui.output:
-        vec_args = dict(apply_idf=gui.apply_idf.value)
-        term_args = dict(
-            args=dict(
-                ngrams=gui.ngrams.value,
-                named_entities=gui.named_entities.value,
-                normalize=gui.normalize.value,
-                as_strings=True
-            ),
-            kwargs=dict(
-                filter_nums=gui.filter_nums.value,
-                drop_determiners=gui.drop_determiners.value,
-                min_freq=gui.min_freq.value,
-                include_pos=gui.include_pos.value,
-                filter_stops=gui.filter_stops.value,
-                filter_punct=True
-            ),
-            extra_stop_words=gui.stop_words.value
-        )
-        tm_args = dict(
-            n_topics=gui.n_topics.value,
-            max_iter=gui.max_iter.value,
-            learning_method='online', 
-            n_jobs=1
-        )
-        method = gui.method.value
-        gui.model = topic_model.compute(
-            corpus=corpus,
-            tick=tick,
-            method=method,
-            vec_args=vec_args,
-            term_args=term_args,
-            tm_args=tm_args
-        )
+    vec_args = dict(apply_idf=gui.apply_idf.value)
+    term_args = dict(
+        args=dict(
+            ngrams=gui.ngrams.value,
+            named_entities=gui.named_entities.value,
+            normalize=gui.normalize.value,
+            as_strings=True
+        ),
+        kwargs=dict(
+            filter_nums=gui.filter_nums.value,
+            drop_determiners=gui.drop_determiners.value,
+            min_freq=gui.min_freq.value,
+            include_pos=gui.include_pos.value,
+            filter_stops=gui.filter_stops.value,
+            filter_punct=True
+        ),
+        extra_stop_words=gui.stop_words.value
+    )
+    tm_args = dict(
+        n_topics=gui.n_topics.value,
+        max_iter=gui.max_iter.value,
+        learning_method='online', 
+        n_jobs=1
+    )
+    method = gui.method.value
     
-    gui.output.clear_output()
-    with gui.output:
-        topics = topic_model_utility.get_lda_topics(gui.model.tm_model, n_tokens=20)
-        display(topics)
+    n_topics = gui.n_topics.value
+    n_topic_window = 0
+    gui.payload = { 'models': [] }
+    
+    for x_topics in range(max(n_topics - n_topic_window, 2), n_topics + n_topic_window + 1):
         
-def display_topic_model_gui(corpus, tagset):
+        with gui.output:
+
+            logger.info('Computing model with {} topics...'.format(x_topics))
+            gui.spinner.layout.visibility = 'visible'
+            tm_args['n_topics'] = x_topics
+            
+            candidate_model = topic_model.compute(corpus=corpus, tick=tick, method=method, vec_args=vec_args, term_args=term_args, tm_args=tm_args)
+            
+            gui.payload['models'].append(candidate_model)
+
+            if x_topics == n_topics:
+                gui.model = candidate_model
+
+            logger.info('#topics: {}, coherence_score {} perplexity {}'.format(x_topics, candidate_model.coherence_score, candidate_model.perplexity_score))
+            gui.spinner.layout.visibility = 'hidden'
+
+        gui.output.clear_output()
+        
+        logger.info('#topics: {}, coherence_score {} perplexity {}'.format(n_topics, gui.model.coherence_score, gui.model.perplexity_score))
+        
+    with gui.output:
+        topics = topic_model_utility.get_topics_unstacked(gui.model.tm_model, n_tokens=20, id2term=gui.model.tm_id2term)
+        display(topics)
     
+    if n_topic_window > 0:
+        
+        models = gui.payload['models']
+        df = pd.DataFrame([ {
+            'n_topics': int(model.tm_model.num_topics),
+            'perplexity_score': model.perplexity_score,
+            'coherence_score': model.coherence_score
+          } for model in models ])
+        df['n_topics'] = df.n_topics.astype(int)
+        df = df.set_index('n_topics')
+        df.to_excel(utility.path_add_timestamp('perplexity.xlsx'))
+        df['perplexity_score'].plot.line()
+
+def spinner_widget(filename="images/spinner-02.gif", width=40, height=40):
+    with open(filename, "rb") as image_file:
+        image = image_file.read()
+    return widgets.Image(value=image, format='gif', width=width, height=height, layout={'visibility': 'hidden'})
+
+def display_topic_model_gui(corpus, tagset):
+
     pos_options = [ x for x in tagset.POS.unique() if x not in ['PUNCT', '', 'DET', 'X', 'SPACE', 'PART', 'CONJ', 'SYM', 'INTJ', 'PRON']]
-    engine_options = { 'MALLET LDA': 'gensim_malletlda', 'gensim LDA': 'gensim_lda', 'gensim LSI': 'gensim_lsi' } #, 'sklearn_lda': 'sklearn_lda'}
+    engine_options = [
+        ('MALLET LDA', 'gensim_malletlda'),
+        ('gensim LDA', 'gensim_lda'),
+        ('gensim LSI', 'gensim_lsi'),
+        ('scikit LDA', 'sklearn_lda'),
+        ('scikit NMF', 'sklearn_nmf'),
+        ('scikit LSA', 'sklearn_lsa')        
+    ]
     normalize_options = { 'None': False, 'Use lemma': 'lemma', 'Lowercase': 'lower'}
     ngrams_options = { '1': [1], '1, 2': [1, 2], '1,2,3': [1, 2, 3] }
     default_include_pos = [ 'NOUN', 'PROPN' ]
     frequent_words = [ x[0] for x in textacy_utility.get_most_frequent_words(corpus, 100, normalize='lemma', include_pos=default_include_pos) ]
-    
+    named_entities_disabled = len(corpus) == 0 or len(corpus[0].spacy_doc.ents) == 0
     gui = types.SimpleNamespace(
         progress=widgets.IntProgress(value=0, min=0, max=5, step=1, description='', layout=widgets.Layout(width='90%')),
         n_topics=widgets.IntSlider(description='#topics', min=5, max=50, value=20, step=1, layout=widgets.Layout(width='240px')),
@@ -75,16 +119,18 @@ def display_topic_model_gui(corpus, tagset):
         normalize=widgets.Dropdown(description='Normalize', options=normalize_options, value='lemma', layout=widgets.Layout(width='200px')),
         filter_stops=widgets.ToggleButton(value=True, description='Remove stopword',  tooltip='Filter out stopwords', icon='check'),
         filter_nums=widgets.ToggleButton(value=True, description='Remove nums',  tooltip='Filter out stopwords', icon='check'),
-        named_entities=widgets.ToggleButton(value=False, description='Merge entities',  tooltip='Merge entities', icon='check'),
-        drop_determiners=widgets.ToggleButton(value=True, description='Drop determiners',  tooltip='Drop determiners', icon='check'),
+        named_entities=widgets.ToggleButton(value=False, description='Merge entities',  tooltip='Merge entities', icon='check', disabled=named_entities_disabled),
+        drop_determiners=widgets.ToggleButton(value=False, description='Drop DET',  tooltip='Drop determiners', icon='check', disabled=True),
         apply_idf=widgets.ToggleButton(value=False, description='Apply IDF',  tooltip='Apply TF-IDF', icon='check'),
         include_pos=widgets.SelectMultiple(description='POS', options=pos_options, value=default_include_pos, rows=7, layout=widgets.Layout(width='160px')),
         stop_words=widgets.SelectMultiple(description='STOP', options=frequent_words, value=list([]), rows=7, layout=widgets.Layout(width='220px')),
         method=widgets.Dropdown(description='Engine', options=engine_options, value='gensim_lda', layout=widgets.Layout(width='200px')),
-        compute=widgets.Button(description='Compute' , layout=widgets.Layout(width='200px',background_color='blue')),
+        compute=widgets.Button(description='Compute', button_style='Success', layout=widgets.Layout(width='115px',background_color='blue')),
         boxes=None,
-        output = widgets.Output(),
-        model=None
+        output=widgets.Output(layout={'border': '1px solid black'}), # , 'height': '400px'
+        model=None,
+        payload={},
+        spinner=spinner_widget()
     )
     
     gui.boxes = widgets.VBox([
@@ -108,8 +154,8 @@ def display_topic_model_gui(corpus, tagset):
                 gui.normalize,
                 gui.ngrams,
                 gui.method,
-                gui.compute
-            ])
+                widgets.HBox([gui.spinner, gui.compute], layout=widgets.Layout(align_items='flex-end'))
+            ], layout=widgets.Layout(align_items='flex-end'))
         ]),
         widgets.VBox([gui.output]),
     ])

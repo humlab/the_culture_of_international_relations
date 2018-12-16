@@ -13,45 +13,72 @@ DEFAULT_VECTORIZE_PARAMS = dict(tf_type='linear', apply_idf=False, idf_type='smo
 
 # FIXME: Bug somewhere...
 def n_gram_detector(doc_iter, n_gram_size=2, min_count=5, threshold=100):
+    
     for n_span in range(2, n_gram_size+1):
         print('Applying {}_gram detector'.format(n_span))
         n_grams = gensim.models.Phrases(doc_iter(), min_count=min_count, threshold=threshold)
         ngram_modifier = gensim.models.phrases.Phraser(n_grams)
         ngram_doc_iter = lambda: ( ngram_modifier[doc] for doc in doc_iter() )
         doc_iter = ngram_doc_iter
+        
     return doc_iter
 
 def compute(corpus, tick=utility.noop, method='sklearn_lda', vec_args=None, term_args=None, tm_args=None, **args):
     
     tick()
+    
     vec_args = utility.extend({}, DEFAULT_VECTORIZE_PARAMS, vec_args)
     
-    terms_iter = lambda: (textacy_utility.textacy_filter_terms(doc, term_args) for doc in corpus)
-    tick()
-    
-    if False:
-        terms_iter = n_gram_detector(terms_iter)
+    def terms_iter():
+        
+        n_gram_size = term_args.get('arg', {}).get('ngrams', 1)
+        
+        doc_iter = ( textacy_utility.textacy_filter_terms(doc, term_args) for doc in corpus )
             
-    vectorizer = textacy.Vectorizer(**vec_args)
-    doc_term_matrix = vectorizer.fit_transform(terms_iter())
+        if n_gram_size > 1:
+            doc_iter = (token.replace(' ', '_') for token in doc_iter)
+            # doc_iter = n_gram_detector(doc_iter, n_gram_size=2, min_count=5, threshold=100)
+            
+        return doc_iter
+    
+    tick()
+            
+    perplexity_score = None
+    coherence_score = None
+    vectorizer = None
+    doc_topic_matrix = None
+    doc_term_matrix = None
+    documents = textacy_utility.get_corpus_documents(corpus)
 
     if method.startswith('sklearn'):
         
+        vectorizer = textacy.Vectorizer(**vec_args)
+        doc_term_matrix = vectorizer.fit_transform(terms_iter())
+
         tm_model = textacy.TopicModel(method.split('_')[1], **tm_args)
         tm_model.fit(doc_term_matrix)
+        
         tick()
+        
         doc_topic_matrix = tm_model.transform(doc_term_matrix)
+        
         tick()
+        
         tm_id2word = vectorizer.id_to_term
         tm_corpus = gensim.matutils.Sparse2Corpus(doc_term_matrix, documents_columns=False)
-        compiled_data = None # FIXME
+        
+        # FIXME!!!
+        perplexity_score = None
+        coherence_score = None
         
     elif method.startswith('gensim_'):
         
         algorithm = method.split('_')[1].upper()
-        doc_topic_matrix = None # ?
         tm_id2word = gensim.corpora.Dictionary(terms_iter())
         tm_corpus = [ tm_id2word.doc2bow(text) for text in terms_iter() ]
+        
+        #tfidf_model = gensim.models.tfidfmodel.TfidfModel(tm_corpus)
+        #tm_corpus = [ tfidf_model[d] for d in tm_corpus ]
         
         algorithms = {
             'LSI': {
@@ -71,7 +98,7 @@ def compute(corpus, tick=utility.noop, method='sklearn_lda', vec_args=None, term
                     'num_topics':  tm_args.get('n_topics', 0),
                     'id2word':  tm_id2word,
                     'iterations': tm_args.get('max_iter', 0),
-                    'passes': 20,
+                    'passes': tm_args.get('passes', 20),
                     'alpha': 'auto'
                 }
             },
@@ -84,7 +111,7 @@ def compute(corpus, tick=utility.noop, method='sklearn_lda', vec_args=None, term
                     
                     'num_topics':  tm_args.get('n_topics', 0),
                     'iterations': tm_args.get('max_iter', 0),
-                    'passes': 20,
+                    'passes': tm_args.get('passes', 20),
                     
                     'prefix': './data/',
                     'workers': 4,
@@ -92,19 +119,39 @@ def compute(corpus, tick=utility.noop, method='sklearn_lda', vec_args=None, term
                 }
             },
         }
-    
+        
         tm_model = algorithms[algorithm]['engine'](**algorithms[algorithm]['options'])
-        documents = textacy_utility.get_corpus_documents(corpus)
-        compiled_data = topic_model_utility.compile_metadata(tm_model, tm_corpus, tm_id2word, documents)
+        
+        if hasattr(tm_model, 'log_perplexity'):
+            perplexity_score = tm_model.log_perplexity(tm_corpus, len(tm_corpus))
+        
+        try:
+            coherence_model_lda =  gensim.models.CoherenceModel(model=tm_model, texts=terms_iter(), dictionary=tm_id2word, coherence='c_v')
+            coherence_score = coherence_model_lda.get_coherence()
+        except Exception as ex:
+            logger.error(ex)
+            coherence_score = None
+            
+    compiled_data = topic_model_utility.compile_metadata(
+        tm_model,
+        tm_corpus,
+        tm_id2word,
+        documents,
+        vectorizer=vectorizer,
+        doc_topic_matrix=doc_topic_matrix,
+        n_tokens=200
+    )
     
     tm_data = types.SimpleNamespace(
         tm_model=tm_model,
         tm_id2term=tm_id2word,
         tm_corpus=tm_corpus,
-        doc_term_matrix=doc_term_matrix,
-        doc_topic_matrix=doc_topic_matrix,
-        vectorizer=vectorizer,
+        #doc_term_matrix=doc_term_matrix,
+        #doc_topic_matrix=doc_topic_matrix,
+        #vectorizer=vectorizer,
         compiled_data=compiled_data,
+        perplexity_score=perplexity_score,
+        coherence_score=coherence_score,
         options=dict(method=method, vec_args=vec_args, term_args=term_args, tm_args=tm_args, **args)
     )
     
