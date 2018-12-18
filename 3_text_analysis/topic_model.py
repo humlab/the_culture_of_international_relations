@@ -22,7 +22,7 @@ def n_gram_detector(doc_iter, n_gram_size=2, min_count=5, threshold=100):
         doc_iter = ngram_doc_iter
         
     return doc_iter
-
+    
 def compute(corpus, tick=utility.noop, method='sklearn_lda', vec_args=None, term_args=None, tm_args=None, **args):
     
     tick()
@@ -98,8 +98,36 @@ def compute(corpus, tick=utility.noop, method='sklearn_lda', vec_args=None, term
                     'num_topics':  tm_args.get('n_topics', 0),
                     'id2word':  tm_id2word,
                     'iterations': tm_args.get('max_iter', 0),
-                    'passes': tm_args.get('passes', 20),
-                    'alpha': 'auto'
+                    'passes': tm_args.get('passes', 40),
+                    #'eval_every': 5,
+                    'update_every': 0,
+                    'alpha': 'auto',
+                    'eta': 'auto'
+                }
+            },
+            'HDP': {
+                'engine': gensim.models.HdpModel,
+                'options': {
+                    'corpus': tm_corpus, 
+                    'T':  tm_args.get('n_topics', 0),
+                    'id2word':  tm_id2word,
+                    #'iterations': tm_args.get('max_iter', 0),
+                    #'passes': tm_args.get('passes', 20),
+                    #'alpha': 'auto'
+                }
+            },
+            'DTM': {
+                'engine': gensim.models.LdaSeqModel,
+                'options': {
+                    'corpus': tm_corpus, 
+                    'num_topics':  tm_args.get('n_topics', 0),
+                    'id2word':  tm_id2word,
+                    'time_slice': textacy_utility.count_documents_by_pivot(corpus, 'signed_year')
+                    # 'initialize': 'gensim/own/ldamodel',
+                    # 'lda_model': model # if initialize='gensim'
+                    # 'lda_inference_max_iter': tm_args.get('max_iter', 0),
+                    # 'passes': tm_args.get('passes', 20),
+                    # 'alpha': 'auto'
                 }
             },
             'MALLETLDA': {

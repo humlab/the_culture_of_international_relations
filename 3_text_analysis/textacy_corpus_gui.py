@@ -17,7 +17,6 @@ def generate_textacy_corpus(
     data_folder,
     wti_index,
     container,
-    gui,
     source_path,
     language,
     merge_entities,
@@ -25,7 +24,8 @@ def generate_textacy_corpus(
     period_group='years_1945-1972',
     treaty_filter='',
     parties=None,
-    disabled_pipes=None
+    disabled_pipes=None,
+    tick=utility.noop
 ):
     
     def get_treaties(wti_index, language, period_group='years_1945-1972', treaty_filter='is_cultural', parties=None):
@@ -37,13 +37,9 @@ def generate_textacy_corpus(
             parties=parties
         )
         treaties = treaties[treaties[config.LANGUAGE_MAP[language]]==language]
+        treaties = treaties.sort_values('signed_year', ascending=True)
         return treaties
 
-    def tick(step=None, max_step=None):
-        if max_step is not None:
-            gui.progress.max = max_step
-        gui.progress.value = gui.progress.value + 1 if step is None else step
-        
     for key in container.__dict__:
         container.__dict__[key] = None
         
@@ -113,7 +109,7 @@ def display_corpus_load_gui(data_folder, wti_index, container):
         overwrite=widgets_config.toggle('Force', False, icon='', layout=lw('100px'), tooltip="Force generation of new corpus (even if exists)"),
         
         compute_pos=widgets_config.toggle('POS', True, icon='', layout=lw('100px'), disabled=True, tooltip="Enable Part-of-Speech tagging"),
-        compute_ner=widgets_config.toggle('NER', False, icon='', layout=lw('100px'), disabled=True, tooltip="Enable NER tagging"),
+        compute_ner=widgets_config.toggle('NER', False, icon='', layout=lw('100px'), disabled=False, tooltip="Enable NER tagging"),
         compute_dep=widgets_config.toggle('DEP', False, icon='', layout=lw('100px'), disabled=True, tooltip="Enable dependency parsing"),
         
         compute=widgets.Button(description='Compute', layout=lw('100px'))
@@ -139,7 +135,11 @@ def display_corpus_load_gui(data_folder, wti_index, container):
             gui.compute]),
         gui.output
     ]))
-    
+    def tick(step=None, max_step=None):
+        if max_step is not None:
+            gui.progress.max = max_step
+        gui.progress.value = gui.progress.value + 1 if step is None else step
+            
     def compute_callback(*_args):
         gui.output.clear_output()
         with gui.output:
@@ -150,14 +150,14 @@ def display_corpus_load_gui(data_folder, wti_index, container):
                 data_folder=data_folder,
                 wti_index=wti_index,
                 container=container,
-                gui=gui,
                 source_path=gui.source_path.value,
                 language=gui.language.value,
                 merge_entities=gui.merge_entities.value,
                 overwrite=gui.overwrite.value,
                 period_group=gui.period_group.value,
                 parties=None,
-                disabled_pipes=tuple(disabled_pipes)
+                disabled_pipes=tuple(disabled_pipes),
+                tick=tick
             )
 
     gui.compute.on_click(compute_callback)

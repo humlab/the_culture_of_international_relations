@@ -10,7 +10,7 @@ import textacy_corpus_utility as textacy_utility
 logger = utility.getLogger('corpus_text_analysis')
 
 gensim_logger = logging.getLogger('gensim')
-gensim_logger.setLevel(logging.WARNING)
+gensim_logger.setLevel(logging.INFO)
 
 def compute_topic_model(corpus, gui, *args):
 
@@ -19,7 +19,21 @@ def compute_topic_model(corpus, gui, *args):
     
     tick(1)
     gui.output.clear_output()
-
+    
+    extra_stop_words = set(gui.stop_words.value)
+    
+    if gui.min_freq.value > 1:
+        infrequent_words = textacy_utility.infrequent_words(corpus, normalize=gui.normalize.value, weighting='count', threshold=gui.min_freq.value, as_strings=True)
+        with gui.output:
+            logger.info('Ignoring low-frequent words: ' + ', '.join(list(infrequent_words)))
+        extra_stop_words = extra_stop_words.union(infrequent_words)
+    
+    if gui.max_doc_freq.value < 1.0:
+        frequent_words = textacy_utility.frequent_document_words(corpus, normalize=gui.normalize.value, weighting='freq', dfs_threshold=gui.max_doc_freq.value, as_strings=True)
+        with gui.output:
+            logger.info('Ignoring high-frequent words: ' + ', '.join(list(frequent_words)))
+        extra_stop_words = extra_stop_words.union(frequent_words )
+        
     vec_args = dict(apply_idf=gui.apply_idf.value)
     term_args = dict(
         args=dict(
@@ -29,21 +43,23 @@ def compute_topic_model(corpus, gui, *args):
             as_strings=True
         ),
         kwargs=dict(
-            filter_nums=gui.filter_nums.value,
-            drop_determiners=gui.drop_determiners.value,
+            #filter_nums=gui.filter_nums.value,
+            #drop_determiners=gui.drop_determiners.value,
             min_freq=gui.min_freq.value,
             include_pos=gui.include_pos.value,
             filter_stops=gui.filter_stops.value,
             filter_punct=True
         ),
-        extra_stop_words=gui.stop_words.value
+        extra_stop_words=extra_stop_words
     )
+    
     tm_args = dict(
         n_topics=gui.n_topics.value,
         max_iter=gui.max_iter.value,
         learning_method='online', 
         n_jobs=1
     )
+    
     method = gui.method.value
     
     n_topics = gui.n_topics.value
@@ -54,7 +70,9 @@ def compute_topic_model(corpus, gui, *args):
         
         with gui.output:
 
-            logger.info('Computing model with {} topics...'.format(x_topics))
+            if n_topic_window > 0:
+                logger.info('Computing model with {} topics...'.format(x_topics))
+                
             gui.spinner.layout.visibility = 'visible'
             tm_args['n_topics'] = x_topics
             
@@ -65,15 +83,18 @@ def compute_topic_model(corpus, gui, *args):
             if x_topics == n_topics:
                 gui.model = candidate_model
 
-            logger.info('#topics: {}, coherence_score {} perplexity {}'.format(x_topics, candidate_model.coherence_score, candidate_model.perplexity_score))
+            if n_topic_window > 0:
+                logger.info('#topics: {}, coherence_score {} perplexity {}'.format(x_topics, candidate_model.coherence_score, candidate_model.perplexity_score))
+
             gui.spinner.layout.visibility = 'hidden'
 
-        gui.output.clear_output()
+        #gui.output.clear_output()
         
         logger.info('#topics: {}, coherence_score {} perplexity {}'.format(n_topics, gui.model.coherence_score, gui.model.perplexity_score))
         
     with gui.output:
-        topics = topic_model_utility.get_topics_unstacked(gui.model.tm_model, n_tokens=20, id2term=gui.model.tm_id2term)
+        relevant_topic_ids = gui.model.compiled_data.relevant_topic_ids
+        topics = topic_model_utility.get_topics_unstacked(gui.model.tm_model, n_tokens=50, id2term=gui.model.tm_id2term, topic_ids=relevant_topic_ids)
         display(topics)
     
     if n_topic_window > 0:
@@ -101,6 +122,8 @@ def display_topic_model_gui(corpus, tagset):
         ('MALLET LDA', 'gensim_malletlda'),
         ('gensim LDA', 'gensim_lda'),
         ('gensim LSI', 'gensim_lsi'),
+        ('gensim HDP', 'gensim_hdp'),
+        ('gensim DTM', 'gensim_dtm'),
         ('scikit LDA', 'sklearn_lda'),
         ('scikit NMF', 'sklearn_nmf'),
         ('scikit LSA', 'sklearn_lsa')        
@@ -112,15 +135,16 @@ def display_topic_model_gui(corpus, tagset):
     named_entities_disabled = len(corpus) == 0 or len(corpus[0].spacy_doc.ents) == 0
     gui = types.SimpleNamespace(
         progress=widgets.IntProgress(value=0, min=0, max=5, step=1, description='', layout=widgets.Layout(width='90%')),
-        n_topics=widgets.IntSlider(description='#topics', min=5, max=50, value=20, step=1, layout=widgets.Layout(width='240px')),
+        n_topics=widgets.IntSlider(description='#topics', min=5, max=100, value=20, step=1, layout=widgets.Layout(width='240px')),
         min_freq=widgets.IntSlider(description='Min word freq', min=0, max=10, value=2, step=1, layout=widgets.Layout(width='240px')),
-        max_iter=widgets.IntSlider(description='Max iterations', min=100, max=2000, value=600, step=10, layout=widgets.Layout(width='240px')),
+        max_doc_freq=widgets.FloatSlider(description='Min doc freq', min=0.75, max=1.0, value=1.0, step=0.01, layout=widgets.Layout(width='240px')),
+        max_iter=widgets.IntSlider(description='Max iterations', min=100, max=6000, value=2000, step=10, layout=widgets.Layout(width='240px')),
         ngrams=widgets.Dropdown(description='n-grams', options=ngrams_options, value=[1], layout=widgets.Layout(width='200px')),
         normalize=widgets.Dropdown(description='Normalize', options=normalize_options, value='lemma', layout=widgets.Layout(width='200px')),
         filter_stops=widgets.ToggleButton(value=True, description='Remove stopword',  tooltip='Filter out stopwords', icon='check'),
-        filter_nums=widgets.ToggleButton(value=True, description='Remove nums',  tooltip='Filter out stopwords', icon='check'),
+        #filter_nums=widgets.ToggleButton(value=True, description='Remove nums',  tooltip='Filter out stopwords', icon='check'),
         named_entities=widgets.ToggleButton(value=False, description='Merge entities',  tooltip='Merge entities', icon='check', disabled=named_entities_disabled),
-        drop_determiners=widgets.ToggleButton(value=False, description='Drop DET',  tooltip='Drop determiners', icon='check', disabled=True),
+        #drop_determiners=widgets.ToggleButton(value=False, description='Drop DET',  tooltip='Drop determiners', icon='check', disabled=True),
         apply_idf=widgets.ToggleButton(value=False, description='Apply IDF',  tooltip='Apply TF-IDF', icon='check'),
         include_pos=widgets.SelectMultiple(description='POS', options=pos_options, value=default_include_pos, rows=7, layout=widgets.Layout(width='160px')),
         stop_words=widgets.SelectMultiple(description='STOP', options=frequent_words, value=list([]), rows=7, layout=widgets.Layout(width='220px')),
@@ -139,13 +163,14 @@ def display_topic_model_gui(corpus, tagset):
             widgets.VBox([
                 gui.n_topics,
                 gui.min_freq,
+                gui.max_doc_freq,
                 gui.max_iter
             ]),
             widgets.VBox([
                 gui.filter_stops,
-                gui.filter_nums,
+                #gui.filter_nums,
                 gui.named_entities,
-                gui.drop_determiners,
+                #gui.drop_determiners,
                 gui.apply_idf
             ]),
             gui.include_pos,

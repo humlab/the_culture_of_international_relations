@@ -49,7 +49,8 @@ def compile_topic_token_weights(model, dictionary, n_tokens=200):
     
     if hasattr(model, 'show_topics'):
         # Gensim LDA model
-        topic_data = model.show_topics(model.num_topics, num_words=n_tokens, formatted=False)
+        #topic_data = model.show_topics(model.num_topics, num_words=n_tokens, formatted=False)
+        topic_data = model.show_topics(num_topics=-1, num_words=n_tokens, formatted=False)
     else:
         # Textacy/scikit-learn model
         topic_data = model.top_topic_terms(id2term, topics=-1, top_n=n_tokens, weights=True)
@@ -83,45 +84,52 @@ def compile_topic_token_overview(topic_token_weights, alpha=None, n_tokens=200):
 
 def compile_document_topics(model, corpus, documents, doc_topic_matrix=None, minimum_probability=0.001):
 
-    def document_topics_iter(model, corpus, minimum_probability=0.0):
+    try:
+        def document_topics_iter(model, corpus, minimum_probability=0.0):
 
-        if isinstance(model, gensim.models.LsiModel):
-            # Gensim LSI Model
-            data_iter = enumerate(model[corpus])
-        elif hasattr(model, 'get_document_topics'):
-            # Gensim LDA Model
-            data_iter = enumerate(model.get_document_topics(corpus, minimum_probability=minimum_probability))
-        elif hasattr(model, 'load_document_topics'):
-            # Gensim MALLET wrapper
-            data_iter = enumerate(model.load_document_topics())
-        elif hasattr(model, 'top_doc_topics'):
-            # scikit-learn
-            assert doc_topic_matrix is not None, "doc_topic_matrix not supplied"
-            data_iter = model.top_doc_topics(doc_topic_matrix, docs=-1, top_n=1000, weights=True)
-        else:
-            assert False, 'compile_document_topics: Unknown topic model'
+            if isinstance(model, gensim.models.LsiModel):
+                # Gensim LSI Model
+                data_iter = enumerate(model[corpus])
+            elif hasattr(model, 'get_document_topics'):
+                # Gensim LDA Model
+                data_iter = enumerate(model.get_document_topics(corpus, minimum_probability=minimum_probability))
+            elif hasattr(model, 'load_document_topics'):
+                # Gensim MALLET wrapper
+                data_iter = enumerate(model.load_document_topics())
+            elif hasattr(model, 'top_doc_topics'):
+                # scikit-learn
+                assert doc_topic_matrix is not None, "doc_topic_matrix not supplied"
+                data_iter = model.top_doc_topics(doc_topic_matrix, docs=-1, top_n=1000, weights=True)
+            else:
+                data_iter = ( (document_id, model[corpus[document_id]]) for document_id in range(0, len(corpus)) )
 
-        for document_id, topic_weights in data_iter:
-            for (topic_id, weight) in ((topic_id, weight) for (topic_id, weight) in topic_weights if weight >= minimum_probability):
-                yield (document_id, topic_id, weight)
-    '''
-    Get document topic weights for all documents in corpus
-    Note!  minimum_probability=None filters less probable topics, set to 0 to retrieve all topcs
+                # assert False, 'compile_document_topics: Unknown topic model'
 
-    If gensim model then use 'get_document_topics', else 'load_document_topics' for mallet model
-    '''
-    logger.info('Compiling document topics...')
-    logger.info('  Creating data iterator...')
-    data = document_topics_iter(model, corpus, minimum_probability)
+            for document_id, topic_weights in data_iter:
+                for (topic_id, weight) in ((topic_id, weight) for (topic_id, weight) in topic_weights if weight >= minimum_probability):
+                    yield (document_id, topic_id, weight)
+                    
+        '''
+        Get document topic weights for all documents in corpus
+        Note!  minimum_probability=None filters less probable topics, set to 0 to retrieve all topcs
+
+        If gensim model then use 'get_document_topics', else 'load_document_topics' for mallet model
+        '''
+        logger.info('Compiling document topics...')
+        logger.info('  Creating data iterator...')
+        data = document_topics_iter(model, corpus, minimum_probability)
+
+        logger.info('  Creating frame from iterator...')
+        df_doc_topics = pd.DataFrame(data, columns=[ 'document_id', 'topic_id', 'weight' ]).set_index('document_id')
+
+        logger.info('  Merging data...')
+        df = pd.merge(documents, df_doc_topics, how='inner', left_index=True, right_index=True)
+        logger.info('  DONE!')
+        return df
+    except Exception as ex:
+        logger.error(ex)
+        return None
     
-    logger.info('  Creating frame from iterator...')
-    df_doc_topics = pd.DataFrame(data, columns=[ 'document_id', 'topic_id', 'weight' ]).set_index('document_id')
-    
-    logger.info('  Merging data...')
-    df = pd.merge(documents, df_doc_topics, how='inner', left_index=True, right_index=True)
-    logger.info('  DONE!')
-    return df
-
 def compile_metadata(model, corpus, id2term, documents, vectorizer=None, doc_topic_matrix=None, n_tokens=200):
     '''
     Compile metadata associated to given model and corpus
@@ -132,6 +140,7 @@ def compile_metadata(model, corpus, id2term, documents, vectorizer=None, doc_top
     topic_token_overview = compile_topic_token_overview(topic_token_weights, alpha)
     document_topic_weights = compile_document_topics(model, corpus, documents, doc_topic_matrix=doc_topic_matrix, minimum_probability=0.001)
     year_period = (documents.signed_year.min(), documents.signed_year.max())
+    relevant_topic_ids = list(document_topic_weights.topic_id.unique())
     
     return types.SimpleNamespace(
         dictionary=dictionary,
@@ -139,7 +148,8 @@ def compile_metadata(model, corpus, id2term, documents, vectorizer=None, doc_top
         topic_token_weights=topic_token_weights,
         topic_token_overview=topic_token_overview,
         document_topic_weights=document_topic_weights,
-        year_period=year_period
+        year_period=year_period,
+        relevant_topic_ids=relevant_topic_ids
     )
 
 def get_topic_titles(topic_token_weights, topic_id=None, n_tokens=100):
@@ -158,18 +168,30 @@ def get_topic_tokens(topic_token_weights, topic_id=None, n_tokens=100):
     df = df_temp.sort_values('weight', ascending=False)[:n_tokens]
     return df
 
-def get_topics_unstacked(model, n_tokens=20, id2term=None):
+def get_topics_unstacked(model, n_tokens=20, id2term=None, topic_ids=None):
 
     if hasattr(model, 'num_topics'):
         # Gensim LDA model
         show_topic = lambda topic_id: model.show_topic(topic_id, topn=n_tokens)
         n_topics = model.num_topics
+    elif hasattr(model, 'm_T'):
+        # Gensim HDP model
+        show_topic = lambda topic_id: model.show_topic(topic_id, topn=n_tokens)
+        n_topics = model.m_T
     else:
         # Textacy/scikit-learn model
-        show_topic = lambda topic_id: list(model.top_topic_terms(id2term, topics=topic_id, top_n=n_tokens, weights=True))[0][1]
+        def scikit_learn_show_topic(topic_id):
+            topic_words = list(model.top_topic_terms(id2term, topics=(topic_id,), top_n=n_tokens, weights=True))
+            if len(topic_words) == 0:
+                return []
+            else:
+                return topic_words[0][1]
+        show_topic = scikit_learn_show_topic
         n_topics = model.n_topics
 
+    topic_ids = topic_ids or range(n_topics)
+    
     return pd.DataFrame({
         'Topic#{:02d}'.format(topic_id+1) : [ word[0] for word in show_topic(topic_id) ]
-            for topic_id in range(n_topics)
+            for topic_id in topic_ids
     })

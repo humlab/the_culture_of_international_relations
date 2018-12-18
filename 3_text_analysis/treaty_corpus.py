@@ -8,6 +8,7 @@ import fnmatch
 import logging
 import re
 import typing.re
+
 from gensim.corpora.textcorpus import TextCorpus
 
 logger = logging.getLogger(__name__)
@@ -15,6 +16,7 @@ logger = logging.getLogger(__name__)
 HYPHEN_REGEXP = re.compile(r'\b(\w+)-\s*\r?\n\s*(\w+)\b', re.UNICODE)
 TREATY_FILENAME = re.compile(r"^([a-zA-Z0-9]*)\_(en|fr|de|it).*\.txt$")
 
+#@deprecated('Moved to TreatyCompressedFileReader.language_filename_pattern')
 def language_filename_pattern(language):
     return re.compile("^(\w*)\_" + language + "([\_\-]corr)?\.txt$") 
     
@@ -23,12 +25,11 @@ def dehyphen(text):
     return result
 
 def list_treaty_archive_files(archivename, pattern):
-
     px = lambda x: pattern.match(x) if isinstance(pattern, typing.re.Pattern) else fnmatch.fnmatch(x, pattern)
-    
     with zipfile.ZipFile(archivename) as zf:
         return [ name for name in zf.namelist() if px(name) ]
         
+#@deprecated('Moved to TreatyCompressedFileReader.get_treaty_filename_lookups')
 def get_treaty_filename_lookup(archivename, language):
     pattern = language_filename_pattern(language)
     filenames = list_treaty_archive_files(archivename, pattern)
@@ -83,19 +84,53 @@ class CompressedFileReader:
         
 class TreatyCompressedFileReader(CompressedFileReader):
 
-    def __init__(self, archive_name, language, treaty_ids):
-        lookup = get_treaty_filename_lookup(archive_name, language)
-        pattern = language_filename_pattern(language)
-        self.treaty_ids = [ x for x in treaty_ids if x in lookup ]
-        filenames = [ lookup[x] for x in self.treaty_ids ]
-        CompressedFileReader.__init__(self, archive_name, pattern=pattern, itemfilter=filenames)
+    def __init__(self, path, language, treaty_ids):
         
+        self.path        = path
+        self.language    = language
+        
+        pattern          = re.compile("^(\w*)\_" + language + "([\_\-]corr)?\.txt$") 
+        treaty_lookup    = { x.split('_')[0]: x for x in self._ls_archive(path, pattern) }
+        
+        self.treaty_ids  = [ x for x in treaty_ids if x in treaty_lookup ]
+        self.filenames   = [ treaty_lookup[x] for x in self.treaty_ids ]
+        
+        if len(set(treaty_ids) - set(self.treaty_ids)) > 0:
+            logger.warning('Treaties not found in archive: ' + ', '.join(list(set(treaty_ids) - set(self.treaty_ids))))
+            
+        CompressedFileReader.__init__(self, archive_name, pattern=pattern, itemfilter=self.filenames)
+        
+    def _ls_archive(self, path, pattern):
+        
+        px = lambda x: pattern.match(x) \
+            if isinstance(pattern, typing.re.Pattern) \
+            else fnmatch.fnmatch(x, pattern)
+        
+        with zipfile.ZipFile(path) as f:
+            return [ x for x in f.namelist() if px(x) ]
+    
     def __next__(self):
+        
         filename, content = super(TreatyCompressedFileReader, self).__next__()
+        
         m = TREATY_FILENAME.match(filename)
+        
         treaty_id = m.groups(1)[0]
         language = m.groups(1)[1]
+        
         return treaty_id, language, filename, content
+
+def get_document_stream(corpus_path, lang, treaties):
+
+    if 'treaty_id' not in treaties.columns:
+        treaties['treaty_id'] = treaties.index
+
+    documents = TreatyCompressedFileReader(corpus_path, lang, list(treaties.index))
+
+    for treaty_id, language, filename, text in documents:
+        assert language == lang
+        metadata = treaties.loc[treaty_id]
+        yield filename, text, metadata
     
 class TreatyCorpus(TextCorpus):
 
@@ -220,7 +255,7 @@ class TreatyCorpus(TextCorpus):
             logger.critical('Warning! Duplicate treaties found in corpus: {}'.format(' '.join(list(dupes.index))))
             
         return documents
-
+        
 class MmCorpusStatisticsService():
     
     def __init__(self, corpus, dictionary, language):

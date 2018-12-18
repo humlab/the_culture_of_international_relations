@@ -60,6 +60,22 @@ DEFAULT_TERM_PARAMS = dict(
     )
 )
 
+def infrequent_words(corpus, normalize='lemma', weighting='count', threshold=0, as_strings=False):
+    '''Returns set of infrequent words i.e. words having total count less than given threshold'''
+    if weighting == 'count' and threshold <= 1:
+        return set([])
+    
+    word_counts = corpus.word_freqs(normalize=normalize, weighting=weighting, as_strings=as_strings)
+    words = set([ w for w in word_counts if word_counts[w] < threshold ])
+    
+    return words
+
+def frequent_document_words(corpus, normalize='lemma', weighting='freq', dfs_threshold=0.80, as_strings=True):
+    '''Returns set of words that occurrs freuently in many documents, candidate stopwords'''
+    document_freqs = corpus.word_doc_freqs(normalize=normalize, weighting=weighting, smooth_idf=True, as_strings=True)
+    frequent_document_words = set([ w for w in document_freqs if document_freqs[w] > dfs_threshold ])
+    return frequent_document_words
+
 def textacy_filter_terms(doc, term_args, chunk_size=None, min_length=2):
     
     def fix_peculiarities(w):
@@ -70,6 +86,7 @@ def textacy_filter_terms(doc, term_args, chunk_size=None, min_length=2):
     kwargs = utility.extend({}, DEFAULT_TERM_PARAMS['kwargs'], term_args['kwargs'])
     args = utility.extend({}, DEFAULT_TERM_PARAMS['args'], term_args['args'])
     extra_stop_words = set(term_args.get('extra_stop_words', None) or [])
+    
     terms = (
         fix_peculiarities(x) for x in doc.to_terms_list(
             args['ngrams'],
@@ -86,6 +103,7 @@ def get_treaty_doc(corpus, treaty_id):
         return doc
     return None
 
+# FIXME: Move to 
 def get_document_stream(corpus_path, lang, treaties):
     
     if 'treaty_id' not in treaties.columns:
@@ -232,3 +250,11 @@ def store_tokens_to_file(corpus, filename):
         tokens['lemma'] = tokens.token.str.replace('"', ' ')
         tokens.to_csv(filename, sep='\t')
     
+import itertools
+
+def count_documents_by_pivot(corpus, attribute):
+    ''' Return a list of document counts per group defined by attribute
+    Assumes documents are sorted by attribute!
+    '''
+    fx_key = lambda doc: doc.metadata[attribute]
+    return [ len(list(g)) for _, g in itertools.groupby(corpus, fx_key) ]

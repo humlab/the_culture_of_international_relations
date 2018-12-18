@@ -588,6 +588,18 @@ class TreatyState:
             self._party_preset_options = options
         return self._party_preset_options
     
+    def get_treaties(self, language, period_group='years_1945-1972', treaty_filter='is_cultural', parties=None):
+        period_group = config.PERIOD_GROUPS_ID_MAP[period_group]
+        treaties = self.get_treaties_within_division(
+            period_group=period_group,
+            treaty_filter=treaty_filter,
+            recode_is_cultural=False,
+            parties=parties
+        )
+        treaties = treaties[treaties[config.LANGUAGE_MAP[language]]==language]
+        treaties = treaties.sort_values('signed_year', ascending=True)
+        return treaties
+    
 def load_wti_index(data_folder, skip_columns=default_treaties_skip_columns, period_groups=None):
     try:
         period_groups = period_groups or config.DEFAULT_PERIOD_GROUPS
