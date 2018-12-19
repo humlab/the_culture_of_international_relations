@@ -7,6 +7,7 @@ import types
 import glob
 import re
 import time
+import gensim.utils
 
 def getLogger(name='cultural_treaties', level=logging.INFO):
     logging.basicConfig(format="%(asctime)s : %(levelname)s : %(message)s", level=level)
@@ -19,6 +20,10 @@ logger = getLogger(__name__)
 __cwd__ = os.path.abspath(__file__) if '__file__' in globals() else os.getcwd()
 
 sys.path.append(__cwd__)
+
+lazy_flatten = gensim.utils.lazy_flatten
+iter_windows = gensim.utils.iter_windows
+deprecated = gensim.utils.deprecated
 
 def remove_snake_case(snake_str):
     return ' '.join(x.title() for x in snake_str.split('_'))
@@ -223,35 +228,3 @@ def complete_value_range(values, typef=str):
     values = range(min(values), max(values) + 1)
     
     return list(map(typef, values))
-
-import six
-import inspect
-
-def deprecated(reason_or_replace_function):
-    """Decorator to mark functions as deprecated. A call results in a warning
-    Adapted from https://stackoverflow.com/a/40301488/8001386.
-    """
-    if isinstance(reason, six.string_types):
-        
-        def decorator(func):
-            
-            @wraps(func)
-            def wrapper_function1(*args, **kwargs):
-                warnings.warn("Call to deprecated `{}` ({}).".format(func.__name__, reason), category=DeprecationWarning, stacklevel=2)
-                return func(*args, **kwargs)
-
-            return wrapper_function
-        return decorator
-
-    elif inspect.isclass(reason) or inspect.isfunction(reason):
-        
-        @wraps(func)
-        def replacement_function(*args, **kwargs):
-            warnings.warn( "Call to deprecated `{}`.".format(func.__name__), category=DeprecationWarning, stacklevel=2)
-            return reason_or_replace_function(*args, **kwargs)
-        
-        return replacement_function
-
-    else:
-        raise TypeError(repr(type(reason)))
-        

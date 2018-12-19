@@ -38,10 +38,10 @@ def get_treaty_filename_lookup(archivename, language):
     
 class CompressedFileReader:
     
-    def __init__(self, archive_name, pattern='*.txt', itemfilter=None):
-        self.archive_name = archive_name
+    def __init__(self, path, pattern='*.txt', itemfilter=None):
+        self.path = path
         self.filename_pattern = pattern
-        self.archive_filenames = list_treaty_archive_files(archive_name, pattern)
+        self.archive_filenames = list_treaty_archive_files(path, pattern)
         filenames = None
         if itemfilter is not None:
             if isinstance(itemfilter, list):
@@ -67,11 +67,11 @@ class CompressedFileReader:
         if filename not in self.filenames:
             yield  os.path.basename(filename), None
             
-        with zipfile.ZipFile(self.archive_name) as zip_file:
+        with zipfile.ZipFile(self.path) as zip_file:
             yield os.path.basename(filename), self._read_content(zip_file, filename)
                     
     def get_iterator(self):
-        with zipfile.ZipFile(self.archive_name) as zip_file:
+        with zipfile.ZipFile(self.path) as zip_file:
             for filename in self.filenames:
                 yield os.path.basename(filename), self._read_content(zip_file, filename)
                     
@@ -98,7 +98,7 @@ class TreatyCompressedFileReader(CompressedFileReader):
         if len(set(treaty_ids) - set(self.treaty_ids)) > 0:
             logger.warning('Treaties not found in archive: ' + ', '.join(list(set(treaty_ids) - set(self.treaty_ids))))
             
-        CompressedFileReader.__init__(self, archive_name, pattern=pattern, itemfilter=self.filenames)
+        CompressedFileReader.__init__(self, path, pattern=pattern, itemfilter=self.filenames)
         
     def _ls_archive(self, path, pattern):
         

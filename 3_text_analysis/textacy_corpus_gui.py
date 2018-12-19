@@ -27,18 +27,6 @@ def generate_textacy_corpus(
     disabled_pipes=None,
     tick=utility.noop
 ):
-    
-    def get_treaties(wti_index, language, period_group='years_1945-1972', treaty_filter='is_cultural', parties=None):
-        period_group = config.PERIOD_GROUPS_ID_MAP[period_group]
-        treaties = wti_index.get_treaties_within_division(
-            period_group=period_group,
-            treaty_filter=treaty_filter,
-            recode_is_cultural=False,
-            parties=parties
-        )
-        treaties = treaties[treaties[config.LANGUAGE_MAP[language]]==language]
-        treaties = treaties.sort_values('signed_year', ascending=True)
-        return treaties
 
     for key in container.__dict__:
         container.__dict__[key] = None
@@ -53,7 +41,7 @@ def generate_textacy_corpus(
     if not os.path.isfile(container.prepped_source_path):
         preprocess_text(container.source_path, container.prepped_source_path, tick=tick)
         
-    container.textacy_corpus_path = textacy_utility.generate_corpus_filename(container.prepped_source_path, container.language, nlp_args=nlp_args, compression=None)
+    container.textacy_corpus_path = textacy_utility.generate_corpus_filename(container.prepped_source_path, container.language, nlp_args=nlp_args, compression=None, period_group=period_group)
     
     container.nlp = textacy_utility.setup_nlp_language_model(container.language, **nlp_args)
     
@@ -61,7 +49,7 @@ def generate_textacy_corpus(
         
         logger.info('Working: Computing new corpus ' + container.textacy_corpus_path + '...')
         
-        treaties = get_treaties(wti_index, language=container.language, period_group=period_group, treaty_filter=treaty_filter, parties=parties)
+        treaties = wti_index.get_treaties(language=container.language, period_group=period_group, treaty_filter=treaty_filter, parties=parties)
         stream = textacy_utility.get_document_stream(container.prepped_source_path, container.language, treaties)
         
         logger.info('Working: Stream created...')
@@ -103,7 +91,7 @@ def display_corpus_load_gui(data_folder, wti_index, container):
         source_path=widgets_config.dropdown(description='Corpus', options=corpus_files, value=corpus_files[-1], layout=lw('300px')),
         
         language=widgets_config.dropdown(description='Language', options=language_options, value='en', layout=lw('180px')),
-        period_group=widgets_config.dropdown('Period', period_group_options, 'years_1945-1972', disabled=True, layout=lw('180px')),
+        period_group=widgets_config.dropdown('Period', period_group_options, 'years_1945-1972', disabled=False, layout=lw('180px')),
 
         merge_entities=widgets_config.toggle('Merge NER', False, icon='', layout=lw('100px')),
         overwrite=widgets_config.toggle('Force', False, icon='', layout=lw('100px'), tooltip="Force generation of new corpus (even if exists)"),

@@ -12,30 +12,21 @@ logger = utility.getLogger('corpus_text_analysis')
 gensim_logger = logging.getLogger('gensim')
 gensim_logger.setLevel(logging.INFO)
 
-def compute_topic_model(corpus, gui, *args):
+def compile_vectorizer_args(gui, corpus):
+    
+    args = dict(apply_idf=gui.apply_idf.value)
+    
+    return args
 
-    def tick(x=None):
-        gui.progress.value = gui.progress.value + 1 if x is None else x
+def compile_topic_modeller_args(gui, corpus):
     
-    tick(1)
-    gui.output.clear_output()
+    args = dict(n_topics=gui.n_topics.value, max_iter=gui.max_iter.value, learning_method='online', n_jobs=1)
     
-    extra_stop_words = set(gui.stop_words.value)
-    
-    if gui.min_freq.value > 1:
-        infrequent_words = textacy_utility.infrequent_words(corpus, normalize=gui.normalize.value, weighting='count', threshold=gui.min_freq.value, as_strings=True)
-        with gui.output:
-            logger.info('Ignoring low-frequent words: ' + ', '.join(list(infrequent_words)))
-        extra_stop_words = extra_stop_words.union(infrequent_words)
-    
-    if gui.max_doc_freq.value < 1.0:
-        frequent_words = textacy_utility.frequent_document_words(corpus, normalize=gui.normalize.value, weighting='freq', dfs_threshold=gui.max_doc_freq.value, as_strings=True)
-        with gui.output:
-            logger.info('Ignoring high-frequent words: ' + ', '.join(list(frequent_words)))
-        extra_stop_words = extra_stop_words.union(frequent_words )
-        
-    vec_args = dict(apply_idf=gui.apply_idf.value)
-    term_args = dict(
+    return args
+
+def compile_tokenizer_args(gui, corpus):
+       
+    args = dict(
         args=dict(
             ngrams=gui.ngrams.value,
             named_entities=gui.named_entities.value,
@@ -43,79 +34,94 @@ def compute_topic_model(corpus, gui, *args):
             as_strings=True
         ),
         kwargs=dict(
-            #filter_nums=gui.filter_nums.value,
-            #drop_determiners=gui.drop_determiners.value,
             min_freq=gui.min_freq.value,
             include_pos=gui.include_pos.value,
             filter_stops=gui.filter_stops.value,
             filter_punct=True
         ),
-        extra_stop_words=extra_stop_words
+        extra_stop_words=set(gui.stop_words.value),
+        mask_gpe=gui.mask_gpe.value,
+        min_freq=gui.min_freq.value,
+        max_doc_freq=gui.max_doc_freq.value
     )
     
-    tm_args = dict(
-        n_topics=gui.n_topics.value,
-        max_iter=gui.max_iter.value,
-        learning_method='online', 
-        n_jobs=1
-    )
-    
-    method = gui.method.value
-    
-    n_topics = gui.n_topics.value
-    n_topic_window = 0
-    gui.payload = { 'models': [] }
-    
-    for x_topics in range(max(n_topics - n_topic_window, 2), n_topics + n_topic_window + 1):
-        
+    return args
+
+def compute_topic_model(corpus, method, n_topics, gui, n_topic_window=0):
+    try:
+        def tick(x=None):
+            gui.progress.value = gui.progress.value + 1 if x is None else x
+
+        tick(1)
+
         with gui.output:
+            vectorizer_args     = compile_vectorizer_args(gui, corpus)
+            tokenizer_args      = compile_tokenizer_args(gui, corpus)
+            topic_modeller_args = compile_topic_modeller_args(gui, corpus)
+            #print(vectorizer_args)
+            #print(tokenizer_args)
+            #print(topic_modeller_args)
 
-            if n_topic_window > 0:
+        gui.payload = { 'models': [] }
+
+        for x_topics in range(max(n_topics - n_topic_window, 2), n_topics + n_topic_window + 1):
+
+            with gui.output:
+                gui.spinner.layout.visibility = 'visible'
+                topic_modeller_args['n_topics'] = x_topics
+
                 logger.info('Computing model with {} topics...'.format(x_topics))
-                
-            gui.spinner.layout.visibility = 'visible'
-            tm_args['n_topics'] = x_topics
+                candidate_model = topic_model.compute(
+                    corpus=corpus,
+                    tick=tick,
+                    method=method,
+                    vec_args=vectorizer_args,
+                    term_args=tokenizer_args,
+                    tm_args=topic_modeller_args
+                )
+
+                gui.payload['models'].append(candidate_model)
+
+                if x_topics == n_topics:
+                    gui.model = candidate_model
+
+                if n_topic_window > 0:
+                    logger.info('#topics: {}, coherence_score {} perplexity {}'.format(x_topics, candidate_model.coherence_score, candidate_model.perplexity_score))
+
+                gui.spinner.layout.visibility = 'hidden'
+
+            #gui.output.clear_output()
+
+            logger.info('#topics: {}, coherence_score {} perplexity {}'.format(n_topics, gui.model.coherence_score, gui.model.perplexity_score))
+
+        with gui.output:
+            relevant_topic_ids = gui.model.compiled_data.relevant_topic_ids
+            topics = topic_model_utility.get_topics_unstacked(gui.model.tm_model, n_tokens=100, id2term=gui.model.tm_id2term, topic_ids=relevant_topic_ids)
+            display(topics)
+
+        if n_topic_window > 0:
+
+            models = gui.payload['models']
+            df = pd.DataFrame([ {
+                'n_topics': int(model.tm_model.num_topics),
+                'perplexity_score': model.perplexity_score,
+                'coherence_score': model.coherence_score
+              } for model in models ])
+            df['n_topics'] = df.n_topics.astype(int)
+            df = df.set_index('n_topics')
+            df.to_excel(utility.path_add_timestamp('perplexity.xlsx'))
+            df['perplexity_score'].plot.line()
             
-            candidate_model = topic_model.compute(corpus=corpus, tick=tick, method=method, vec_args=vec_args, term_args=term_args, tm_args=tm_args)
-            
-            gui.payload['models'].append(candidate_model)
-
-            if x_topics == n_topics:
-                gui.model = candidate_model
-
-            if n_topic_window > 0:
-                logger.info('#topics: {}, coherence_score {} perplexity {}'.format(x_topics, candidate_model.coherence_score, candidate_model.perplexity_score))
-
-            gui.spinner.layout.visibility = 'hidden'
-
-        #gui.output.clear_output()
-        
-        logger.info('#topics: {}, coherence_score {} perplexity {}'.format(n_topics, gui.model.coherence_score, gui.model.perplexity_score))
-        
-    with gui.output:
-        relevant_topic_ids = gui.model.compiled_data.relevant_topic_ids
-        topics = topic_model_utility.get_topics_unstacked(gui.model.tm_model, n_tokens=50, id2term=gui.model.tm_id2term, topic_ids=relevant_topic_ids)
-        display(topics)
-    
-    if n_topic_window > 0:
-        
-        models = gui.payload['models']
-        df = pd.DataFrame([ {
-            'n_topics': int(model.tm_model.num_topics),
-            'perplexity_score': model.perplexity_score,
-            'coherence_score': model.coherence_score
-          } for model in models ])
-        df['n_topics'] = df.n_topics.astype(int)
-        df = df.set_index('n_topics')
-        df.to_excel(utility.path_add_timestamp('perplexity.xlsx'))
-        df['perplexity_score'].plot.line()
-
-def spinner_widget(filename="images/spinner-02.gif", width=40, height=40):
-    with open(filename, "rb") as image_file:
-        image = image_file.read()
-    return widgets.Image(value=image, format='gif', width=width, height=height, layout={'visibility': 'hidden'})
+    except Exception as ex:
+        with gui.output:
+            logger.error(ex)
 
 def display_topic_model_gui(corpus, tagset):
+    
+    def spinner_widget(filename="images/spinner-02.gif", width=40, height=40):
+        with open(filename, "rb") as image_file:
+            image = image_file.read()
+        return widgets.Image(value=image, format='gif', width=width, height=height, layout={'visibility': 'hidden'})
 
     pos_options = [ x for x in tagset.POS.unique() if x not in ['PUNCT', '', 'DET', 'X', 'SPACE', 'PART', 'CONJ', 'SYM', 'INTJ', 'PRON']]
     engine_options = [
@@ -146,6 +152,7 @@ def display_topic_model_gui(corpus, tagset):
         named_entities=widgets.ToggleButton(value=False, description='Merge entities',  tooltip='Merge entities', icon='check', disabled=named_entities_disabled),
         #drop_determiners=widgets.ToggleButton(value=False, description='Drop DET',  tooltip='Drop determiners', icon='check', disabled=True),
         apply_idf=widgets.ToggleButton(value=False, description='Apply IDF',  tooltip='Apply TF-IDF', icon='check'),
+        mask_gpe=widgets.ToggleButton(value=False, description='Mask GPE',  tooltip='Mask GPE', icon='check'),
         include_pos=widgets.SelectMultiple(description='POS', options=pos_options, value=default_include_pos, rows=7, layout=widgets.Layout(width='160px')),
         stop_words=widgets.SelectMultiple(description='STOP', options=frequent_words, value=list([]), rows=7, layout=widgets.Layout(width='220px')),
         method=widgets.Dropdown(description='Engine', options=engine_options, value='gensim_lda', layout=widgets.Layout(width='200px')),
@@ -171,7 +178,8 @@ def display_topic_model_gui(corpus, tagset):
                 #gui.filter_nums,
                 gui.named_entities,
                 #gui.drop_determiners,
-                gui.apply_idf
+                gui.apply_idf,
+                gui.mask_gpe
             ]),
             gui.include_pos,
             gui.stop_words,
@@ -184,10 +192,13 @@ def display_topic_model_gui(corpus, tagset):
         ]),
         widgets.VBox([gui.output]),
     ])
+    
     def compute_topic_model_handler(*args):
         try:
+            gui.output.clear_output()
             gui.compute.disabled = True
-            compute_topic_model(corpus, gui, *args)
+            with gui.output:
+                compute_topic_model(corpus, gui.method.value, gui.n_topics.value, gui)
         finally:
             gui.compute.disabled = False
             

@@ -29,17 +29,9 @@ def compute(corpus, tick=utility.noop, method='sklearn_lda', vec_args=None, term
     
     vec_args = utility.extend({}, DEFAULT_VECTORIZE_PARAMS, vec_args)
     
-    def terms_iter():
-        
-        n_gram_size = term_args.get('arg', {}).get('ngrams', 1)
-        
-        doc_iter = ( textacy_utility.textacy_filter_terms(doc, term_args) for doc in corpus )
-            
-        if n_gram_size > 1:
-            doc_iter = (token.replace(' ', '_') for token in doc_iter)
-            # doc_iter = n_gram_detector(doc_iter, n_gram_size=2, min_count=5, threshold=100)
-            
-        return doc_iter
+    terms = [ doc for doc in textacy_utility.extract_corpus_terms(corpus, term_args) ]
+    
+    fx_terms = lambda: terms
     
     tick()
             
@@ -48,12 +40,13 @@ def compute(corpus, tick=utility.noop, method='sklearn_lda', vec_args=None, term
     vectorizer = None
     doc_topic_matrix = None
     doc_term_matrix = None
+    
     documents = textacy_utility.get_corpus_documents(corpus)
 
     if method.startswith('sklearn'):
         
         vectorizer = textacy.Vectorizer(**vec_args)
-        doc_term_matrix = vectorizer.fit_transform(terms_iter())
+        doc_term_matrix = vectorizer.fit_transform(fx_terms())
 
         tm_model = textacy.TopicModel(method.split('_')[1], **tm_args)
         tm_model.fit(doc_term_matrix)
@@ -74,8 +67,8 @@ def compute(corpus, tick=utility.noop, method='sklearn_lda', vec_args=None, term
     elif method.startswith('gensim_'):
         
         algorithm = method.split('_')[1].upper()
-        tm_id2word = gensim.corpora.Dictionary(terms_iter())
-        tm_corpus = [ tm_id2word.doc2bow(text) for text in terms_iter() ]
+        tm_id2word = gensim.corpora.Dictionary(fx_terms())
+        tm_corpus = [ tm_id2word.doc2bow(text) for text in fx_terms() ]
         
         #tfidf_model = gensim.models.tfidfmodel.TfidfModel(tm_corpus)
         #tm_corpus = [ tfidf_model[d] for d in tm_corpus ]
@@ -147,14 +140,14 @@ def compute(corpus, tick=utility.noop, method='sklearn_lda', vec_args=None, term
                 }
             },
         }
-        
+
         tm_model = algorithms[algorithm]['engine'](**algorithms[algorithm]['options'])
         
         if hasattr(tm_model, 'log_perplexity'):
             perplexity_score = tm_model.log_perplexity(tm_corpus, len(tm_corpus))
         
         try:
-            coherence_model_lda =  gensim.models.CoherenceModel(model=tm_model, texts=terms_iter(), dictionary=tm_id2word, coherence='c_v')
+            coherence_model_lda =  gensim.models.CoherenceModel(model=tm_model, texts=fx_terms(), dictionary=tm_id2word, coherence='c_v')
             coherence_score = coherence_model_lda.get_coherence()
         except Exception as ex:
             logger.error(ex)

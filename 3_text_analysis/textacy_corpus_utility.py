@@ -14,6 +14,8 @@ from spacy import attrs
 import common.utility as utility
 import treaty_corpus
 
+from common.utility import deprecated
+
 logger = utility.getLogger('corpus_text_analysis')
 
 LANGUAGE_MODEL_MAP = { 'en': 'en_core_web_sm', 'fr': 'fr_core_web_sm', 'it': 'it_core_web_sm', 'de': 'de_core_web_sm' }
@@ -42,26 +44,29 @@ def preprocess_text(source_filename, target_filename, tick=utility.noop):
             zf.writestr(filename, text)
             tick()
     tick(0)
-
-DEFAULT_TERM_PARAMS = dict(
-    args=dict(
-        ngrams=None,
-        named_entities=True,
-        normalize='lemma',
-        as_strings=True
-    ),
-    kwargs=dict(
-        filter_stops=True,
-        filter_punct=True,
-        filter_nums=True,
-        min_freq=1,
-        drop_determiners=True,
-        include_pos=('NOUN', 'PROPN', )
-    )
-)
+    
+def get_gpe_names(corpus, filename='country_lemmas.txt'):
+    
+    with open(filename) as f:
+        content = f.readlines()
+        
+    lemmas = set([ x.strip() for x in content ])
+    
+    tokens = set([])
+    
+    for doc in corpus:
+        candidates = set([ x.lower_ for x in doc if x.lemma_ in lemmas ])
+        tokens = tokens.union(candidates)
+        
+    tokens = tokens.union(lemmas)
+    
+    return tokens
+    
 
 def infrequent_words(corpus, normalize='lemma', weighting='count', threshold=0, as_strings=False):
+    
     '''Returns set of infrequent words i.e. words having total count less than given threshold'''
+    
     if weighting == 'count' and threshold <= 1:
         return set([])
     
@@ -76,26 +81,207 @@ def frequent_document_words(corpus, normalize='lemma', weighting='freq', dfs_thr
     frequent_document_words = set([ w for w in document_freqs if document_freqs[w] > dfs_threshold ])
     return frequent_document_words
 
-def textacy_filter_terms(doc, term_args, chunk_size=None, min_length=2):
+    def get_extra_stop_words():
+        
+        extra_stop_words = set(gui.stop_words.value)
+
+        if gui.min_freq.value > 1:
+
+            infrequent_words = textacy_utility.infrequent_words(
+                corpus, normalize=gui.normalize.value, weighting='count', threshold=gui.min_freq.value, as_strings=True)
+
+            with gui.output:
+                logger.info('Ignoring {} low-frequent words!'.format(len(infrequent_words)))
+
+            extra_stop_words = extra_stop_words.union(infrequent_words)
+
+        if gui.max_doc_freq.value < 1.0:
+
+            frequent_words = textacy_utility.frequent_document_words(
+                corpus, normalize=gui.normalize.value, weighting='freq', dfs_threshold=gui.max_doc_freq.value, as_strings=True)
+
+            with gui.output:
+                logger.info('Ignoring {} high-frequent words!'.format(len(frequent_words)))
+
+            extra_stop_words = extra_stop_words.union(frequent_words)
+            
+        return extra_stop_word
     
-    def fix_peculiarities(w):
-        if '\n' in w:
-            w = w.replace('\n', ' ')
-        return w
+def fix_peculiarities(w):
+    if '\n' in w:
+        w = w.replace('\n', ' ')
+    return w
+
+def extract_document_terms(doc, extract_args):
+    """ Extracts documents and terms from a corpus
     
-    kwargs = utility.extend({}, DEFAULT_TERM_PARAMS['kwargs'], term_args['kwargs'])
-    args = utility.extend({}, DEFAULT_TERM_PARAMS['args'], term_args['args'])
+    Parameters
+    ----------
+    corpus : textacy Corpus
+        Corpus in textacy format.
+        
+    extract_args : dict
+        Dict that contains args that specifies the filter and transforms
+        extract_args['args'] positional arguments for textacy.Doc.to_terms_list
+        extract_args['kwargs'] Keyword arguments for textacy.Doc.to_terms_list
+        extract_args['substitutions'] Dict (map) with term substitution
+        extract_args['extra_stop_words'] List of additional stopwords to use
+        
+    Returns
+    -------
+    iterable of documents (which is iterable of terms)
+        Documents where terms have ben filtered and transformed according to args.
+        
+    """
+    kwargs = extract_args.get('kwargs', {})
+    args = extract_args.get('args', {})
+    
+    extra_stop_words = set(extract_args.get('extra_stop_words', None) or [])
+    substitutions = extract_args.get('substitutions', None)    
+    min_length = extract_args.get('min_length', 2)
+    
+    ngrams = args.get('ngrams', None)
+    named_entities = args.get('named_entities', False)
+    normalize = args.get('normalize', 'lemma')
+    as_strings = args.get('as_strings', True)
+    
+    terms = (
+        fix_peculiarities(substitutions.get(x, x))
+            for x in doc.to_terms_list(ngrams, named_entities, normalize, as_strings, **kwargs)
+                if len(x) >= min_length and x not in extra_stop_words
+    )
+        
+    return terms
+
+def extract_corpus_terms(corpus, extract_args):
+    
+    """ Extracts documents and terms from a corpus
+    
+    Parameters
+    ----------
+    corpus : textacy Corpus
+        Corpus in textacy format.
+        
+    extract_args : dict
+        Dict that contains args that specifies the filter and transforms
+        extract_args['args'] positional arguments for textacy.Doc.to_terms_list
+        extract_args['kwargs'] Keyword arguments for textacy.Doc.to_terms_list
+        extract_args['extra_stop_words'] List of additional stopwords to use
+        extract_args['substitutions'] Dict (map) with term substitution
+        extract_args['mask_gpe'] Boolean flag indicating if GPE should be substituted
+        extract_args['min_freq'] Integer value specifying min global word count.
+        extract_args['max_doc_freq'] Float value between 0 and 1 indicating threshold
+          for documentword frequency, Words that occur in more than `max_doc_freq`
+          documents will be filtered out.
+        
+    Returns
+    -------
+    iterable of documents (which is iterable of terms)
+        Documents where terms have ben filtered and transformed according to args.
+        
+    """
+    
+    kwargs = dict(extract_args.get('kwargs', {}))
+    args = dict(extract_args.get('args', {}))
+    normalize = args.get('normalize', 'lemma')    
+    substitutions = extract_args.get('substitutions', {})
+    extra_stop_words = set(extract_args.get('extra_stop_words', None) or [])
+    chunk_size = extract_args.get('chunk_size', None)
+    min_length = extract_args.get('min_length', 2)
+    
+    mask_gpe = extract_args.get('mask_gpe', False)
+    if mask_gpe is True:
+        gpe_names = { x: '_gpe_' for x in get_gpe_names(corpus) }
+        substitutions = utility.extend(substitutions, gpe_names)
+    
+    min_freq = extract_args.get('min_freq', 1)
+    
+    if min_freq > 1:
+        words = infrequent_words(corpus, normalize=normalize, weighting='count', threshold=min_freq, as_strings=True)
+        extra_stop_words = extra_stop_words.union(words)
+        logger.info('Ignoring {} low-frequent words!'.format(len(words)))
+
+    max_doc_freq = extract_args.get('max_doc_freq', 1.0)
+    
+    if max_doc_freq < 1.0 :
+        words = frequent_document_words(corpus, normalize=normalize, weighting='freq', dfs_threshold=max_doc_freq, as_strings=True)
+        extra_stop_words = extra_stop_words.union(words)
+        logger.info('Ignoring {} high-frequent words!'.format(len(words)))
+    
+    extract_args = {
+        'args': args,
+        'kwargs': kwargs,
+        'substitutions': substitutions,
+        'extra_stop_words': extra_stop_words,
+        'chunk_size': None
+    }
+    
+    terms = ( extract_document_terms(doc, extract_args) for doc in corpus )
+        
+    return terms
+
+@deprecated(reason="Function will be removed")
+def textacy_filter_terms2(doc, term_args, chunk_size=None, min_length=2):
+    '''Extracts terms from a document'''
+    kwargs = term_args.get('kwargs', {})
+    args = term_args.get('args', {})
+    
     extra_stop_words = set(term_args.get('extra_stop_words', None) or [])
+    
+    mask_gpe = term_args.get('mask_gpe', False)
+    min_freq = term_args.get('min_freq', 1)
+    max_doc_freq = term_args.get('max_doc_freq', 1.0)
+    normalize = args.get('normalize', 'lemma')
+    
+    if min_freq > 1 or term_args.get('infrequent_words', None) is not None:
+        
+        words = term_args.get('infrequent_words', None)
+        
+        if words is None:
+            
+            words = infrequent_words(
+                doc.corpus, normalize=normalize, weighting='count', threshold=min_freq, as_strings=True)
+            
+            term_args['infrequent_words'] = words
+            
+            logger.info('Ignoring {} low-frequent words!'.format(len(words)))
+
+        extra_stop_words = extra_stop_words.union(words)
+
+    if max_doc_freq < 1.0 or term_args.get('frequent_document_words', None) is not None:
+        
+        words = term_args.get('frequent_document_words', None)
+        
+        if words is None:
+            
+            words = frequent_document_words(
+                doc.corpus, normalize=normalize, weighting='freq', dfs_threshold=max_doc_freq, as_strings=True)
+            
+            logger.info('Ignoring {} high-frequent words!'.format(len(words)))
+        
+            term_args['frequent_document_words'] = words
+
+        extra_stop_words = extra_stop_words.union(words)
     
     terms = (
         fix_peculiarities(x) for x in doc.to_terms_list(
-            args['ngrams'],
-            args['named_entities'],
-            args['normalize'],
-            args['as_strings'],
+            args.get('ngrams', None),
+            args.get('named_entities', False),
+            args.get('normalize', 'lemma'),
+            args.get('as_strings', True),
             **kwargs
         ) if len(x) >= min_length and x not in extra_stop_words
     )
+    
+    if mask_gpe is True:
+        
+        if term_args.get('_gpe_name_map_', None) is None:
+            term_args['_gpe_name_map_'] = { x: '_gpe_' for x in get_gpe_names(doc.corpus) }
+            
+        gpe_names = term_args['_gpe_name_map_']
+        
+        terms = ( gpe_names.get(x, x) for x in terms )
+        
     return terms
 
 def get_treaty_doc(corpus, treaty_id):
@@ -123,14 +309,15 @@ def create_textacy_corpus(documents, nlp, tick=utility.noop):
         tick()
     return corpus
 
-def generate_corpus_filename(source_path, language, nlp_args=None, preprocess_args=None, compression='bz2'):
+def generate_corpus_filename(source_path, language, nlp_args=None, preprocess_args=None, compression='bz2', period_group=''):
     nlp_args = nlp_args or {}
     preprocess_args = preprocess_args or {}
     disabled_pipes = nlp_args.get('disable', ())
-    suffix = '_{}_{}{}'.format(
+    suffix = '_{}_{}{}_{}'.format(
         language,
         '_'.join([ k for k in preprocess_args if preprocess_args[k] ]),
-        '_disable({})'.format(','.join(disabled_pipes)) if len(disabled_pipes) > 0 else ''
+        '_disable({})'.format(','.join(disabled_pipes)) if len(disabled_pipes) > 0 else '',
+        (period_group or '')
     )
     filename = utility.path_add_suffix(source_path, suffix, new_extension='.pkl')
     if compression is not None:

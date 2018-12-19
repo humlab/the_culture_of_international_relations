@@ -10,7 +10,7 @@ HYPHEN_REGEXP = re.compile(r'\b(\w+)-\s*\r?\n\s*(\w+)\b', re.UNICODE)
 DEFAULT_PERIOD_GROUPS = [
     {
         'id': 'years_1919-1972',
-        'title': 'Year',
+        'title': '1919-1972',
         'column': 'signed_year',
         'type': 'range',
         'periods': list(range(1919, 1973))
