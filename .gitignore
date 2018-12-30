@@ -1,5 +1,8 @@
 data/
 temp/
+pyLDAvis/
+lib/
+results/
 .vscode/
 __pycache__/
 *.py[cod]

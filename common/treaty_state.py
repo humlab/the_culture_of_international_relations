@@ -9,6 +9,7 @@ import datetime
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
 import common.config as config
+import common.utility as utility
 
 logger = logging.getLogger(__name__)
 
@@ -599,6 +600,15 @@ class TreatyState:
         treaties = treaties[treaties[config.LANGUAGE_MAP[language]]==language]
         treaties = treaties.sort_values('signed_year', ascending=True)
         return treaties
+    
+    def get_treaty_time_groupings(self):
+        groups = {
+            'treaty_id': { 'column': 'treaty_id', 'divisor': None, 'title': 'Treaty', 'fx': None},
+            'signed_year': { 'column': 'signed_year', 'divisor': 1, 'title': 'Year', 'fx': None },
+            'signed_lustrum': { 'column': 'signed_lustrum', 'divisor': 5, 'title': 'Lustrum', 'fx': lambda df: utility.trunc_year_by(df.signed_year, 5) },
+            'signed_decade': { 'column': 'signed_decade', 'divisor': 10, 'title': 'Decade', 'fx': lambda df: utility.trunc_year_by(df.signed_year, 10) }
+        }
+        return groups
     
 def load_wti_index(data_folder, skip_columns=default_treaties_skip_columns, period_groups=None):
     try:

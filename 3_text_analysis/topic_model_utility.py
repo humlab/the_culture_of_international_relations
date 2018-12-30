@@ -6,6 +6,61 @@ import gensim
 
 logger = utility.getLogger('corpus_text_analysis')
 
+class TopicModelException(Exception):
+    pass
+    
+class TopicModelContainer():
+    """Class for current (last) computed or loaded model
+    """
+    _singleton = None
+    
+    def __init__(self):
+        self._data = None
+    
+    @staticmethod
+    def singleton():
+        TopicModelContainer._singleton = TopicModelContainer._singleton or TopicModelContainer()
+        return TopicModelContainer._singleton
+    
+    @property
+    def data(self):
+        if self._data is None:
+            raise TopicModelException('Model not loaded or computed')
+        return self._data
+
+    @data.setter
+    def data(self, value):
+        self._data = value
+        
+    @property
+    def topic_model(self):
+        return self.data.topic_model
+    
+    @property
+    def id2term(self):
+        return self.data.id2term
+    
+    @property
+    def processed(self):
+        return self.data.processed
+    
+    @property
+    def num_topics(self):
+        tm = self.topic_model
+        if tm is None:
+            return 0
+        if hasattr(tm, 'num_topics'):
+            return tm.num_topics
+        if hasattr(tm, 'n_topics'):
+            return tm.n_topics
+        
+        return 0
+    
+    @property
+    def relevant_topics(self):
+        return self.processed.relevant_topic_ids
+
+        
 # NOT USED
 def get_doc_topic_weights(doc_topic_matrix, threshold=0.05):
     topic_ids = range(0,doc_topic_matrix.shape[1])
@@ -77,8 +132,8 @@ def compile_topic_token_overview(topic_token_weights, alpha=None, n_tokens=200):
     df = topic_token_weights.groupby('topic_id')\
         .apply(lambda x: sorted(list(zip(x["token"], x["weight"])), key=lambda z: z[1], reverse=True))\
         .apply(lambda x: ' '.join([z[0] for z in x][:n_tokens])).reset_index()
+    df.columns = ['topic_id', 'tokens']
     df['alpha'] = df.topic_id.apply(lambda topic_id: alpha[topic_id]) if alpha is not None else 0.0
-    df.columns = ['topic_id', 'tokens', 'alpha']
 
     return df.set_index('topic_id')
 
@@ -89,6 +144,7 @@ def compile_document_topics(model, corpus, documents, doc_topic_matrix=None, min
 
             if isinstance(model, gensim.models.LsiModel):
                 # Gensim LSI Model
+                logger.warning('FIXME!!! Gensim LSI Model is ti big!!! ')
                 data_iter = enumerate(model[corpus])
             elif hasattr(model, 'get_document_topics'):
                 # Gensim LDA Model
@@ -129,7 +185,7 @@ def compile_document_topics(model, corpus, documents, doc_topic_matrix=None, min
     except Exception as ex:
         logger.error(ex)
         return None
-    
+
 def compile_metadata(model, corpus, id2term, documents, vectorizer=None, doc_topic_matrix=None, n_tokens=200):
     '''
     Compile metadata associated to given model and corpus
@@ -161,7 +217,7 @@ def get_topic_titles(topic_token_weights, topic_id=None, n_tokens=100):
     return df
 
 def get_topic_title(topic_token_weights, topic_id, n_tokens=100):
-    return get_topic_titles(topic_token_weights, topic_id, n_words=n_tokens).iloc[0]
+    return get_topic_titles(topic_token_weights, topic_id, n_tokens=n_tokens).iloc[0]
 
 def get_topic_tokens(topic_token_weights, topic_id=None, n_tokens=100):
     df_temp = topic_token_weights if topic_id is None else topic_token_weights[(topic_token_weights.topic_id == topic_id)]
@@ -195,3 +251,52 @@ def get_topics_unstacked(model, n_tokens=20, id2term=None, topic_ids=None):
         'Topic#{:02d}'.format(topic_id+1) : [ word[0] for word in show_topic(topic_id) ]
             for topic_id in topic_ids
     })
+
+def display_termite_plot(model, id2term, doc_term_matrix):
+    #tm = get_current_model().tm_model
+    #id2term = get_current_model().tm_id2term
+    #dtm = get_current_model().doc_term_matrix
+    
+    if hasattr (model, 'termite_plot'):
+        # doc_term_matrix [ dictionary.doc2bow(doc) for doc in doc_clean ]
+        model.termite_plot(
+            doc_term_matrix,
+            id2term,
+            topics=-1,
+            sort_topics_by='index',
+            highlight_topics=None,
+            n_terms=50,
+            rank_terms_by='topic_weight',
+            sort_terms_by='seriation',
+            save=False
+        )
+
+from gensim.models import LdaModel
+import numpy
+
+def malletmodel2ldamodel(mallet_model, gamma_threshold=0.001, iterations=50):
+    """Convert :class:`~gensim.models.wrappers.ldamallet.LdaMallet` to :class:`~gensim.models.ldamodel.LdaModel`.
+    This works by copying the training model weights (alpha, beta...) from a trained mallet model into the gensim model.
+    Parameters
+    ----------
+    mallet_model : :class:`~gensim.models.wrappers.ldamallet.LdaMallet`
+        Trained Mallet model
+    gamma_threshold : float, optional
+        To be used for inference in the new LdaModel.
+    iterations : int, optional
+        Number of iterations to be used for inference in the new LdaModel.
+    Returns
+    -------
+    :class:`~gensim.models.ldamodel.LdaModel`
+        Gensim native LDA.
+    """
+    model_gensim = LdaModel(
+        id2word=mallet_model.id2word, num_topics=mallet_model.num_topics,
+        alpha=mallet_model.alpha, eta=0,
+        iterations=iterations,
+        gamma_threshold=gamma_threshold,
+        dtype=numpy.float64  # don't loose precision when converting from MALLET
+    )
+    model_gensim.state.sstats[...] = mallet_model.wordtopics
+    model_gensim.sync_state()
+    return model_gensim

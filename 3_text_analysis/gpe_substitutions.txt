@@ -1,3 +1,10 @@
+franco-iraqi
+florence
+port-au-prince
+bagdad
+mogadiscio
+sovjet-hungarian
+khartoum
 french republic
 italian republic
 french government
@@ -5,13 +12,30 @@ buenos aires
 romanian people
 polish people
 hungarian people
+arab republic
 czechoslovak ministry
 czechoslovak republic
 czechoslovak socialist
+syrian
+arab
+yemen
+mongolian people
+mongolian
+upper volta
+volta
+syrian arab
+panama city
+african republic
 american republic
+dominican republic
+dominican
 mexican state
 soviet socialist
+togolese republic
 bratislava
+united mexican
+mexican states
+mexico city
 belgrade sub-commission
 belgrade
 belgian minister
@@ -20,6 +44,8 @@ costa rica
 carillo
 carillo flores
 italian cultural
+ivory coast
+de janiero
 rio de
 taipei
 el salvador

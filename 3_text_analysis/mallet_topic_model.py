@@ -11,11 +11,11 @@ def filter_fn_args(f, args):
     return { k: args[k] for k in args.keys()
         if k in inspect.getfullargspec(f).args }
 
-class LdaMalletService(models.wrappers.LdaMallet):
+class MalletTopicModel(models.wrappers.LdaMallet):
 
     def __init__(self, corpus, id2word, default_mallet_home, **args):
 
-        args = filter_fn_args(super(LdaMalletService, self).__init__, args)
+        args = filter_fn_args(super(MalletTopicModel, self).__init__, args)
 
         args.update({ "workers": 4, "optimize_interval": 10 })
         os.environ["MALLET_HOME"] = default_mallet_home
@@ -29,7 +29,7 @@ class LdaMalletService(models.wrappers.LdaMallet):
         if os.environ.get('MALLET_HOME', '') != mallet_home:
             os.environ["MALLET_HOME"] = mallet_home
 
-        super(LdaMalletService, self ).__init__(mallet_path, corpus=corpus, id2word=id2word, **args)
+        super(MalletTopicModel, self ).__init__(mallet_path, corpus=corpus, id2word=id2word, **args)
 
     def ftopicwordweights(self):
         return self.prefix + 'topicwordweights.txt'

@@ -228,3 +228,20 @@ def complete_value_range(values, typef=str):
     values = range(min(values), max(values) + 1)
     
     return list(map(typef, values))
+
+def is_platform_architecture(xxbit):
+    import platform
+    assert xxbit in [ '32bit', '64bit' ]
+    logger.info(platform.architecture()[0])
+    return platform.architecture()[0] == xxbit
+    #return xxbit == ('64bit' if sys.maxsize > 2**32 else '32bit')
+    
+def setup_default_pd_display(pd):
+    pd.options.display.max_columns = None
+    pd.options.display.max_rows = None
+    #pd.options.display.max_colwidth = -1
+    pd.options.display.colheader_justify = 'left'
+    #pd.options.display.precision = 4
+
+def trunc_year_by(series, divisor):
+    return (series - series.mod(divisor)).astype(int) 

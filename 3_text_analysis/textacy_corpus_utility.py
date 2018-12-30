@@ -20,6 +20,40 @@ logger = utility.getLogger('corpus_text_analysis')
 
 LANGUAGE_MODEL_MAP = { 'en': 'en_core_web_sm', 'fr': 'fr_core_web_sm', 'it': 'it_core_web_sm', 'de': 'de_core_web_sm' }
 
+class CorpusContainer():
+    """Singleton class for current (last) computed or loaded corpus
+    """
+    corpus_container = None
+    
+    class CorpusNotLoaded(Exception):
+        pass
+    
+    def __init__(self):
+        self.language = None
+        self.source_path = None
+        self.prepped_source_path = None
+        self.textacy_corpus_path = None
+        self.textacy_corpus = None
+        self.nlp = None
+    
+    @staticmethod
+    def container():
+
+        CorpusContainer.corpus_container = CorpusContainer.corpus_container or CorpusContainer()
+        
+        return CorpusContainer.corpus_container
+
+    @staticmethod
+    def corpus():
+        
+        class CorpusNotLoaded(Exception):
+            pass
+        
+        if CorpusContainer.corpus_container.textacy_corpus is None:
+            raise CorpusNotLoaded('Corpus not loaded or computed')
+        
+        return CorpusContainer.corpus_container.textacy_corpus
+
 def preprocess_text(source_filename, target_filename, tick=utility.noop):
     '''
     Pre-process of zipped archive that contains text documents
@@ -45,7 +79,7 @@ def preprocess_text(source_filename, target_filename, tick=utility.noop):
             tick()
     tick(0)
     
-def get_gpe_names(corpus, filename='country_lemmas.txt'):
+def get_gpe_names(corpus, filename='gpe_substitutions.txt'):
     
     with open(filename) as f:
         content = f.readlines()
@@ -75,43 +109,12 @@ def infrequent_words(corpus, normalize='lemma', weighting='count', threshold=0, 
     
     return words
 
-def frequent_document_words(corpus, normalize='lemma', weighting='freq', dfs_threshold=0.80, as_strings=True):
+def frequent_document_words(corpus, normalize='lemma', weighting='freq', dfs_threshold=80, as_strings=True):
     '''Returns set of words that occurrs freuently in many documents, candidate stopwords'''
     document_freqs = corpus.word_doc_freqs(normalize=normalize, weighting=weighting, smooth_idf=True, as_strings=True)
-    frequent_document_words = set([ w for w in document_freqs if document_freqs[w] > dfs_threshold ])
+    frequent_document_words = set([ w for w, f in document_freqs.items() if int(round(f,2)*100) >= dfs_threshold ])
     return frequent_document_words
-
-    def get_extra_stop_words():
-        
-        extra_stop_words = set(gui.stop_words.value)
-
-        if gui.min_freq.value > 1:
-
-            infrequent_words = textacy_utility.infrequent_words(
-                corpus, normalize=gui.normalize.value, weighting='count', threshold=gui.min_freq.value, as_strings=True)
-
-            with gui.output:
-                logger.info('Ignoring {} low-frequent words!'.format(len(infrequent_words)))
-
-            extra_stop_words = extra_stop_words.union(infrequent_words)
-
-        if gui.max_doc_freq.value < 1.0:
-
-            frequent_words = textacy_utility.frequent_document_words(
-                corpus, normalize=gui.normalize.value, weighting='freq', dfs_threshold=gui.max_doc_freq.value, as_strings=True)
-
-            with gui.output:
-                logger.info('Ignoring {} high-frequent words!'.format(len(frequent_words)))
-
-            extra_stop_words = extra_stop_words.union(frequent_words)
-            
-        return extra_stop_word
-    
-def fix_peculiarities(w):
-    if '\n' in w:
-        w = w.replace('\n', ' ')
-    return w
-
+   
 def extract_document_terms(doc, extract_args):
     """ Extracts documents and terms from a corpus
     
@@ -144,12 +147,19 @@ def extract_document_terms(doc, extract_args):
     named_entities = args.get('named_entities', False)
     normalize = args.get('normalize', 'lemma')
     as_strings = args.get('as_strings', True)
-    
-    terms = (
-        fix_peculiarities(substitutions.get(x, x))
-            for x in doc.to_terms_list(ngrams, named_entities, normalize, as_strings, **kwargs)
-                if len(x) >= min_length and x not in extra_stop_words
-    )
+ 
+    def tranform_token(w, substitutions=None):
+        if '\n' in w:
+            w = w.replace('\n', '_')
+        if substitutions is not None and w in substitutions:
+            w = substitutions[w]
+        return w
+
+    terms = ( z for z in (
+        tranform_token(w, substitutions)
+            for w in doc.to_terms_list(ngrams, named_entities, normalize, as_strings, **kwargs)
+                if len(w) >= min_length # and w not in extra_stop_words
+    ) if z not in extra_stop_words)
         
     return terms
 
@@ -174,6 +184,11 @@ def extract_corpus_terms(corpus, extract_args):
           for documentword frequency, Words that occur in more than `max_doc_freq`
           documents will be filtered out.
         
+    None
+    ----
+        extract_args.min_freq and extract_args.min_freq is the same value but used differently
+        kwargs.min_freq is passed directly as args to `textacy_doc.to_terms_list`
+        tokens below extract_args.min_freq threshold are added to the `extra_stop_words` list
     Returns
     -------
     iterable of documents (which is iterable of terms)
@@ -201,9 +216,9 @@ def extract_corpus_terms(corpus, extract_args):
         extra_stop_words = extra_stop_words.union(words)
         logger.info('Ignoring {} low-frequent words!'.format(len(words)))
 
-    max_doc_freq = extract_args.get('max_doc_freq', 1.0)
+    max_doc_freq = extract_args.get('max_doc_freq', 100)
     
-    if max_doc_freq < 1.0 :
+    if max_doc_freq < 100 :
         words = frequent_document_words(corpus, normalize=normalize, weighting='freq', dfs_threshold=max_doc_freq, as_strings=True)
         extra_stop_words = extra_stop_words.union(words)
         logger.info('Ignoring {} high-frequent words!'.format(len(words)))
@@ -341,10 +356,12 @@ def setup_nlp_language_model(language, **nlp_args):
         return doc
 
     logger.info('Loading model: %s...', language)
-    
+ 
     Language.factories['remove_whitespace_entities'] = lambda nlp, **cfg: remove_whitespace_entities
-    
-    nlp = textacy.load_spacy(LANGUAGE_MODEL_MAP[language], **nlp_args)
+    model_name = LANGUAGE_MODEL_MAP[language]
+    if not model_name.endswith('lg'):
+        logger.warning('Selected model is not the largest availiable.')
+    nlp = textacy.load_spacy(model_name, **nlp_args)
     nlp.tokenizer = keep_hyphen_tokenizer(nlp)
     
     pipeline = lambda: [ x[0] for x in nlp.pipeline ]

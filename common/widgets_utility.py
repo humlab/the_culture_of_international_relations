@@ -31,41 +31,41 @@ class WidgetUtility():
             setattr(self, key, value)
         # self.__dict__.update(kwargs)
 
-    def forward(self, description=None):
-        if 'progress' in self.__dict__.keys():
-            self.progress.value = self.progress.value + 1
-            if description is not None:
-                self.progress.description = description
+    #def forward(self, description=None):
+    #    if 'progress' in self.__dict__.keys():
+    #        self.progress.value = self.progress.value + 1
+    #        if description is not None:
+    #            self.progress.description = description
 
-    def create_select_widget(self, label='', values=None, default=None, **kwargs):
-        opts = dict(
-            options=values or [],
-            value=default if default is not None and default in values else values[0] if len(values or []) > 0 else None,
-            description=label,
-            disabled=False
-        )
-        opts = extend(opts, kwargs)
-        return widgets.Dropdown(**opts)
+    #def create_select_widget(self, label='', values=None, default=None, **kwargs):
+    #    opts = dict(
+    #        options=values or [],
+    #        value=default if default is not None and default in values else values[0] if len(values or []) > 0 else None,
+    #        description=label,
+    #        disabled=False
+    #    )
+    #    opts = extend(opts, kwargs)
+    #    return widgets.Dropdown(**opts)
 
-    def create_int_slider(self, description, **args):
-        args = extend(dict(min=0, max=0, step=1, value=0, disabled=False, continuous_update=False), args)
-        return widgets.IntSlider(description=description, **args)
+    #def create_int_slider(self, description, **args):
+    #    args = extend(dict(min=0, max=0, step=1, value=0, disabled=False, continuous_update=False), args)
+    #    return widgets.IntSlider(description=description, **args)
 
-    def create_float_slider(self, description, **args):
-        args = extend(dict(min=0.0, max=0.0, step=0.1, value=0.0, disabled=False, continuous_update=False), args)
-        return widgets.FloatSlider(description=description, **args)
+    #def create_float_slider(self, description, **args):
+    #    args = extend(dict(min=0.0, max=0.0, step=0.1, value=0.0, disabled=False, continuous_update=False), args)
+    #    return widgets.FloatSlider(description=description, **args)
 
-    def layout_algorithm_widget(self, options, default=None):
-        return dropdown('Layout', options, default)
+    #def layout_algorithm_widget(self, options, default=None):
+    #    return dropdown('Layout', options, default)
 
-    def topic_id_slider(self, n_topics):
-        return slider('Topic ID', 0, n_topics - 1, 0, step=1)
+    #def topic_id_slider(self, n_topics):
+    #    return slider('Topic ID', 0, n_topics - 1, 0, step=1)
 
-    def word_count_slider(self, min=1, max=500):  # pylint: disable=W0622
-        return slider('Word count', min, max, 50)
+    #def word_count_slider(self, min=1, max=500):  # pylint: disable=W0622
+    #    return slider('Word count', min, max, 50)
 
-    def topic_count_slider(self, n_topics):
-        return slider('Topic count', 0, n_topics - 1, 3, step=1)
+    #def topic_count_slider(self, n_topics):
+    #    return slider('Topic count', 0, n_topics - 1, 3, step=1)
 
     def create_button(self, description, style=None, callback=None):
         style = style or dict(description_width='initial', button_color='lightgreen')
@@ -74,8 +74,8 @@ class WidgetUtility():
             button.on_click(callback)
         return button
 
-    def create_text_input_widget(self, **opts):
-        return widgets.Text(**opts)
+    #def create_text_input_widget(self, **opts):
+    #    return widgets.Text(**opts)
 
     def create_text_widget(self, element_id=None, default_value=''):
         value = "<span class='{}'>{}</span>".format(element_id, default_value) if element_id is not None else ''

@@ -100,7 +100,7 @@ def display_corpus_load_gui(data_folder, wti_index, container):
         compute_ner=widgets_config.toggle('NER', False, icon='', layout=lw('100px'), disabled=False, tooltip="Enable NER tagging"),
         compute_dep=widgets_config.toggle('DEP', False, icon='', layout=lw('100px'), disabled=True, tooltip="Enable dependency parsing"),
         
-        compute=widgets.Button(description='Compute', layout=lw('100px'))
+        compute=widgets.Button(description='Compute', button_style='Success', layout=lw('100px'))
     )
     
     display(widgets.VBox([

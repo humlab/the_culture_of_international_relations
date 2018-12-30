@@ -4,6 +4,7 @@ import textacy
 import textacy.keyterms
 import ipywidgets as widgets
 import pandas as pd
+import logging
 
 import sys, types
 
@@ -11,6 +12,8 @@ sys.path = list(set(['.', '..']) - set(sys.path)) + sys.path
 
 import common.widgets_config as widgets_config
 from IPython.display import display
+
+logger = logging.getLogger(__name__)
 
 def compute_most_discriminating_terms(
     wti_index,
@@ -50,6 +53,9 @@ def compute_most_discriminating_terms(
         
     docs1 = get_term_list(corpus, group1, period1, closed_region)
     docs2 = get_term_list(corpus, group2, period2, closed_region)
+    
+    if len(docs1) == 0 or len(docs2) == 0:
+        return None
     
     docs = docs1 + docs2
     
@@ -175,9 +181,13 @@ def display_gui(wti_index, corpus):
                     closed_region=gui.closed_region.value,
                     normalize=gui.normalize.value
                 )
-                display_callback(df)
+                if df is not None:
+                    display_callback(df)
+                else:
+                    logger.info('No data for selected groups or periods.')
+            except Exception as ex:
+                logger.error(ex)
             finally:
                 gui.compute.disabled = False
-                
     gui.compute.on_click(compute_callback_handler)
     return gui
