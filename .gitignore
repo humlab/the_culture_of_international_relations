@@ -1,6 +1,7 @@
 data/
 temp/
 pyLDAvis/
+nbconvert_output/
 lib/
 results/
 .vscode/
