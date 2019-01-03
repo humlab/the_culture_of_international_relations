@@ -38,6 +38,7 @@ sql-magic = "*"
 tornado = "*"
 widgetsnbextension = "*"
 wordcloud = "*"
+jupytext = "*"
 
 [requires]
 python_version = "3"
