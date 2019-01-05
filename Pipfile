@@ -39,6 +39,12 @@ tornado = "*"
 widgetsnbextension = "*"
 wordcloud = "*"
 jupytext = "*"
+nbdime = "*"
+spacy = "*"
+textacy = "*"
+cytoolz = "*"
+beakerx = "*"
+rake-nltk = "*"
 
 [requires]
 python_version = "3"

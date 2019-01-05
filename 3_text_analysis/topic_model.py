@@ -2,7 +2,7 @@ import types
 import textacy
 import pandas as pd
 import gensim
-
+import os
 import common.utility as utility
 import textacy_corpus_utility as textacy_utility
 import topic_model_utility
@@ -35,7 +35,6 @@ default_options = {
         }
     }
 }
-
 def setup_gensim_algorithms(corpus, bow_corpus, id2word, tm_args):
     algorithms = {
         'LSI': {
@@ -61,6 +60,11 @@ def setup_gensim_algorithms(corpus, bow_corpus, id2word, tm_args):
                 'alpha': 'auto',
                 'eta': 'auto', # None
                 'decay': 0.1, # 0.5
+                
+                'chunksize': 10,
+                'per_word_topics': True,
+                'random_state': 100
+                
                 #'offset': 1.0,
                 #'dtype': np.float64
                 #'callbacks': [

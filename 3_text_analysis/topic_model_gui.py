@@ -108,6 +108,7 @@ def compute_topic_model(corpus, method, n_topics, gui, n_topic_window=0, tick=ut
             
     except Exception as ex:
         logger.error(ex)
+        raise
     finally:
         return result
     
@@ -192,15 +193,18 @@ def display_topic_model_gui(state, corpus, tagset):
     
     def tick(x=None):
         gui.progress.value = gui.progress.value + 1 if x is None else x
-
+        
+    def buzy(is_buzy):
+        gui.compute.disabled = is_buzy
+        gui.spinner.layout.visibility = 'visible' if is_buzy else 'hidden'
+            
     def compute_topic_model_handler(*args):
-        try:
-            gui.output.clear_output()
-            gui.compute.disabled = True
-            gui.spinner.layout.visibility = 'visible'
+        gui.output.clear_output()
+        buzy(True)
 
-            with gui.output:
-                
+        with gui.output:
+            
+            try:
                 state.data = compute_topic_model(corpus, gui.method.value, gui.n_topics.value, gui, tick=tick)
 
                 topics = topic_model_utility.get_topics_unstacked(
@@ -209,18 +213,16 @@ def display_topic_model_gui(state, corpus, tagset):
                     id2term=state.id2term,
                     topic_ids=state.relevant_topics
                 )
-                
+
                 display(topics)
-            
-        except Exception as ex:
-            with gui.output:
+        
+            except Exception as ex:
                 logger.error(ex)
-            state.data = None
-            raise
-        finally:
-            gui.spinner.layout.visibility = 'hidden'
-            gui.compute.disabled = False
-            
+                state.data = None
+                raise
+            finally:
+                buzy(False)
+        
     gui.compute.on_click(compute_topic_model_handler)
     
     def pos_change_handler(*args):

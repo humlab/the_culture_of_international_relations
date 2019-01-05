@@ -123,16 +123,17 @@ def display_gui(wti_index, corpus):
             widgets.VBox([
                 gui.top_n_terms,
                 gui.max_n_terms,
-                gui.normalize
-            ]), # layout=widgets.Layout(align_items='flex-end')),
-            widgets.VBox([
-                gui.compute,
-                widgets.HTML(
-                    '<b>#terms</b> is the  number of most discriminating<br>terms to return for each group.<br>' +
-                    '<b>#top</b> Consider only terms with a frequency<br>within the top #top terms out of all terms<br>'
-                    '<b>Closed region</b> If checked, then <u>both</u> treaty parties<br>must be within selected region'
-                )
-            ])
+                gui.normalize,
+                gui.compute
+            ],layout=widgets.Layout(align_items='flex-end')), # layout=widgets.Layout(align_items='flex-end')),
+            #    widgets.VBox([
+            #        gui.compute,
+            #        widgets.HTML(
+            #            '<b>#terms</b> is the  number of most discriminating<br>terms to return for each group.<br>' +
+            #            '<b>#top</b> Consider only terms with a frequency<br>within the top #top terms out of all terms<br>'
+            #            '<b>Closed region</b> If checked, then <u>both</u> treaty parties<br>must be within selected region'
+            #        )
+            #    ])
         ]),
         gui.output
     ])
