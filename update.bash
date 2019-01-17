@@ -29,7 +29,13 @@ if [ ! -d ${target_dir} ]; then
   sudo -u $target_username -g $target_group mkdir ${target_dir}
 fi
 
-declare -a notebook_dirs=("1_quantitative_analysis" "2_network_analysis" "3_text_analysis" "common" "common/network")
+declare -a notebook_dirs=(
+	"1_quantitative_analysis"
+	"2_network_analysis"
+	"3_text_analysis"
+	"6_text_similarity"
+	"common"
+	"common/network")
 
 for i in "${notebook_dirs[@]}"
 do

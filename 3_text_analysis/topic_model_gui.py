@@ -24,8 +24,14 @@ def compile_topic_modeller_args(gui, corpus):
     
     return args
 
-def compile_tokenizer_args(gui, corpus):
-       
+def compile_tokenizer_args(gui, corpus, **opts):
+    
+    gpe_substitutions = {}
+    
+    if gui.mask_gpe.value is True:
+        assert opts.get('gpe_filename', None) is not None
+        gpe_substitutions = { x: '_gpe_' for x in textacy_utility.get_gpe_names(filename=opts['gpe_filename'], corpus=corpus) }
+        
     args = dict(
         args=dict(
             ngrams=gui.ngrams.value,
@@ -40,14 +46,14 @@ def compile_tokenizer_args(gui, corpus):
             filter_punct=True
         ),
         extra_stop_words=set(gui.stop_words.value),
-        mask_gpe=gui.mask_gpe.value,
+        substitutions=gpe_substitutions,
         min_freq=gui.min_freq.value,
         max_doc_freq=gui.max_doc_freq.value
     )
     
     return args
 
-def compute_topic_model(corpus, method, n_topics, gui, n_topic_window=0, tick=utility.noop):
+def compute_topic_model(data_folder, corpus, method, n_topics, gui, n_topic_window=0, tick=utility.noop, **opts):
     
     result = None
     
@@ -59,11 +65,8 @@ def compute_topic_model(corpus, method, n_topics, gui, n_topic_window=0, tick=ut
         gensim_logger.setLevel(logging.INFO if gui.show_trace.value else logging.WARNING)
 
         vectorizer_args     = compile_vectorizer_args(gui, corpus)
-        tokenizer_args      = compile_tokenizer_args(gui, corpus)
+        tokenizer_args      = compile_tokenizer_args(gui, corpus, **opts)
         topic_modeller_args = compile_topic_modeller_args(gui, corpus)
-        #print(vectorizer_args)
-        #print(tokenizer_args)
-        #print(topic_modeller_args)
 
         window_coherences = [ ]
 
@@ -112,14 +115,14 @@ def compute_topic_model(corpus, method, n_topics, gui, n_topic_window=0, tick=ut
     finally:
         return result
     
-def display_topic_model_gui(state, corpus, tagset):
+def display_topic_model_gui(data_folder, state, corpus, **opts):
     
     def spinner_widget(filename="images/spinner-02.gif", width=40, height=40):
         with open(filename, "rb") as image_file:
             image = image_file.read()
         return widgets.Image(value=image, format='gif', width=width, height=height, layout={'visibility': 'hidden'})
 
-    pos_options = [ x for x in tagset.POS.unique() if x not in ['PUNCT', '', 'DET', 'X', 'SPACE', 'PART', 'CONJ', 'SYM', 'INTJ', 'PRON']]
+    pos_options = [ x for x in opts['tagset'].POS.unique() if x not in ['PUNCT', '', 'DET', 'X', 'SPACE', 'PART', 'CONJ', 'SYM', 'INTJ', 'PRON']]
     engine_options = [
         ('MALLET LDA', 'gensim_mallet-lda'),
         ('gensim LDA', 'gensim_lda'),
@@ -205,7 +208,7 @@ def display_topic_model_gui(state, corpus, tagset):
         with gui.output:
             
             try:
-                state.data = compute_topic_model(corpus, gui.method.value, gui.n_topics.value, gui, tick=tick)
+                state.data = compute_topic_model(data_folder, corpus, gui.method.value, gui.n_topics.value, gui, tick=tick, **opts)
 
                 topics = topic_model_utility.get_topics_unstacked(
                     state.topic_model,

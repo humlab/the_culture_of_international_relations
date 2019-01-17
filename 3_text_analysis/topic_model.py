@@ -55,7 +55,7 @@ def setup_gensim_algorithms(corpus, bow_corpus, id2word, tm_args):
                 'id2word':  id2word,
                 'iterations': tm_args.get('max_iter', 1000),
                 'passes': tm_args.get('passes', 40),
-                'eval_every': 5,
+                'eval_every': 2,
                 'update_every': 1,
                 'alpha': 'auto',
                 'eta': 'auto', # None

@@ -72,7 +72,7 @@ def generate_textacy_corpus(
             merge_spans(named_entities, doc.spacy_doc)
     else:
         logger.info('Named entities not merged')
-        
+                
     logger.info('Done!')
     
 def display_corpus_load_gui(data_folder, wti_index, container):

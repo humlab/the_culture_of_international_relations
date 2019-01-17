@@ -3,6 +3,9 @@ temp/
 pyLDAvis/
 nbconvert_output/
 lib/
+lib
+similarity
+output*
 results/
 .vscode/
 __pycache__/

@@ -11,14 +11,14 @@ os.sys.path = os.sys.path if '..' in os.sys.path else os.sys.path + ['..']
 import common.config as config
 import common.widgets_config as widgets_config
 import common.color_utility as color_utility
+import common.network.networkx_utility as networkx_utility
 import common.utility as utility
+import common.network.layout as network_layout
 
-from common.network.layout import layout_setups, layout_network
-from common.network.networkx_utility import create_nx_subgraph, get_positioned_edges2, get_positioned_nodes
 from network_analysis_plot import plot_network, get_palette
 from network_analysis import create_party_network, slice_network_datasource, setup_node_size, adjust_node_label_offset
 
-NETWORK_LAYOUT_OPTIONS = {x.name: x.key for x in layout_setups}
+NETWORK_LAYOUT_OPTIONS = {x.name: x.key for x in network_layout.layout_setups}
 logger = utility.getLogger('network_analysis')
 warnings.filterwarnings('ignore')
 
@@ -173,14 +173,14 @@ def display_party_network(
         if output == 'network':
 
             if weight_threshold > 0:
-                G = get_sub_network(G, weight_threshold)
+                G = get_subgraph(G, weight_threshold)
             
-            layout, _ = layout_network(G, layout_algorithm, **dict(scale=1.0, K=K, C=C, p=p1))
+            layout, _ = network_layout.layout_network(G, layout_algorithm, **dict(scale=1.0, K=K, C=C, p=p1))
 
             progress(4)
 
-            edges = get_positioned_edges2(G, layout, sort_attr='signed')
-            nodes = get_positioned_nodes(G, layout)
+            edges = networkx_utility.get_positioned_edges2(G, layout, sort_attr='signed')
+            nodes = networkx_utility.get_positioned_nodes(G, layout)
             
             edges = { k: list(edges[k]) for k in edges }
             nodes = { k: list(nodes[k]) for k in nodes }

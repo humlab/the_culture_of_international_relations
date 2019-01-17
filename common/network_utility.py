@@ -81,7 +81,6 @@ class NetworkUtility:
         weights = [ scale * x / norm for x in  weights ]
         lines_source = bm.ColumnDataSource(dict(xs=xs, ys=ys, weights=weights))
         return lines_source
-    
    
     @staticmethod
     def get_node_subset_source(network, layout, node_list = None):
@@ -165,3 +164,13 @@ class NetworkUtility:
     
 # pos = nx.graphviz_layout(G, prog="twopi") # twopi, neato, circo
 
+get_edge_layout_data = NetworkUtility.get_edge_layout_data
+get_edges_source = NetworkUtility.get_edges_source
+get_node_subset_source = NetworkUtility.get_node_subset_source
+create_nodes_data_source = NetworkUtility.create_nodes_data_source
+create_network = NetworkUtility.create_network
+create_bipartite_network = NetworkUtility.create_bipartite_network
+get_bipartite_node_set = NetworkUtility.get_bipartite_node_set
+create_network_from_xyw_list = NetworkUtility.create_network_from_xyw_list
+
+   

@@ -245,3 +245,12 @@ def setup_default_pd_display(pd):
 
 def trunc_year_by(series, divisor):
     return (series - series.mod(divisor)).astype(int) 
+
+def normalize_values(values):
+    if len(values or []) == 0:
+        return []
+    max_value = max(values)
+    if max_value == 0:
+        return values
+    values = [ x / max_value for x in values ]
+    return values

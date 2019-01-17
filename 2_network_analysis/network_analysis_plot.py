@@ -19,8 +19,17 @@ def get_line_color(data, topic_group_name):
 
 TOOLS = "pan,wheel_zoom,box_zoom,reset,previewsave"
 
-DFLT_NODE_OPTS = dict(color='green', level='overlay', alpha=1.0)
-DFLT_EDGE_OPTS = dict(color='black', alpha=0.2)
+DFLT_NODE_OPTS = dict(
+    color='green',
+    level='overlay',
+    alpha=1.0
+)
+
+DFLT_EDGE_OPTS = dict(
+    color='black',
+    alpha=0.2
+)
+
 DFLT_LABEL_OPTS = dict(
     level='overlay',
     text_align='center',

@@ -135,10 +135,10 @@ class PlotNetworkUtility:
         r_lines = p.multi_line('xs', 'ys', line_width='weights', source=lines_source, **line_opts)
         r_nodes = p.circle('x', 'y', size=nodes_size, source=nodes_source, **node_opts)
 
-        p.add_tools(bm.HoverTool(renderers=[r_nodes], tooltips=None, callback=WidgetUtility.\
-            glyph_hover_callback(nodes_source, 'node_id', text_ids=node_description.index, \
-                                 text=node_description, element_id=element_id))
-        )
+        #p.add_tools(bm.HoverTool(renderers=[r_nodes], tooltips=None, callback=WidgetUtility.\
+        #    glyph_hover_callback(nodes_source, 'node_id', text_ids=node_description.index, \
+        #                         text=node_description, element_id=element_id))
+        #)
 
         text_opts = dict(x='x', y='y', text='name', level='overlay', text_align='center', text_baseline='middle')
 

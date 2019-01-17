@@ -19,6 +19,32 @@ from common.utility import deprecated
 logger = utility.getLogger('corpus_text_analysis')
 
 LANGUAGE_MODEL_MAP = { 'en': 'en_core_web_sm', 'fr': 'fr_core_web_sm', 'it': 'it_core_web_sm', 'de': 'de_core_web_sm' }
+    
+import itertools
+
+def count_documents_by_pivot(corpus, attribute):
+    ''' Return a list of document counts per group defined by attribute
+    Assumes documents are sorted by attribute!
+    '''
+    fx_key = lambda doc: doc.metadata[attribute]
+    return [ len(list(g)) for _, g in itertools.groupby(corpus, fx_key) ]
+
+def generate_word_count_score(corpus, normalize, count):
+    wc = corpus.word_freqs(normalize=normalize, weighting='count', as_strings=True)
+    d = { i: set([]) for i in range(1, count+1)}
+    for k, v in wc.items():
+        if v <= count:
+            d[v].add(k)
+    return d
+
+def generate_word_document_count_score(corpus, normalize, threshold=75):
+    wc = corpus.word_doc_freqs(normalize=normalize, weighting='freq', smooth_idf=True, as_strings=True)
+    d = { i: set([]) for i in range(threshold, 101)}
+    for k, v in wc.items():
+        slot = int(round(v,2)*100)
+        if slot >= threshold:
+            d[slot].add(k)
+    return d
 
 class CorpusContainer():
     """Singleton class for current (last) computed or loaded corpus
@@ -35,7 +61,22 @@ class CorpusContainer():
         self.textacy_corpus_path = None
         self.textacy_corpus = None
         self.nlp = None
+        self.word_count_scores = None
     
+    def get_word_count(self, normalize):
+        key = 'word_count_' + normalize
+        self.word_count_scores = self.word_count_scores or { }
+        if key not in self.word_count_scores:
+            self.word_count_scores[key] = generate_word_count_score(self.textacy_corpus, normalize, 100)
+        return self.word_count_scores[key]
+    
+    def get_word_document_count(self, normalize):
+        key = 'word_document_count_' + normalize
+        self.word_count_scores = self.word_count_scores or { }
+        if key not in self.word_count_scores:
+            self.word_count_scores[key] = generate_word_document_count_score(self.textacy_corpus, normalize, 75)
+        return self.word_count_scores[key]
+        
     @staticmethod
     def container():
 
@@ -49,10 +90,10 @@ class CorpusContainer():
         class CorpusNotLoaded(Exception):
             pass
         
-        if CorpusContainer.corpus_container.textacy_corpus is None:
+        if CorpusContainer.container().textacy_corpus is None:
             raise CorpusNotLoaded('Corpus not loaded or computed')
         
-        return CorpusContainer.corpus_container.textacy_corpus
+        return CorpusContainer.container().textacy_corpus
 
 def preprocess_text(source_filename, target_filename, tick=utility.noop):
     '''
@@ -79,7 +120,7 @@ def preprocess_text(source_filename, target_filename, tick=utility.noop):
             tick()
     tick(0)
     
-def get_gpe_names(corpus, filename='gpe_substitutions.txt'):
+def get_gpe_names(filename, corpus=None):
     
     with open(filename) as f:
         content = f.readlines()
@@ -88,9 +129,10 @@ def get_gpe_names(corpus, filename='gpe_substitutions.txt'):
     
     tokens = set([])
     
-    for doc in corpus:
-        candidates = set([ x.lower_ for x in doc if x.lemma_ in lemmas ])
-        tokens = tokens.union(candidates)
+    if corpus is not None:
+        for doc in corpus:
+            candidates = set([ x.lower_ for x in doc if x.lemma_ in lemmas ])
+            tokens = tokens.union(candidates)
         
     tokens = tokens.union(lemmas)
     
@@ -178,7 +220,7 @@ def extract_corpus_terms(corpus, extract_args):
         extract_args['kwargs'] Keyword arguments for textacy.Doc.to_terms_list
         extract_args['extra_stop_words'] List of additional stopwords to use
         extract_args['substitutions'] Dict (map) with term substitution
-        extract_args['mask_gpe'] Boolean flag indicating if GPE should be substituted
+        DEPRECATED extract_args['mask_gpe'] Boolean flag indicating if GPE should be substituted
         extract_args['min_freq'] Integer value specifying min global word count.
         extract_args['max_doc_freq'] Float value between 0 and 1 indicating threshold
           for documentword frequency, Words that occur in more than `max_doc_freq`
@@ -204,10 +246,10 @@ def extract_corpus_terms(corpus, extract_args):
     chunk_size = extract_args.get('chunk_size', None)
     min_length = extract_args.get('min_length', 2)
     
-    mask_gpe = extract_args.get('mask_gpe', False)
-    if mask_gpe is True:
-        gpe_names = { x: '_gpe_' for x in get_gpe_names(corpus) }
-        substitutions = utility.extend(substitutions, gpe_names)
+    #mask_gpe = extract_args.get('mask_gpe', False)
+    #if mask_gpe is True:
+    #    gpe_names = { x: '_gpe_' for x in get_gpe_names(corpus) }
+    #    substitutions = utility.extend(substitutions, gpe_names)
     
     min_freq = extract_args.get('min_freq', 1)
     
@@ -232,70 +274,6 @@ def extract_corpus_terms(corpus, extract_args):
     }
     
     terms = ( extract_document_terms(doc, extract_args) for doc in corpus )
-        
-    return terms
-
-@deprecated(reason="Function will be removed")
-def textacy_filter_terms2(doc, term_args, chunk_size=None, min_length=2):
-    '''Extracts terms from a document'''
-    kwargs = term_args.get('kwargs', {})
-    args = term_args.get('args', {})
-    
-    extra_stop_words = set(term_args.get('extra_stop_words', None) or [])
-    
-    mask_gpe = term_args.get('mask_gpe', False)
-    min_freq = term_args.get('min_freq', 1)
-    max_doc_freq = term_args.get('max_doc_freq', 1.0)
-    normalize = args.get('normalize', 'lemma')
-    
-    if min_freq > 1 or term_args.get('infrequent_words', None) is not None:
-        
-        words = term_args.get('infrequent_words', None)
-        
-        if words is None:
-            
-            words = infrequent_words(
-                doc.corpus, normalize=normalize, weighting='count', threshold=min_freq, as_strings=True)
-            
-            term_args['infrequent_words'] = words
-            
-            logger.info('Ignoring {} low-frequent words!'.format(len(words)))
-
-        extra_stop_words = extra_stop_words.union(words)
-
-    if max_doc_freq < 1.0 or term_args.get('frequent_document_words', None) is not None:
-        
-        words = term_args.get('frequent_document_words', None)
-        
-        if words is None:
-            
-            words = frequent_document_words(
-                doc.corpus, normalize=normalize, weighting='freq', dfs_threshold=max_doc_freq, as_strings=True)
-            
-            logger.info('Ignoring {} high-frequent words!'.format(len(words)))
-        
-            term_args['frequent_document_words'] = words
-
-        extra_stop_words = extra_stop_words.union(words)
-    
-    terms = (
-        fix_peculiarities(x) for x in doc.to_terms_list(
-            args.get('ngrams', None),
-            args.get('named_entities', False),
-            args.get('normalize', 'lemma'),
-            args.get('as_strings', True),
-            **kwargs
-        ) if len(x) >= min_length and x not in extra_stop_words
-    )
-    
-    if mask_gpe is True:
-        
-        if term_args.get('_gpe_name_map_', None) is None:
-            term_args['_gpe_name_map_'] = { x: '_gpe_' for x in get_gpe_names(doc.corpus) }
-            
-        gpe_names = term_args['_gpe_name_map_']
-        
-        terms = ( gpe_names.get(x, x) for x in terms )
         
     return terms
 
@@ -453,12 +431,3 @@ def store_tokens_to_file(corpus, filename):
         tokens['lemma'] = tokens.token.str.replace('\n', ' ')
         tokens['lemma'] = tokens.token.str.replace('"', ' ')
         tokens.to_csv(filename, sep='\t')
-    
-import itertools
-
-def count_documents_by_pivot(corpus, attribute):
-    ''' Return a list of document counts per group defined by attribute
-    Assumes documents are sorted by attribute!
-    '''
-    fx_key = lambda doc: doc.metadata[attribute]
-    return [ len(list(g)) for _, g in itertools.groupby(corpus, fx_key) ]

@@ -66,6 +66,11 @@ def glyph_hover_js_code(element_id, id_name, text_name, glyph_name='glyph', glyp
     }
     """
 
+def glyph_hover_callback(glyph_source, glyph_id, text_source, element_id):
+    code = glyph_hover_js_code(element_id, glyph_id, 'text', glyph_name='glyph', glyph_data='glyph_data')
+    callback = CustomJS(args={'glyph': glyph_source, 'glyph_data': text_source}, code=code)
+    return callback
+    
 def treaty_filter_widget(**kwopts):
     default_opts = dict(
         options=config.TREATY_FILTER_OPTIONS,
