@@ -18,7 +18,7 @@ from common.utility import deprecated
 
 logger = utility.getLogger('corpus_text_analysis')
 
-LANGUAGE_MODEL_MAP = { 'en': 'en_core_web_sm', 'fr': 'fr_core_web_sm', 'it': 'it_core_web_sm', 'de': 'de_core_web_sm' }
+LANGUAGE_MODEL_MAP = { 'en': 'en_core_web_sm', 'fr': 'fr_core_news_sm', 'it': 'it_core_web_sm', 'de': 'de_core_web_sm' }
     
 import itertools
 
