@@ -315,7 +315,10 @@ class TreatyState:
 
     def get_continents(self):
         '''Returns continent reference data'''
+        mask = self.data['continent']['country_code2'] != ''
+        self.data['continent'] = self.data['continent'][mask]
         df = self.data['continent'].set_index('country_code2')
+                
         if 'Unnamed: 0' in df.columns:
             df = df.drop(['Unnamed: 0'], axis=1)
         name_map = { 'AS': 'ASIA', 'AF': 'AFRICA', 'EU': 'EUROPA', 'SA': 'SOUTH AMERICA', 'OC': 'OCEANIA', 'NA': 'NORTH AMERICA' }
