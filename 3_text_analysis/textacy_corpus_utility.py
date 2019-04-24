@@ -14,6 +14,8 @@ from spacy import attrs
 import common.utility as utility
 import treaty_corpus
 
+import textacy_patch
+
 from common.utility import deprecated
 
 logger = utility.getLogger('corpus_text_analysis')
@@ -39,7 +41,7 @@ def generate_word_count_score(corpus, normalize, count):
     return d
 
 def generate_word_document_count_score(corpus, normalize, threshold=75):
-    wc = corpus.word_doc_freqs(normalize=normalize, weighting='freq', smooth_idf=True, as_strings=True)
+    wc = textacy_patch.word_doc_freqs(corpus, normalize=normalize, weighting='freq', smooth_idf=True, as_strings=True)    
     d = { i: set([]) for i in range(threshold, 101)}
     for k, v in wc.items():
         slot = int(round(v,2)*100)
