@@ -88,7 +88,7 @@ def display_corpus_load_gui(data_folder, wti_index, container):
 
         progress=widgets.IntProgress(value=0, min=0, max=5, step=1, description='', layout=lw('90%')),
         output=widgets.Output(layout={'border': '1px solid black'}),
-        source_path=widgets_config.dropdown(description='Corpus', options=corpus_files, value=corpus_files[-1], layout=lw('300px')),
+        source_path=widgets_config.dropdown(description='Corpus', options=corpus_files, value=corpus_files[-1], layout=lw('400px')),
 
         language=widgets_config.dropdown(description='Language', options=language_options, value='en', layout=lw('180px')),
         period_group=widgets_config.dropdown('Period', period_group_options, 'years_1945-1972', disabled=False, layout=lw('180px')),
