@@ -8,6 +8,7 @@ import glob
 import re
 import time
 import gensim.utils
+import functools
 
 def getLogger(name='cultural_treaties', level=logging.INFO):
     logging.basicConfig(format="%(asctime)s : %(levelname)s : %(message)s", level=level)
@@ -43,7 +44,20 @@ def filter_dict(d, keys=None, filter_out=False):
     return {
         k: v for k, v in d.items() if k in keys
     }
-        
+
+
+def timecall(f):
+    
+    @functools.wraps(f)
+    def f_wrapper(*args, **kwargs):
+        start_time = time.perf_counter()
+        value = f(*args, **kwargs)
+        elapsed = time.perf_counter() - start_time
+        logger.info("Call time [{}]: {:.4f} secs".format(f.__name__, elapsed))
+        return value
+    
+    return f_wrapper
+
 def extend(target, *args, **kwargs):
     """Returns dictionary 'target' extended by supplied dictionaries (args) or named keywords
 
@@ -190,6 +204,10 @@ def path_add_date(path, format="%Y%m%d"):
     suffix = '_{}'.format(time.strftime(format))
     return path_add_suffix(path, suffix) 
 
+def path_add_sequence(path, i, j=0):
+    suffix = str(i).zfill(j)
+    return path_add_suffix(path, suffix) 
+
 import zipfile
 
 def zip_get_filenames(zip_filename, extension='.txt'):
@@ -254,3 +272,19 @@ def normalize_values(values):
         return values
     values = [ x / max_value for x in values ]
     return values
+
+def extract_counter_items_within_threshold(counter, low, high):
+    item_values = set([])
+    for x, wl in counter.items():
+        if low <= x <= high:
+            item_values.update(wl)
+    return item_values
+
+def chunks(l, n):
+    
+    if (n or 0) == 0:
+        yield l
+        
+    for i in range(0, len(l), n):
+        yield l[i:i + n]
+        

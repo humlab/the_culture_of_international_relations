@@ -1,21 +1,28 @@
-import re
+# -*- coding: utf-8 -*-
+import re, sys, os
 import zipfile
 import pandas as pd
 import logging
-import textacy
+import msgpack
 import logging
 import collections
-
+import textacy
+import textacy.preprocessing
 import spacy
+import timeit
+import functools
+import itertools
+import time
+import ftfy
 
 from spacy.language import Language
 from spacy import attrs
+from spacy.tokens.doc import Doc as SpacyDoc
+
+sys.path = list(set(['.', '..']) - set(sys.path)) + sys.path
 
 import common.utility as utility
-import treaty_corpus
-
-import textacy_patch
-
+import text_corpus
 from common.utility import deprecated
 
 logger = utility.getLogger('corpus_text_analysis')
@@ -23,25 +30,38 @@ logger = utility.getLogger('corpus_text_analysis')
 LANGUAGE_MODEL_MAP = { 'en': 'en_core_web_sm', 'fr': 'fr_core_news_sm', 'it': 'it_core_web_sm', 'de': 'de_core_web_sm' }
 HYPHEN_REGEXP = re.compile(r'\b(\w+)-\s*\r?\n\s*(\w+)\b', re.UNICODE)
 
-import itertools
-
 def count_documents_by_pivot(corpus, attribute):
     ''' Return a list of document counts per group defined by attribute
     Assumes documents are sorted by attribute!
     '''
-    fx_key = lambda doc: doc.metadata[attribute]
+    fx_key = lambda doc: doc._.meta[attribute]
     return [ len(list(g)) for _, g in itertools.groupby(corpus, fx_key) ]
 
+def count_documents_in_index_by_pivot(documents, attribute):
+    ''' Return a list of document counts per group defined by attribute
+    Assumes documents are sorted by attribute!
+    Same as count_documents_by_pivot but uses document index instead of (textacy) corpus
+    '''
+    assert documents[attribute].is_monotonic_increasing, 'Documents *MUST* be sorted by TIME-SLICE attribute!'
+    # FIXME: Either sort documents (and corpus or term stream!) prior to this call - OR force sortorder by filename (i.e add year-prefix)
+    return list(documents.groupby(attribute).size().values)
+
+#import numba
+#from numba import jit
+#print(numba.__version__)
+
+#@jit(nopython=True)
 def generate_word_count_score(corpus, normalize, count):
-    wc = corpus.word_freqs(normalize=normalize, weighting='count', as_strings=True)
+    wc = corpus.word_counts(normalize=normalize, weighting='count', as_strings=True)
     d = { i: set([]) for i in range(1, count+1)}
     for k, v in wc.items():
         if v <= count:
             d[v].add(k)
     return d
 
+#@jit(nopython=True)
 def generate_word_document_count_score(corpus, normalize, threshold=75):
-    wc = textacy_patch.word_doc_freqs(corpus, normalize=normalize, weighting='freq', smooth_idf=True, as_strings=True)    
+    wc = corpus.word_doc_counts(normalize=normalize, weighting='freq', smooth_idf=True, as_strings=True)
     d = { i: set([]) for i in range(threshold, 101)}
     for k, v in wc.items():
         slot = int(round(v,2)*100)
@@ -65,6 +85,7 @@ class CorpusContainer():
         self.textacy_corpus = None
         self.nlp = None
         self.word_count_scores = None
+        self.document_index = None
 
     def get_word_count(self, normalize):
         key = 'word_count_' + normalize
@@ -114,32 +135,36 @@ def preprocess_text(source_filename, target_filename, tick=utility.noop):
     with zipfile.ZipFile(target_filename, 'w', zipfile.ZIP_DEFLATED) as zf:
         for filename, text in texts:
             text = re.sub(HYPHEN_REGEXP, r"\1\2\n", text)
-            text = textacy.preprocess.normalize_whitespace(text)
-            text = textacy.preprocess.fix_bad_unicode(text)
-            text = textacy.preprocess.replace_currency_symbols(text)
-            text = textacy.preprocess.unpack_contractions(text)
-            text = textacy.preprocess.remove_accents(text)
+            text = textacy.preprocessing.normalize_whitespace(text)
+            text = ftfy.fix_text(text)
+            text = textacy.preprocessing.replace_currency_symbols(text)
+            # logger.info("Deprecation warning: textacy.preprocessing.unpack_contractions")
+            # text = textacy.preprocessing.unpack_contractions(text)
+            text = textacy.preprocessing.remove_accents(text)
             zf.writestr(filename, text)
             tick()
     tick(0)
 
-def get_gpe_names(filename, corpus=None):
-
-    with open(filename) as f:
-        content = f.readlines()
-
-    lemmas = set([ x.strip() for x in content ])
-
-    tokens = set([])
-
-    if corpus is not None:
-        for doc in corpus:
-            candidates = set([ x.lower_ for x in doc if x.lemma_ in lemmas ])
-            tokens = tokens.union(candidates)
-
-    tokens = tokens.union(lemmas)
-
-    return tokens
+#def get_gpe_names(filename, corpus=None):
+#
+#    with open(filename) as f:
+#        content = f.readlines()
+#
+#    lemmas = set([ x.strip() for x in content ])
+#
+#    tokens = set([])
+#
+#    if len(lemmas) == 0:
+#        return tokens
+#
+#    if corpus is not None:
+#        for doc in corpus:
+#            candidates = set([ x.lower_ for x in doc if x.lemma_ in lemmas ])
+#            tokens = tokens.union(candidates)
+#
+#    tokens = tokens.union(lemmas)
+#
+#    return tokens
 
 
 def infrequent_words(corpus, normalize='lemma', weighting='count', threshold=0, as_strings=False):
@@ -149,14 +174,14 @@ def infrequent_words(corpus, normalize='lemma', weighting='count', threshold=0, 
     if weighting == 'count' and threshold <= 1:
         return set([])
 
-    word_counts = corpus.word_freqs(normalize=normalize, weighting=weighting, as_strings=as_strings)
+    word_counts = corpus.word_counts(normalize=normalize, weighting=weighting, as_strings=as_strings)
     words = set([ w for w in word_counts if word_counts[w] < threshold ])
 
     return words
 
 def frequent_document_words(corpus, normalize='lemma', weighting='freq', dfs_threshold=80, as_strings=True):
     '''Returns set of words that occurrs freuently in many documents, candidate stopwords'''
-    document_freqs = corpus.word_doc_freqs(normalize=normalize, weighting=weighting, smooth_idf=True, as_strings=True)
+    document_freqs = corpus.word_doc_counts(normalize=normalize, weighting=weighting, smooth_idf=True, as_strings=True)
     frequent_document_words = set([ w for w, f in document_freqs.items() if int(round(f,2)*100) >= dfs_threshold ])
     return frequent_document_words
 
@@ -202,7 +227,7 @@ def extract_document_terms(doc, extract_args):
 
     terms = ( z for z in (
         tranform_token(w, substitutions)
-            for w in doc.to_terms_list(ngrams, named_entities, normalize, as_strings, **kwargs)
+            for w in doc._.to_terms_list(ngrams, named_entities, normalize, as_strings, **kwargs)
                 if len(w) >= min_length # and w not in extra_stop_words
     ) if z not in extra_stop_words)
 
@@ -280,32 +305,13 @@ def extract_corpus_terms(corpus, extract_args):
 
     return terms
 
-def get_treaty_doc(corpus, treaty_id):
-    for doc in corpus.get(lambda x: x.metadata['treaty_id'] == treaty_id, limit=1):
+def get_document_by_id(corpus, document_id, field_name='document_id'):
+    for doc in corpus.get(lambda x: x._.meta[field_name] == document_id, limit=1):
         return doc
+    assert False, 'Document {} not found in corpus'.format(document_id)
     return None
 
-# FIXME: Move to
-def get_document_stream(corpus_path, lang, treaties):
-
-    if 'treaty_id' not in treaties.columns:
-        treaties['treaty_id'] = treaties.index
-
-    documents = treaty_corpus.TreatyCompressedFileReader(corpus_path, lang, list(treaties.index))
-
-    for treaty_id, language, filename, text in documents:
-        assert language == lang
-        metadata = treaties.loc[treaty_id]
-        yield filename, text, metadata
-
-def create_textacy_corpus(documents, nlp, tick=utility.noop):
-    corpus = textacy.Corpus(nlp)
-    for filename, text, metadata in documents:
-        corpus.add_text(text, utility.extend(dict(filename=filename), metadata))
-        tick()
-    return corpus
-
-def generate_corpus_filename(source_path, language, nlp_args=None, preprocess_args=None, compression='bz2', period_group=''):
+def generate_corpus_filename(source_path, language, nlp_args=None, preprocess_args=None, compression='bz2', period_group='', extension='bin'):
     nlp_args = nlp_args or {}
     preprocess_args = preprocess_args or {}
     disabled_pipes = nlp_args.get('disable', ())
@@ -315,10 +321,54 @@ def generate_corpus_filename(source_path, language, nlp_args=None, preprocess_ar
         '_disable({})'.format(','.join(disabled_pipes)) if len(disabled_pipes) > 0 else '',
         (period_group or '')
     )
-    filename = utility.path_add_suffix(source_path, suffix, new_extension='.pkl')
-    if compression is not None:
+    filename = utility.path_add_suffix(source_path, suffix, new_extension='.' + extension)
+    if (compression or '') != '':
         filename += ('.' + compression)
     return filename
+
+def get_disabled_pipes_from_filename(filename):
+    re_pipes = r'^.*disable\((.*)\).*$'
+    x = re.match(re_pipes, filename).groups(0)
+    if len(x or []) > 0:
+        return x[0].split(',')
+    return None
+
+def create_textacy_corpus(corpus_reader, nlp, tick=utility.noop, n_chunk_threshold = 100000):
+
+    corpus = textacy.Corpus(nlp)
+    counter = 0
+
+    for filename, document_id, text, metadata in corpus_reader:
+
+        metadata = utility.extend(metadata, dict(filename=filename, document_id=document_id))
+
+        if len(text) > n_chunk_threshold:
+            doc = textacy.spacier.utils.make_doc_from_text_chunks(text, lang=nlp, chunk_size=n_chunk_threshold)
+            corpus.add_doc(doc)
+            doc._.meta = metadata
+        else:
+            corpus.add((text, metadata))
+
+        counter += 1
+        if counter % 100 == 0:
+            logger.info('%s documents added...', counter)
+        tick(counter)
+
+    logger.info('Done! %s documents added!', counter)
+
+    return corpus
+
+@utility.timecall
+def save_corpus(corpus, filename, lang=None, include_tensor=False):
+    if not include_tensor:
+        for doc in corpus:
+            doc.tensor = None
+    corpus.save(filename)
+
+@utility.timecall
+def load_corpus(filename, lang, document_id='document_id'):
+    corpus = textacy.Corpus.load(lang, filename)
+    return corpus
 
 def keep_hyphen_tokenizer(nlp):
     infix_re = re.compile(r'''[.\,\?\:\;\...\‘\’\`\“\”\"\'~]''')
@@ -327,6 +377,9 @@ def keep_hyphen_tokenizer(nlp):
 
     return spacy.tokenizer.Tokenizer(nlp.vocab, prefix_search=prefix_re.search, suffix_search=suffix_re.search, infix_finditer=infix_re.finditer, token_match=None)
 
+_load_spacy = textacy.load_spacy_lang if hasattr(textacy, 'load_spacy_lang') else textacy.load_spacy
+
+@utility.timecall
 def setup_nlp_language_model(language, **nlp_args):
 
     if (len(nlp_args.get('disable', [])) == 0):
@@ -340,9 +393,10 @@ def setup_nlp_language_model(language, **nlp_args):
 
     Language.factories['remove_whitespace_entities'] = lambda nlp, **cfg: remove_whitespace_entities
     model_name = LANGUAGE_MODEL_MAP[language]
-    if not model_name.endswith('lg'):
-        logger.warning('Selected model is not the largest availiable.')
-    nlp = textacy.load_spacy(model_name, **nlp_args)
+    #if not model_name.endswith('lg'):
+    #    logger.warning('Selected model is not the largest availiable.')
+
+    nlp = _load_spacy(model_name, **nlp_args)
     nlp.tokenizer = keep_hyphen_tokenizer(nlp)
 
     pipeline = lambda: [ x[0] for x in nlp.pipeline ]
@@ -350,11 +404,6 @@ def setup_nlp_language_model(language, **nlp_args):
     logger.info('Using pipeline: ' + ' '.join(pipeline()))
 
     return nlp
-
-def propagate_document_attributes(corpus):
-    for doc in corpus:
-        doc.spacy_doc.user_data['title'] = doc.metadata['treaty_id']
-        doc.spacy_doc.user_data['treaty_id'] = doc.metadata['treaty_id']
 
 POS_TO_COUNT = {
     'SYM': 0, 'PART': 0, 'ADV': 0, 'NOUN': 0, 'CCONJ': 0, 'ADJ': 0, 'DET': 0, 'ADP': 0, 'INTJ': 0, 'VERB': 0, 'NUM': 0, 'PRON': 0, 'PROPN': 0
@@ -368,37 +417,44 @@ def _get_pos_statistics(doc):
     stats = utility.extend(dict(POS_TO_COUNT), pos_counts)
     return stats
 
-def get_corpus_documents(corpus):
-    metadata = [ utility.extend({}, doc.metadata, _get_pos_statistics(doc)) for doc in corpus ]
-    df = pd.DataFrame(metadata)[['treaty_id', 'filename', 'signed_year', 'party1', 'party2', 'topic1', 'is_cultural']+POS_NAMES]
-    df['title'] = df.treaty_id
-    df['lang'] = df.filename.str.extract(r'\w{4,6}\_(\w\w)')  #.apply(lambda x: x.split('_')[1][:2])
+def get_corpus_data(corpus, document_index, title, columns_of_interest=None):
+    metadata = [
+        utility.extend({},
+                       dict(document_id=doc._.meta['document_id']),
+                       _get_pos_statistics(doc)
+                      )
+        for doc in corpus
+    ]
+    df = pd.DataFrame(metadata)[['document_id'] + POS_NAMES]
+    if columns_of_interest is not None:
+        document_index = document_index[columns_of_interest]
+    df = pd.merge(df, document_index, left_on='document_id', right_index=True, how='inner')
+    df['title'] = df[title]
     df['words'] = df[POS_NAMES].apply(sum, axis=1)
     return df
 
-def textacy_doc_to_bow(doc, target='lemma', weighting='count', as_strings=False, include=None):
-
-    spacy_doc = doc.spacy_doc
+def textacy_doc_to_bow(doc, target='lemma', weighting='count', as_strings=False, include=None, n_min_count=2):
 
     weighing_keys = { 'count', 'freq' }
     target_keys = { 'lemma': attrs.LEMMA, 'lower': attrs.LOWER, 'orth': attrs.ORTH }
 
     default_exclude = lambda x: x.is_stop or x.is_punct or x.is_space
-    exclude = default_exclude if include is None else lambda x: default_exclude(x) or not include(x)
+    exclude = default_exclude if include is None else lambda x: x.is_stop or x.is_punct or x.is_space or not include(x)
 
     assert weighting in weighing_keys
     assert target in target_keys
 
-    target_weights = spacy_doc.count_by(target_keys[target], exclude=exclude)
+    target_weights = doc.count_by(target_keys[target], exclude=exclude)
+    n_tokens = doc._.n_tokens
 
     if weighting == 'freq':
-        n_tokens = sum(target_weights.values())
         target_weights = { id_: weight / n_tokens for id_, weight in target_weights.items() }
 
+    store = doc.vocab.strings
     if as_strings:
-        bow = { doc.spacy_stringstore[word_id]: count for word_id, count in target_weights.items() }
+        bow = { store[word_id]: count for word_id, count in target_weights.items() if count >= n_min_count}
     else:
-        bow = { word_id: count for word_id, count in target_weights.items() }
+        bow = target_weights # { word_id: count for word_id, count in target_weights.items() }
 
     return bow
 
@@ -419,8 +475,8 @@ def store_tokens_to_file(corpus, filename):
             token=t.lower_,
             lemma=t.lemma_,
             pos=t.pos_,
-            signed_year=d.metadata['signed_year'],
-            treaty_id=d.metadata['treaty_id']
+            year=d._.meta['year'],
+            document_id=d._.meta['document_id']
         ) for t in d )
     tokens = pd.DataFrame(list(itertools.chain.from_iterable(doc_tokens(d) for d in corpus )))
 
@@ -434,3 +490,27 @@ def store_tokens_to_file(corpus, filename):
         tokens['lemma'] = tokens.token.str.replace('\n', ' ')
         tokens['lemma'] = tokens.token.str.replace('"', ' ')
         tokens.to_csv(filename, sep='\t')
+
+def load_term_substitutions(filepath, default_term='_gpe_', delim=';', vocab=None):
+    substitutions = {}
+    if not os.path.isfile(filepath):
+        return {}
+
+    with open(filepath) as f:
+        substitutions = {
+            x[0].strip(): x[1].strip() for x in (
+                tuple(line.lower().split(delim)) + (default_term,) for line in f.readlines()
+            ) if x[0].strip() != ''
+        }
+
+    if vocab is not None:
+
+        extras = { x.norm_: substitutions[x.lower_] for x in vocab if x.lower_ in substitutions }
+        substitutions.update(extras)
+
+        extras = { x.lower_: substitutions[x.norm_] for x in vocab if x.norm_  in substitutions }
+        substitutions.update(extras)
+
+    substitutions = { k: v for k, v in substitutions.items() if k != v }
+
+    return substitutions

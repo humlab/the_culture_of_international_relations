@@ -1,4 +1,4 @@
-import os, glob, types
+import os, glob, types, fnmatch
 import logging
 import textacy
 import ipywidgets as widgets
@@ -8,10 +8,13 @@ import common.widgets_utility as widgets_utility
 import common.widgets_config as widgets_config
 
 import textacy_corpus_utility as textacy_utility
+import text_corpus
 
 from textacy.spacier.utils import merge_spans
 
 logger = utility.getLogger('corpus_text_analysis')
+
+from domain_logic_config import current_domain as domain_logic
 
 def generate_textacy_corpus(
     data_folder,
@@ -50,8 +53,11 @@ def generate_textacy_corpus(
         logger.info('Working: Computing new corpus ' + container.textacy_corpus_path + '...')
 
         treaties = wti_index.get_treaties(language=container.language, period_group=period_group, treaty_filter=treaty_filter, parties=parties)
-        stream = textacy_utility.get_document_stream(container.prepped_source_path, container.language, treaties)
 
+        reader = text_corpus.CompressedFileReader(container.prepped_source_path)
+        
+        stream = domain_logic.get_document_stream(reader, container.language, document_index=treaties)
+        
         logger.info('Working: Stream created...')
 
         tick(0, len(treaties))
@@ -62,7 +68,7 @@ def generate_textacy_corpus(
     else:
         logger.info('Working: Loading corpus ' + container.textacy_corpus_path + '...')
         tick(1,2)
-        container.textacy_corpus = textacy.Corpus.load(container.textacy_corpus_path)
+        container.textacy_corpus = textacy.Corpus.load(container.nlp, container.textacy_corpus_path)
         tick(0)
 
     if merge_entities:
@@ -79,16 +85,28 @@ def display_corpus_load_gui(data_folder, wti_index, container):
 
     lw = lambda w: widgets.Layout(width=w)
 
-    language_options = { config.LANGUAGE_MAP[k].title(): k for k in config.LANGUAGE_MAP.keys() }
-    period_group_options = { config.PERIOD_GROUPS_ID_MAP[k]['title']: k for k in config.PERIOD_GROUPS_ID_MAP }
+    language_options = {
+        config.LANGUAGE_MAP[k].title(): k for k in config.LANGUAGE_MAP.keys() if k in [ 'en', 'fr' ]
+    }
 
-    corpus_files = sorted(glob.glob(os.path.join(data_folder, 'treaty_text_corpora_????????.zip')))
+    period_group_options = {
+        config.PERIOD_GROUPS_ID_MAP[k]['title']: k for k in config.PERIOD_GROUPS_ID_MAP
+    }
 
+    default_corpus_index = -1
+    corpus_files = sorted(glob.glob(os.path.join(data_folder, 'treaty_text_corpora_??_??????.zip')))
+
+    if len(corpus_files) > 0:
+        x, *_ = [ x for x in corpus_files if fnmatch.fnmatch(x, '*_en*')] + corpus_files[-1:]
+        default_corpus_index = corpus_files.index(x)
+    else:
+        corpus_files = [ 'No corpus found' ]
+        
     gui = types.SimpleNamespace(
 
         progress=widgets.IntProgress(value=0, min=0, max=5, step=1, description='', layout=lw('90%')),
         output=widgets.Output(layout={'border': '1px solid black'}),
-        source_path=widgets_config.dropdown(description='Corpus', options=corpus_files, value=corpus_files[-1], layout=lw('400px')),
+        source_path=widgets_config.dropdown(description='Corpus', options=corpus_files, value=corpus_files[default_corpus_index], layout=lw('400px')),
 
         language=widgets_config.dropdown(description='Language', options=language_options, value='en', layout=lw('180px')),
         period_group=widgets_config.dropdown('Period', period_group_options, 'years_1945-1972', disabled=False, layout=lw('180px')),

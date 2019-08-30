@@ -30,7 +30,7 @@ def compute_most_discriminating_terms(
 ):
     def get_token_attr(token, feature):
         if feature == spacy.attrs.LEMMA:
-            return token.lemma_
+            return token.lemma_.lower().strip('_')
         if feature == spacy.attrs.LOWER:
             return token.lower_
         return token.orth_
@@ -42,12 +42,12 @@ def compute_most_discriminating_terms(
         
         if len(region) > 0:
             if closed_region:
-                docs = ( x for x in docs if (x.metadata['party1'] in region or x.metadata['party2'] in region) )
+                docs = ( x for x in docs if (x._.meta['party1'] in region or x._.meta['party2'] in region) )
             else:
-                docs = ( x for x in docs if (x.metadata['party1'] in region and x.metadata['party2'] in region) )
+                docs = ( x for x in docs if (x._.meta['party1'] in region and x._.meta['party2'] in region) )
 
         if period is not None:
-            docs = (x for x in docs if (period[0] <= x.metadata['signed_year']) and (x.metadata['signed_year'] <= period[1]))
+            docs = (x for x in docs if (period[0] <= x._.meta['signed_year']) and (x._.meta['signed_year'] <= period[1]))
         
         return [[ get_token_attr(x, normalize) for x in doc if x.pos_ in include_pos and len(x) > 1 ] for doc in docs]
         
@@ -78,11 +78,16 @@ def display_gui(wti_index, corpus):
     lw = lambda w: widgets.Layout(width=w)   
     
     include_pos_tags = [ 'ADJ', 'VERB', 'NUM', 'ADV', 'NOUN', 'PROPN' ]
-    normalize_options = { 'Lemma': spacy.attrs.LEMMA, 'Lower': spacy.attrs.LOWER, 'Orth': spacy.attrs.ORTH }
-    party_preset_options = wti_index.get_party_preset_options()
-    parties_options = [ x for x in wti_index.get_countries_list() if x != 'ALL OTHER' ]
     
-    signed_years = { d.metadata['signed_year'] for d in corpus }
+    normalize_options = {
+        'Lemma': spacy.attrs.LEMMA,
+        'Lower': spacy.attrs.LOWER,
+        'Orth': spacy.attrs.ORTH
+    }
+    party_preset_options = wti_index.get_party_preset_options()
+    parties_options = [ x for x in wti_index.get_countries_list() if x not in ['ALL', 'ALL OTHER'] ]
+    
+    signed_years = { d._.meta['signed_year'] for d in corpus }
     period_default = (min(signed_years), max(signed_years))
 
     gui = types.SimpleNamespace(
