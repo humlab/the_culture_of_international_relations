@@ -44,7 +44,8 @@ def generate_textacy_corpus(
     if not os.path.isfile(container.prepped_source_path):
         textacy_utility.preprocess_text(container.source_path, container.prepped_source_path, tick=tick)
 
-    container.textacy_corpus_path = textacy_utility.generate_corpus_filename(container.prepped_source_path, container.language, nlp_args=nlp_args, compression=None, period_group=period_group)
+    container.textacy_corpus_path = textacy_utility.generate_corpus_filename(
+        container.prepped_source_path, container.language, nlp_args=nlp_args, compression=None, period_group=period_group)
 
     container.nlp = textacy_utility.setup_nlp_language_model(container.language, **nlp_args)
 
