@@ -1,4 +1,5 @@
 data/
+*.xlsx
 temp/
 pyLDAvis/
 nbconvert_output/
