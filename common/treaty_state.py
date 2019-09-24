@@ -117,13 +117,14 @@ from common.treaty_utility import trim_period_group, period_group_years, QueryUt
 
 class TreatyState:
 
-    def __init__(self, data_folder='./data', skip_columns=default_treaties_skip_columns, period_groups=None): # pylint: disable=W0102
+    def __init__(self, data_folder='./data', skip_columns=default_treaties_skip_columns, period_groups=None, filename=None): # pylint: disable=W0102
+        filename = filename or 'Treaties_Master_List_Treaties.csv'
         self.data_folder = data_folder
         self.period_groups = period_groups or config.DEFAULT_PERIOD_GROUPS
         self.treaties_skip_columns = (skip_columns or []) + ['sequence', 'is_cultural_yesno']
         self.treaties_columns = treaties_column_names
         self.csv_files = [
-            ('Treaties_Master_List_Treaties.csv', 'treaties', None),
+            (filename, 'treaties', None),
             ('country_continent.csv', 'country_continent', None),
             ('parties_curated_parties.csv', 'parties', None),
             ('parties_curated_continent.csv', 'continent', None),
@@ -181,6 +182,7 @@ class TreatyState:
         data = {}
         na_values = ['#N/A','N/A', 'NULL', 'NaN', '-NaN']
         for (filename, key, _) in self.csv_files:
+            logger.info('Reading file: {}...'.format(filename))
             path = os.path.join(self.data_folder, filename)
             # data[key] = pd.read_csv(path, sep='\t', low_memory=False, na_filter=False)
             data[key] = pd.read_csv(path, sep='\t', low_memory=False, keep_default_na=False, na_values=None)
@@ -613,10 +615,10 @@ class TreatyState:
         }
         return groups
     
-def load_wti_index(data_folder, skip_columns=default_treaties_skip_columns, period_groups=None):
+def load_wti_index(data_folder, skip_columns=default_treaties_skip_columns, period_groups=None, filename=None):
     try:
         period_groups = period_groups or config.DEFAULT_PERIOD_GROUPS
-        state = TreatyState(data_folder, skip_columns, period_groups)
+        state = TreatyState(data_folder, skip_columns, period_groups, filename=filename)
         logger.info("WTI index loaded!")
         return state
     except Exception as ex:

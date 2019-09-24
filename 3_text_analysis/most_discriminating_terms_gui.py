@@ -15,6 +15,8 @@ from IPython.display import display
 
 logger = logging.getLogger(__name__)
 
+from most_discriminating_terms_patch import most_discriminating_terms
+
 def compute_most_discriminating_terms(
     wti_index,
     corpus,
@@ -62,6 +64,7 @@ def compute_most_discriminating_terms(
     in_group1 = [True] * len(docs1) + [False] * len(docs2)   
     
     terms = textacy.keyterms.most_discriminating_terms(docs, in_group1, top_n_terms=top_n_terms, max_n_terms=max_n_terms)
+    #terms = most_discriminating_terms(docs, in_group1, top_n_terms=top_n_terms, max_n_terms=max_n_terms)
     min_terms = min(len(terms[0]), len(terms[1]))
     df = pd.DataFrame({'Group 1': terms[0][:min_terms], 'Group 2': terms[1][:min_terms] })
     
