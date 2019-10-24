@@ -3,6 +3,18 @@ name = "pypi"
 url = "https://pypi.org/simple"
 verify_ssl = true
 
+[dev-packages]
+jupytext = "*"
+pipenv = "*"
+pipreqs = "*"
+pylint = "*"
+pytest = "<=5.0.1"
+pytest-cov = "*"
+rope = "*"
+yapf = "*"
+pandoc = "*"
+"pep8" = "*"
+
 [packages]
 bokeh = "*"
 colorcet = "*"
@@ -38,7 +50,6 @@ sql-magic = "*"
 tornado = "*"
 widgetsnbextension = "*"
 wordcloud = "*"
-jupytext = "*"
 nbdime = "*"
 spacy = "*"
 textacy = "*"
@@ -49,9 +60,3 @@ rake-nltk = "*"
 [requires]
 python_version = "3"
 
-[dev-packages]
-pytest = "*"
-pytest-cov = "*"
-pandoc = "*"
-pylint = "*"
-"pep8" = "*"
