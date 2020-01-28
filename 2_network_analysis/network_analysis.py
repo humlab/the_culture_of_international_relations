@@ -10,7 +10,7 @@ from common.utility import clamp_values
 def create_party_network(df_party_data, K, node_partition, palette):  # , multigraph=True):
 
     edges_data = df_to_nx_edge_format(df_party_data)
-
+    
     G = nx.MultiGraph(K=K)
     G.add_edges_from(edges_data)
 
@@ -24,7 +24,13 @@ def create_party_network(df_party_data, K, node_partition, palette):  # , multig
         nx.set_node_attributes(G, palette[0], 'fill_color')
 
     nx.set_node_attributes(G, dict(G.degree()), name='degree')
-    nx.set_node_attributes(G, dict(nx.betweenness_centrality(G, weight=None)), name='betweenness')
+    try:
+        nx.set_node_attributes(G, dict(nx.betweenness_centrality(G, weight=None)), name='betweenness')
+    except nx.NetworkXNotImplemented as ex:
+        #print("warning: data does not support betweenness_centrality")
+        #print(ex)
+        pass
+
     nx.set_node_attributes(G, dict(nx.closeness_centrality(G)), name='closeness')
 
     return G

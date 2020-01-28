@@ -8,11 +8,12 @@ import common.widgets_config as widgets_config
 import common.color_utility as color_utility
 import analysis_data
 import analysis_plot
+import logging
 
 from IPython.display import display
 from pprint import pprint as pp
 
-logger = utility.getLogger('tq_by_topic')
+logger = utility.getLogger('tq_by_topic', level=logging.WARNING)
 
 def display_topic_quantity(
     period_group=0,

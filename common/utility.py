@@ -11,7 +11,7 @@ import gensim.utils
 import functools
 
 def getLogger(name='cultural_treaties', level=logging.INFO):
-    logging.basicConfig(format="%(asctime)s : %(levelname)s : %(message)s", level=level)
+    logging.basicConfig(format="%(asctime)s : %(levelname)s : %(filename)s.%(funcName)s() : %(message)s", level=level)
     logger = logging.getLogger(name)
     logger.setLevel(level)
     return logger

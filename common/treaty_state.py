@@ -182,7 +182,7 @@ class TreatyState:
         data = {}
         na_values = ['#N/A','N/A', 'NULL', 'NaN', '-NaN']
         for (filename, key, _) in self.csv_files:
-            logger.info('Reading file: {}...'.format(filename))
+            logger.debug('Reading file: {}...'.format(filename))
             path = os.path.join(self.data_folder, filename)
             # data[key] = pd.read_csv(path, sep='\t', low_memory=False, na_filter=False)
             data[key] = pd.read_csv(path, sep='\t', low_memory=False, keep_default_na=False, na_values=None)
