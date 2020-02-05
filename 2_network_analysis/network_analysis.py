@@ -1,5 +1,6 @@
 import networkx as nx
 import pandas as pd
+import numpy as np
 import community
 import datetime
 
@@ -60,10 +61,12 @@ def slice_network_datasource(edges, nodes, slice_range, slice_range_type):
 
     """
     df_edges = pd.DataFrame(edges)
+    
     if slice_range_type == 1:  # sequence
         df_edges = df_edges.loc[slice_range[0]:slice_range[1]]
     else:
-        lower, upper = datetime.date(slice_range[0], 1, 1), datetime.date(slice_range[1] + 1, 1, 1)
+        lower = np.datetime64('{}-01-01'.format(slice_range[0]))
+        upper = np.datetime64('{}-01-01'.format(slice_range[1] + 1))
         df_edges = df_edges[(df_edges.signed >= lower) & (df_edges.signed < upper)]
 
     nodes_indices = set(df_edges.source.unique()) | set(df_edges.target.unique())
