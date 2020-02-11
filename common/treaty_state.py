@@ -587,9 +587,9 @@ class TreatyState:
     def get_party_preset_options(self):
         if self._party_preset_options is None:
             options = [  ]
-            options += [ (x, y) for x,y in config.PARTY_PRESET_OPTIONS.items() ]
-            options += [ (x, y) for x,y in self.get_continent_states().to_dict().items() ]
-            options += [ ('WTI:' + x, y) for x,y in self.get_wti_group_states().to_dict().items() ]
+            options += [ (x, y) for x, y in config.PARTY_PRESET_OPTIONS.items() ]
+            options += [ ('Continent: ' + x.title(), y) for x, y in self.get_continent_states().to_dict().items() ]
+            options += [ ('WTI:' + x, y) for x, y in self.get_wti_group_states().to_dict().items() ]            
             options = sorted(options, key=lambda x: x[0])
             self._party_preset_options = options
         return self._party_preset_options
