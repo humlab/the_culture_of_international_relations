@@ -585,13 +585,31 @@ class TreatyState:
         return df
     
     def get_party_preset_options(self):
+
+        preset_options = dict(config.PARTY_PRESET_OPTIONS)
+
+        preset_options.update({
+            'Regions: 1st + 2nd World': config.get_region_parties(1, 2),
+            'Regions: 1st + 3rd World': config.get_region_parties(1, 3),
+            'Regions: 2nd + 3rd World': config.get_region_parties(2, 3)
+        })
+
+        countries = set(self.get_countries_list()) - set(['ALL', 'ALL OTHER'])
+
+        for group_id in [ 1, 2, 3 ]:
+            preset_options['Region: Not in World {}'.format(group_id)] = [ x for x in countries if x not in set(config.get_region_parties(group_id)) ]
+
         if self._party_preset_options is None:
+
             options = [  ]
-            options += [ (x, y) for x, y in config.PARTY_PRESET_OPTIONS.items() ]
+            options += [ (x, y) for x, y in preset_options.items() ]
             options += [ ('Continent: ' + x.title(), y) for x, y in self.get_continent_states().to_dict().items() ]
             options += [ ('WTI:' + x, y) for x, y in self.get_wti_group_states().to_dict().items() ]            
+
             options = sorted(options, key=lambda x: x[0])
+
             self._party_preset_options = options
+
         return self._party_preset_options
     
     def get_treaties(self, language, period_group='years_1945-1972', treaty_filter='is_cultural', parties=None):
