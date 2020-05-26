@@ -190,7 +190,7 @@ class TreatyState:
                 xls_path = os.path.join(self.data_folder, xls_filename)
                 assert os.path.exists(xls_path)
                 df = pd.read_excel(xls_path, sheet_name=xls_sheet)
-                df.to_csv(path, sep='\t')
+                df.to_csv(path, sep='\t', index=False)
             data[key] = pd.read_csv(path, sep='\t', low_memory=False, keep_default_na=False, na_values=None)
         return data
 
