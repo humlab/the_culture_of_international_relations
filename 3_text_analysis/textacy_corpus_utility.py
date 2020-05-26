@@ -3,8 +3,6 @@ import re, sys, os
 import zipfile
 import pandas as pd
 import logging
-import msgpack
-import logging
 import collections
 import textacy
 import textacy.preprocessing
