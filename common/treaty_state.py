@@ -123,6 +123,7 @@ class TreatyState:
         self.period_groups = period_groups or config.DEFAULT_PERIOD_GROUPS
         self.treaties_skip_columns = (skip_columns or []) + ['sequence', 'is_cultural_yesno']
         self.treaties_columns = treaties_column_names
+        self.is_cultural_yesno_column = is_cultural_yesno_column
         self.csv_files = [
             (filename, 'treaties', 'Treaties_Master_List.xlsx', 'Treaties'),
             ('country_continent.csv', 'country_continent', None, None),
@@ -131,7 +132,6 @@ class TreatyState:
             ('parties_curated_group.csv', 'group', None, None)
         ]
         self.data = self._read_data()
-        self.data['treaties']['is_cultural_yesno'] = self.data['treaties'][is_cultural_yesno_column]
 
         self.treaty_headnote_corpus = None
         self.tagged_headnotes = None
@@ -234,6 +234,7 @@ class TreatyState:
         treaties = self.data['treaties']
         treaties.columns = self.treaties_columns
 
+        treaties['is_cultural_yesno'] = self.data['treaties'][self.is_cultural_yesno_column]
         treaties['vol'] = treaties.vol.fillna(0).astype('int', errors='ignore')
         treaties['page'] = treaties.page.fillna(0).astype('int', errors='ignore')
         treaties['signed'] = pd.to_datetime(treaties.signed, errors='coerce')
