@@ -640,10 +640,10 @@ class TreatyState:
         }
         return groups
 
-def load_wti_index(data_folder, skip_columns=default_treaties_skip_columns, period_groups=None, filename=None):
+def load_wti_index(data_folder, skip_columns=default_treaties_skip_columns, period_groups=None, filename=None, is_cultural_yesno_column='is_cultural_yesno_org'):
     try:
         period_groups = period_groups or config.DEFAULT_PERIOD_GROUPS
-        state = TreatyState(data_folder, skip_columns, period_groups, filename=filename)
+        state = TreatyState(data_folder, skip_columns, period_groups, filename=filename, is_cultural_yesno_column=is_cultural_yesno_column)
         logger.info("WTI index loaded!")
         return state
     except Exception as ex:
