@@ -187,7 +187,7 @@ class TreatyState:
             path = os.path.join(self.data_folder, filename)
             if not os.path.exists(path):
                 assert xls_filename is not None
-                xls_path = os.path.join(self.data_folder)
+                xls_path = os.path.join(self.data_folder, xls_filename)
                 assert os.path.exists(xls_path)
                 df = pd.read_excel(xls_path, sheet_name=xls_sheet)
                 df.to_csv(path, sep='\t')
