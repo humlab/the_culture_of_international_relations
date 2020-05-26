@@ -234,7 +234,7 @@ class TreatyState:
         treaties = self.data['treaties']
         treaties.columns = self.treaties_columns
 
-        treaties['is_cultural_yesno'] = treaties['treaties'][self.is_cultural_yesno_column]
+        treaties['is_cultural_yesno'] = treaties[self.is_cultural_yesno_column]
         treaties['vol'] = treaties.vol.fillna(0).astype('int', errors='ignore')
         treaties['page'] = treaties.page.fillna(0).astype('int', errors='ignore')
         treaties['signed'] = pd.to_datetime(treaties.signed, errors='coerce')
