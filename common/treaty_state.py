@@ -5,6 +5,8 @@ import re
 import warnings
 import logging
 import datetime
+import ipywidgets as widgets
+import types
 
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
@@ -644,7 +646,7 @@ def load_wti_index(data_folder, skip_columns=default_treaties_skip_columns, peri
     try:
         period_groups = period_groups or config.DEFAULT_PERIOD_GROUPS
         state = TreatyState(data_folder, skip_columns, period_groups, filename=filename, is_cultural_yesno_column=is_cultural_yesno_column)
-        logger.info("WTI index loaded!")
+        print("WTI index loaded!")
         return state
     except Exception as ex:
         logger.error(ex)
@@ -653,3 +655,38 @@ def load_wti_index(data_folder, skip_columns=default_treaties_skip_columns, peri
         return None
 
 load_treaty_state = load_wti_index
+
+WTI_INDEX_CONTAINER = types.SimpleNamespace(value=None)
+
+def __getattr__(name):
+    if name == 'WTI_INDEX':
+        return WTI_INDEX_CONTAINER.value
+    raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
+
+
+def load_wti_index_with_gui(data_folder):
+
+    lw = lambda w: widgets.Layout(width=w)
+    wti_options = [('WTI 7CULT', 'is_cultural_yesno_org'), ('WTI 7CULT+', 'is_cultural_yesno_plus'), ('WTI 7CULTGen', 'is_cultural_yesno_gen')]
+    wti_info = { x[1]:x[0] for x in wti_options }
+    
+    gui = types.SimpleNamespace(
+        output=widgets.Output(),
+        wti=widgets.Dropdown(description='Load index', options=wti_options, value=wti_options[0][1], layout=lw('300px')),
+    )
+
+    display(widgets.VBox([
+        gui.wti,
+        gui.output
+    ]))
+
+    def compute_callback(*_args):
+        gui.output.clear_output()
+        with gui.output:
+            WTI_INDEX_CONTAINER.value = load_wti_index(data_folder, is_cultural_yesno_column=gui.wti.value)
+            print("Current index \"{}\" has {} treaties".format(wti_info[gui.wti.value], 
+                len(WTI_INDEX_CONTAINER.value.treaties[WTI_INDEX_CONTAINER.value.treaties.is_cultural]))
+            )
+
+    gui.wti.observe(compute_callback, names='value')
+    compute_callback()
