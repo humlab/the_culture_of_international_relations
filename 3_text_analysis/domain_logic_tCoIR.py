@@ -11,13 +11,14 @@ import collections
 
 # import domain.tCoIR.treaty_state as treaty_repository
 import common.treaty_state as treaty_repository
+import common.config as config
 import textacy
 
 # FIXME VARYING ASPECTS
 
 logger = utility.getLogger('corpus_text_analysis')
 
-DATA_FOLDER = '../data'
+DATA_FOLDER = config.DATA_FOLDER
 
 CORPUS_NAME_PATTERN = 'tCoIR_*.txt.zip'
 CORPUS_TEXT_FILES_PATTERN = '*.txt'
@@ -61,24 +62,15 @@ GROUP_BY_OPTIONS = [
     ('Group1, Year', ['group1', 'signed_year']),
     ('Group2, Year', ['group2', 'signed_year']),
 ]
-    #group_by_options = { 'Year': 'year', 'Pope': 'pope', 'Genre': 'genre' } #TREATY_TIME_GROUPINGS[k]['title']: k for k in TREATY_TIME_GROUPINGS }
-
-WTI_INDEX = None
-
-def get_wti_index():
-    global WTI_INDEX
-    if WTI_INDEX is None:
-        WTI_INDEX = treaty_repository.load_wti_index(WTI_INDEX_FOLDER)
-    return WTI_INDEX
 
 def get_parties():
-    parties = get_wti_index().get_parties()
+    parties = treaty_repository.current_wti_index().get_parties()
     return parties
 
 def get_treaties(lang='en', period_group='years_1945-1972'): # , treaty_filter='is_cultural', parties=None)
 
     columns = [ 'party1', 'party2', 'topic', 'topic1', 'signed_year']
-    treaties = get_wti_index().get_treaties(language=lang, period_group=period_group)[columns]
+    treaties = treaty_repository.current_wti_index().get_treaties(language=lang, period_group=period_group)[columns]
 
     group_map = get_parties()['group_name'].to_dict()
     treaties['group1'] = treaties['party1'].map(group_map)
@@ -116,7 +108,7 @@ def get_treaty_dropdown_options(wti_index, corpus):
 
         return '{}: {} {} {} {}'.format(x.name, x['signed_year'], x['topic'], x['party1'], x['party2'])
 
-    documents = wti_index.treaties.loc[textacy_utility.get_corpus_documents(corpus).treaty_id]
+    documents = wti_index.treaties.loc[get_corpus_documents(corpus).treaty_id]
 
     options = [ (v, k) for k, v in documents.apply(format_treaty_name, axis=1).to_dict().items() ]
     options = sorted(options, key=lambda x: x[0])
@@ -133,7 +125,7 @@ def get_document_stream(source, lang, document_index=None, id_extractor=None):
     id_extractor = lambda filename: filename.split('_')[0]
     lang_pattern = re.compile("^(\w*)\_" + lang + "([\_\-]corr)?\.txt$")
     item_filter  = lambda x: lang_pattern.match(x) # and id_extractor(x) in document_index.index
-        
+
     if isinstance(source, str):
         print('Opening archive: {}'.format(source))
         reader = text_corpus.CompressedFileReader(source, pattern=lang_pattern, itemfilter=item_filter)
@@ -143,30 +135,30 @@ def get_document_stream(source, lang, document_index=None, id_extractor=None):
     id_map = {
         filename : id_extractor(filename) for filename in reader.filenames if item_filter(filename)
     }
-    
+
     if len(set(document_index.index) - set(id_map.values())) > 0:
         logger.warning('Treaties not found in archive: ' +
                            ', '.join(list(set(document_index.index) - set(id_map.values()))))
-            
+
     columns = ['signed_year', 'party1', 'party2']
-    
+
     df = document_index[columns]
-    
+
     for filename, text in reader:
-        
+
         document_id = id_map.get(filename, None)
-        
+
         if document_id not in df.index:
             continue
-            
+
         metadata = df.loc[document_id].to_dict()
-        
+
         metadata['filename'] = filename
         metadata['document_id'] = document_id
         metadata['treaty_id'] = document_id
-        
+
         yield filename, document_id, text, metadata
-    
+
 def compile_documents_by_filename(filenames):
 
     treaties = get_treaties()

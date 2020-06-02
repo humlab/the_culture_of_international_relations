@@ -642,11 +642,26 @@ class TreatyState:
         }
         return groups
 
-def load_wti_index(data_folder, skip_columns=default_treaties_skip_columns, period_groups=None, filename=None, is_cultural_yesno_column='is_cultural_yesno_org'):
+WTI_OPTIONS = [
+    ('WTI 7CULT', 'is_cultural_yesno_org'),
+    ('WTI 7CULT+', 'is_cultural_yesno_plus'),
+    ('WTI 7CULTGen', 'is_cultural_yesno_gen')
+]
+
+WTI_INFO = { x[1]:x[0] for x in WTI_OPTIONS }
+
+def load_wti_index(data_folder=None, skip_columns=default_treaties_skip_columns, period_groups=None, filename=None, is_cultural_yesno_column='is_cultural_yesno_org'):
     try:
+
+        data_folder = data_folder or config.DATA_FOLDER
         period_groups = period_groups or config.DEFAULT_PERIOD_GROUPS
+
         state = TreatyState(data_folder, skip_columns, period_groups, filename=filename, is_cultural_yesno_column=is_cultural_yesno_column)
-        print("WTI index loaded!")
+
+        print("WTI index loaded! Current index \"{}\" has {} treaties.".format(WTI_INFO[is_cultural_yesno_column],
+            len(state.treaties[state.treaties.is_cultural]))
+        )
+
         return state
     except Exception as ex:
         logger.error(ex)
@@ -658,21 +673,22 @@ load_treaty_state = load_wti_index
 
 WTI_INDEX_CONTAINER = types.SimpleNamespace(value=None)
 
-def __getattr__(name):
-    if name == 'WTI_INDEX':
-        return WTI_INDEX_CONTAINER.value
-    raise AttributeError(f"module '{__name__}' has no attribute '{name}'")
+def current_wti_index():
+    if WTI_INDEX_CONTAINER.value is None:
+        raise AttributeError("WTI Index not loaded. Please call load_wti_index or load_wti_index_with_gui prior to calling this method")
+    return WTI_INDEX_CONTAINER.value
 
+def load_wti_index_with_gui(data_folder=None):
 
-def load_wti_index_with_gui(data_folder):
+    global WTI_INDEX_CONTAINER
+
+    data_folder = data_folder or config.DATA_FOLDER
 
     lw = lambda w: widgets.Layout(width=w)
-    wti_options = [('WTI 7CULT', 'is_cultural_yesno_org'), ('WTI 7CULT+', 'is_cultural_yesno_plus'), ('WTI 7CULTGen', 'is_cultural_yesno_gen')]
-    wti_info = { x[1]:x[0] for x in wti_options }
-    
+
     gui = types.SimpleNamespace(
         output=widgets.Output(),
-        wti=widgets.Dropdown(description='Load index', options=wti_options, value=wti_options[0][1], layout=lw('300px')),
+        wti=widgets.Dropdown(description='Load index', options=WTI_OPTIONS, value=WTI_OPTIONS[0][1], layout=lw('300px')),
     )
 
     display(widgets.VBox([
@@ -684,9 +700,6 @@ def load_wti_index_with_gui(data_folder):
         gui.output.clear_output()
         with gui.output:
             WTI_INDEX_CONTAINER.value = load_wti_index(data_folder, is_cultural_yesno_column=gui.wti.value)
-            print("Current index \"{}\" has {} treaties".format(wti_info[gui.wti.value], 
-                len(WTI_INDEX_CONTAINER.value.treaties[WTI_INDEX_CONTAINER.value.treaties.is_cultural]))
-            )
 
     gui.wti.observe(compute_callback, names='value')
     compute_callback()

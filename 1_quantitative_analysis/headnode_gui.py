@@ -12,6 +12,7 @@ import common.widgets_config as widgets_config
 import common.config as config
 import common.color_utility as color_utility
 import common.utility as utility
+import headnote_corpus
 
 from pprint import pprint as pp
 
@@ -36,21 +37,21 @@ EXTRA_GROUPBY_OPTIONS = {
 def compute_co_occurrance(treaty_tokens):
 
     """Computes and returns a co-occurencence matrix
-        
+
         Parameters
         ----------
         treaty_tokens : DataFrame
-            Subset of treaty tokens for which we want to compute co-occurrence        
+            Subset of treaty tokens for which we want to compute co-occurrence
         """
     co_occurrance = treaty_tokens.merge(treaty_tokens, how='inner', left_index=True, right_index=True)
-    
+
     co_occurrance = co_occurrance.loc[(co_occurrance['token_x'] < co_occurrance['token_y'])]
-    
+
     co_occurrance['token'] = co_occurrance.apply(lambda row: ' - '.join([row['token_x'].upper(), row['token_y'].upper()]), axis=1)
     co_occurrance['lemma'] = co_occurrance.apply(lambda row: ' - '.join([row['lemma_x'].upper(), row['lemma_y'].upper()]), axis=1)
-    
+
     co_occurrance = co_occurrance.assign(is_stopword=False, sequence_id=0)[['sequence_id', 'token', 'lemma', 'is_stopword']]
-    
+
     return co_occurrance
 
 def display_headnote_toplist(
@@ -85,11 +86,12 @@ def display_headnote_toplist(
             args = utility.filter_dict(locals(), [ 'progress', 'print_args' ], filter_out=True)
             args['wti_index'] = None
             pp(args)
-            
-        corpus = wti_index.headnote_corpus
+
+        corpus = headnote_corpus.HeadnoteTokenCorpus(treaties=wti_index.treaties)
+
         period_group = config.DEFAULT_PERIOD_GROUPS[period_group_index]
         topic_group = config.TOPIC_GROUP_MAPS[topic_group_name]
-    
+
         progress()
 
         """ Get subset of treaties filtered by topic, period, and is-cultural filter """
@@ -99,16 +101,16 @@ def display_headnote_toplist(
             treaty_filter=treaty_filter,
             recode_is_cultural=recode_is_cultural
         )
-        
+
         if parties is not None and not 'ALL' in parties:
             treaties = treaties.loc[(treaties.party1.isin(parties))|(treaties.party2.isin(parties))]
 
         if treaties.shape[0] == 0:
             print('No data for selection')
             return
-        
+
         progress()
-        
+
         token_or_lemma = 'token' if not use_lemma else 'lemma'
 
         if compute_co_occurance:
@@ -117,9 +119,9 @@ def display_headnote_toplist(
                 .loc[treaty_tokens[token_or_lemma].str.len() >= min_word_size]\
                 .reset_index()\
                 .drop(['is_stopword', 'sequence_id'], axis=1)\
-                .set_index('treaty_id')            
+                .set_index('treaty_id')
             treaty_tokens = compute_co_occurrance(treaty_tokens)
-            
+
         else:
             #FIXME: Filter based on token-length
             treaty_tokens = corpus.tokens
@@ -173,13 +175,13 @@ def display_headnote_toplist(
             result = result.set_index(list(reversed(groupbys))).unstack(level=0).fillna(0).astype('int32')
             result.columns = [ x[1] for x in result.columns ]
             result.plot(kind=kind, stacked=stacked, figsize=(16,8))
-            
+
         progress(0)
 
     except Exception as ex:
         raise
         logger.error(ex)
-    finally:        
+    finally:
         progress(0)
 
 def display_gui(wti_index, print_args=False):
@@ -204,7 +206,7 @@ def display_gui(wti_index, print_args=False):
     # plot_style_widget = widgets_config.plot_style_widget(layout=lw())
     n_top_widget = widgets_config.slider('Top/grp #', 2, 100, 25, step=10, layout=lw(width='200px'))
     n_min_count_widget = widgets_config.slider('Min count', 1, 10, 5, step=1, tooltip='Filter out words with count less than specified value', layout=lw(width='200px'))
-    
+
     treaty_filter_widget = widgets_config.dropdown('Filter', config.TREATY_FILTER_OPTIONS, 'is_cultural', layout=lw())
     output_format_widget = widgets_config.dropdown('Output', OUTPUT_OPTIONS, 'plot_stacked_bar', layout=lw())
     progress_widget = widgets_config.progress(0, 8, 1, 0, layout=lw(width='95%'))

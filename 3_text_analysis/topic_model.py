@@ -9,27 +9,27 @@ import topic_model_utility
 import mallet_topic_model
 import sttm_topic_model
 import numpy as np
-    
+
 # OBS OBS! https://scikit-learn.org/stable/auto_examples/applications/plot_topics_extraction_with_nmf_lda.html
 DEFAULT_VECTORIZE_PARAMS = dict(tf_type='linear', apply_idf=False, idf_type='smooth', norm='l2', min_df=1, max_df=0.95)
 
 # FIXME: Bug somewhere...
 def n_gram_detector(doc_iter, n_gram_size=2, min_count=5, threshold=100):
-    
+
     for n_span in range(2, n_gram_size+1):
         print('Applying {}_gram detector'.format(n_span))
         n_grams = gensim.models.Phrases(doc_iter(), min_count=min_count, threshold=threshold)
         ngram_modifier = gensim.models.phrases.Phraser(n_grams)
         ngram_doc_iter = lambda: ( ngram_modifier[doc] for doc in doc_iter() )
         doc_iter = ngram_doc_iter
-        
+
     return doc_iter
 
 default_options = {
     'LSI': {
         'engine': gensim.models.LsiModel,
         'options': {
-            'corpus': None, 
+            'corpus': None,
             'num_topics':  20,
             'id2word':  None
         }
@@ -40,7 +40,7 @@ def setup_gensim_algorithms(corpus, bow_corpus, id2word, tm_args):
         'LSI': {
             'engine': gensim.models.LsiModel,
             'options': {
-                'corpus': bow_corpus, 
+                'corpus': bow_corpus,
                 'num_topics': tm_args.get('n_topics', 0),
                 'id2word': id2word,
                 'power_iters': 2,
@@ -50,7 +50,7 @@ def setup_gensim_algorithms(corpus, bow_corpus, id2word, tm_args):
         'LDA': {
             'engine': gensim.models.LdaModel,
             'options': {
-                'corpus': bow_corpus, 
+                'corpus': bow_corpus,
                 'num_topics':  tm_args.get('n_topics', 20),
                 'id2word':  id2word,
                 'iterations': tm_args.get('max_iter', 1000),
@@ -60,11 +60,11 @@ def setup_gensim_algorithms(corpus, bow_corpus, id2word, tm_args):
                 'alpha': 'auto',
                 'eta': 'auto', # None
                 'decay': 0.1, # 0.5
-                
+
                 'chunksize': 10,
                 'per_word_topics': True,
                 'random_state': 100
-                
+
                 #'offset': 1.0,
                 #'dtype': np.float64
                 #'callbacks': [
@@ -76,7 +76,7 @@ def setup_gensim_algorithms(corpus, bow_corpus, id2word, tm_args):
         'HDP': {
             'engine': gensim.models.HdpModel,
             'options': {
-                'corpus': bow_corpus, 
+                'corpus': bow_corpus,
                 'T':  tm_args.get('n_topics', 0),
                 'id2word':  id2word,
                 #'iterations': tm_args.get('max_iter', 0),
@@ -87,7 +87,7 @@ def setup_gensim_algorithms(corpus, bow_corpus, id2word, tm_args):
         'DTM': {
             'engine': gensim.models.LdaSeqModel,
             'options': {
-                'corpus': bow_corpus, 
+                'corpus': bow_corpus,
                 'num_topics':  tm_args.get('n_topics', 0),
                 'id2word':  id2word,
                 'time_slice': textacy_utility.count_documents_by_pivot(corpus, 'signed_year')
@@ -101,14 +101,14 @@ def setup_gensim_algorithms(corpus, bow_corpus, id2word, tm_args):
         'MALLET-LDA': {
             'engine': mallet_topic_model.MalletTopicModel,
             'options': {
-                'corpus': bow_corpus, 
+                'corpus': bow_corpus,
                 'id2word':  id2word,
                 'default_mallet_home': '/usr/local/share/mallet-2.0.8/',
-                
+
                 'num_topics':  tm_args.get('n_topics', 100),
                 'iterations': tm_args.get('max_iter', 2000),
                 'passes': tm_args.get('passes', 20),
-                
+
                 'prefix': './data/',
                 'workers': 4,
                 'optimize_interval': 10,
@@ -135,74 +135,82 @@ def setup_gensim_algorithms(corpus, bow_corpus, id2word, tm_args):
             )
         )
     return algorithms
-    
+
+def get_corpus_documents(corpus):
+    metadata = [ utility.extend({}, doc._.meta, _get_pos_statistics(doc)) for doc in corpus ]
+    df = pd.DataFrame(metadata)[['treaty_id', 'filename', 'signed_year', 'party1', 'party2'] + POS_NAMES]
+    df['title'] = df.treaty_id
+    df['lang'] = df.filename.str.extract(r'\w{4,6}\_(\w\w)')
+    df['words'] = df[POS_NAMES].apply(sum, axis=1)
+    return df
+
 def compute(corpus, tick=utility.noop, method='sklearn_lda', vec_args=None, term_args=None, tm_args=None, **args):
-    
+
     tick()
-    
+
     vec_args = utility.extend({}, DEFAULT_VECTORIZE_PARAMS, vec_args)
-    
+
     terms = [ list(doc) for doc in textacy_utility.extract_corpus_terms(corpus, term_args) ]
     fx_terms = lambda: terms # [ doc for doc in textacy_utility.extract_corpus_terms(corpus, term_args) ]
-            
+
     perplexity_score = None
     coherence_score = None
     vectorizer = None
     doc_topic_matrix = None
     doc_term_matrix = None
-    
-    documents = textacy_utility.get_corpus_documents(corpus)
+
+    documents = get_corpus_documents(corpus)
 
     if method.startswith('sklearn'):
-        
+
         vectorizer = textacy.Vectorizer(**vec_args)
         doc_term_matrix = vectorizer.fit_transform(fx_terms())
 
         model = textacy.TopicModel(method.split('_')[1], **tm_args)
         model.fit(doc_term_matrix)
-        
+
         tick()
-        
+
         doc_topic_matrix = model.transform(doc_term_matrix)
-        
+
         tick()
-        
+
         id2word = vectorizer.id_to_term
         bow_corpus = gensim.matutils.Sparse2Corpus(doc_term_matrix, documents_columns=False)
-        
+
         # FIXME!!!
         perplexity_score = None
         coherence_score = None
-        
+
     elif method.startswith('gensim_'):
-        
+
         algorithm = method.split('_')[1].upper()
-        
+
         id2word = gensim.corpora.Dictionary(fx_terms())
         bow_corpus = [ id2word.doc2bow(tokens) for tokens in fx_terms() ]
-        
+
         if args.get('tfidf_weiging', False):
             # assert algorithm != 'MALLETLDA', 'MALLET training model cannot (currently) use TFIDF weighed corpus'
             tfidf_model = gensim.models.tfidfmodel.TfidfModel(bow_corpus)
             bow_corpus = [ tfidf_model[d] for d in bow_corpus ]
-        
+
         algorithms = setup_gensim_algorithms(corpus, bow_corpus, id2word, tm_args)
-        
+
         engine = algorithms[algorithm]['engine']
         engine_options = algorithms[algorithm]['options']
-        
+
         model = engine(**engine_options)
-        
+
         if hasattr(model, 'log_perplexity'):
             perplexity_score = model.log_perplexity(bow_corpus, len(bow_corpus))
-        
+
         try:
             coherence_model_lda =  gensim.models.CoherenceModel(model=model, texts=fx_terms(), dictionary=id2word, coherence='c_v')
             coherence_score = coherence_model_lda.get_coherence()
         except Exception as ex:
             logger.error(ex)
             coherence_score = None
-            
+
     processed = topic_model_utility.compile_metadata(
         model,
         bow_corpus,
@@ -212,7 +220,7 @@ def compute(corpus, tick=utility.noop, method='sklearn_lda', vec_args=None, term
         doc_topic_matrix=doc_topic_matrix,
         n_tokens=200
     )
-    
+
     model_data = types.SimpleNamespace(
         topic_model=model,
         id2term=id2word,
@@ -226,15 +234,15 @@ def compute(corpus, tick=utility.noop, method='sklearn_lda', vec_args=None, term
         options=dict(method=method, vec_args=vec_args, term_args=term_args, tm_args=tm_args, **args),
         coherence_scores=None
     )
-    
+
     tick(0)
-    
+
     return model_data
 
 import pickle
 
 def store_model(data, filename):
-    
+
     data = types.SimpleNamespace(
         topic_model=data.topic_model,
         id2term=data.id2term,
@@ -290,4 +298,3 @@ def compute_topic_proportions(document_topic_weights, doc_length_series):
     topic_proportion = topic_frequency / topic_frequency.sum()
 
     return topic_proportion
-    

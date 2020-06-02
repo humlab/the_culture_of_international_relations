@@ -1,5 +1,13 @@
+import os
 import re
 import numpy as np
+
+def project_root(folder):
+    while not os.path.exists(os.path.join(folder, "common")):
+        folder, _ = os.path.split(folder)
+    return folder
+
+DATA_FOLDER = os.path.join(project_root(os.getcwd()), "data")
 
 LANGUAGE_MAP = { 'en': 'english', 'fr': 'french', 'it': 'other', 'de': 'other' }
 
@@ -35,6 +43,13 @@ DEFAULT_PERIOD_GROUPS = [
         'column': 'signed_year',
         'type': 'range',
         'periods': list(range(1945, 1973))
+    },
+    {
+        'id': 'years_1935-1972',
+        'title': '1935-1972',
+        'column': 'signed_year',
+        'type': 'range',
+        'periods': list(range(1935, 1973))
     }
 ]
 
@@ -62,7 +77,7 @@ DEFAULT_TOPIC_GROUPS = {
     '7CORR + 1DIPLOMACY': {
         '7CORR': ['7CORR'],
         'DIPLOMACY': ['1ALLY', '1AMITY', '1ARMCO', '1CHART', '1DISPU', '1ESTAB', '1HEAD', '1OCCUP', '1OPTC', '1PEACE', '1RECOG', '1REPAR', '1STATU', '1TERRI', '1TRUST']
-    },    
+    },
     '7CULT + 1DIPLOMACY': {
         '7CULT': ['7CULT', '7CORR'],
         'DIPLOMACY': ['1ALLY', '1AMITY', '1ARMCO', '1CHART', '1DISPU', '1ESTAB', '1HEAD', '1OCCUP', '1OPTC', '1PEACE', '1RECOG', '1REPAR', '1STATU', '1TERRI', '1TRUST']
@@ -345,7 +360,7 @@ def get_region_parties(*region_ids):
     for region_id in region_ids:
         assert region_id in [1, 2, 3]
         data += WORLD_REGIONS[region_id]
-        
+
     return data
 
 PARTY_PRESET_OPTIONS = {

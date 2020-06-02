@@ -143,7 +143,7 @@ def display_topic_model_gui(data_folder, state, corpus, **opts):
     ngrams_options = { '1': [1], '1, 2': [1, 2], '1,2,3': [1, 2, 3] }
     default_include_pos = [ 'NOUN', 'PROPN' ]
     frequent_words = [ x[0] for x in textacy_utility.get_most_frequent_words(corpus, 100, normalize='lemma', include_pos=default_include_pos) ] + [ '_gpe_' ]
-    named_entities_disabled = len(corpus) == 0 or len(corpus[0].spacy_doc.ents) == 0
+    named_entities_disabled = len(corpus) == 0 or len(corpus[0].ents) == 0
     gui = types.SimpleNamespace(
         progress=widgets.IntProgress(value=0, min=0, max=5, step=1, description='', layout=widgets.Layout(width='90%')),
         n_topics=widgets.IntSlider(description='#topics', min=2, max=100, value=20, step=1, layout=widgets.Layout(width='240px')),
