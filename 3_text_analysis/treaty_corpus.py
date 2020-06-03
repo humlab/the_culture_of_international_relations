@@ -1,15 +1,16 @@
-import os
-import pandas as pd
-import glob
-import nltk
-import gensim
-import zipfile
 import fnmatch
+import glob
 import logging
+import os
 import re
 import typing.re
+import zipfile
 
+import gensim
+import nltk
+import pandas as pd
 from gensim.corpora.textcorpus import TextCorpus
+
 
 logger = logging.getLogger(__name__)
 
@@ -132,6 +133,7 @@ def get_document_stream(corpus_path, lang, treaties):
         metadata = treaties.loc[treaty_id]
         yield filename, text, metadata
     
+
 class TreatyCorpus(TextCorpus):
 
     def __init__(self,
@@ -383,4 +385,3 @@ class TreatyCorpusSaveLoad():
         return os.path.isfile(self.mm_filename) and \
             os.path.isfile(self.dict_filename) and \
             os.path.isfile(self.document_index)
-

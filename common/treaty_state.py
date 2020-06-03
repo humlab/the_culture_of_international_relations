@@ -643,7 +643,7 @@ class TreatyState:
         return groups
 
 WTI_OPTIONS = [
-    ('WTI 7CULT', 'is_cultural_yesno_org'),
+    ('WTI 7CULT Old', 'is_cultural_yesno_org'),
     ('WTI 7CULT+', 'is_cultural_yesno_plus'),
     ('WTI 7CULTGen', 'is_cultural_yesno_gen')
 ]
