@@ -96,6 +96,7 @@ def display_corpus_load_gui(data_folder, wti_index, container):
 
     default_corpus_index = -1
     corpus_files = sorted(glob.glob(os.path.join(data_folder, 'treaty_text_corpora_??_??????.zip')))
+    corpus_files += sorted(glob.glob(os.path.join(data_folder, 'treaty_text_corpora_??_????????_*.zip')))
 
     if len(corpus_files) > 0:
         x, *_ = [ x for x in corpus_files if fnmatch.fnmatch(x, '*_en*')] + corpus_files[-1:]
