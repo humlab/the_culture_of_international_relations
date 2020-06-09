@@ -16,6 +16,7 @@ logger = utility.getLogger('corpus_text_analysis')
 
 from domain_logic_config import current_domain as domain_logic
 
+
 def generate_textacy_corpus(
     data_folder,
     wti_index,
@@ -56,9 +57,9 @@ def generate_textacy_corpus(
         treaties = wti_index.get_treaties(language=container.language, period_group=period_group, treaty_filter=treaty_filter, parties=parties)
 
         reader = text_corpus.CompressedFileReader(container.prepped_source_path)
-        
+
         stream = domain_logic.get_document_stream(reader, container.language, document_index=treaties)
-        
+
         logger.info('Working: Stream created...')
 
         tick(0, len(treaties))
@@ -68,7 +69,7 @@ def generate_textacy_corpus(
 
     else:
         logger.info('Working: Loading corpus ' + container.textacy_corpus_path + '...')
-        tick(1,2)
+        tick(1, 2)
         container.textacy_corpus = textacy.Corpus.load(container.nlp, container.textacy_corpus_path)
         tick(0)
 
@@ -82,6 +83,7 @@ def generate_textacy_corpus(
 
     logger.info('Done!')
 
+
 def display_corpus_load_gui(data_folder, wti_index, container):
 
     lw = lambda w: widgets.Layout(width=w)
@@ -94,16 +96,15 @@ def display_corpus_load_gui(data_folder, wti_index, container):
         config.PERIOD_GROUPS_ID_MAP[k]['title']: k for k in config.PERIOD_GROUPS_ID_MAP
     }
 
-    default_corpus_index = -1
-    corpus_files = sorted(glob.glob(os.path.join(data_folder, 'treaty_text_corpora_??_??????.zip')))
-    corpus_files += sorted(glob.glob(os.path.join(data_folder, 'treaty_text_corpora_??_????????_*.zip')))
+    default_corpus_index = -1    
+    corpus_files = sorted(glob.glob(os.path.join(data_folder, 'treaty_text_corpora_??_*[!_preprocessed].zip')))
 
     if len(corpus_files) > 0:
         x, *_ = [ x for x in corpus_files if fnmatch.fnmatch(x, '*_en*')] + corpus_files[-1:]
         default_corpus_index = corpus_files.index(x)
     else:
         corpus_files = [ 'No corpus found' ]
-        
+
     gui = types.SimpleNamespace(
 
         progress=widgets.IntProgress(value=0, min=0, max=5, step=1, description='', layout=lw('90%')),
@@ -143,6 +144,7 @@ def display_corpus_load_gui(data_folder, wti_index, container):
             gui.compute]),
         gui.output
     ]))
+
     def tick(step=None, max_step=None):
         if max_step is not None:
             gui.progress.max = max_step
@@ -169,4 +171,3 @@ def display_corpus_load_gui(data_folder, wti_index, container):
             )
 
     gui.compute.on_click(compute_callback)
-
