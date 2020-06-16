@@ -28,7 +28,8 @@ def compute_most_discriminating_terms(
     period1=None,
     period2=None,
     closed_region=False,
-    normalize=spacy.attrs.LEMMA
+    normalize=spacy.attrs.LEMMA,
+    output_filename=None
 ):
     def get_token_attr(token, feature):
         if feature == spacy.attrs.LEMMA:
@@ -68,6 +69,17 @@ def compute_most_discriminating_terms(
     min_terms = min(len(terms[0]), len(terms[1]))
     df = pd.DataFrame({'Group 1': terms[0][:min_terms], 'Group 2': terms[1][:min_terms] })
     
+    if output_filename is not None:
+        #df.to_excel(output_filename)
+
+        cols = ['group1', 'group2', 'period1', 'period2', 'top_n_terms', 'max_n_terms', 'closed_region', 'include_pos']
+        meta = pd.DataFrame({ key:pd.Series(value) for key, value in locals().items() if key in cols })
+
+        with pd.ExcelWriter(output_filename) as writer:  
+            df.to_excel(writer, sheet_name='MDT')
+            #meta.to_excel(writer, sheet_name='Metadata')   
+            meta.to_excel(writer, sheet_name='MDT', startcol=4, index=False)   
+
     return df
     
 def display_most_discriminating_terms(df):
