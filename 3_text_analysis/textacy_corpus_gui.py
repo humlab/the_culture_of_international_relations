@@ -42,7 +42,7 @@ def generate_textacy_corpus(
     container.textacy_corpus = None
     container.prepped_source_path = utility.path_add_suffix(source_path, '_preprocessed')
 
-    if not os.path.isfile(container.prepped_source_path):
+    if overwrite or not os.path.isfile(container.prepped_source_path):
         textacy_utility.preprocess_text(container.source_path, container.prepped_source_path, tick=tick)
 
     container.textacy_corpus_path = textacy_utility.generate_corpus_filename(
