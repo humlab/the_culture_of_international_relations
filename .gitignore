@@ -60,5 +60,4 @@ venv.bak/
 .ropeproject
 /site
 desktop.ini
-data/*
-!data/Treaties_Master_List.xlsx
+data
