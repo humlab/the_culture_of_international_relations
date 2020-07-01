@@ -11,7 +11,7 @@ def complete_missing_data_points(data, period_group, category_column='Party', va
     periods = period_group['periods'] \
         if period_group['type'] == 'range' else [ '{} to {}'.format(x[0], x[1])
             for x in period_group['periods']]
- 
+
     period_categories = pd.DataFrame(
         list(product(periods, categories)),
         columns=['Period', category_column])\
@@ -157,9 +157,9 @@ class QuantityByTopic():
             return None
 
         if target_quantity == 'topic':
-            
+
             # Primary case - Compute sum of treaty count over all parties for each topic in selected topic group
-            
+
             data = parties_treaties\
                     .groupby([period_group['column'], target_column[target_quantity]])\
                     .size()\
@@ -170,13 +170,13 @@ class QuantityByTopic():
 
             # Special case - Compute treaty count per party for treaties with topic in selected treaty group
             stacked_treaties = pd.merge(wti_index.stacked_treaties[['party', 'party_other']], categorized_treaties, left_on='treaty_id', right_index=True, how='inner')
-            
+
             party_continents = wti_index.parties[['continent_code', 'group_name']]
             stacked_treaties = pd.merge(stacked_treaties, party_continents, left_on=['party_other'], right_index=True, how='inner')\
                 .rename(columns={'continent_code': 'continent_code_other', 'group_name': 'group_name_other'})
-            
+
             stacked_treaties['continent_code_other'] = stacked_treaties['continent_code_other'].fillna(value='IO')
-            
+
             if not 'ALL' in parties:
                  stacked_treaties = stacked_treaties.loc[stacked_treaties.party.isin(parties)]
 
