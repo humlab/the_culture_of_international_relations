@@ -658,8 +658,8 @@ def load_wti_index(data_folder=None, skip_columns=default_treaties_skip_columns,
 
         state = TreatyState(data_folder, skip_columns, period_groups, filename=filename, is_cultural_yesno_column=is_cultural_yesno_column)
 
-        print("WTI index loaded! Current index \"{}\" has {} treaties.".format(WTI_INFO[is_cultural_yesno_column],
-            len(state.treaties[state.treaties.is_cultural]))
+        print("WTI index loaded! Current index \"{}\" has {} treaties ({} in English).".format(WTI_INFO[is_cultural_yesno_column],
+            len(state.treaties[state.treaties.is_cultural]), len(state.treaties.loc[(state.treaties.is_cultural) & (state.treaties.english == 'en')]))
         )
 
         return state
