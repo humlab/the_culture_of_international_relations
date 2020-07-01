@@ -36,27 +36,26 @@ def display_quantity_by_party(
     print_args=False
 ):
     try:
-        
+
         static_color_map = color_utility.get_static_color_map()
-        
+
         if print_args or (chart_type_name == 'print_args'):
             args = utility.filter_dict(locals(), [ 'progress', 'print_args' ], filter_out=True)
             args['wti_index'] = None
             pp(args)
 
         progress()
-        
+
         period_group = config.DEFAULT_PERIOD_GROUPS[period_group_index]
         chart_type = config.CHART_TYPE_MAP[chart_type_name]
-        period_column = period_group['column']
-        
+
         parties = list(parties)
-        
+
         if period_group['type'] == 'range':
             period_group = treaty_utility.trim_period_group(period_group, year_limit)
         else:
             year_limit=None
-        
+
         data = analysis_data.QuantityByParty.get_treaties_statistics(
             wti_index,
             period_group=period_group,
@@ -67,24 +66,24 @@ def display_quantity_by_party(
             n_top=top_n_parties,
             year_limit=year_limit
         )
-        
+
         progress()
-        
+
         if data.shape[0] == 0:
             print('No data for selection')
             return
 
         pivot = pd.pivot_table(data, index=['Period'], values=["Count"], columns=['Party'], fill_value=0)
         pivot.columns = [ x[-1] for x in pivot.columns ]
-    
+
         if normalize_values is True:
             pivot = pivot.div(0.01 * pivot.sum(1), axis=0)
             data['Count'] = data.groupby(['Period']).transform(lambda x: 100.0 * (x / x.sum()))
 
         progress()
-        
+
         if chart_type.name.startswith('plot'):
-            
+
             columns = pivot.columns
 
             pivot = pivot.reset_index()[columns]
@@ -92,9 +91,9 @@ def display_quantity_by_party(
 
             kwargs = analysis_plot.prepare_plot_kwargs(pivot, chart_type, normalize_values, period_group)
             kwargs.update(dict(overlay=overlay, colors=colors))
-            
+
             progress()
-           
+
             analysis_plot.quantity_plot(data, pivot, chart_type, plot_style, **kwargs)
 
         elif chart_type.name == 'table':
@@ -111,7 +110,7 @@ def display_quantity_by_party(
         progress(0)
 
 def display_gui(wti_index, print_args=False):
-    
+
     def lw(width='100px', left='0'):
         return widgets.Layout(width=width, left=left)
 
@@ -140,7 +139,7 @@ def display_gui(wti_index, print_args=False):
     party_name_widget = widgets_config.party_name_widget()
     normalize_values_widget = widgets_config.toggle('Display %', False, icon='', layout=lw('100px'))
     chart_type_name_widget = widgets_config.dropdown('Output', config.CHART_TYPE_NAME_OPTIONS, "plot_stacked_bar", layout=lw('200px'))
-    
+
     plot_style_widget = widgets_config.plot_style_widget()
     top_n_parties_widget = widgets_config.slider('Top #', 0, 10, 0, continuous_update=False, layout=lw(width='200px'))
     party_preset_widget = widgets_config.dropdown('Presets', party_preset_options, None, layout=lw(width='200px'))
@@ -150,7 +149,7 @@ def display_gui(wti_index, print_args=False):
     #overlay_option_widget = widgets_config.toggle('Overlay', True, icon='', layout=lw())
     progress_widget = widgets_config.progress(0, 5, 1, 0, layout=lw('95%'))
     info_widget = widgets.Label(value="", layout=lw('95%'))
-    
+
     def stepper(step=None):
         progress_widget.value = progress_widget.value + 1 if step is None else step
 
@@ -173,10 +172,10 @@ def display_gui(wti_index, print_args=False):
     )
 
     def on_party_preset_change(change):  # pylint: disable=W0613
-        
+
         if party_preset_widget.value is None:
             return
-        
+
         try:
             parties_widget.unobserve(on_parties_change, names='value')
             top_n_parties_widget.unobserve(on_top_n_parties_change, names='value')
@@ -188,7 +187,7 @@ def display_gui(wti_index, print_args=False):
             if top_n_parties_widget.value > 0:
                 top_n_parties_widget.value = 0
         except Exception as ex:
-            logger.info(ex)            
+            logger.info(ex)
         finally:
             parties_widget.observe(on_parties_change, names='value')
             top_n_parties_widget.observe(on_top_n_parties_change, names='value')
@@ -230,14 +229,14 @@ def display_gui(wti_index, print_args=False):
     def on_period_change(change):
         period_group_index = change['new']
         set_years_window(period_group_index)
-    
+
     parties_widget.observe(on_parties_change, names='value')
     period_group_index_widget.observe(on_period_change, names='value')
     party_preset_widget.observe(on_party_preset_change, names='value')
     top_n_parties_widget.observe(on_top_n_parties_change, names='value')
-            
+
     set_years_window(period_group_index_widget.value)
-    
+
     boxes =  widgets.HBox([
         widgets.VBox([ period_group_index_widget, party_name_widget, top_n_parties_widget, party_preset_widget]),
         widgets.VBox([ parties_widget ]),
