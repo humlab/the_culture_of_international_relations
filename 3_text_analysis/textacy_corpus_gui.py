@@ -25,7 +25,7 @@ def generate_textacy_corpus(
     language,
     merge_entities,
     overwrite=False,
-    period_group='years_1945-1972',
+    period_group='years_1935-1972',
     treaty_filter='',
     parties=None,
     disabled_pipes=None,
@@ -53,9 +53,15 @@ def generate_textacy_corpus(
     if overwrite or not os.path.isfile(container.textacy_corpus_path):
 
         logger.info('Working: Computing new corpus ' + container.textacy_corpus_path + '...')
-
-        treaties = wti_index.get_treaties(language=container.language, period_group=period_group, treaty_filter=treaty_filter, parties=parties)
-
+        logger.warning(" --> Implicit source filter applied: {}".format(','.join(sources)))
+        sources = ['LTS', 'UNTS', 'UNXX']
+        treaties = wti_index.get_treaties(
+            language=container.language,
+            period_group=period_group,
+            treaty_filter=treaty_filter,
+            parties=parties,
+            sources=sources
+        )
         reader = text_corpus.CompressedFileReader(container.prepped_source_path)
 
         stream = domain_logic.get_document_stream(reader, container.language, document_index=treaties)
@@ -96,23 +102,26 @@ def display_corpus_load_gui(data_folder, wti_index, container):
         config.PERIOD_GROUPS_ID_MAP[k]['title']: k for k in config.PERIOD_GROUPS_ID_MAP
     }
 
-    default_corpus_index = -1    
-    corpus_files = sorted(glob.glob(os.path.join(data_folder, 'treaty_text_corpora_??_*[!_preprocessed].zip')))
+    corpus_files = list(sorted(
+        glob.glob(os.path.join(data_folder, 'treaty_text_corpora_??_*[!_preprocessed].zip'))
+    , key=lambda x: os.stat(x).st_mtime))
 
-    if len(corpus_files) > 0:
-        x, *_ = [ x for x in corpus_files if fnmatch.fnmatch(x, '*_en*')] + corpus_files[-1:]
-        default_corpus_index = corpus_files.index(x)
-    else:
-        corpus_files = [ 'No corpus found' ]
+    if len(corpus_files) == 0:
+        print("No prepared corpus")
+        return
+
+    corpus_files = [ os.path.basename(x) for x in corpus_files ]
 
     gui = types.SimpleNamespace(
 
         progress=widgets.IntProgress(value=0, min=0, max=5, step=1, description='', layout=lw('90%')),
         output=widgets.Output(layout={'border': '1px solid black'}),
-        source_path=widgets_config.dropdown(description='Corpus', options=corpus_files, value=corpus_files[default_corpus_index], layout=lw('400px')),
+        source_path=widgets_config.dropdown(description='Corpus',
+            options=corpus_files,
+            value=corpus_files[-1], layout=lw('400px')),
 
         language=widgets_config.dropdown(description='Language', options=language_options, value='en', layout=lw('180px')),
-        period_group=widgets_config.dropdown('Period', period_group_options, 'years_1945-1972', disabled=False, layout=lw('180px')),
+        period_group=widgets_config.dropdown('Period', period_group_options, 'years_1935-1972', disabled=False, layout=lw('180px')),
 
         merge_entities=widgets_config.toggle('Merge NER', False, icon='', layout=lw('100px')),
         overwrite=widgets_config.toggle('Force', False, icon='', layout=lw('100px'), tooltip="Force generation of new corpus (even if exists)"),
@@ -160,7 +169,7 @@ def display_corpus_load_gui(data_folder, wti_index, container):
                 data_folder=data_folder,
                 wti_index=wti_index,
                 container=container,
-                source_path=gui.source_path.value,
+                source_path=os.path.join(data_folder, gui.source_path.value),
                 language=gui.language.value,
                 merge_entities=gui.merge_entities.value,
                 overwrite=gui.overwrite.value,
