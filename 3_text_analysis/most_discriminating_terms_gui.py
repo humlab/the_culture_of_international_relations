@@ -37,12 +37,12 @@ def compute_most_discriminating_terms(
         if feature == spacy.attrs.LOWER:
             return token.lower_
         return token.orth_
-    
+
     def get_term_list(corpus, region=None, period=None, closed_region=False):
-        
+
         region = set(region or [])
         docs = ( x for x in corpus )
-        
+
         if len(region) > 0:
             if closed_region:
                 docs = ( x for x in docs if (x._.meta['party1'] in region or x._.meta['party2'] in region) )
@@ -51,49 +51,53 @@ def compute_most_discriminating_terms(
 
         if period is not None:
             docs = (x for x in docs if (period[0] <= x._.meta['signed_year']) and (x._.meta['signed_year'] <= period[1]))
-        
+
         return [[ get_token_attr(x, normalize) for x in doc if x.pos_ in include_pos and len(x) > 1 ] for doc in docs]
-        
+
     docs1 = get_term_list(corpus, group1, period1, closed_region)
     docs2 = get_term_list(corpus, group2, period2, closed_region)
-    
+
     if len(docs1) == 0 or len(docs2) == 0:
         return None
-    
+
     docs = docs1 + docs2
-    
-    in_group1 = [True] * len(docs1) + [False] * len(docs2)   
-    
+
+    in_group1 = [True] * len(docs1) + [False] * len(docs2)
+
     terms = textacy.keyterms.most_discriminating_terms(docs, in_group1, top_n_terms=top_n_terms, max_n_terms=max_n_terms)
     #terms = most_discriminating_terms(docs, in_group1, top_n_terms=top_n_terms, max_n_terms=max_n_terms)
     min_terms = min(len(terms[0]), len(terms[1]))
     df = pd.DataFrame({'Group 1': terms[0][:min_terms], 'Group 2': terms[1][:min_terms] })
-    
+
     if output_filename is not None:
         #df.to_excel(output_filename)
 
         cols = ['group1', 'group2', 'period1', 'period2', 'top_n_terms', 'max_n_terms', 'closed_region', 'include_pos']
         meta = pd.DataFrame({ key:pd.Series(value) for key, value in locals().items() if key in cols })
 
-        with pd.ExcelWriter(output_filename) as writer:  
+        with pd.ExcelWriter(output_filename) as writer:
             df.to_excel(writer, sheet_name='MDT')
-            #meta.to_excel(writer, sheet_name='Metadata')   
-            meta.to_excel(writer, sheet_name='MDT', startcol=4, index=False)   
+            #meta.to_excel(writer, sheet_name='Metadata')
+            meta.to_excel(writer, sheet_name='MDT', startcol=4, index=False)
 
     return df
-    
+
 def display_most_discriminating_terms(df):
+
+    print("N.B. *All* documents in the loaded text corpus are used in this computation.")
+    print("No additional filters are applied apart from selections made on Parties and Year in this CELL i.e. WTI index selection has no effect in this notebook!")
+
     display(df)
-        
+
 def display_gui(wti_index, corpus):
-    
+
     compute_callback = compute_most_discriminating_terms
     display_callback = display_most_discriminating_terms
-        
-    lw = lambda w: widgets.Layout(width=w)   
-    
+
+    lw = lambda w: widgets.Layout(width=w)
+
     include_pos_tags = [ 'ADJ', 'VERB', 'NUM', 'ADV', 'NOUN', 'PROPN' ]
-    
+
     normalize_options = {
         'Lemma': spacy.attrs.LEMMA,
         'Lower': spacy.attrs.LOWER,
@@ -101,7 +105,7 @@ def display_gui(wti_index, corpus):
     }
     party_preset_options = wti_index.get_party_preset_options()
     parties_options = [ x for x in wti_index.get_countries_list() if x not in ['ALL', 'ALL OTHER'] ]
-    
+
     signed_years = { d._.meta['signed_year'] for d in corpus }
     period_default = (min(signed_years), max(signed_years))
 
@@ -122,7 +126,7 @@ def display_gui(wti_index, corpus):
         compute=widgets.Button(description='Compute', icon='', button_style='Success', layout=lw('120px')),
         output=widgets.Output(layout={'border': '1px solid black'})
     )
-    
+
     boxes = widgets.VBox([
         widgets.HBox([
             widgets.VBox([
@@ -157,33 +161,33 @@ def display_gui(wti_index, corpus):
         ]),
         gui.output
     ])
-    
+
     display(boxes)
-    
+
     def on_group1_preset_change(change):
         if gui.group1_preset.value is None:
             return
-        gui.group1.value = gui.group1.options if 'ALL' in gui.group1_preset.value else gui.group1_preset.value   
-    
+        gui.group1.value = gui.group1.options if 'ALL' in gui.group1_preset.value else gui.group1_preset.value
+
     def on_group2_preset_change(change):
         if gui.group2_preset.value is None:
             return
         gui.group2.value = gui.group2.options if 'ALL' in gui.group2_preset.value else gui.group2_preset.value
-        
+
     def on_period1_change(change):
         if gui.sync_period.value:
             gui.period2.value = gui.period1.value
-            
+
     def on_period2_change(change):
         if gui.sync_period.value:
             gui.period1.value = gui.period2.value
-            
-    gui.group1_preset.observe(on_group1_preset_change, names='value') 
+
+    gui.group1_preset.observe(on_group1_preset_change, names='value')
     gui.group2_preset.observe(on_group2_preset_change, names='value')
-    
+
     gui.period1.observe(on_period1_change, names='value')
     gui.period2.observe(on_period2_change, names='value')
-    
+
     def compute_callback_handler(*_args):
         gui.output.clear_output()
         with gui.output:

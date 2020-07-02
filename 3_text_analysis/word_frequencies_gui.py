@@ -155,8 +155,7 @@ def sanitize_name(x):
 def display_list_of_most_frequent_words(gui, df):
 
     print("N.B. *All* documents in the selected text corpus are used in this computation.")
-    print("No additional filters apart from selections made in Parties are applied!")
-    print("WTI index selection has no effect in this notebook!")
+    print("No additional filters apart from selections made in Parties are applied i.e. WTI index selection made above has no effect in this notebook!")
 
     if gui.output_type.value == 'table':
 
