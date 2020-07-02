@@ -43,12 +43,19 @@ class QuantityByParty():
         treaty_filter='',
         extra_category='',
         n_top=0,
-        year_limit=None
+        year_limit=None,
+        treaty_sources=None
     ):
 
         period_column = period_group['column']
 
-        treaty_subset = wti_index.get_treaties_within_division(wti_index.treaties, period_group, treaty_filter, year_limit=year_limit)
+        treaty_subset = wti_index.get_treaties_within_division(
+            wti_index.treaties,
+            period_group,
+            treaty_filter,
+            year_limit=year_limit,
+            treaty_sources=treaty_sources
+        )
 
         # Skapa urvalet från stacked_treaties så att vi kan gruppera på valda parties via column "party"
         # Regel: Filterera ut på treaty_ids, och forcera att "party" måste finnas i valda parter (vi vill inte gruppera på motpart såvida den inte finns i parties)
@@ -118,9 +125,10 @@ class QuantityByTopic():
         party_group,
         recode_is_cultural,
         extra_other_category,
-        target_quantity='topic'
+        target_quantity='topic',
+        treaty_sources=None
     ):
-        
+
         target_column = {
             'party': 'party',
             'topic': 'topic_category',
@@ -137,7 +145,8 @@ class QuantityByTopic():
             period_group=period_group,
             treaty_filter='',
             recode_is_cultural=recode_is_cultural,
-            topic_category=topic_category
+            topic_category=topic_category,
+            treaty_sources=treaty_sources
         )
 
         if not extra_other_category:

@@ -67,7 +67,7 @@ def get_parties():
     parties = treaty_repository.current_wti_index().get_parties()
     return parties
 
-def get_treaties(lang='en', period_group='years_1945-1972'): # , treaty_filter='is_cultural', parties=None)
+def _get_treaties(lang='en', period_group='years_1935-1972'): # , treaty_filter='is_cultural', parties=None)
 
     columns = [ 'party1', 'party2', 'topic', 'topic1', 'signed_year']
     treaties = treaty_repository.current_wti_index().get_treaties(language=lang, period_group=period_group)[columns]
@@ -78,9 +78,9 @@ def get_treaties(lang='en', period_group='years_1945-1972'): # , treaty_filter='
 
     return treaties
 
-def get_extended_treaties(lang='en'):
-    treaties = get_treaties(lang=lang)
-    return treaties
+# def get_extended_treaties(lang='en'):
+#     treaties = _get_treaties(lang=lang)
+#     return treaties
 
 POS_TO_COUNT = {
     'SYM': 0, 'PART': 0, 'ADV': 0, 'NOUN': 0, 'CCONJ': 0, 'ADJ': 0, 'DET': 0, 'ADP': 0, 'INTJ': 0, 'VERB': 0, 'NUM': 0, 'PRON': 0, 'PROPN': 0
@@ -161,7 +161,7 @@ def get_document_stream(source, lang, document_index=None, id_extractor=None):
 
 def compile_documents_by_filename(filenames):
 
-    treaties = get_treaties()
+    treaties = _get_treaties()
     treaty_map = {
         treaty_id: filename for (treaty_id, filename) in map(lambda x: (x.split('_')[0], x), filenames)
     }
@@ -192,7 +192,7 @@ def compile_documents(corpus, corpus_index=None):
 # FIXME VARYING ASPECTs: What attributes to extend
 def add_domain_attributes(df, document_index):
 
-    treaties = get_treaties()
+    treaties = _get_treaties()
     group_map = get_parties()['group_name'].to_dict()
 
     df_extended = pd.merge(df, treaties, left_index=True, right_index=True, how='inner')

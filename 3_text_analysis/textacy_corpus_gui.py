@@ -29,7 +29,8 @@ def generate_textacy_corpus(
     treaty_filter='',
     parties=None,
     disabled_pipes=None,
-    tick=utility.noop
+    tick=utility.noop,
+    treaty_sources=None
 ):
 
     for key in container.__dict__:
@@ -53,15 +54,13 @@ def generate_textacy_corpus(
     if overwrite or not os.path.isfile(container.textacy_corpus_path):
 
         logger.info('Working: Computing new corpus ' + container.textacy_corpus_path + '...')
-        sources = ['LTS', 'UNTS', 'UNXX']
         treaties = wti_index.get_treaties(
             language=container.language,
             period_group=period_group,
             treaty_filter=treaty_filter,
             parties=parties,
-            sources=sources
+            treaty_sources=treaty_sources
         )
-        logger.warning(" --> Implicit source filter applied: {}".format(','.join(sources)))
         reader = text_corpus.CompressedFileReader(container.prepped_source_path)
 
         stream = domain_logic.get_document_stream(reader, container.language, document_index=treaties)
@@ -77,6 +76,8 @@ def generate_textacy_corpus(
         logger.info('Working: Loading corpus ' + container.textacy_corpus_path + '...')
         tick(1, 2)
         container.textacy_corpus = textacy.Corpus.load(container.nlp, container.textacy_corpus_path)
+        logger.info('Loaded corpus with {} documents.'.format(len(container.textacy_corpus)))
+
         tick(0)
 
     if merge_entities:
@@ -93,6 +94,8 @@ def generate_textacy_corpus(
 def display_corpus_load_gui(data_folder, wti_index, container):
 
     lw = lambda w: widgets.Layout(width=w)
+
+    treaty_sources = ['LTS', 'UNTS', 'UNXX']
 
     language_options = {
         config.LANGUAGE_MAP[k].title(): k for k in config.LANGUAGE_MAP.keys() if k in [ 'en', 'fr' ]
@@ -120,6 +123,7 @@ def display_corpus_load_gui(data_folder, wti_index, container):
             options=corpus_files,
             value=corpus_files[-1], layout=lw('400px')),
 
+        sources=widgets_config.select_multiple(description='Sources', options=treaty_sources, values=treaty_sources, disabled=True, layout=lw('180px')),
         language=widgets_config.dropdown(description='Language', options=language_options, value='en', layout=lw('180px')),
         period_group=widgets_config.dropdown('Period', period_group_options, 'years_1935-1972', disabled=False, layout=lw('180px')),
 
@@ -139,7 +143,8 @@ def display_corpus_load_gui(data_folder, wti_index, container):
             gui.source_path,
             widgets.VBox([
                 gui.language,
-                gui.period_group
+                gui.period_group,
+                gui.sources
             ]),
             widgets.VBox([
                 gui.merge_entities,
@@ -176,7 +181,8 @@ def display_corpus_load_gui(data_folder, wti_index, container):
                 period_group=gui.period_group.value,
                 parties=None,
                 disabled_pipes=tuple(disabled_pipes),
-                tick=tick
+                tick=tick,
+                treaty_sources=gui.sources.value
             )
 
     gui.compute.on_click(compute_callback)

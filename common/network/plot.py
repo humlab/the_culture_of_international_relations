@@ -13,7 +13,7 @@ import bokeh.models
 from bokeh.models import ColumnDataSource, HoverTool, LabelSet
 from bokeh.plotting import figure
 
-TOOLS = "pan,wheel_zoom,box_zoom,reset,previewsave"
+TOOLS = "pan,wheel_zoom,box_zoom,reset,save"
 
 DFLT_PALETTE = bokeh.palettes.Set3[12]
 DFLT_FIG_OPTS = dict(plot_height=900, plot_width=900, tools=TOOLS)
@@ -49,16 +49,16 @@ DFLT_LABEL_OPTS = dict(
 )
 
 def get_palette(name):
-    
+
     if name not in bokeh.palettes.all_palettes.keys():
         return bokeh.palettes.RdYlBu[11]
-    
+
     key = max(bokeh.palettes.all_palettes[name].keys())
-    
+
     return bokeh.palettes.all_palettes[name][key]
 
 def setup_node_size(nodes, node_size, node_size_range):
-    
+
     if node_size is None:
         node_size = node_size_range[0]
 
@@ -99,7 +99,7 @@ def plot(  # pylint: disable=W0102
         network = get_sub_network(network, threshold)
 
     edges = networkx_utility.get_positioned_edges(network, layout)
-    
+
     if normalize_weights and 'weight' in edges.keys():
         max_weight = max(edges['weight'])
         edges['weight'] = [ float(x) / max_weight for x in edges['weight'] ]
@@ -108,7 +108,7 @@ def plot(  # pylint: disable=W0102
         edges['weight'] = [ weight_scale * float(x) for x in edges['weight'] ]
 
     edges = dict(source=u, target=v, xs=xs, ys=ys, weights=weights)
-    
+
     nodes = networkx_utility.get_positioned_nodes(network, layout)
 
     #node_size = setup_node_size(nodes, node_size, node_size_range)
@@ -159,9 +159,9 @@ def plot_network(nodes, edges, plot_opts, fig_opts=None):
     node_opts = utility.extend(DFLT_NODE_OPTS, plot_opts.get('node_opts', {}))
     line_opts = utility.extend(DFLT_EDGE_OPTS, plot_opts.get('line_opts', {}))
     fig_opts  = utility.extend(DFLT_FIG_OPTS, fig_opts or {})
-    
+
     node_size = plot_opts.get('node_size', 1)
-    
+
     p = figure(**fig_opts)
 
     p.xgrid.grid_line_color = None
@@ -204,7 +204,7 @@ def plot_network(nodes, edges, plot_opts, fig_opts=None):
     )
 
 def plot_df(df, source='source', target='target', weight='weight', layout_opts=None, plot_opts=None, fig_opts=None):
-    
+
     #print([ x.key for x in network_layout.layout_setups])
 
     g = networkx_utility.df_to_nx(df, source=source, target=target, bipartite=False, weight=weight)
@@ -215,6 +215,6 @@ def plot_df(df, source='source', target='target', weight='weight', layout_opts=N
     nodes = networkx_utility.get_positioned_nodes(g, layout)
 
     plot_data = plot_network(nodes=nodes, edges=edges, plot_opts=plot_opts, fig_opts=fig_opts)
-    
+
     return plot_data
 

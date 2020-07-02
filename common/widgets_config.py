@@ -23,6 +23,17 @@ def toggle(description, value, **kwargs):  # pylint: disable=W0613
 def toggles(description, options, value, **kwopts):  # pylint: disable=W0613
     return widgets.ToggleButtons(**kwargser(locals()))
 
+def select_multiple(description, options, values, **kwopts):
+    default_opts = dict(
+        options=options,
+        value=values,
+        rows=4,
+        description=description,
+        disabled=False,
+        layout=widgets.Layout(width='180px')
+    )
+    return widgets.SelectMultiple(**extend(default_opts, kwopts))
+
 def dropdown(description, options, value, **kwargs):  # pylint: disable=W0613
     return widgets.Dropdown(**kwargser(locals()))
 
@@ -70,7 +81,7 @@ def glyph_hover_callback(glyph_source, glyph_id, text_source, element_id):
     code = glyph_hover_js_code(element_id, glyph_id, 'text', glyph_name='glyph', glyph_data='glyph_data')
     callback = CustomJS(args={'glyph': glyph_source, 'glyph_data': text_source}, code=code)
     return callback
-    
+
 def treaty_filter_widget(**kwopts):
     default_opts = dict(
         options=config.TREATY_FILTER_OPTIONS,

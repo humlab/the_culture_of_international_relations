@@ -454,8 +454,15 @@ class TreatyState:
             return df.apply(lambda x: topic_category.get(x[topic_column], 'OTHER'), axis=1)
         return df[topic_column]
 
-    def get_treaties_within_division(self, treaties=None, period_group=None, treaty_filter='', recode_is_cultural=False, parties=None, year_limit=None):
-        """Returns treaties filtered by given set of parameters.
+    def get_treaties_within_division(self,
+        treaties=None,
+        period_group=None,
+        treaty_filter='',
+        recode_is_cultural=False,
+        parties=None,
+        year_limit=None,
+        treaty_sources=None):
+        """Base filter function. Returns treaties filtered by given set of parameters.
 
         Parameters
         ----------
@@ -468,16 +475,19 @@ class TreatyState:
         treaty_filter: str in [ 'is_cultural',  'is_7cult', '' ]
             Optional. 'is_cultural' filters out treaties where is_cultural is False, 'is_7cult' filters out treaties where topic1 is not '7cult'
 
-        recode_is_cultural: Boolean
+        recode_is_cultural: bool
             Optional. Sets topic1 to '7CORR' for treaties having 'is_cultural' equal to true
 
-        parties: [str]
+        parties: List[str]
             Optional. Filters out treaties where neither of party1, party2 is in 'parties' list
 
-        year_limit: tuple or list of ints
+        year_limit: Union[List[int], Tuple[int]] of ints
             Optional. Filters out treaties where signed_year is outside of given limit
 
-        Returns
+        treaty_sources: Optional[List[str]]
+            Optional. Filters out treaties where SOURCE not in treaty_sources
+
+       Returns
         -------
         DataFrame
 
@@ -516,6 +526,9 @@ class TreatyState:
 
         if recode_is_cultural:
             treaties.loc[treaties.is_cultural, 'topic1'] = '7CORR'
+
+        if treaty_sources is not None:
+            treaties = treaties.loc[treaties.source.isin(treaty_sources)]
 
         return treaties
 
@@ -621,17 +634,15 @@ class TreatyState:
 
         return self._party_preset_options
 
-    def get_treaties(self, language, period_group='years_1945-1972', treaty_filter='is_cultural', parties=None, sources=None):
+    def get_treaties(self, language, period_group='years_1945-1972', treaty_filter='is_cultural', parties=None, treaty_sources=None):
         period_group = config.PERIOD_GROUPS_ID_MAP[period_group]
         treaties = self.get_treaties_within_division(
             period_group=period_group,
             treaty_filter=treaty_filter,
             recode_is_cultural=False,
-            parties=parties
+            parties=parties,
+            treaty_sources=treaty_sources
         )
-
-        if sources is not None:
-            treaties = treaties.loc[treaties.source.isin(sources)]
 
         treaties = treaties[treaties[config.LANGUAGE_MAP[language]]==language]
         treaties = treaties.sort_values('signed_year', ascending=True)

@@ -33,7 +33,8 @@ def display_quantity_by_party(
     overlay=True,
     progress=utility.noop,
     wti_index=None,
-    print_args=False
+    print_args=False,
+    treaty_sources=None
 ):
     try:
 
@@ -64,7 +65,8 @@ def display_quantity_by_party(
             treaty_filter=treaty_filter,
             extra_category=extra_category,
             n_top=top_n_parties,
-            year_limit=year_limit
+            year_limit=year_limit,
+            treaty_sources=treaty_sources
         )
 
         progress()

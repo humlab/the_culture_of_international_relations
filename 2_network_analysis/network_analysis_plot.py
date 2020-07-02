@@ -17,7 +17,7 @@ def get_line_color(data, topic_group_name):
     line_palette_map = { k: i % len(line_palette) for i, k in enumerate(group_keys) }
     return data.category.apply(lambda x: line_palette[line_palette_map[x]])
 
-TOOLS = "pan,wheel_zoom,box_zoom,reset,previewsave"
+TOOLS = "pan,wheel_zoom,box_zoom,reset,save"
 
 DFLT_NODE_OPTS = dict(
     color='green',

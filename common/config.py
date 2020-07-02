@@ -83,7 +83,7 @@ DEFAULT_TOPIC_GROUPS = {
         '1RECOG': ['1RECOG']
     },
     '1DIPLOMACY': {
-        '1ALLY': ['1ALLY'], 
+        '1ALLY': ['1ALLY'],
         '1AMITY': ['1AMITY'],
         '1ARMCO': ['1ARMCO'],
         '1CHART': ['1CHART'],
@@ -91,11 +91,11 @@ DEFAULT_TOPIC_GROUPS = {
         '1ESTAB': ['1ESTAB'],
         '1HEAD': ['1HEAD'],
         '1OCCUP': ['1OCCUP'],
-        '1OPTC': ['1OPTC'], 
+        '1OPTC': ['1OPTC'],
         '1PEACE': ['1PEACE'],
         '1RECOG': ['1RECOG'],
-        '1REPAR': ['1REPAR'], 
-        '1STATU': ['1STATU'], 
+        '1REPAR': ['1REPAR'],
+        '1STATU': ['1STATU'],
         '1TERRI': ['1TERRI'],
         '1TRUST': ['1TRUST']
     },
@@ -153,7 +153,7 @@ TOPIC_GROUP_MAPS = {
     } for group_name in DEFAULT_TOPIC_GROUPS.keys()
 }
 
-default_graph_tools = "pan,wheel_zoom,box_zoom,reset,hover,previewsave"
+default_graph_tools = "pan,wheel_zoom,box_zoom,reset,hover,save"
 
 MATPLOTLIB_PLOT_STYLES = [
     'ggplot',
