@@ -621,7 +621,7 @@ class TreatyState:
 
         return self._party_preset_options
 
-    def get_treaties(self, language, period_group='years_1945-1972', treaty_filter='is_cultural', parties=None):
+    def get_treaties(self, language, period_group='years_1945-1972', treaty_filter='is_cultural', parties=None, sources=None):
         period_group = config.PERIOD_GROUPS_ID_MAP[period_group]
         treaties = self.get_treaties_within_division(
             period_group=period_group,
@@ -629,6 +629,10 @@ class TreatyState:
             recode_is_cultural=False,
             parties=parties
         )
+
+        if sources is not None:
+            treaties = treaties.loc[treaties.source.isin(sources)]
+
         treaties = treaties[treaties[config.LANGUAGE_MAP[language]]==language]
         treaties = treaties.sort_values('signed_year', ascending=True)
         return treaties
@@ -688,7 +692,7 @@ def load_wti_index_with_gui(data_folder=None):
 
     gui = types.SimpleNamespace(
         output=widgets.Output(),
-        wti=widgets.Dropdown(description='Load index', options=WTI_OPTIONS, value=WTI_OPTIONS[0][1], layout=lw('300px')),
+        wti=widgets.Dropdown(description='Load index', options=WTI_OPTIONS, value='is_cultural_yesno_gen', layout=lw('300px')),
     )
 
     display(widgets.VBox([
