@@ -15,28 +15,28 @@ import time
 logger = utility.getLogger('corpus_text_analysis')
 utility.setup_default_pd_display(pd)
 
-def count_words_by(doc, target='lemma', include=None):
+# def count_words_by(doc, target='lemma', include=None):
 
-    spacy_store = doc.vocab.strings
-    
-    default_exclude = lambda x: x.is_stop or x.is_punct or x.is_space
-    exclude = default_exclude if include is None else lambda x: x.is_stop or x.is_punct or x.is_space or not include(x)
-    
-    assert target in target_keys
+#     spacy_store = doc.vocab.strings
 
-    word_counts = doc.count_by(target_keys[target], exclude=exclude)
-        
-    bow = {
-        spacy_store[word_id]: count  for word_id, count in word_counts.items()
-    }
-    
-    if target == 'lemma':
-        lower_cased_word_counts = collections.Counter()
-        for k, v in bow.items():
-            lower_cased_word_counts.update({ k.lower(): v })
-        bow = lower_cased_word_counts
-        
-    return bow
+#     default_exclude = lambda x: x.is_stop or x.is_punct or x.is_space
+#     exclude = default_exclude if include is None else lambda x: x.is_stop or x.is_punct or x.is_space or not include(x)
+
+#     assert target in target_keys
+
+#     word_counts = doc.count_by(target_keys[target], exclude=exclude)
+
+#     bow = {
+#         spacy_store[word_id]: count  for word_id, count in word_counts.items()
+#     }
+
+#     if target == 'lemma':
+#         lower_cased_word_counts = collections.Counter()
+#         for k, v in bow.items():
+#             lower_cased_word_counts.update({ k.lower(): v })
+#         bow = lower_cased_word_counts
+
+#     return bow
 
 def corpus_size_by_grouping(corpus, treaty_time_groups, group_by_column):
 
@@ -63,37 +63,37 @@ def compute_list_of_most_frequent_words(
     stop_words  = stop_words or set()
     include_pos = set(include_pos) if include_pos is not None and len(include_pos) > 0 else None
     target_keys = { 'lemma': attrs.LEMMA, 'lower': attrs.LOWER, 'orth': attrs.ORTH }
-    
+
     def exclude(x):
-        
+
         if x.is_stop or x.is_punct or x.is_space:
             return True
-        
+
         if include_pos is not None and x.pos_ not in include_pos:
             return True
-        
+
         if x.lemma_ in stop_words:
             return True
-            
+
         if len(x.lemma_) < 2:
             return True
-        
+
         return False
-    
+
     df_counts = pd.DataFrame({ 'treaty_id': [], 'signed_year': [], 'word_id': [], 'word': [], 'word_count': [] })
-    
+
     parties_set = set(parties or [])
-    
+
     docs = corpus if len(parties_set) == 0 \
         else ( x for x in corpus if len(set((x._.meta['party1'], x._.meta['party2'])) & parties_set) > 0 )
 
     gui.progress.max = len(corpus)
 
     for doc in docs:
-        
+
         #f doc._.meta['signed_year'] != 1956:
         #   continue
-            
+
         spacy_store = doc.vocab.strings
 
         word_counts = doc.count_by(target_keys[target], exclude=exclude)
@@ -105,24 +105,24 @@ def compute_list_of_most_frequent_words(
             'word': [ spacy_store[key].lower() for key in word_counts.keys() ],
             'word_count': list(word_counts.values())
         })
-        
+
         df_counts = df_counts.append(df)
-        
+
         gui.progress.value = gui.progress.value + 1
-        
-    
+
+
     df_counts['signed_year'] = df_counts.signed_year.astype(int)
     df_counts['word_count'] = df_counts.word_count.astype(int)
-    
+
     if group_by_column not in df_counts.columns:
         df_counts[group_by_column] = (treaty_time_groups[group_by_column]['fx'])(df_counts)
-    
+
     if group_by_column != 'treaty_id':
-        
+
         df_counts = df_counts\
             .groupby([group_by_column, 'word'])\
             .sum()
-        
+
     df_counts = df_counts\
         .reset_index()[[group_by_column, 'word', 'word_count'] + (['signed_year'] if group_by_column != 'signed_year' else [])]\
         .set_index([group_by_column, 'word'])
@@ -135,36 +135,40 @@ def compute_list_of_most_frequent_words(
 
     df_counts = df_counts.reset_index()
     # df_counts.to_excel('df_counts.xlsx')
-    
+
     if display_score is True:
         df_counts['word'] = df_counts.word + '*' + (df_counts.word_frequency.apply('{:,.3f}'.format) if weighting == 'freq'
             else df_counts.word_count.astype(str))
-        
+
     df_counts['position'] = df_counts.sort_values(by=[group_by_column, 'word_frequency'], ascending=False)\
         .groupby([group_by_column]).cumcount() + 1
-    
+
     df_counts = df_counts[[group_by_column, 'word', 'word_count', 'word_frequency', 'position']]
     gui.progress.value = 0
-    
+
     return df_counts
-    
+
 def sanitize_name(x):
     sane_x = "_".join([c if (c.isalpha() or c.isdigit()) else '_' for c in (x or '')]).strip()
     return sane_x.lower()
-    
+
 def display_list_of_most_frequent_words(gui, df):
-    
+
+    print("N.B. *All* documents in the selected text corpus are used in this computation.")
+    print("No additional filters apart from selections made in Parties are applied!")
+    print("WTI index selection has no effect in this notebook!")
+
     if gui.output_type.value == 'table':
-        
+
         display(df.head(500))
-        
+
     elif gui.output_type.value == 'rank':
-        
+
         group_by_column = gui.group_by_column.value
         df = df[df.position <= 50]
         df_unstacked_freqs = df[[group_by_column, 'position', 'word']].set_index([group_by_column, 'position']).unstack()
         display(df_unstacked_freqs)
-        
+
     else:
         sanitized_suffix = sanitize_name(gui.file_suffix.value)
         #if gui.party_preset.value is not None:
@@ -178,13 +182,13 @@ def display_list_of_most_frequent_words(gui, df):
         )
         df.to_excel(filename)
         print('Excel written: ' + filename)
-        
+
 def word_frequency_gui(wti_index, corpus):
-    
+
     treaty_time_groups = wti_index.get_treaty_time_groupings()
-    
+
     lw = lambda w: widgets.Layout(width=w)
-        
+
     include_pos_tags    = [ 'ADJ', 'VERB', 'ADV', 'NOUN', 'PROPN' ]
     weighting_options   = { 'Count': 'count', 'Frequency': 'freq' }
     normalize_options   = { '':  False, 'Lemma': 'lemma', 'Lower': 'lower' }
@@ -197,7 +201,7 @@ def word_frequency_gui(wti_index, corpus):
     ngrams_options = { '-': None, '1': [1], '1,2': [1,2], '1,2,3': [1,2,3]}
     party_preset_options = wti_index.get_party_preset_options()
     parties_options = [ x for x in wti_index.get_countries_list() if x != 'ALL OTHER' ]
-    
+
     gui = types.SimpleNamespace(
         progress=widgets.IntProgress(value=0, min=0, max=5, step=1, description='', layout=lw('98%')),
         parties=widgets.SelectMultiple(description='Parties', options=parties_options, value=[], rows=7, layout=lw('200px')),
@@ -215,7 +219,7 @@ def word_frequency_gui(wti_index, corpus):
         output=widgets.Output(layout={'border': '1px solid black'}),
         file_suffix=widgets.Text(value='', placeholder='(optional id)', description='ID:', disabled=False, layout=lw('200px'), tooltip="Optional plain text id that will be added to filename.")
     )
-    
+
     boxes = widgets.VBox([
         gui.progress,
         widgets.HBox([
@@ -242,16 +246,16 @@ def word_frequency_gui(wti_index, corpus):
         ]),
         gui.output
     ])
-    
+
     display(boxes)
-    
+
     def on_party_preset_change(change):  # pylint: disable=W0613
         if gui.party_preset.value is None:
             return
         gui.parties.value = gui.parties.options if 'ALL' in gui.party_preset.value else gui.party_preset.value
-            
+
     gui.party_preset.observe(on_party_preset_change, names='value')
-    
+
     def pos_change_handler(*args):
         with gui.output:
             gui.compute.disabled = True
@@ -270,10 +274,10 @@ def word_frequency_gui(wti_index, corpus):
             selected = selected & set(gui.stop_words.options)
             gui.stop_words.value = list(selected)
             gui.compute.disabled = False
-        
-    gui.include_pos.observe(pos_change_handler, 'value')    
-    gui.weighting.observe(pos_change_handler, 'value')    
-    
+
+    gui.include_pos.observe(pos_change_handler, 'value')
+    gui.weighting.observe(pos_change_handler, 'value')
+
     def compute_callback_handler(*_args):
         gui.output.clear_output()
         with gui.output:
@@ -301,4 +305,4 @@ def word_frequency_gui(wti_index, corpus):
 
     gui.compute.on_click(compute_callback_handler)
     return gui
-                
+
