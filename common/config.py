@@ -56,8 +56,8 @@ DEFAULT_PERIOD_GROUPS = [
 PERIOD_GROUPS_ID_MAP = { x['id']: x for x in DEFAULT_PERIOD_GROUPS }
 
 DEFAULT_TOPIC_GROUPS = {
-    '7CULT, 7SCIEN, and 7EDUC': {
-        '7CULT': ['7CULT', '7CORR'],
+    '7CORR, 7SCIEN, and 7EDUC': {
+        '7CORR': ['7CORR'],
         '7SCIEN': ['7SCIEN'],
         '7EDUC': ['7EDUC']
     },
@@ -77,6 +77,27 @@ DEFAULT_TOPIC_GROUPS = {
     '7CORR + 1DIPLOMACY': {
         '7CORR': ['7CORR'],
         'DIPLOMACY': ['1ALLY', '1AMITY', '1ARMCO', '1CHART', '1DISPU', '1ESTAB', '1HEAD', '1OCCUP', '1OPTC', '1PEACE', '1RECOG', '1REPAR', '1STATU', '1TERRI', '1TRUST']
+    },
+    '7CORR + 1RECOG': {
+        '7CORR': ['7CORR'],
+        '1RECOG': ['1RECOG']
+    },
+    '1DIPLOMACY': {
+        '1ALLY': ['1ALLY'], 
+        '1AMITY': ['1AMITY'],
+        '1ARMCO': ['1ARMCO'],
+        '1CHART': ['1CHART'],
+        '1DISPU': ['1DISPU'],
+        '1ESTAB': ['1ESTAB'],
+        '1HEAD': ['1HEAD'],
+        '1OCCUP': ['1OCCUP'],
+        '1OPTC': ['1OPTC'], 
+        '1PEACE': ['1PEACE'],
+        '1RECOG': ['1RECOG'],
+        '1REPAR': ['1REPAR'], 
+        '1STATU': ['1STATU'], 
+        '1TERRI': ['1TERRI'],
+        '1TRUST': ['1TRUST']
     },
     '7CULT + 1DIPLOMACY': {
         '7CULT': ['7CULT', '7CORR'],
@@ -104,7 +125,6 @@ DEFAULT_TOPIC_GROUPS = {
     },
     '7CULTURE': {
         '7CORR': ['7CORR'],
-        '7CULT': ['7CULT'],
         '7EDUC': ['7EDUC'],
         '7RELIG': ['7RELIG'],
         '7SCIEN': ['7SCIEN'],
