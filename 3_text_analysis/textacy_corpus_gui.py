@@ -53,7 +53,6 @@ def generate_textacy_corpus(
     if overwrite or not os.path.isfile(container.textacy_corpus_path):
 
         logger.info('Working: Computing new corpus ' + container.textacy_corpus_path + '...')
-        logger.warning(" --> Implicit source filter applied: {}".format(','.join(sources)))
         sources = ['LTS', 'UNTS', 'UNXX']
         treaties = wti_index.get_treaties(
             language=container.language,
@@ -62,6 +61,7 @@ def generate_textacy_corpus(
             parties=parties,
             sources=sources
         )
+        logger.warning(" --> Implicit source filter applied: {}".format(','.join(sources)))
         reader = text_corpus.CompressedFileReader(container.prepped_source_path)
 
         stream = domain_logic.get_document_stream(reader, container.language, document_index=treaties)
