@@ -1,5 +1,6 @@
 import ipywidgets as widgets
 import itertools
+import types
 import pandas as pd
 import common.widgets_config as widgets_config
 import common.config as config
@@ -130,101 +131,106 @@ def display_gui(wti_index, print_args=False):
 
         return min(periods), max(periods)
 
+    treaty_source_options = ['LTS', 'UNTS', 'UNXX']
     party_preset_options = wti_index.get_party_preset_options()
 
     period_group_index_widget = widgets_config.period_group_widget(index_as_value=True)
 
     min_year, max_year = period_group_window(period_group_index_widget.value)
 
-    year_limit_widget = widgets_config.rangeslider('Window', min_year, max_year, [min_year, max_year], layout=lw('900px'), continuous_update=False)
+    gui = types.SimpleNamespace(
+        year_limit = widgets_config.rangeslider('Window', min_year, max_year, [min_year, max_year], layout=lw('900px'), continuous_update=False),
+        sources=widgets_config.select_multiple(description='Sources', options=treaty_source_options, values=treaty_source_options, disabled=True, layout=lw('200px')),
+        period_group_index=period_group_index_widget,
+        party_name = widgets_config.party_name_widget(),
+        normalize_values = widgets_config.toggle('Display %', False, icon='', layout=lw('100px')),
+        chart_type_name = widgets_config.dropdown('Output', config.CHART_TYPE_NAME_OPTIONS, "plot_stacked_bar", layout=lw('200px')),
 
-    party_name_widget = widgets_config.party_name_widget()
-    normalize_values_widget = widgets_config.toggle('Display %', False, icon='', layout=lw('100px'))
-    chart_type_name_widget = widgets_config.dropdown('Output', config.CHART_TYPE_NAME_OPTIONS, "plot_stacked_bar", layout=lw('200px'))
-
-    plot_style_widget = widgets_config.plot_style_widget()
-    top_n_parties_widget = widgets_config.slider('Top #', 0, 10, 0, continuous_update=False, layout=lw(width='200px'))
-    party_preset_widget = widgets_config.dropdown('Presets', party_preset_options, None, layout=lw(width='200px'))
-    parties_widget = widgets_config.parties_widget(options=wti_index.get_countries_list(excludes=['ALL', 'ALL OTHER']), value=['FRANCE'], rows=8,)
-    treaty_filter_widget = widgets_config.dropdown('Filter', config.TREATY_FILTER_OPTIONS, 'is_cultural', layout=lw(width='150px'))
-    extra_category_widget = widgets_config.dropdown('Include', OTHER_CATEGORY_OPTIONS, '', layout=lw(width='150px'))
-    #overlay_option_widget = widgets_config.toggle('Overlay', True, icon='', layout=lw())
-    progress_widget = widgets_config.progress(0, 5, 1, 0, layout=lw('95%'))
-    info_widget = widgets.Label(value="", layout=lw('95%'))
+        plot_style = widgets_config.plot_style_widget(),
+        top_n_parties = widgets_config.slider('Top #', 0, 10, 0, continuous_update=False, layout=lw(width='200px')),
+        party_preset = widgets_config.dropdown('Presets', party_preset_options, None, layout=lw(width='200px')),
+        parties = widgets_config.parties_widget(options=wti_index.get_countries_list(excludes=['ALL', 'ALL OTHER']), value=['FRANCE'], rows=8,),
+        treaty_filter = widgets_config.dropdown('Filter', config.TREATY_FILTER_OPTIONS, 'is_cultural', layout=lw(width='200px')),
+        extra_category = widgets_config.dropdown('Include', OTHER_CATEGORY_OPTIONS, '', layout=lw(width='200px')),
+        #overlay_option = widgets_config.toggle('Overlay', True, icon='', layout=lw()),
+        progress = widgets_config.progress(0, 5, 1, 0, layout=lw('95%')),
+        info = widgets.Label(value="", layout=lw('95%'))
+    )
 
     def stepper(step=None):
-        progress_widget.value = progress_widget.value + 1 if step is None else step
+        gui.progress.value = gui.progress.value + 1 if step is None else step
 
     itw = widgets.interactive(
         display_quantity_by_party,
         period_group_index=period_group_index_widget,
-        year_limit=year_limit_widget,
-        party_name=party_name_widget,
-        parties=parties_widget,
-        treaty_filter=treaty_filter_widget,
-        extra_category=extra_category_widget,
-        normalize_values=normalize_values_widget,
-        chart_type_name=chart_type_name_widget,
-        plot_style=plot_style_widget,
-        top_n_parties=top_n_parties_widget,
-        overlay=widgets.fixed(False), # overlay_option_widget,
+        year_limit=gui.year_limit,
+        party_name=gui.party_name,
+        parties=gui.parties,
+        treaty_filter=gui.treaty_filter,
+        extra_category=gui.extra_category,
+        normalize_values=gui.normalize_values,
+        chart_type_name=gui.chart_type_name,
+        plot_style=gui.plot_style,
+        top_n_parties=gui.top_n_parties,
+        overlay=widgets.fixed(False), # overlay_option,
         progress=widgets.fixed(stepper),
         wti_index=widgets.fixed(wti_index),
-        print_args=widgets.fixed(print_args)
+        print_args=widgets.fixed(print_args),
+        treaty_sources=gui.sources
     )
 
     def on_party_preset_change(change):  # pylint: disable=W0613
 
-        if party_preset_widget.value is None:
+        if gui.party_preset.value is None:
             return
 
         try:
-            parties_widget.unobserve(on_parties_change, names='value')
-            top_n_parties_widget.unobserve(on_top_n_parties_change, names='value')
-            if 'ALL' in party_preset_widget.value:
-                parties_widget.value = parties_widget.options
+            gui.parties.unobserve(on_parties_change, names='value')
+            gui.top_n_parties.unobserve(on_top_n_parties_change, names='value')
+            if 'ALL' in gui.party_preset.value:
+                gui.parties.value = gui.parties.options
             else:
-                parties_widget.value = party_preset_widget.value
+                gui.parties.value = gui.party_preset.value
 
-            if top_n_parties_widget.value > 0:
-                top_n_parties_widget.value = 0
+            if gui.top_n_parties.value > 0:
+                gui.top_n_parties.value = 0
         except Exception as ex:
             logger.info(ex)
         finally:
-            parties_widget.observe(on_parties_change, names='value')
-            top_n_parties_widget.observe(on_top_n_parties_change, names='value')
+            gui.parties.observe(on_parties_change, names='value')
+            gui.top_n_parties.observe(on_top_n_parties_change, names='value')
 
     def on_parties_change(change):  # pylint: disable=W0613
         try:
-            if top_n_parties_widget.value != 0:
-                top_n_parties_widget.unobserve(on_top_n_parties_change, names='value')
-                top_n_parties_widget.value = 0
-                top_n_parties_widget.observe(on_top_n_parties_change, names='value')
+            if gui.top_n_parties.value != 0:
+                gui.top_n_parties.unobserve(on_top_n_parties_change, names='value')
+                gui.top_n_parties.value = 0
+                gui.top_n_parties.observe(on_top_n_parties_change, names='value')
         except Exception as ex:  # pylint: disable=W0703
             logger.info(ex)
 
     def on_top_n_parties_change(change):  # pylint: disable=W0613
         try:
-            if top_n_parties_widget.value > 0:
-                parties_widget.unobserve(on_parties_change, names='value')
-                parties_widget.disabled = True
-                party_preset_widget.disabled = True
-                if len(parties_widget.value) > 0:
-                    parties_widget.value = []
+            if gui.top_n_parties.value > 0:
+                gui.parties.unobserve(on_parties_change, names='value')
+                gui.parties.disabled = True
+                gui.party_preset.disabled = True
+                if len(gui.parties.value) > 0:
+                    gui.parties.value = []
             else:
-                parties_widget.observe(on_parties_change, names='value')
-                parties_widget.disabled = False
-                party_preset_widget.disabled = False
+                gui.parties.observe(on_parties_change, names='value')
+                gui.parties.disabled = False
+                gui.party_preset.disabled = False
         except Exception as ex:  # pylint: disable=W0703
             logger.info(ex)
 
     def set_years_window(period_group_index):
         try:
             min_year, max_year = period_group_window(period_group_index)
-            year_limit_widget.min, year_limit_widget.max = min_year, max_year
-            year_limit_widget.value = (min_year, max_year)
+            gui.year_limit.min, gui.year_limit.max = min_year, max_year
+            gui.year_limit.value = (min_year, max_year)
             period_group = config.DEFAULT_PERIOD_GROUPS[period_group_index]
-            year_limit_widget.disabled = (period_group['type']  != 'range')
+            gui.year_limit.disabled = (period_group['type']  != 'range')
         except Exception as ex:  # pylint: disable=W0703
             logger.info(ex)
 
@@ -232,26 +238,26 @@ def display_gui(wti_index, print_args=False):
         period_group_index = change['new']
         set_years_window(period_group_index)
 
-    parties_widget.observe(on_parties_change, names='value')
-    period_group_index_widget.observe(on_period_change, names='value')
-    party_preset_widget.observe(on_party_preset_change, names='value')
-    top_n_parties_widget.observe(on_top_n_parties_change, names='value')
+    gui.parties.observe(on_parties_change, names='value')
+    gui.period_group_index.observe(on_period_change, names='value')
+    gui.party_preset.observe(on_party_preset_change, names='value')
+    gui.top_n_parties.observe(on_top_n_parties_change, names='value')
 
-    set_years_window(period_group_index_widget.value)
+    set_years_window(gui.period_group_index.value)
 
     boxes =  widgets.HBox([
-        widgets.VBox([ period_group_index_widget, party_name_widget, top_n_parties_widget, party_preset_widget]),
-        widgets.VBox([ parties_widget ]),
+        widgets.VBox([ gui.period_group_index, gui.party_name, gui.top_n_parties, gui.party_preset]),
+        widgets.VBox([ gui.parties ]),
         widgets.VBox([
             widgets.HBox([
-                widgets.VBox([ treaty_filter_widget, extra_category_widget]),
-                widgets.VBox([ chart_type_name_widget, plot_style_widget]),
-                widgets.VBox([ normalize_values_widget ])
+                widgets.VBox([ gui.treaty_filter, gui.extra_category, gui.sources]),
+                widgets.VBox([ gui.chart_type_name, gui.plot_style]),
+                widgets.VBox([ gui.normalize_values ])
             ]),
-            progress_widget,
-            info_widget
+            gui.progress,
+            gui.info
         ])
     ])
 
-    display(widgets.VBox([boxes, year_limit_widget, itw.children[-1]]))
+    display(widgets.VBox([boxes, gui.year_limit, itw.children[-1]]))
     itw.update()
