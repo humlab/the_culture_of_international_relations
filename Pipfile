@@ -22,7 +22,6 @@ colorcet = "*"
 community = "==1.0.0b1"
 cryptography = "*"
 cytoolz = "*"
-en-core-web-lg = {file = "https://github.com/explosion/spacy-models/releases/download/en_core_web_lg-2.2.0/en_core_web_lg-2.2.0.tar.gz"}
 en-core-web-sm = {file = "https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-2.2.0/en_core_web_sm-2.2.0.tar.gz"}
 ftfy = "*"
 gensim = "*"
