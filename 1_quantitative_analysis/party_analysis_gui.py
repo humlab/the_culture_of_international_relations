@@ -131,7 +131,7 @@ def display_gui(wti_index, print_args=False):
 
         return min(periods), max(periods)
 
-    treaty_source_options = ['LTS', 'UNTS', 'UNXX']
+    treaty_source_options = wti_index.unique_sources
     party_preset_options = wti_index.get_party_preset_options()
 
     period_group_index_widget = widgets_config.period_group_widget(index_as_value=True)
@@ -140,7 +140,7 @@ def display_gui(wti_index, print_args=False):
 
     gui = types.SimpleNamespace(
         year_limit = widgets_config.rangeslider('Window', min_year, max_year, [min_year, max_year], layout=lw('900px'), continuous_update=False),
-        sources=widgets_config.select_multiple(description='Sources', options=treaty_source_options, values=treaty_source_options, disabled=True, layout=lw('200px')),
+        sources=widgets_config.select_multiple(description='Sources', options=treaty_source_options, values=treaty_source_options, disabled=False, layout=lw('200px')),
         period_group_index=period_group_index_widget,
         party_name = widgets_config.party_name_widget(),
         normalize_values = widgets_config.toggle('Display %', False, icon='', layout=lw('100px')),

@@ -95,7 +95,8 @@ def display_corpus_load_gui(data_folder, wti_index, container):
 
     lw = lambda w: widgets.Layout(width=w)
 
-    treaty_source_options = ['LTS', 'UNTS', 'UNXX']
+    treaty_source_options = wti_index.unique_sources
+    treaty_default_source_options = ['LTS', 'UNTS', 'UNXX']
 
     language_options = {
         config.LANGUAGE_MAP[k].title(): k for k in config.LANGUAGE_MAP.keys() if k in [ 'en', 'fr' ]
@@ -123,7 +124,7 @@ def display_corpus_load_gui(data_folder, wti_index, container):
             options=corpus_files,
             value=corpus_files[-1], layout=lw('400px')),
 
-        sources=widgets_config.select_multiple(description='Sources', options=treaty_source_options, values=treaty_source_options, disabled=True, layout=lw('180px')),
+        sources=widgets_config.select_multiple(description='Sources', options=treaty_source_options, values=treaty_default_source_options, disabled=False, layout=lw('180px')),
         language=widgets_config.dropdown(description='Language', options=language_options, value='en', layout=lw('180px')),
         period_group=widgets_config.dropdown('Period', period_group_options, 'years_1935-1972', disabled=False, layout=lw('180px')),
 

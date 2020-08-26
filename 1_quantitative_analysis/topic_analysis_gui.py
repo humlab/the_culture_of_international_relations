@@ -151,7 +151,7 @@ def display_gui(wti_index, print_args=False):
 
     party_preset_options = wti_index.get_party_preset_options()
 
-    treaty_source_options = ['LTS', 'UNTS', 'UNXX']
+    treaty_source_options = wti_index.unique_sources
 
     gui = types.SimpleNamespace(
         treaty_sources = widgets_config.select_multiple(

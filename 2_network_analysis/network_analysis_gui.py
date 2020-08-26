@@ -229,7 +229,7 @@ def display_network_analyis_gui(wti_index, plot_data):
     def lw(w='170px'):
         return widgets.Layout(width=w)
 
-    treaty_source_options = ['LTS', 'UNTS', 'UNXX']
+    treaty_source_options = wti_index.unique_sources
 
     party_preset_widget = widgets_config.dropdown('Presets', config.PARTY_PRESET_OPTIONS, None, layout=lw())
 

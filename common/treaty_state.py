@@ -146,6 +146,7 @@ class TreatyState:
         self._stacked_treaties = None
         self._get_countries_list = None
         self._party_preset_options = None
+        self._unique_sources = [ ]
 
     def check_party(self):
         # party1 = self.treaties[~self.treaties.group1.isin([0, 8])].party1.unique().tolist()
@@ -165,7 +166,12 @@ class TreatyState:
     def treaties(self):
         if self._treaties is None:
             self._treaties = self._process_treaties()
+            self._unique_sources = list(sorted(list(self._treaties.source.unique())))
         return self._treaties
+
+    @property
+    def unique_sources(self):
+        return self._unique_sources
 
     @property
     def stacked_treaties(self):
