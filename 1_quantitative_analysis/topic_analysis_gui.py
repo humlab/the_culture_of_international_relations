@@ -9,6 +9,7 @@ import common.color_utility as color_utility
 import analysis_data
 import analysis_plot
 import logging
+import types
 
 from IPython.display import display
 from pprint import pprint as pp
@@ -87,21 +88,21 @@ def party_group_label(parties):
     return ', '.join(parties[:6]) + ('' if len(parties) <= 6 else ' +{} parties'.format(len(parties)-6))
 
 def display_topic_quantity_groups(
-        period_group_index,
-        topic_group_name,
-        recode_is_cultural=False,
-        normalize_values=False,
-        extra_other_category=None,
-        chart_type_name=None,
-        plot_style='classic',
-        parties=None,
-        chart_per_category=False,
-        target_quantity="topic",
-        treaty_sources=None,
-        wti_index=None,
-        progress=utility.noop,
-        print_args=False
-    ):
+    period_group_index,
+    topic_group_name,
+    recode_is_cultural=False,
+    normalize_values=False,
+    extra_other_category=None,
+    chart_type_name=None,
+    plot_style='classic',
+    parties=None,
+    chart_per_category=False,
+    target_quantity="topic",
+    treaty_sources=None,
+    wti_index=None,
+    progress=utility.noop,
+    print_args=False
+):
 
     if print_args or (chart_type_name == 'print_args'):
         args = utility.filter_dict(locals(), [ 'progress', 'print_args' ], filter_out=True)
@@ -150,67 +151,72 @@ def display_gui(wti_index, print_args=False):
 
     party_preset_options = wti_index.get_party_preset_options()
 
-    treaty_source_options= ['LTS', 'UNTS', 'UNXX']
-    treaty_sources_widget = widgets_config.select_multiple(description='Sources', options=treaty_source_options, value=None, disabled=False, layout=lw('180px')),
+    treaty_source_options = ['LTS', 'UNTS', 'UNXX']
 
-    period_group_index_widget = widgets_config.period_group_widget(index_as_value=True)
-    topic_group_name_widget = widgets_config.topic_groups_widget(value='7CULTURE')
-    # treaty_filter_widget = widgets_config.treaty_filter_widget()
-    recode_is_cultural_widget = widgets_config.recode_7corr_widget(layout=lw('120px'))
-    normalize_values_widget = widgets_config.toggle('Display %', False, icon='', layout=lw('100px'))
-    chart_type_name_widget = widgets_config.dropdown('Output', config.CHART_TYPE_NAME_OPTIONS, "plot_stacked_bar", layout=lw('200px'))
-    plot_style_widget = widgets_config.plot_style_widget()
-    parties_widget = widgets_config.parties_widget(options=[ x for x in wti_index.get_countries_list() if x != 'ALL OTHER' ], value=['FRANCE'])
-    party_preset_widget = widgets_config.dropdown('Presets', party_preset_options, None, layout=lw(width='200px'))
-    chart_per_category_widget = widgets_config.toggle('Chart per Qty', False,
-        tooltip='Display one chart per selected quantity category', layout=lw())
-    extra_other_category_widget = widgets_config.toggle('Add OTHER topics', False, layout=lw())
-    target_quantity_widget = widgets_config.dropdown('Quantity', ['topic', 'party', 'source', 'continent', 'group'], 'topic', layout=lw(width='200px'))
-    progress_widget = widgets_config.progress(0, 5, 1, 0, layout=lw())
+    gui = types.SimpleNamespace(
+        treaty_sources = widgets_config.select_multiple(
+            description='Sources', options=treaty_source_options,
+            values=treaty_source_options, disabled=False, layout=lw('180px')),
+        period_group_index = widgets_config.period_group_widget(index_as_value=True),
+        topic_group_name = widgets_config.topic_groups_widget(value='7CULTURE'),
+        # treaty_filter = widgets_config.treaty_filter_widget()
+        recode_is_cultural = widgets_config.recode_7corr_widget(layout=lw('120px')),
+        normalize_values = widgets_config.toggle('Display %', False, icon='', layout=lw('100px')),
+        chart_type_name = widgets_config.dropdown('Output', config.CHART_TYPE_NAME_OPTIONS, "plot_stacked_bar", layout=lw('200px')),
+        plot_style = widgets_config.plot_style_widget(),
+        parties = widgets_config.parties_widget(options=[ x for x in wti_index.get_countries_list() if x != 'ALL OTHER' ], value=['FRANCE']),
+        party_preset = widgets_config.dropdown('Presets', party_preset_options, None, layout=lw(width='200px')),
+        chart_per_category = widgets_config.toggle('Chart per Qty', False,
+            tooltip='Display one chart per selected quantity category', layout=lw()),
+        extra_other_category = widgets_config.toggle('Add OTHER topics', False, layout=lw()),
+        target_quantity = widgets_config.dropdown('Quantity', ['topic', 'party', 'source', 'continent', 'group'], 'topic', layout=lw(width='200px')),
+        progress = widgets_config.progress(0, 5, 1, 0, layout=lw())
+    )
+
 
     def stepper(step=None):
-        progress_widget.value = progress_widget.value + 1 if step is None else step
+        gui.progress.value = gui.progress.value + 1 if step is None else step
 
     def on_party_preset_change(change):  # pylint: disable=W0613
 
-        if party_preset_widget.value is None:
+        if gui.party_preset.value is None:
             return
 
-        if 'ALL' in party_preset_widget.value:
-            parties_widget.value = parties_widget.options
+        if 'ALL' in gui.party_preset.value:
+            gui.parties.value = gui.parties.options
         else:
-            parties_widget.value = party_preset_widget.value
+            gui.parties.value = gui.party_preset.value
 
-        #if top_n_parties_widget.value > 0:
-        #    top_n_parties_widget.value = 0
+        #if top_n_parties.value > 0:
+        #    top_n_parties.value = 0
 
-    party_preset_widget.observe(on_party_preset_change, names='value')
+    gui.party_preset.observe(on_party_preset_change, names='value')
 
     itw = widgets.interactive(
         display_topic_quantity_groups,
-        period_group_index=period_group_index_widget,
-        topic_group_name=topic_group_name_widget,
-        parties=parties_widget,
-        recode_is_cultural=recode_is_cultural_widget,
-        normalize_values=normalize_values_widget,
-        extra_other_category=extra_other_category_widget,
-        chart_type_name=chart_type_name_widget,
-        plot_style=plot_style_widget,
-        chart_per_category=chart_per_category_widget,
-        target_quantity=target_quantity_widget,
+        period_group_index=gui.period_group_index,
+        topic_group_name=gui.topic_group_name,
+        parties=gui.parties,
+        recode_is_cultural=gui.recode_is_cultural,
+        normalize_values=gui.normalize_values,
+        extra_other_category=gui.extra_other_category,
+        chart_type_name=gui.chart_type_name,
+        plot_style=gui.plot_style,
+        chart_per_category=gui.chart_per_category,
+        target_quantity=gui.target_quantity,
         progress=widgets.fixed(stepper),
         wti_index=widgets.fixed(wti_index),
-        treaty_source=treaty_sources_widget.value,
+        treaty_sources=gui.treaty_sources,
         print_args=widgets.fixed(print_args)
     )
 
     boxes = widgets.HBox(
         [
-            widgets.VBox([ period_group_index_widget, topic_group_name_widget, target_quantity_widget, party_preset_widget]),
-            widgets.VBox([ treaty_sources_widget, parties_widget ]),
-            widgets.VBox([ recode_is_cultural_widget, extra_other_category_widget, chart_per_category_widget]),
-            widgets.VBox([ chart_type_name_widget, plot_style_widget ]),
-            widgets.VBox([ normalize_values_widget, progress_widget ])
+            widgets.VBox([ gui.period_group_index, gui.topic_group_name, gui.target_quantity, gui.party_preset]),
+            widgets.VBox([ gui.treaty_sources, gui.parties ]),
+            widgets.VBox([ gui.recode_is_cultural, gui.extra_other_category, gui.chart_per_category]),
+            widgets.VBox([ gui.chart_type_name, gui.plot_style ]),
+            widgets.VBox([ gui.normalize_values, gui.progress ])
         ]
     )
     display(widgets.VBox([boxes, itw.children[-1]]))
