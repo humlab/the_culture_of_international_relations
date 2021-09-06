@@ -64,6 +64,8 @@ SLICE_TYPE_OPTIONS, SLICE_TYPE_DEFAULT = {
 from network_analysis_gui import NETWORK_PLOT_OPTS
 
 def display_partial_party_network(plot_data, slice_range_type, slice_range, slice_changed_callback):
+    if not plot_data or not plot_data.edges:
+        return
 
     nodes, edges = slice_network_datasource(plot_data.edges, plot_data.nodes, slice_range, slice_range_type)
 
@@ -226,7 +228,7 @@ def display_network_analyis_gui(wti_index, plot_data):
 
     box = widgets.Layout()
 
-    def lw(w='170px'):
+    def lw(w='200px'):
         return widgets.Layout(width=w)
 
     treaty_source_options = wti_index.unique_sources
@@ -240,7 +242,7 @@ def display_network_analyis_gui(wti_index, plot_data):
     party_name_widget = widgets_config.party_name_widget(layout=lw())
 
     treaty_filter_widget = widgets_config.dropdown('Filter', config.TREATY_FILTER_OPTIONS, 'is_cultural', layout=lw())
-    recode_is_cultural_widget = widgets_config.toggle('Recode 7CORR', True, layout=lw(w='100px'))
+    recode_is_cultural_widget = widgets_config.toggle('Recode 7CORR', True, layout=lw(w='200px'))
 
     parties_widget = widgets_config.parties_widget(options=wti_index.get_countries_list(), value=['FRANCE'], layout=lw())
 
@@ -257,8 +259,8 @@ def display_network_analyis_gui(wti_index, plot_data):
     layout_algorithm_widget = widgets_config.dropdown('Layout', NETWORK_LAYOUT_OPTIONS, 'nx_spring_layout', layout=lw())
     progress_widget = widgets_config.progress(0, 4, 1, 0, layout=lw("300px"))
     node_partition_widget = widgets_config.dropdown('Partition', COMMUNITY_OPTIONS, None, layout=lw())
-    simple_mode_widget = widgets_config.toggle('Simple', False, tooltip='Simple view', layout=lw(w='100px'))
-    treaty_sources_widget = widgets_config.select_multiple(description='Sources', values=treaty_source_options, value=(,), disabled=False, layout=lw('180px')),
+    simple_mode_widget = widgets_config.toggle('Simple', False, tooltip='Simple view', layout=lw(w='200px'))
+    treaty_sources_widget = widgets_config.select_multiple(description='Sources', options=treaty_source_options, values=['UNTS'], disabled=False, layout=lw('200px'))
 
     slice_range_type_widget = widgets_config.dropdown('Unit', SLICE_TYPE_OPTIONS, SLICE_TYPE_DEFAULT, layout=lw())
     time_travel_range_widget = widgets_config.rangeslider('Time travel', 0, 100, [0, 100], layout=lw('60%'), continuous_update=False)
@@ -307,6 +309,9 @@ def display_network_analyis_gui(wti_index, plot_data):
 
     def update_slice_range(slice_range_type):
         """ Called whenever display of new plot_data is done. """
+        if not plot_data or not plot_data.edges:
+            return
+
         slice_range_type = slice_range_type or plot_data.slice_range_type
         sign_dates = plot_data.edges['signed']
 
@@ -364,7 +369,7 @@ def display_network_analyis_gui(wti_index, plot_data):
         node_partition=node_partition_widget,
         year_limit=widgets.fixed(None),
         wti_index=widgets.fixed(wti_index),
-        treaty_sources=treaty_sources_widget.value,
+        treaty_sources=treaty_sources_widget,
         progress=widgets.fixed(progress_callback),
         done_callback=widgets.fixed(update_slice_range)
     )
