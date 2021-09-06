@@ -1,0 +1,71 @@
+[tool.poetry]
+name = "the_culture_of_international_relations"
+version = "2021.3.1"
+description = "tCoIR"
+authors = ["Roger Mähler <roger.mahler@hotmail.com>"]
+packages = [
+]
+classifiers = [
+    'License :: OSI Approved :: Apache Software License',
+    'Operating System :: OS Independent',
+    'Topic :: Software Development',
+    'Programming Language :: Python',
+    'Programming Language :: Python :: 3',
+    'Programming Language :: Python :: 3.8',
+]
+license = "Apache-2.0"
+readme = "README.md"
+homepage = "https://westac.se"
+repository = "https://github.com/humlab/the_culture_of_international_relations"
+
+[tool.poetry.dependencies]
+python = "==3.8.5"
+beakerx = "*"
+bokeh = "*"
+colorcet = "*"
+community = "==1.0.0b1"
+cryptography = "*"
+cytoolz = "*"
+ftfy = "*"
+gensim = "*"
+graphviz = "*"
+ipykernel = "*"
+ipython = "*"
+ipywidgets = "*"
+jupyterlab = "*"
+jupytext = "*"
+lxml = "*"
+matplotlib = "*"
+matplotlib-venn = "*"
+matplotlib-venn-wordcloud = "*"
+nbdime = "*"
+networkx = "*"
+nltk = "*"
+numpy = "*"
+openpyxl = "*"
+pandas = "*"
+pivottablejs = "*"
+py4j = "*"
+pydotplus = "*"
+pyldavis = "*"
+python-louvain = "*"
+rake-nltk = "*"
+scikit-learn = "*"
+scipy = "*"
+spacy = "==2.3.2"
+sql-magic = "*"
+textacy = "*"
+tornado = "*"
+wordcloud = "*"
+xlrd = "*"
+
+[tool.poetry.dev-dependencies]
+pandoc = "*"
+pep8 = "*"
+pipenv = "*"
+pipreqs = "*"
+pylint = "*"
+pytest = "<=5.0.1"
+pytest-cov = "*"
+rope = "*"
+yapf = "*"
