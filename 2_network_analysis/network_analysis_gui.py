@@ -258,7 +258,7 @@ def display_network_analyis_gui(wti_index, plot_data):
     progress_widget = widgets_config.progress(0, 4, 1, 0, layout=lw("300px"))
     node_partition_widget = widgets_config.dropdown('Partition', COMMUNITY_OPTIONS, None, layout=lw())
     simple_mode_widget = widgets_config.toggle('Simple', False, tooltip='Simple view', layout=lw(w='100px'))
-    treaty_sources_widget = widgets_config.select_multiple(description='Sources', options=treaty_source_options, value=None, disabled=False, layout=lw('180px')),
+    treaty_sources_widget = widgets_config.select_multiple(description='Sources', values=treaty_source_options, value=(,), disabled=False, layout=lw('180px')),
 
     slice_range_type_widget = widgets_config.dropdown('Unit', SLICE_TYPE_OPTIONS, SLICE_TYPE_DEFAULT, layout=lw())
     time_travel_range_widget = widgets_config.rangeslider('Time travel', 0, 100, [0, 100], layout=lw('60%'), continuous_update=False)
