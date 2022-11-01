@@ -1,4 +1,4 @@
-
+ 
 import ipywidgets as widgets
 import pandas as pd
 import common.config as config
@@ -10,6 +10,7 @@ import analysis_data
 import analysis_plot
 import logging
 import types
+import datetime
 
 from IPython.display import display
 from pprint import pprint as pp
@@ -28,12 +29,20 @@ def display_topic_quantity(
     target_quantity="topic",
     treaty_sources=None,
     wti_index=None,
-    progress=utility.noop
+    progress=utility.noop,
+    vmax=None,
+    legend=True,
+    output_filename=None
 ):
     try:
-        # print(locals())
         progress()
-
+        
+        # Note: Using `output_filename`-argument instead
+        # save_plot = False
+        # if chart_type_name.endswith('_save'):
+        #     save_plot = True
+        #     chart_type_name = chart_type_name[:-5]
+            
         chart_type = config.CHART_TYPE_MAP[chart_type_name]
 
         period_column = period_group['column']
@@ -65,11 +74,17 @@ def display_topic_quantity(
             columns = pivot.columns
             pivot = pivot.reset_index()[columns]
 
-            kwargs = analysis_plot.prepare_plot_kwargs(pivot, chart_type, normalize_values, period_group)
+            kwargs = analysis_plot.prepare_plot_kwargs(pivot, chart_type, normalize_values, period_group, vmax=vmax)
             progress()
             #kwargs.update(dict(overlay=False, colors=colors))
             kwargs.update(dict(title=party_group['label']))
-            analysis_plot.quantity_plot(data, pivot, chart_type, plot_style, **kwargs)
+            kwargs.update(dict(legend=legend))
+            
+            ax = analysis_plot.quantity_plot(data, pivot, chart_type, plot_style, **kwargs)
+            
+            if output_filename:
+                basename = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+                ax.savefig('{}_{}.{}'.format(basename, output_filename, 'eps'), format='eps', dpi=300)
 
         elif chart_type.name == 'table':
             display(data)
@@ -101,7 +116,10 @@ def display_topic_quantity_groups(
     treaty_sources=None,
     wti_index=None,
     progress=utility.noop,
-    print_args=False
+    print_args=False,
+    vmax=None,
+    legend=True,
+    output_filename=None
 ):
 
     if print_args or (chart_type_name == 'print_args'):
@@ -141,7 +159,10 @@ def display_topic_quantity_groups(
                 target_quantity=target_quantity,
                 treaty_sources=treaty_sources,
                 wti_index=wti_index,
-                progress=progress
+                progress=progress,
+                vmax=vmax,
+                legend=legend,
+                output_filename=output_filename
             )
 
 def display_gui(wti_index, print_args=False):

@@ -25,7 +25,7 @@ def quantity_plot(
     figsize=(figsize[0]/dpi, figsize[1]/dpi)
 
     kind = '{}{}'.format(chart_type.kind, 'h' if chart_type.horizontal else '')
-
+   
     ax = pivot.plot(kind=kind, stacked=chart_type.stacked, figsize=figsize, color=colors, **kwargs)
 
     if xticks is not None:
@@ -42,6 +42,7 @@ def quantity_plot(
 
     ax.set_xlabel(xlabel or '')
     ax.set_ylabel(ylabel or '')
+    ax.set_title(None) # TODO: Add as argument
 
     if xlim is not None:
         ax.set_xlim(xlim)
@@ -55,12 +56,16 @@ def quantity_plot(
     # ax.yaxis.set_major_locator(MaxNLocator(integer=True))
 
     # Put a legend to the right of the current axis
-    legend = ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
-    legend.get_frame().set_linewidth(0.0)
+    # TODO: Add `loc` as argument
+    if kwargs.get('legend'):
+        legend = ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+        legend.get_frame().set_linewidth(0.0)
 
     if ax.get_xticklabels() is not None:
         for tick in ax.get_xticklabels():
             tick.set_rotation(45)
+
+    return ax.get_figure()
 
 # note: pd-read_csv can read .csv.gz
 # from colorcet import fire
@@ -176,7 +181,7 @@ def vstepper(vmax):
             return step
     return 500
 
-def prepare_plot_kwargs(data, chart_type, normalize_values, period_group):
+def prepare_plot_kwargs(data, chart_type, normalize_values, period_group, vmax = None):
 
     kwargs = dict(
         figsize=(1000, 500)
@@ -195,12 +200,15 @@ def prepare_plot_kwargs(data, chart_type, normalize_values, period_group):
 
     kwargs.setdefault('%sticks' %(c,), list(data.index))
 
-    if chart_type.stacked:
-        vmax = data.sum(axis=1).max()
-    else:
-        vmax = data.max().max()    
-        
+    if vmax is None:
+        if chart_type.stacked:
+            vmax = data.sum(axis=1).max()
+        else:
+            vmax = data.max().max()    
+
     vstep = vstepper(vmax)
+    
+    
     if not normalize_values:
         kwargs.setdefault('%sticks' %(v,), list(range(0,vmax+vstep, vstep)))
 
@@ -209,6 +217,6 @@ def prepare_plot_kwargs(data, chart_type, normalize_values, period_group):
 
     if normalize_values:
         kwargs.setdefault('%slim' %(v,), [0, 100])
-
+        
     return kwargs
 

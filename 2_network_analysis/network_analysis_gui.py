@@ -311,7 +311,7 @@ def display_network_analyis_gui(wti_index, plot_data):
         """ Called whenever display of new plot_data is done. """
         if not plot_data or not plot_data.edges:
             return
-
+        
         slice_range_type = slice_range_type or plot_data.slice_range_type
         sign_dates = plot_data.edges['signed']
 

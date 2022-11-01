@@ -35,14 +35,28 @@ DEFAULT_PERIOD_GROUPS = [
         'title': 'Alt. division',
         'column': 'signed_period_alt',
         'type': 'divisions',
-        'periods': [ (1919, 1944), (1945, 1955), (1956, 1966), (1967, 1972) ]
+        'periods': [ (1935, 1945), (1946, 1955), (1956, 1965), (1966, 1972) ]
     },
     {
-        'id': 'years_1945-1972',
-        'title': '1945-1972',
+        'id': '5_year_periods_1935-1980',
+        'title': '5 year periods, 1935-1980',
+        'column': 'signed_period_five',
+        'type': 'divisions',
+        'periods': [ (1935, 1939), (1940, 1944), (1945, 1949), (1950, 1954), (1955, 1959), (1960, 1964), (1965, 1969), (1970, 1974), (1975, 1980) ]
+    },
+    {
+        'id': 'years_1945-1980',
+        'title': '1945-1980',
         'column': 'signed_year',
         'type': 'range',
-        'periods': list(range(1945, 1973))
+        'periods': list(range(1945, 1981))
+    },
+    {
+        'id': 'years_1935-1975',
+        'title': '1935-1975',
+        'column': 'signed_year',
+        'type': 'range',
+        'periods': list(range(1935, 1976))
     },
     {
         'id': 'years_1935-1972',
@@ -50,6 +64,13 @@ DEFAULT_PERIOD_GROUPS = [
         'column': 'signed_year',
         'type': 'range',
         'periods': list(range(1935, 1973))
+    },
+    {
+        'id': 'years_1935-1980',
+        'title': '1935-1980',
+        'column': 'signed_year',
+        'type': 'range',
+        'periods': list(range(1935, 1981))
     }
 ]
 

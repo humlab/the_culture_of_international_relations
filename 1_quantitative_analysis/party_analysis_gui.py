@@ -11,6 +11,7 @@ import analysis_data
 import analysis_plot
 from pprint import pprint as pp
 from IPython.display import display
+import datetime
 
 logger = utility.getLogger('tq_by_party')
 
@@ -35,9 +36,14 @@ def display_quantity_by_party(
     progress=utility.noop,
     wti_index=None,
     print_args=False,
-    treaty_sources=None
+    treaty_sources=None,
+    vmax=None,
+    legend=True,
+    output_filename=None
 ):
     try:
+        
+        chart_type = config.CHART_TYPE_MAP[chart_type_name]
 
         static_color_map = color_utility.get_static_color_map()
 
@@ -92,12 +98,18 @@ def display_quantity_by_party(
             pivot = pivot.reset_index()[columns]
             colors = static_color_map.get_palette(columns)
 
-            kwargs = analysis_plot.prepare_plot_kwargs(pivot, chart_type, normalize_values, period_group)
+            kwargs = analysis_plot.prepare_plot_kwargs(pivot, chart_type, normalize_values, period_group, vmax=vmax)
             kwargs.update(dict(overlay=overlay, colors=colors))
+            kwargs.update(dict(legend=legend))
 
             progress()
 
-            analysis_plot.quantity_plot(data, pivot, chart_type, plot_style, **kwargs)
+            kwargs.update(ylim=(0, vmax))
+            ax = analysis_plot.quantity_plot(data, pivot, chart_type, plot_style, **kwargs)
+            
+            if output_filename:
+                basename = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
+                ax.savefig('{}_{}.{}'.format(basename, output_filename, 'eps'), format='eps', dpi=300)
 
         elif chart_type.name == 'table':
             display(data)

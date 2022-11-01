@@ -129,9 +129,9 @@ class TreatyState:
         self.csv_files = [
             (filename, 'treaties', 'Treaties_Master_List.xlsx', 'Treaties'),
             ('country_continent.csv', 'country_continent', None, None),
-            ('parties_curated_parties.csv', 'parties', None, None),
-            ('parties_curated_continent.csv', 'continent', None, None),
-            ('parties_curated_group.csv', 'group', None, None)
+            ('parties_curated_parties.csv', 'parties', 'parties_curated.xlsx', 'parties'),
+            ('parties_curated_continent.csv', 'continent', 'parties_curated.xlsx', 'continent'),
+            ('parties_curated_group.csv', 'group', 'parties_curated.xlsx', 'group')
         ]
         self.data = self._read_data()
 
