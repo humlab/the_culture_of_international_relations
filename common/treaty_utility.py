@@ -1,26 +1,32 @@
 import common.utility as utility
 
+
 def trim_period_group(period_group, year_limit):
     pg = dict(period_group)
     low, high = year_limit
-    if pg['type'] == 'range':
-        pg['periods'] = [ x for x in pg['periods'] if low <= x <= high ]
+    if pg["type"] == "range":
+        pg["periods"] = [x for x in pg["periods"] if low <= x <= high]
     else:
-        pg['periods'] = [ (max(low,x), min(high, y)) for x, y in pg['periods'] if not (high < x and low > y) ]
+        pg["periods"] = [
+            (max(low, x), min(high, y))
+            for x, y in pg["periods"]
+            if not (high < x and low > y)
+        ]
     return pg
 
 
 def period_group_years(period_group):
-    if period_group['type'] == 'range':
-        return period_group['periods']
-    period_years = [ list(range(x[0], x[1] + 1)) for x in period_group['periods']]
+    if period_group["type"] == "range":
+        return period_group["periods"]
+    period_years = [list(range(x[0], x[1] + 1)) for x in period_group["periods"]]
     return utility.flatten(period_years)
 
-class QueryUtility():
-    
+
+class QueryUtility:
+
     @staticmethod
     def parties_mask(parties):
-        return lambda df: (df.party1.isin(parties))|(df.party2.isin(parties))
+        return lambda df: (df.party1.isin(parties)) | (df.party2.isin(parties))
 
     @staticmethod
     def period_group_mask(pg):
@@ -29,14 +35,18 @@ class QueryUtility():
     @staticmethod
     def is_cultural_mask():
         def fx(df):
-            df.loc[df.is_cultural, 'topic1'] = '7CORR'
+            df.loc[df.is_cultural, "topic1"] = "7CORR"
             return True
+
         return fx
 
     @staticmethod
     def years_mask(ys):
-        return lambda df: ((ys[0] <= df.signed_year) & (df.signed_year <= ys[1])) \
-            if isinstance(ys, tuple) and len(ys) == 2 else df.signed_year.isin(ys)
+        return lambda df: (
+            ((ys[0] <= df.signed_year) & (df.signed_year <= ys[1]))
+            if isinstance(ys, tuple) and len(ys) == 2
+            else df.signed_year.isin(ys)
+        )
 
     @staticmethod
     def is_cultural_mask():
@@ -44,14 +54,14 @@ class QueryUtility():
 
     @staticmethod
     def topic_7cult_mask():
-        return lambda df: (df.topic1=='7CULT')
-        
+        return lambda df: (df.topic1 == "7CULT")
+
     @staticmethod
     def query_treaties(treaties, filter_masks):
-        """ NOT USED but could perhaps replace functions above """
+        """NOT USED but could perhaps replace functions above"""
         #  period_group=None, treaty_filter='', recode_is_cultural=False, parties=None, year_limit=None):
         if not isinstance(filter_masks, list):
-            filter_masks = [ filter_masks ]
+            filter_masks = [filter_masks]
         for mask in filter_masks:
             if mask is True:
                 pass

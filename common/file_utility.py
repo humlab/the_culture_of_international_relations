@@ -1,6 +1,6 @@
-
 import os
 import pandas as pd
+
 
 class FileUtility:
 
@@ -23,8 +23,8 @@ class FileUtility:
     @staticmethod
     def save_excel(data, filename):
         with pd.ExcelWriter(filename) as writer:
-            for (df, name) in data:
-                df.to_excel(writer, name, engine='xlsxwriter')
+            for df, name in data:
+                df.to_excel(writer, name, engine="xlsxwriter")
             writer.save()
 
     @staticmethod
@@ -33,12 +33,17 @@ class FileUtility:
 
     @staticmethod
     def ts_data_path(directory, filename):
-        return os.path.join(directory, '{}_{}'.format(time.strftime("%Y%m%d%H%M"), filename))
+        return os.path.join(
+            directory, "{}_{}".format(time.strftime("%Y%m%d%H%M"), filename)
+        )
 
     @staticmethod
     def data_path_ts(directory, path):
         basename, extension = os.path.splitext(path)
-        return os.path.join(directory, '{}_{}{}'.format(basename, time.strftime("%Y%m%d%H%M"), extension))
+        return os.path.join(
+            directory,
+            "{}_{}{}".format(basename, time.strftime("%Y%m%d%H%M"), extension),
+        )
 
     @staticmethod
     def zip(path):
@@ -47,8 +52,10 @@ class FileUtility:
             return
         folder, filename = os.path.split(path)
         basename, _ = os.path.splitext(filename)
-        zip_name = os.path.join(folder, basename + '.zip')
-        with zipfile.ZipFile(zip_name, mode='w', compression=zipfile.ZIP_DEFLATED) as zf:
+        zip_name = os.path.join(folder, basename + ".zip")
+        with zipfile.ZipFile(
+            zip_name, mode="w", compression=zipfile.ZIP_DEFLATED
+        ) as zf:
             zf.write(path)
         os.remove(path)
 
