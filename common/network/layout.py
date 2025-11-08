@@ -1,14 +1,16 @@
-import os
 import math
+import os
 
 os.sys.path = os.sys.path if ".." in os.sys.path else os.sys.path + [".."]
 
-from common.network.layout_networkx import layout_setups as nx_layout_setups
 from common.network.layout_graphviz import layout_setups as gv_layout_setups
+from common.network.layout_networkx import layout_setups as nx_layout_setups
 
 try:
     import graph_tool.all as gt
-    from common.network.layout_graphtool import layout_setups as gt_layout_setups
+
+    from common.network.layout_graphtool import \
+        layout_setups as gt_layout_setups
 
     layout_setups = nx_layout_setups + gt_layout_setups + gv_layout_setups
 except ImportError as ex:

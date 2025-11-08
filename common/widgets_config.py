@@ -1,11 +1,12 @@
 # from __future__ import print_function
 import ipywidgets as widgets
 
+import common.config as config
+from common import extend
+
 # if __package__:
 #    print('Package named {!r}; __name__ is {!r}'.format(__package__, __name__))
 
-from common import extend
-import common.config as config
 
 
 def kwargser(d):

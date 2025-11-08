@@ -1,7 +1,8 @@
-import requests
-import os
-import pandas as pd
 import logging
+import os
+
+import pandas as pd
+import requests
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)

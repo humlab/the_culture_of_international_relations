@@ -1,5 +1,5 @@
-import graph_tool.draw as gt_draw  # pylint: disable=E0401
 import graph_tool.all as gt  # pylint: disable=E0401
+import graph_tool.draw as gt_draw  # pylint: disable=E0401
 
 
 def plot(G_gt, layout_gt, n_range, palette, **kwargs):  # pylint: disable=W0613

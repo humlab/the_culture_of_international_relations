@@ -1,6 +1,5 @@
 import networkx as nx
 import pydotplus
-
 from IPython.display import Image
 
 

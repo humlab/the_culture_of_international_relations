@@ -1,12 +1,13 @@
-import os
-import pandas as pd
-import numpy as np
-import re
-import warnings
-import logging
 import datetime
-import ipywidgets as widgets
+import logging
+import os
+import re
 import types
+import warnings
+
+import ipywidgets as widgets
+import numpy as np
+import pandas as pd
 
 warnings.simplefilter(action="ignore", category=FutureWarning)
 
@@ -148,7 +149,8 @@ party_correction_map = {
     "W ALLIES": "IGNORE",
 }
 
-from common.treaty_utility import trim_period_group, period_group_years, QueryUtility
+from common.treaty_utility import (QueryUtility, period_group_years,
+                                   trim_period_group)
 
 
 class TreatyState:

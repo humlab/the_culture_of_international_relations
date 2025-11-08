@@ -1,8 +1,10 @@
 # from __future__ import print_function
 import ipywidgets as widgets
-from common.utility import extend
-from common.widgets_config import glyph_hover_js_code, slider, dropdown, years_widget
 from bokeh.models import ColumnDataSource, CustomJS
+
+from common.utility import extend
+from common.widgets_config import (dropdown, glyph_hover_js_code, slider,
+                                   years_widget)
 
 BUTTON_STYLE = dict(description_width="initial", button_color="lightgreen")
 

@@ -1,6 +1,7 @@
 """ NetworkX utility functions """
 
 import networkx as nx
+
 from common.utility import clamp_values, extend, list_of_dicts_to_dict_of_lists
 
 # def create_nx_graph(df, source_field='source', target_field='target', weight='weight'):

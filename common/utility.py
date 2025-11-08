@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
-import os
-import sys
-import logging
-import inspect
-import types
-import glob
-import re
-import time
-import gensim.utils
 import functools
+import glob
+import inspect
+import logging
+import os
+import re
+import sys
+import time
+import types
+
+import gensim.utils
 
 
 def getLogger(name="cultural_treaties", level=logging.INFO):

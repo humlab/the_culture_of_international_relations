@@ -1,20 +1,20 @@
-import wordcloud
 import matplotlib.pyplot as plt
+import wordcloud
 
 if "__file__" in globals():
-    import os, sys
+    import os
+    import sys
 
     curdir = os.path.abspath(os.path.dirname(__file__))
     if curdir not in sys.path:
         sys.path.append(curdir)
 
+import bokeh.models as bm
+import bokeh.palettes
+import networkx as nx
+from bokeh.plotting import figure
 from network_utility import NetworkMetricHelper, NetworkUtility
 from widgets_utility import WidgetUtility
-
-import networkx as nx
-import bokeh.palettes
-import bokeh.models as bm
-from bokeh.plotting import figure
 
 if "extend" not in globals():
     extend = lambda a, b: a.update(b) or a

@@ -1,5 +1,6 @@
-import networkx as nx
 from types import SimpleNamespace as bunch
+
+import networkx as nx
 
 engines = ["neato", "dot", "circo", "fdp", "sfdp"]
 

@@ -2,16 +2,15 @@ import os
 
 os.sys.path = os.sys.path if "." in os.sys.path else os.sys.path + ["."]
 
-import common.network.networkx_utility as networkx_utility
-import common.network.layout as network_layout
-import common.widgets_config as widgets_config
-import common.utility as utility
-
-import bokeh.palettes
 import bokeh.models
-
+import bokeh.palettes
 from bokeh.models import ColumnDataSource, HoverTool, LabelSet
 from bokeh.plotting import figure
+
+import common.network.layout as network_layout
+import common.network.networkx_utility as networkx_utility
+import common.utility as utility
+import common.widgets_config as widgets_config
 
 TOOLS = "pan,wheel_zoom,box_zoom,reset,save"
 
