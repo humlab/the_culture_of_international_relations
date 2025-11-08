@@ -3,6 +3,7 @@ import logging
 import os
 import re
 import types
+from typing import Any
 import warnings
 
 import ipywidgets as widgets
@@ -149,20 +150,19 @@ party_correction_map = {
     "W ALLIES": "IGNORE",
 }
 
-from common.treaty_utility import (QueryUtility, period_group_years,
-                                   trim_period_group)
+from common.treaty_utility import QueryUtility, period_group_years, trim_period_group
 
 
 class TreatyState:
 
     def __init__(
         self,
-        data_folder="./data",
-        skip_columns=default_treaties_skip_columns,
+        data_folder: str = "./data",
+        skip_columns: list[str] = default_treaties_skip_columns,
         period_groups=None,
-        filename=None,
-        is_cultural_yesno_column="is_cultural_yesno_org",
-    ):  # pylint: disable=W0102
+        filename: str | None = None,
+        is_cultural_yesno_column: str = "is_cultural_yesno_org",
+    ) -> None:  # pylint: disable=W0102
         filename = filename or "Treaties_Master_List_Treaties.csv"
         self.data_folder = data_folder
         self.period_groups = period_groups or config.DEFAULT_PERIOD_GROUPS
@@ -204,19 +204,24 @@ class TreatyState:
         self._party_preset_options = None
         self._unique_sources = []
 
-    def check_party(self):
+    def check_party(self) -> list[Any]:
         # party1 = self.treaties[~self.treaties.group1.isin([0, 8])].party1.unique().tolist()
         # party2 = self.treaties[~self.treaties.group2.isin([0, 8])].party2.unique().tolist()
         party1 = self.treaties.party1.unique().tolist()
         party2 = self.treaties.party2.unique().tolist()
-        df_party = pd.DataFrame({"party": list(set(party1 + party2))})
-        df = df_party.merge(self.parties, left_on="party", right_index=True, how="left")
+        df_party = pd.DataFrame(data={"party": list(set(party1 + party2))})
+        df = df_party.merge(
+            right=self.parties, left_on="party", right_index=True, how="left"
+        )
 
         unknown_parties = df[df.group_no.isna()].party.tolist()
         if len(unknown_parties) > 0:
             logger.warning(
-                "[{} UNKNOWN PARTIES] ".format(len(unknown_parties))
-                + (" ".join(['"' + str(x) + '"' for x in unknown_parties]))
+                "[{unknown_parties} UNKNOWN PARTIES] ".format(
+                    unknown_parties=", ".join(
+                        ['"' + str(x) + '"' for x in unknown_parties]
+                    )
+                )
             )
 
         return unknown_parties
@@ -531,7 +536,7 @@ class TreatyState:
             if party in self.parties.index:
                 return self.parties.loc[party, party_name_column]
             return party
-        except Exception as _:
+        except Exception as _:  # pylint: disable=too-broad-except
             logger.warning("Warning: %s not in curated parties list", party)
             return party
 
@@ -540,7 +545,7 @@ class TreatyState:
             d = self.parties.loc[party].to_dict()
             d["party"] = party
             return d
-        except:  # pytlint: disable=W0702
+        except Exception as _:  # pylint: disable=too-broad-except
             return None
 
     def get_headnotes(self):
@@ -647,9 +652,9 @@ class TreatyState:
 
         period_column = period_group["column"]
 
-        assert period_column in treaties.columns, (
-            "get_treaties_within_division: got unknown %r as column" % period_column
-        )
+        assert (
+            period_column in treaties.columns
+        ), f"get_treaties_within_division: got unknown {period_column!r} as column"
 
         if period_group is not None:
             treaties = QueryUtility.query_treaties(
