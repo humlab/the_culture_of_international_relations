@@ -1,5 +1,4 @@
-import os
 import sys
 
 sys.path.insert(0, '..')
-os.sys.path = os.sys.path if '..' in os.sys.path else os.sys.path + ['..']
+sys.path = sys.path if '..' in sys.path else sys.path + ['..']
