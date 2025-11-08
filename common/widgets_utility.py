@@ -2,9 +2,7 @@
 import ipywidgets as widgets
 from bokeh.models import ColumnDataSource, CustomJS
 
-from common.utility import extend
-from common.widgets_config import (dropdown, glyph_hover_js_code, slider,
-                                   years_widget)
+from common.widgets_config import glyph_hover_js_code, years_widget
 
 BUTTON_STYLE = dict(description_width="initial", button_color="lightgreen")
 
@@ -14,7 +12,7 @@ class WidgetUtility:
     @staticmethod
     def create_js_callback(axis, attribute, source):
         return CustomJS(
-            args=dict(source=source),
+            args={"source": source},
             code="""
             var data = source.data;
             var start = cb_obj.start;
@@ -93,7 +91,7 @@ class WidgetUtility:
 
     def create_text_widget(self, element_id=None, default_value=""):
         value = (
-            "<span class='{}'>{}</span>".format(element_id, default_value)
+            f"<span class='{element_id}'>{default_value}</span>"
             if element_id is not None
             else ""
         )
@@ -125,61 +123,63 @@ class WidgetUtility:
 
         return self.create_button(description="<<", callback=f)
 
-    def next_topic_id_clicked(self, _):
-        self.topic_id.value = (self.topic_id.value + 1) % self.n_topics
+    # def next_topic_id_clicked(self, _):
+    #     self.topic_id.value = (self.topic_id.value + 1) % self.n_topics
 
-    def prev_topic_id_clicked(self, _):
-        self.topic_id.value = (self.topic_id.value - 1) % self.n_topics
-
-
-class TopicWidgets(WidgetUtility):
-
-    def __init__(self, n_topics, years=None, word_count=None, text_id=None):
-
-        self.n_topics = n_topics
-        self.text_id = text_id
-        self.text = self.create_text_widget(text_id)
-        self.year = years_widget(options=years) if years is not None else None
-        self.topic_id = self.topic_id_slider(n_topics)
-
-        self.word_count = (
-            self.word_count_slider(1, 500) if word_count is not None else None
-        )
-
-        self.prev_topic_id = self.create_prev_button(self.prev_topic_id_clicked)
-        self.next_topic_id = self.create_next_button(self.next_topic_id_clicked)
+    # def prev_topic_id_clicked(self, _):
+    #     self.topic_id.value = (self.topic_id.value - 1) % self.n_topics
 
 
-class TopTopicWidgets(WidgetUtility):
+# class TopicWidgets(WidgetUtility):
 
-    def __init__(
-        self,
-        n_topics=0,
-        years=None,
-        aggregates=None,
-        text_id="text_id",
-        layout_algorithms=None,
-    ):
+#     def __init__(self, n_topics, years=None, word_count=None, text_id=None):
 
-        self.n_topics = n_topics
-        self.text_id = text_id
-        self.text = self.create_text_widget(text_id) if text_id is not None else None
-        self.year = years_widget(options=years) if years is not None else None
+#         super().__init__()
 
-        self.topics_count = self.topic_count_slider(n_topics) if n_topics > 0 else None
+#         self.n_topics = n_topics
+#         self.text_id = text_id
+#         self.text = self.create_text_widget(text_id)
+#         self.year = years_widget(options=years) if years is not None else None
+#         self.topic_id = self.topic_id_slider(n_topics)
 
-        self.aggregate = (
-            self.select_aggregate_fn_widget(aggregates, default="mean")
-            if aggregates is not None
-            else None
-        )
-        self.layout_algorithm = (
-            self.layout_algorithm_widget(
-                layout_algorithms, default="Fruchterman-Reingold"
-            )
-            if layout_algorithms is not None
-            else None
-        )
+#         self.word_count = (
+#             self.word_count_slider(1, 500) if word_count is not None else None
+#         )
+
+#         self.prev_topic_id = self.create_prev_button(self.prev_topic_id_clicked)
+#         self.next_topic_id = self.create_next_button(self.next_topic_id_clicked)
 
 
-wf = WidgetUtility()
+# class TopTopicWidgets(WidgetUtility):
+
+#     def __init__(
+#         self,
+#         n_topics=0,
+#         years=None,
+#         aggregates=None,
+#         text_id="text_id",
+#         layout_algorithms=None,
+#     ):
+#         super().__init__()
+#         self.n_topics = n_topics
+#         self.text_id = text_id
+#         self.text = self.create_text_widget(text_id) if text_id is not None else None
+#         self.year = years_widget(options=years) if years is not None else None
+
+#         self.topics_count = self.topic_count_slider(n_topics) if n_topics > 0 else None
+
+#         self.aggregate = (
+#             self.select_aggregate_fn_widget(aggregates, default="mean")
+#             if aggregates is not None
+#             else None
+#         )
+#         self.layout_algorithm = (
+#             self.layout_algorithm_widget(
+#                 layout_algorithms, default="Fruchterman-Reingold"
+#             )
+#             if layout_algorithms is not None
+#             else None
+#         )
+
+
+# wf = WidgetUtility()
