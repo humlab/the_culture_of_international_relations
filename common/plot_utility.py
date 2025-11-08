@@ -13,8 +13,8 @@ import bokeh.models as bm
 import bokeh.palettes
 import networkx as nx
 from bokeh.plotting import figure
-from network_utility import NetworkMetricHelper, NetworkUtility
-from widgets_utility import WidgetUtility
+
+from .network_utility import NetworkMetricHelper, NetworkUtility
 
 if "extend" not in globals():
     extend = lambda a, b: a.update(b) or a
@@ -23,7 +23,7 @@ if "extend" not in globals():
 class WordcloudUtility:
 
     def plot_wordcloud(
-        df_data, token="token", weight="weight", figsize=(12, 12), dpi=100, **args
+        self, df_data, token="token", weight="weight", figsize=(12, 12), dpi=100, **args
     ):
         token_weights = dict({tuple(x) for x in df_data[[token, weight]].values})
         image = wordcloud.WordCloud(
@@ -44,11 +44,11 @@ DFLT_NODE_OPTS = dict(color="green", level="overlay", alpha=1.0)
 DFLT_EDGE_OPTS = dict(color="black", alpha=0.2)
 
 layout_algorithms = {
-    "Fruchterman-Reingold": lambda x, **args: nx.spring_layout(x, **args),
-    "Eigenvectors of Laplacian": lambda x, **args: nx.spectral_layout(x, **args),
-    "Circular": lambda x, **args: nx.circular_layout(x, **args),
-    "Shell": lambda x, **args: nx.shell_layout(x, **args),
-    "Kamada-Kawai": lambda x, **args: nx.kamada_kawai_layout(x, **args),
+    "Fruchterman-Reingold": nx.spring_layout,
+    "Eigenvectors of Laplacian": nx.spectral_layout,
+    "Circular": nx.circular_layout,
+    "Shell": nx.shell_layout,
+    "Kamada-Kawai": nx.kamada_kawai_layout,
 }
 
 
@@ -155,7 +155,6 @@ class PlotNetworkUtility:
         )
         r_nodes = p.circle("x", "y", size=nodes_size, source=nodes_source, **node_opts)
 
-        # p.add_tools(bm.HoverTool(renderers=[r_nodes], tooltips=None, callback=WidgetUtility.\
         #    glyph_hover_callback(nodes_source, 'node_id', text_ids=node_description.index, \
         #                         text=node_description, element_id=element_id))
         # )
