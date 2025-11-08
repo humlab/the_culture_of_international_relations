@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 import random
 from itertools import cycle, islice
+from typing import Self
 
 import numpy as np
-from bokeh.palettes import (Category20_20, Set1_8,  # pylint: disable=E0611
-                            all_palettes)
+from bokeh.palettes import Category20_20, Set1_8, all_palettes  # pylint: disable=E0611
 
 DEFAULT_ALL_PALETTES = all_palettes
 DEFAULT_PALETTE = Category20_20
@@ -14,14 +14,14 @@ DEFAULT_LINE_PALETTE = Set1_8
 class ColorGradient:
 
     @staticmethod
-    def hex_to_RGB(rgb):
+    def hex_to_RGB(rgb) -> list[int]:
         return [int(rgb[i : i + 2], 16) for i in range(1, 6, 2)]
 
     @staticmethod
-    def RGB_to_hex(RGB):
+    def RGB_to_hex(RGB) -> str:
         return "#" + "".join(
             [
-                "0{0:x}".format(v) if v < 16 else "{0:x}".format(v)
+                f"0{v:x}" if v < 16 else f"{v:x}"
                 for v in [int(x) for x in RGB]
             ]
         )
@@ -88,16 +88,16 @@ class ColorGradient:
 
 class StaticColorMap:
 
-    def __init__(self, palette):
+    def __init__(self, palette) -> None:
         self.color_map = {}
         self.palette = palette
         self.color_index = 0
 
-    def next_color(self):
+    def next_color(self) -> str:
         self.color_index = (self.color_index + 1) % len(self.palette)
         return self.palette[self.color_index]
 
-    def add_categories(self, categories):
+    def add_categories(self, categories) -> Self:
         unseen_categories = list(
             set(categories) - set(self.color_map.keys() - {np.nan})
         )
@@ -106,7 +106,7 @@ class StaticColorMap:
         self.color_map.update({v: self.next_color() for v in unseen_categories})
         return self
 
-    def add_categories2(self, categories):
+    def add_categories2(self, categories) -> Self:
         categories = list(set(categories) - set(self.color_map.keys() - {np.nan}))
         if len(categories) == 0:
             return self
@@ -114,7 +114,7 @@ class StaticColorMap:
         self.color_map.update({v: colors[i] for i, v in enumerate(categories)})
         return self
 
-    def get_palette(self, categories):
+    def get_palette(self, categories) -> list[str]:
         # add new categories
         self.add_categories(categories)
         return [self.color_map[k] for k in categories]
@@ -124,7 +124,7 @@ static_color_map = None
 
 
 def get_static_color_map(palette=DEFAULT_PALETTE):
-    global static_color_map
+    global static_color_map # pylint: disable=W0603
     if static_color_map is None:
         static_color_map = StaticColorMap(palette)
     return static_color_map
