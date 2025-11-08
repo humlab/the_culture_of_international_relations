@@ -1,0 +1,17 @@
+[MASTER]
+init-hook='import sys; sys.path.append(".")'
+ignore=deprecated,other,documents,__pycache__
+ignore-patterns=.*\.egg-info.*,.*deprecated.*,.*other.*,.*documents.*
+
+[MESSAGES CONTROL]
+disable = missing-function-docstring,
+          line-too-long,
+          missing-module-docstring,
+          missing-class-docstring,
+          duplicate-code,
+          invalid-name,
+          too-many-arguments,
+          too-many-positional-arguments,
+          too-many-instance-attributes,
+          too-few-public-methods,
+          wrong-import-position

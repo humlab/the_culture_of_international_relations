@@ -1,0 +1,24 @@
+# .pylanceignore
+# Exclude virtual environments and dependencies
+.venv/
+venv/
+env/
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+
+# Exclude legacy and non-relevant directories
+deprecated/
+other/
+documents/
+backup/
+temp/
+
+# Exclude build artifacts
+build/
+dist/
+.git/
+
+# Include only the main project directories
+# This file works in conjunction with pyrightconfig.json
