@@ -969,13 +969,6 @@ WORLD_REGIONS = {
 }
 
 
-def get_region_parties(region_id):
-
-    assert region_id in [1, 2, 3]
-
-    return WORLD_REGIONS[region_id]
-
-
 def get_region_parties(*region_ids):
 
     data = []
