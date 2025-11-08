@@ -3,22 +3,24 @@ import re
 
 import numpy as np
 
+from typing import Any
 
-def project_root(folder):
+
+def project_root(folder: str) -> str:
     while not os.path.exists(os.path.join(folder, "common")):
         folder, _ = os.path.split(folder)
     return folder
 
 
-DATA_FOLDER = os.path.join(project_root(os.getcwd()), "data")
+DATA_FOLDER: str = os.path.join(project_root(os.getcwd()), "data")
 
-LANGUAGE_MAP = {"en": "english", "fr": "french", "it": "other", "de": "other"}
+LANGUAGE_MAP: dict[str, str] = {"en": "english", "fr": "french", "it": "other", "de": "other"}
 
-AGGREGATES = {"mean": np.mean, "sum": np.sum, "max": np.max, "std": np.std}
+AGGREGATES: dict[str, np.ufunc] = {"mean": np.mean, "sum": np.sum, "max": np.max, "std": np.std}  # type: ignore
 
-HYPHEN_REGEXP = re.compile(r"\b(\w+)-\s*\r?\n\s*(\w+)\b", re.UNICODE)
+HYPHEN_REGEXP: re.Pattern[str] = re.compile(r"\b(\w+)-\s*\r?\n\s*(\w+)\b", re.UNICODE)
 
-DEFAULT_PERIOD_GROUPS = [
+DEFAULT_PERIOD_GROUPS: list[dict[str, Any]] = [
     {
         "id": "years_1919-1972",
         "title": "1919-1972",
@@ -93,9 +95,9 @@ DEFAULT_PERIOD_GROUPS = [
     },
 ]
 
-PERIOD_GROUPS_ID_MAP = {x["id"]: x for x in DEFAULT_PERIOD_GROUPS}
+PERIOD_GROUPS_ID_MAP: dict[Any, dict[str, Any]] = {x["id"]: x for x in DEFAULT_PERIOD_GROUPS}
 
-DEFAULT_TOPIC_GROUPS = {
+DEFAULT_TOPIC_GROUPS: dict[str, dict[str, list[str]]] = {
     "7CORR, 7SCIEN, and 7EDUC": {
         "7CORR": ["7CORR"],
         "7SCIEN": ["7SCIEN"],
@@ -263,7 +265,7 @@ DEFAULT_TOPIC_GROUPS = {
     },
 }
 
-TOPIC_GROUP_MAPS = {
+TOPIC_GROUP_MAPS: dict[str, dict[str, str]] = {
     group_name: {
         v: k
         for k in DEFAULT_TOPIC_GROUPS[group_name].keys()
@@ -272,9 +274,9 @@ TOPIC_GROUP_MAPS = {
     for group_name in DEFAULT_TOPIC_GROUPS.keys()
 }
 
-default_graph_tools = "pan,wheel_zoom,box_zoom,reset,hover,save"
+default_graph_tools: str = "pan,wheel_zoom,box_zoom,reset,hover,save"
 
-MATPLOTLIB_PLOT_STYLES = [
+MATPLOTLIB_PLOT_STYLES: list[str] = [
     "ggplot",
     "bmh",
     "seaborn-notebook",
@@ -302,7 +304,7 @@ MATPLOTLIB_PLOT_STYLES = [
     "classic",
 ]
 
-output_formats = {
+output_formats: dict[str, str] = {
     "Plot vertical bar": "plot_bar",
     "Plot horisontal bar": "plot_barh",
     "Plot vertical bar, stacked": "plot_bar_stacked",
@@ -316,7 +318,7 @@ import collections
 
 
 class BunchOfStuff:
-    def __init__(self, **kwds):
+    def __init__(self, **kwds) -> None:
         self.__dict__.update(kwds)
 
 
@@ -324,7 +326,7 @@ KindOfChart = collections.namedtuple(
     "KindOfChart", "description name kind stacked horizontal"
 )
 
-CHART_TYPES = [
+CHART_TYPES: list[KindOfChart] = [
     KindOfChart(
         description="Area",
         name="plot_area",
@@ -387,13 +389,13 @@ CHART_TYPES = [
     ),
 ]
 
-CHART_TYPE_MAP = {x.name: x for x in CHART_TYPES}
-CHART_TYPE_OPTIONS = {x.name: x.name for x in CHART_TYPES}
-CHART_TYPE_NAME_OPTIONS = [(x.description, x.name) for x in CHART_TYPES]
+CHART_TYPE_MAP: dict[str, KindOfChart] = {x.name: x for x in CHART_TYPES}
+CHART_TYPE_OPTIONS: dict[str, str] = {x.name: x.name for x in CHART_TYPES}
+CHART_TYPE_NAME_OPTIONS: list[tuple[str, str]] = [(x.description, x.name) for x in CHART_TYPES]
 
 # output_charts = ([x.description for x in CHART_TYPES], CHART_TYPES)
 
-parties_of_interest = [
+parties_of_interest: list[str] = [
     "FRANCE",
     "GERMU",
     "ITALY",
@@ -405,26 +407,26 @@ parties_of_interest = [
     "GERMA",
 ]
 
-TREATY_FILTER_OPTIONS = {
+TREATY_FILTER_OPTIONS: dict[str, str] = {
     "Is Cultural": "is_cultural",
     "Topic is 7CULT": "is_7cult",
     "No filter": "",
 }
 
-TREATY_FILTER_TOOLTIPS = [
+TREATY_FILTER_TOOLTIPS: list[str] = [
     'Include ONLY treaties marked as "is cultural"',
     'Include all treaties where topic is 7CULT (disregard "is cultural" flag)',
     "Include ALL treaties (no topic filter)",
 ]
 
-PARTY_NAME_OPTIONS = {
+PARTY_NAME_OPTIONS: dict[str, str] = {
     "WTI Code": "party",
     "WTI Name": "party_name",
     "WTI Short": "party_short_name",
     "Country": "party_country",
 }
 
-FOX_STOPWORDS = [
+FOX_STOPWORDS: list[str] = [
     "a",
     "about",
     "above",
@@ -848,7 +850,7 @@ FOX_STOPWORDS = [
     "yours",
 ]
 
-WORLD_REGIONS = {
+WORLD_REGIONS: dict[int, list[str]] = {
     1: [
         "AUSTRA",
         "CANADA",
@@ -969,9 +971,9 @@ WORLD_REGIONS = {
 }
 
 
-def get_region_parties(*region_ids):
+def get_region_parties(*region_ids) -> list[str]:
 
-    data = []
+    data: list[str] = []
 
     for region_id in region_ids:
         assert region_id in [1, 2, 3]
@@ -980,7 +982,7 @@ def get_region_parties(*region_ids):
     return data
 
 
-PARTY_PRESET_OPTIONS = {
+PARTY_PRESET_OPTIONS: dict[str, list[str]] = {
     "Other: PartyOf5": parties_of_interest,
     "Other: Germany (all)": ["GERMU", "GERMAN", "GERME", "GERMW", "GERMA"],
     "Region: 1st World": get_region_parties(1),
