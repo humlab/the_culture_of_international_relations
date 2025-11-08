@@ -4,12 +4,12 @@ import os
 import pandas as pd
 import requests
 
-logger = logging.getLogger()
+logger: logging.Logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
 
-def download_file_from_google_drive(id, destination):
-    def get_confirm_token(response):
+def download_file_from_google_drive(gid: str, destination: str) -> None:
+    def get_confirm_token(response: requests.Response) -> str | None:
         for key, value in response.cookies.items():
             if key.startswith("download_warning"):
                 return value
@@ -24,70 +24,70 @@ def download_file_from_google_drive(id, destination):
                 if chunk:  # filter out keep-alive new chunks
                     f.write(chunk)
 
-        logger.info("Stored: {}".format(destination))
-        print("Stored: {}".format(destination))
+        logger.info(f"Stored: {destination}")
+        print(f"Stored: {destination}")
 
     URL = "https://docs.google.com/uc?export=download"
 
     session = requests.Session()
 
-    response = session.get(URL, params={"id": id}, stream=True)
-    token = get_confirm_token(response)
+    response: requests.Response = session.get(URL, params={"id": gid}, stream=True)
+    token: str | None = get_confirm_token(response)
 
     if token:
-        params = {"id": id, "confirm": token}
+        params: dict[str, str] = {"id": gid, "confirm": token}
         response = session.get(URL, params=params, stream=True)
 
     save_response_content(response, destination)
 
 
-def extract_sheets(path, sheets):
+def extract_sheets(path: str, sheets: list[str]) -> None:
 
     folder, filename = os.path.split(path)
     basename, _ = os.path.splitext(filename)
 
     with pd.ExcelFile(path) as xls:
-        data = pd.read_excel(xls, sheet_name=None)
+        data: dict[str, pd.DataFrame] = pd.read_excel(xls, sheet_name=None)
 
     for sheet_name in data.keys():
 
         if not sheet_name in data.keys():
             continue
 
-        df = data[sheet_name]
+        df: pd.DataFrame = data[sheet_name]
 
         if not hasattr(df, "to_csv"):
             continue
 
-        csv_name = os.path.join(folder, "{}_{}.csv".format(basename, sheet_name))
+        csv_name: str = os.path.join(folder, f"{basename}_{sheet_name}.csv")
 
         if os.path.exists(csv_name):
             os.remove(csv_name)
 
         df.to_csv(csv_name, sep="\t")
 
-        logger.info("Extracted: {}".format(csv_name))
-        print("Extracted: {}".format(csv_name))
+        logger.info(f"Extracted: {csv_name}")
+        print(f"Extracted: {csv_name}")
 
 
-def process_file(file, overwrite=False):
+def process_file(file: dict[str, str], overwrite: bool = False) -> None:
 
-    print("Processing: {}".format(file["file_id"]))
+    print(f"Processing: {file['file_id']}")
     if overwrite and os.path.exists(file["destination"]):
         os.remove(file["destination"])
-        logger.info("Removed: {}".format(file["destination"]))
+        logger.info(f"Removed: {file['destination']}")
     else:
         print("Skipping. File exists in ./data!")
 
     # if not os.path.exists(file['destination']):
-    print("Downloading: {}".format(file["file_id"]))
+    print(f"Downloading: {file['file_id']}")
     download_file_from_google_drive(file["file_id"], file["destination"])
 
     if len(file["sheets"] or []) > 0:
         extract_sheets(file["destination"], file["sheets"])
 
 
-def process_files(files_to_download):
+def process_files(files_to_download: list[dict[str, str]]) -> None:
 
     for file in files_to_download:
         process_file(file)
