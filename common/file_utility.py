@@ -1,5 +1,8 @@
+from ctypes import ArgumentError
 import os
-
+import time
+import shutil
+import zipfile
 import pandas as pd
 
 
@@ -17,7 +20,7 @@ class FileUtility:
     @staticmethod
     def read_excel(filename, sheet):
         if not os.path.isfile(filename):
-            raise Exception("File {0} does not exist!".format(filename))
+            raise ArgumentError(f"File {filename} does not exist!")
         with pd.ExcelFile(filename) as xls:
             return pd.read_excel(xls, sheet)
 
@@ -49,8 +52,7 @@ class FileUtility:
     @staticmethod
     def zip(path):
         if not os.path.exists(path):
-            logger.error("ERROR: file not found (zip)")
-            return
+            raise FileNotFoundError(f"File {path} does not exist!")
         folder, filename = os.path.split(path)
         basename, _ = os.path.splitext(filename)
         zip_name = os.path.join(folder, basename + ".zip")
