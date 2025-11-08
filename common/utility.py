@@ -8,23 +8,31 @@ import re
 import sys
 import time
 import types
-
+from typing import Any, Callable, Iterable
+import pandas as pd
+import zipfile
 import gensim.utils
+import platform
+import string
+
+# pylint: disable=redefined-builtin
 
 
-def getLogger(name="cultural_treaties", level=logging.INFO):
+def getLogger(name: str = "cultural_treaties", level=logging.INFO) -> logging.Logger:
     logging.basicConfig(
         format="%(asctime)s : %(levelname)s : %(filename)s.%(funcName)s() : %(message)s",
         level=level,
     )
-    logger = logging.getLogger(name)
-    logger.setLevel(level)
-    return logger
+    _logger: logging.Logger = logging.getLogger(name=name)
+    _logger.setLevel(level=level)
+    return _logger
 
 
-logger = getLogger(__name__)
+logger: logging.Logger = getLogger(name=__name__)
 
-__cwd__ = os.path.abspath(__file__) if "__file__" in globals() else os.getcwd()
+__cwd__: str = (
+    os.path.abspath(path=__file__) if "__file__" in globals() else os.getcwd()
+)
 
 sys.path.append(__cwd__)
 
@@ -33,24 +41,26 @@ iter_windows = gensim.utils.iter_windows
 deprecated = gensim.utils.deprecated
 
 
-def remove_snake_case(snake_str):
+def remove_snake_case(snake_str: str) -> str:
     return " ".join(x.title() for x in snake_str.split("_"))
 
 
-def noop(*args):  # pylint: disable=W0613
+def noop(*args) -> None:  # pylint: disable=W0613
     pass
 
 
-def isint(s):
+def isint(s: str) -> bool:
     try:
         int(s)
         return True
-    except:
+    except:  # pylint: disable=bare-except
         return False
 
 
-def filter_dict(d, keys=None, filter_out=False):
-    keys = set(d.keys()) - set(keys or []) if filter_out else (keys or [])
+def filter_dict(
+    d: dict[Any, Any], keys: set[Any] | None = None, filter_out: bool = False
+) -> dict[Any, Any]:
+    keys = set(d.keys()) - set(keys or []) if filter_out else (keys or [])  # type: ignore
     return {k: v for k, v in d.items() if k in keys}
 
 
@@ -61,13 +71,13 @@ def timecall(f):
         start_time = time.perf_counter()
         value = f(*args, **kwargs)
         elapsed = time.perf_counter() - start_time
-        logger.info("Call time [{}]: {:.4f} secs".format(f.__name__, elapsed))
+        logger.info(f"Call time [{f.__name__}]: {elapsed:.4f} secs")
         return value
 
     return f_wrapper
 
 
-def extend(target, *args, **kwargs):
+def extend(target: dict, *args: dict, **kwargs: dict) -> dict:
     """Returns dictionary 'target' extended by supplied dictionaries (args) or named keywords
 
     Parameters
@@ -96,11 +106,11 @@ def extend(target, *args, **kwargs):
     return target
 
 
-def ifextend(target, source, p):
-    return extend(target, source) if p else target
+def ifextend(target: dict, source: dict, p: bool) -> dict:
+    return extend(target=target, source=source) if p else target
 
 
-def extend_single(target, source, name):
+def extend_single(target: dict, source: dict, name: str) -> dict:
     if name in source:
         target[name] = source[name]
     return target
@@ -109,34 +119,34 @@ def extend_single(target, source, name):
 class SimpleStruct(types.SimpleNamespace):
     """A simple value container based on built-in SimpleNamespace."""
 
-    def update(self, **kwargs):
+    def update(self, **kwargs) -> types.NoneType:
         self.__dict__.update(kwargs)
 
 
-def flatten(l):
+def flatten(l: list[list[Any]]) -> list[Any]:
     """Returns a flat single list out of supplied list of lists."""
 
     return [item for sublist in l for item in sublist]
 
 
-def project_series_to_range(series, low, high):
+def project_series_to_range(series: pd.Series, low: float, high: float) -> pd.Series:
     """Project a sequence of elements to a range defined by (low, high)"""
-    norm_series = series / series.max()
+    norm_series: pd.Series = series / series.max()
     return norm_series.apply(lambda x: low + (high - low) * x)
 
 
-def project_to_range(value, low, high):
+def project_to_range(value: float, low: float, high: float) -> float:
     """Project a singlevalue to a range (low, high)"""
     return low + (high - low) * value
 
 
-def clamp_values(values, low_high):
+def clamp_values(values: list[float], low_high: tuple[float, float]) -> list[float]:
     """Clamps value to supplied interval."""
-    mw = max(values)
+    mw: float = max(values)
     return [project_to_range(w / mw, low_high[0], low_high[1]) for w in values]
 
 
-def filter_kwargs(f, args):
+def filter_kwargs(f, args) -> dict[Any, Any] | Any:
     """Removes keys in dict arg that are invalid arguments to function f
 
     Parameters
@@ -158,119 +168,122 @@ def filter_kwargs(f, args):
         return args
 
 
-import string
-
-VALID_CHARS = "-_.() " + string.ascii_letters + string.digits
+VALID_CHARS: str = "-_.() " + string.ascii_letters + string.digits
 
 
-def filename_whitelist(filename):
+def filename_whitelist(filename: str) -> str:
     filename = "".join(x for x in filename if x in VALID_CHARS)
     return filename
 
 
-def cpif_deprecated(source, target, name):
-    logger.debug("use of cpif is deprecated")
+def cpif_deprecated(source: dict, target: dict, name: str) -> dict:
+    logger.debug(msg="use of cpif is deprecated")
     if name in source:
         target[name] = source[name]
     return target
 
 
-def dict_subset(d, keys):
+def dict_subset(d: dict, keys: set) -> dict:
     if keys is None:
         return d
     return {k: v for (k, v) in d.items() if k in keys}
 
 
-def dict_split(d, fn):
-    """Splits a dictionary into two parts based on predicate"""
-    true_keys = {k for k in d.keys() if fn(d, k)}
-    return {k: d[k] for k in true_keys}, {k: d[k] for k in set(d.keys()) - true_keys}
+# def dict_split(d: dict, fn: Callable[[dict], bool]) -> tuple[dict[Any, Any], dict[Any, Any]]:
+#     """Splits a dictionary into two parts based on predicate"""
+#     true_keys = {k for k in d.keys() if fn(d, k)}
+#     return {k: d[k] for k in true_keys}, {k: d[k] for k in set(d.keys()) - true_keys}
 
 
-def list_of_dicts_to_dict_of_lists(list_of_dicts):
+def list_of_dicts_to_dict_of_lists(
+    list_of_dicts: list[dict],
+) -> dict[Any, tuple[Any, ...]]:
     dict_of_lists = dict(
         zip(list_of_dicts[0], zip(*[d.values() for d in list_of_dicts]))
     )
     return dict_of_lists
 
 
-def uniquify(sequence):
+def uniquify(sequence: list[Any]) -> list[Any]:
     """Removes duplicates from a list whilst still preserving order"""
-    seen = set()
-    seen_add = seen.add
+    seen: set[Any] = set()
+    seen_add: Callable[[Any], None] = seen.add
     return [x for x in sequence if not (x in seen or seen_add(x))]
 
 
-sort_chained = lambda x, f: list(x).sort(key=f) or x
+def sort_chained(x: list[Any], f: Callable[[Any], Any]) -> list[Any]:
+    return sorted(x, key=f, reverse=True)
 
 
-def ls_sorted(path):
-    return sort_chained(list(filter(os.path.isfile, glob.glob(path))), os.path.getmtime)
+def ls_sorted(path: str) -> list[str]:
+    return sort_chained(
+        list(filter(os.path.isfile, glob.glob(pathname=path))), f=os.path.getmtime
+    )
 
 
-def split(delimiters, string, maxsplit=0):
-    regexPattern = "|".join(map(re.escape, delimiters))
-    return re.split(regexPattern, string, maxsplit)
+# def split(delimiters: list[str], string: str, maxsplit: int = 0) -> list[str]:
+#     regexPattern = "|".join(map(re.escape, delimiters))
+#     return re.split(regexPattern, string, maxsplit)
 
 
-HYPHEN_REGEXP = re.compile(r"\b(\w+)-\s*\r?\n\s*(\w+)\b", re.UNICODE)
+HYPHEN_REGEXP: re.Pattern = re.compile(r"\b(\w+)-\s*\r?\n\s*(\w+)\b", flags=re.UNICODE)
 
 
-def dehyphen(text):
-    result = re.sub(HYPHEN_REGEXP, r"\1\2\n", text)
+def dehyphen(text: str) -> str:
+    result = re.sub(pattern=HYPHEN_REGEXP, repl=r"\1\2\n", string=text)
     return result
 
 
-path = types.SimpleNamespace()
+# path = types.SimpleNamespace()
 
 
-def path_add_suffix(path, suffix, new_extension=None):
+def path_add_suffix(path: str, suffix: str, new_extension: str | None = None) -> str:
     basename, extension = os.path.splitext(path)
-    suffixed_path = (
+    suffixed_path: str = (
         basename + suffix + (extension if new_extension is None else new_extension)
     )
     return suffixed_path
 
 
-def path_add_timestamp(path, format="%Y%m%d%H%M"):
-    suffix = "_{}".format(time.strftime("%Y%m%d%H%M"))
+def path_add_timestamp(path: str, fmt: str = "%Y%m%d%H%M") -> str:
+    suffix: str = f"_{time.strftime(fmt)}"
     return path_add_suffix(path, suffix)
 
 
-def path_add_date(path, format="%Y%m%d"):
-    suffix = "_{}".format(time.strftime(format))
+def path_add_date(path: str, fmt: str = "%Y%m%d") -> str:
+    suffix: str = f"_{time.strftime(fmt)}"
     return path_add_suffix(path, suffix)
 
 
-def path_add_sequence(path, i, j=0):
-    suffix = str(i).zfill(j)
+def path_add_sequence(path: str, i: int, j: int = 0) -> str:
+    suffix: str = str(i).zfill(j)
     return path_add_suffix(path, suffix)
 
 
-import zipfile
-
-
-def zip_get_filenames(zip_filename, extension=".txt"):
+def zip_get_filenames(zip_filename: str, extension: str = ".txt") -> list[str]:
     with zipfile.ZipFile(zip_filename, mode="r") as zf:
         return [x for x in zf.namelist() if x.endswith(extension)]
 
 
-def zip_get_text(zip_filename, filename):
+def zip_get_text(zip_filename: str, filename: str) -> str:
     with zipfile.ZipFile(zip_filename, mode="r") as zf:
         return zf.read(filename).decode(encoding="utf-8")
 
 
-def slim_title(x):
+def slim_title(x: str) -> str:
     try:
-        m = re.match(".*\((.*)\)$", x).groups()
-        if m is not None and len(m) > 0:
-            return m[0]
+        m: re.Match[str] | types.NoneType = re.match(
+            r".*\((.*)\)$", x
+        )  # pylint: disable=W1401
+        if m is not None:
+            g: tuple[str | Any, ...] = m.groups()
+            return g[0]
         return " ".join(x.split(" ")[:3]) + "..."
-    except:
+    except:  # pylint: disable=W0702
         return x
 
 
-def complete_value_range(values, typef=str):
+def complete_value_range(values: list[Any], typef: type) -> list[Any] | list[str]:
     """Create a complete range from min/max range in case values are missing
 
     Parameters
@@ -285,14 +298,13 @@ def complete_value_range(values, typef=str):
     if len(values) == 0:
         return []
 
-    values = list(map(int, values))
-    values = range(min(values), max(values) + 1)
+    int_values: list[int] = list(map(int, values))
+    int_values = list(range(min(int_values), max(int_values) + 1))
 
-    return list(map(typef, values))
+    return list(map(typef, int_values))
 
 
 def is_platform_architecture(xxbit):
-    import platform
 
     assert xxbit in ["32bit", "64bit"]
     logger.info(platform.architecture()[0])
@@ -300,7 +312,7 @@ def is_platform_architecture(xxbit):
     # return xxbit == ('64bit' if sys.maxsize > 2**32 else '32bit')
 
 
-def setup_default_pd_display(pd):
+def setup_default_pd_display(**kargs) -> None:  # pylint: disable=unused-argument
     pd.options.display.max_columns = None
     pd.options.display.max_rows = None
     # pd.options.display.max_colwidth = -1
@@ -312,28 +324,30 @@ def trunc_year_by(series, divisor):
     return (series - series.mod(divisor)).astype(int)
 
 
-def normalize_values(values):
+def normalize_values(values: list[float]) -> list[float]:
     if len(values or []) == 0:
         return []
-    max_value = max(values)
+    max_value: float = max(values)
     if max_value == 0:
         return values
     values = [x / max_value for x in values]
     return values
 
 
-def extract_counter_items_within_threshold(counter, low, high):
-    item_values = set([])
+def extract_counter_items_within_threshold(
+    counter: dict[int, list[str]], low: int, high: int
+) -> set[str]:
+    item_values: set[str] = set()
     for x, wl in counter.items():
         if low <= x <= high:
             item_values.update(wl)
     return item_values
 
 
-def chunks(l, n):
+def chunks(l: list[Any], n: int | None) -> Iterable[Any]:
 
     if (n or 0) == 0:
         yield l
-
+    n = n or 1
     for i in range(0, len(l), n):
         yield l[i : i + n]
