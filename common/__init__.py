@@ -1,3 +1,6 @@
+# type: ignore
+# Import order matters to avoid circular imports
+# Import widgets after utility to avoid circular imports
 import common.widgets_config
 import common.widgets_utility
 
