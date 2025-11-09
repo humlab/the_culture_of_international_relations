@@ -41,7 +41,7 @@ def download_file_from_google_drive(gid: str, destination: str) -> None:
     save_response_content(response, destination)
 
 
-def extract_sheets(path: str, sheets: list[str]) -> None:
+def extract_sheets(path: str, sheets: list[str]) -> None:  # pylint: disable=unused-argument
 
     folder, filename = os.path.split(path)
     basename, _ = os.path.splitext(filename)
