@@ -36,7 +36,7 @@ class QuantityByParty():
 
     @staticmethod
     def get_treaties_statistics(
-        wti_index=None,
+        wti_index,
         period_group=None,
         party_name='party_name',
         parties=None,

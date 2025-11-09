@@ -1,4 +1,5 @@
 import matplotlib
+import pandas as pd
 import common.color_utility as color_utility
 
 def quantity_plot(
@@ -6,7 +7,7 @@ def quantity_plot(
     pivot,
     chart_type,
     plot_style,
-    overlay=True,
+    overlay: bool = True,
     figsize=(1000,600),
     xlabel='',
     ylabel='',
@@ -24,7 +25,7 @@ def quantity_plot(
 
     figsize=(figsize[0]/dpi, figsize[1]/dpi)
 
-    kind = '{}{}'.format(chart_type.kind, 'h' if chart_type.horizontal else '')
+    kind: str = f'{chart_type.kind}{"h" if chart_type.horizontal else ""}'
    
     ax = pivot.plot(kind=kind, stacked=chart_type.stacked, figsize=figsize, color=colors, **kwargs)
 
@@ -162,7 +163,7 @@ def create_party_name_map(parties, palette=color_utility.DEFAULT_PALETTE):
 
     rev_dict = lambda d: {v: k for k, v in d.items()}
 
-    df = parties.rename(columns=dict(short_name='party_short_name', country='party_country'))
+    df: pd.DataFrame = parties.rename(columns=dict(short_name='party_short_name', country='party_country'))
     df['party'] = df.index
 
     rd = df[~df.group_no.isin([0, 8])][['party', 'party_short_name', 'party_name', 'party_country']].to_dict()
@@ -175,7 +176,7 @@ def create_party_name_map(parties, palette=color_utility.DEFAULT_PALETTE):
 
     return party_name_map, party_color_map
 
-def vstepper(vmax):
+def vstepper(vmax) -> int:
     for step, value in [ (1, 15), (5, 30), (10, 250), (25, 500), (100, 2000)]:
         if vmax < value:
             return step
@@ -206,7 +207,7 @@ def prepare_plot_kwargs(data, chart_type, normalize_values, period_group, vmax =
         else:
             vmax = data.max().max()    
 
-    vstep = vstepper(vmax)
+    vstep: int = vstepper(vmax)
     
     
     if not normalize_values:
