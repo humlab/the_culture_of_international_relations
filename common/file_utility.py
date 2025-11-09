@@ -55,8 +55,6 @@ class FileUtility:
         folder, filename = os.path.split(path)
         basename, _ = os.path.splitext(filename)
         zip_name: str = os.path.join(folder, basename + ".zip")
-        with zipfile.ZipFile(
-            zip_name, mode="w", compression=zipfile.ZIP_DEFLATED
-        ) as zf:
+        with zipfile.ZipFile(zip_name, mode="w", compression=zipfile.ZIP_DEFLATED) as zf:
             zf.write(path)
         os.remove(path)

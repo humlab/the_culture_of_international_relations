@@ -18,9 +18,7 @@ class ColorGradient:
 
     @staticmethod
     def RGB_to_hex(RGB) -> str:
-        return "#" + "".join(
-            [f"0{v:x}" if v < 16 else f"{v:x}" for v in [int(x) for x in RGB]]
-        )
+        return "#" + "".join([f"0{v:x}" if v < 16 else f"{v:x}" for v in [int(x) for x in RGB]])
 
     @staticmethod
     def color_dict(gradient) -> dict[str, Any]:
@@ -32,9 +30,7 @@ class ColorGradient:
         }
 
     @staticmethod
-    def linear_gradient(
-        start_hex: str, finish_hex: str = "#FFFFFF", n: int = 10
-    ) -> dict[str, Any]:
+    def linear_gradient(start_hex: str, finish_hex: str = "#FFFFFF", n: int = 10) -> dict[str, Any]:
         """returns a gradient list of (n) colors between two hex colors. start_hex and finish_hex should be the full
         six-digit color string, including the number sign ("#FFFFFF")"""
         # Starting and ending colors in RGB form
@@ -45,9 +41,7 @@ class ColorGradient:
         # Calcuate a color at each evenly spaced value of t from 1 to n
         for t in range(1, n):
             # Interpolate RGB vector for color at the current value of t
-            curr_vector: list[int] = [
-                int(s[j] + (float(t) / (n - 1)) * (f[j] - s[j])) for j in range(3)
-            ]
+            curr_vector: list[int] = [int(s[j] + (float(t) / (n - 1)) * (f[j] - s[j])) for j in range(3)]
             # Add it to our list of output colors
             RGB_list.append(curr_vector)
 
@@ -57,9 +51,7 @@ class ColorGradient:
     def rand_hex_color(num: int = 1) -> str | list[str]:
         """Generate random hex colors, default is one, returning a string. If num is greater than 1, an array of strings is returned."""
         colors: list[str] = [
-            ColorGradient.RGB_to_hex(
-                [random.random() * 255, random.random() * 255, random.random() * 255]
-            )
+            ColorGradient.RGB_to_hex([random.random() * 255, random.random() * 255, random.random() * 255])
             for i in range(num)
         ]
         return colors[0] if num == 1 else colors
@@ -72,15 +64,11 @@ class ColorGradient:
         # The number of colors per individual linear gradient
         n_out = int(float(n) / (len(colors) - 1))
         # returns dictionary defined by color_dict()
-        gradient_dict: dict[str, Any] = ColorGradient.linear_gradient(
-            colors[0], colors[1], n_out
-        )
+        gradient_dict: dict[str, Any] = ColorGradient.linear_gradient(colors[0], colors[1], n_out)
 
         if len(colors) > 1:
             for col in range(1, len(colors) - 1):
-                v: dict[str, Any] = ColorGradient.linear_gradient(
-                    colors[col], colors[col + 1], n_out
-                )
+                v: dict[str, Any] = ColorGradient.linear_gradient(colors[col], colors[col + 1], n_out)
                 for k in ("hex", "r", "g", "b"):
                     # Exclude first point to avoid duplicates
                     gradient_dict[k] += v[k][1:]
@@ -100,9 +88,7 @@ class StaticColorMap:
         return self.palette[self.color_index]
 
     def add_categories(self, categories: list[str]) -> Self:
-        unseen_categories: list[str] = list(
-            set(categories) - set(self.color_map.keys() - {np.nan})
-        )
+        unseen_categories: list[str] = list(set(categories) - set(self.color_map.keys() - {np.nan}))
         if len(unseen_categories) == 0:
             return self
         self.color_map.update({v: self.next_color() for v in unseen_categories})

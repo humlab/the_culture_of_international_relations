@@ -9,20 +9,14 @@ def trim_period_group(period_group, year_limit):
     if pg["type"] == "range":
         pg["periods"] = [x for x in pg["periods"] if low <= x <= high]
     else:
-        pg["periods"] = [
-            (max(low, x), min(high, y))
-            for x, y in pg["periods"]
-            if not (high < x and low > y)
-        ]
+        pg["periods"] = [(max(low, x), min(high, y)) for x, y in pg["periods"] if not (high < x and low > y)]
     return pg
 
 
 def period_group_years(period_group: dict[str, Any]):
     if period_group["type"] == "range":
         return period_group["periods"]
-    period_years: list[list[int]] = [
-        list(range(x[0], x[1] + 1)) for x in period_group["periods"]
-    ]
+    period_years: list[list[int]] = [list(range(x[0], x[1] + 1)) for x in period_group["periods"]]
     return utility.flatten(period_years)
 
 

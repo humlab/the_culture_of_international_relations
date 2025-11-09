@@ -23,9 +23,7 @@ layouts = {x.key: x for x in layout_setups}
 
 def layout_network(G, layout_algorithm, **kwargs):
 
-    return layouts[layout_algorithm].layout_network(
-        G, layout_algorithm=layout_algorithm, **kwargs
-    )
+    return layouts[layout_algorithm].layout_network(G, layout_algorithm=layout_algorithm, **kwargs)
 
 
 def adjust_edge_endpoint(p, q, d):

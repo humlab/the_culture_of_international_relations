@@ -62,9 +62,7 @@ def df_to_nx_edges_list(
     edges = zip(
         df[source].values,
         df[target].values,
-        df[attr_fields].apply(
-            lambda x: {attr_names[k]: v for k, v in x.to_dict().items()}, axis=1
-        ),
+        df[attr_fields].apply(lambda x: {attr_names[k]: v for k, v in x.to_dict().items()}, axis=1),
     )
     return list(edges)
 
@@ -109,9 +107,7 @@ def df_to_nx(
         source_nodes: set[Any] = set(df[source].values)
         target_nodes: set[Any] = set(df[target].values)
 
-        assert (
-            len(source_nodes.intersection(target_nodes)) == 0
-        ), "Bipartite graph cannot have overlapping node names!"
+        assert len(source_nodes.intersection(target_nodes)) == 0, "Bipartite graph cannot have overlapping node names!"
 
         G.add_nodes_from(source_nodes, bipartite=0)
         G.add_nodes_from(target_nodes, bipartite=1)
@@ -128,9 +124,7 @@ def df_to_nx(
 create_nx_graph = df_to_nx
 
 
-def get_subgraph(
-    g: nx.Graph, attribute: str = "weight", threshold: float = 0.0
-) -> nx.Graph:
+def get_subgraph(g: nx.Graph, attribute: str = "weight", threshold: float = 0.0) -> nx.Graph:
     """Creates a subgraph of g of all edges having a attribute value equal to or above threshold.
 
     Parameters
@@ -147,11 +141,7 @@ def get_subgraph(
 
     """
     max_weight: float = max(1.0, max(nx.get_edge_attributes(g, attribute).values()))
-    filter_edges = [
-        (u, v)
-        for u, v, d in g.edges(data=True)
-        if d[attribute] >= (threshold * max_weight)
-    ]
+    filter_edges = [(u, v) for u, v, d in g.edges(data=True) if d[attribute] >= (threshold * max_weight)]
     tng: nx.Graph = g.edge_subgraph(filter_edges)
     return tng
 
@@ -159,9 +149,7 @@ def get_subgraph(
 get_sub_network = get_subgraph
 
 
-def get_positioned_nodes(
-    network: nx.Graph, layout: dict, nodes: list[str] | None = None
-) -> dict[str, list[Any]]:
+def get_positioned_nodes(network: nx.Graph, layout: dict, nodes: list[str] | None = None) -> dict[str, list[Any]]:
     """Returns nodes assigned position from given layout.
 
     Parameters
@@ -180,11 +168,7 @@ def get_positioned_nodes(
         Positioned nodes (xs, ys, nodes, node_id, ...attributes) and any additional found attributes
 
     """
-    layout_items = (
-        layout.items()
-        if nodes is None
-        else [x for x in layout.items() if x[0] in nodes]
-    )
+    layout_items = layout.items() if nodes is None else [x for x in layout.items() if x[0] in nodes]
 
     nodes, nodes_coordinates = zip(*sorted(layout_items))
     xs, ys = list(zip(*nodes_coordinates))
@@ -202,9 +186,7 @@ def get_positioned_nodes(
     return dict_of_lists
 
 
-def get_positioned_edges(
-    network: nx.Graph, layout: dict, sort_attr: str | None = None
-) -> list[dict[str, Any]]:
+def get_positioned_edges(network: nx.Graph, layout: dict, sort_attr: str | None = None) -> list[dict[str, Any]]:
     """Extracts network edge attributes and assigns coordinates to endpoints, and computes midpoint coordinate
 
     Parameters
@@ -256,9 +238,7 @@ def get_positioned_edges(
     return list_of_dicts
 
 
-def get_positioned_edges2(
-    network: nx.Graph, layout: dict, sort_attr: str | None = None
-) -> dict[str, list[Any]]:
+def get_positioned_edges2(network: nx.Graph, layout: dict, sort_attr: str | None = None) -> dict[str, list[Any]]:
     """Returns positioned edges as and all associated attributes.
 
     Is simply a reformat of result from get_layout_edges_attributes
@@ -290,14 +270,10 @@ def get_positioned_edges2(
             computed by midpoint formula
 
     """
-    list_of_dicts: list[dict[str, Any]] = get_positioned_edges(
-        network, layout, sort_attr
-    )
+    list_of_dicts: list[dict[str, Any]] = get_positioned_edges(network, layout, sort_attr)
 
     dict_of_tuples = list_of_dicts_to_dict_of_lists(list_of_dicts)
-    dict_of_lists: dict[str, list[Any]] = {
-        k: list(v) for k, v in dict_of_tuples.items()
-    }  # convert tuples to lists
+    dict_of_lists: dict[str, list[Any]] = {k: list(v) for k, v in dict_of_tuples.items()}  # convert tuples to lists
 
     return dict_of_lists
 
@@ -334,9 +310,7 @@ def get_positioned_nodes_as_dict(
 
     label_y_offset = "y_offset" if node_size in nodes.keys() else int(node_size) + 8
     if label_y_offset == "y_offset":
-        nodes["y_offset"] = [
-            y + r for (y, r) in zip(nodes["y"], [r / 2.0 + 8 for r in nodes[node_size]])
-        ]
+        nodes["y_offset"] = [y + r for (y, r) in zip(nodes["y"], [r / 2.0 + 8 for r in nodes[node_size]])]
 
     nodes = {k: list(nodes[k]) for k in nodes}
 
@@ -363,9 +337,7 @@ def create_bipartite_network(
     return graph
 
 
-def get_bipartite_node_set(
-    graph: nx.Graph, bipartite: int = 0
-) -> tuple[list[str], list[str]]:
+def get_bipartite_node_set(graph: nx.Graph, bipartite: int = 0) -> tuple[list[str], list[str]]:
     nodes = set(n for n, d in graph.nodes(data=True) if d["bipartite"] == bipartite)
     others = set(graph) - nodes
     return list(nodes), list(others)

@@ -51,9 +51,7 @@ def rangeslider(description, min, max, value, **kwargs):  # pylint: disable=W061
     return widgets.IntRangeSlider(**kwargser(locals()))
 
 
-def sliderf(
-    description, min, max, step, value, **kwargs
-):  # pylint: disable=W0613, W0622
+def sliderf(description, min, max, step, value, **kwargs):  # pylint: disable=W0613, W0622
     return widgets.FloatSlider(**kwargser(locals()))
 
 
@@ -71,18 +69,14 @@ def wrap_id_text(dom_id, value=""):
 
 
 def text(dom_id=None, value=""):
-    return widgets.HTML(
-        value=wrap_id_text(dom_id, value), placeholder="", description=""
-    )
+    return widgets.HTML(value=wrap_id_text(dom_id, value), placeholder="", description="")
 
 
 def button(description: str, **kwargs):  # pylint: disable=W0613
     return widgets.Button(**kwargser(locals()))
 
 
-def glyph_hover_js_code(
-    element_id, id_name, text_name, glyph_name="glyph", glyph_data="glyph_data"
-):
+def glyph_hover_js_code(element_id, id_name, text_name, glyph_name="glyph", glyph_data="glyph_data"):
     return (
         """
         var indices = cb_data.index['1d'].indices;
@@ -111,20 +105,14 @@ def glyph_hover_js_code(
 
 
 def glyph_hover_callback(glyph_source, glyph_id, text_source, element_id):
-    code = glyph_hover_js_code(
-        element_id, glyph_id, "text", glyph_name="glyph", glyph_data="glyph_data"
-    )
-    callback = CustomJS(
-        args={"glyph": glyph_source, "glyph_data": text_source}, code=code
-    )
+    code = glyph_hover_js_code(element_id, glyph_id, "text", glyph_name="glyph", glyph_data="glyph_data")
+    callback = CustomJS(args={"glyph": glyph_source, "glyph_data": text_source}, code=code)
     return callback
 
 
 def glyph_hover_callback2(glyph_source, glyph_id, text_ids, text, element_id):
     source = ColumnDataSource({"text_id": text_ids, "text": text})
-    code = glyph_hover_js_code(
-        element_id, glyph_id, "text", glyph_name="glyph", glyph_data="glyph_data"
-    )
+    code = glyph_hover_js_code(element_id, glyph_id, "text", glyph_name="glyph", glyph_data="glyph_data")
     callback = CustomJS(args={"glyph": glyph_source, "glyph_data": source}, code=code)
     return callback
 
@@ -143,15 +131,8 @@ def treaty_filter_widget(**kwopts):
 
 def period_group_widget(index_as_value=False, **kwopts):
     default_opts: dict[str, Any] = {
-        "options": {
-            x["title"]: i if index_as_value else x
-            for i, x in enumerate(config.DEFAULT_PERIOD_GROUPS)
-        },
-        "value": (
-            len(config.DEFAULT_PERIOD_GROUPS) - 1
-            if index_as_value
-            else config.DEFAULT_PERIOD_GROUPS[-1]
-        ),
+        "options": {x["title"]: i if index_as_value else x for i, x in enumerate(config.DEFAULT_PERIOD_GROUPS)},
+        "value": (len(config.DEFAULT_PERIOD_GROUPS) - 1 if index_as_value else config.DEFAULT_PERIOD_GROUPS[-1]),
         "description": "Divisions",
         "layout": widgets.Layout(width="200px"),
     }

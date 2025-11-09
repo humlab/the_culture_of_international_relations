@@ -99,9 +99,7 @@ DEFAULT_PERIOD_GROUPS: list[dict[str, Any]] = [
     },
 ]
 
-PERIOD_GROUPS_ID_MAP: dict[Any, dict[str, Any]] = {
-    x["id"]: x for x in DEFAULT_PERIOD_GROUPS
-}
+PERIOD_GROUPS_ID_MAP: dict[Any, dict[str, Any]] = {x["id"]: x for x in DEFAULT_PERIOD_GROUPS}
 
 DEFAULT_TOPIC_GROUPS: dict[str, dict[str, list[str]]] = {
     "7CORR, 7SCIEN, and 7EDUC": {
@@ -272,11 +270,7 @@ DEFAULT_TOPIC_GROUPS: dict[str, dict[str, list[str]]] = {
 }
 
 TOPIC_GROUP_MAPS: dict[str, dict[str, str]] = {
-    group_name: {
-        v: k
-        for k in DEFAULT_TOPIC_GROUPS[group_name].keys()
-        for v in DEFAULT_TOPIC_GROUPS[group_name][k]
-    }
+    group_name: {v: k for k in DEFAULT_TOPIC_GROUPS[group_name].keys() for v in DEFAULT_TOPIC_GROUPS[group_name][k]}
     for group_name in DEFAULT_TOPIC_GROUPS
 }
 
@@ -328,9 +322,7 @@ class BunchOfStuff:
         self.__dict__.update(kwds)
 
 
-KindOfChart = collections.namedtuple(
-    "KindOfChart", "description name kind stacked horizontal"
-)
+KindOfChart = collections.namedtuple("KindOfChart", "description name kind stacked horizontal")
 
 CHART_TYPES: list[KindOfChart] = [
     KindOfChart(
@@ -347,9 +339,7 @@ CHART_TYPES: list[KindOfChart] = [
         stacked=True,
         horizontal=False,
     ),
-    KindOfChart(
-        description="Bar", name="plot_bar", kind="bar", stacked=False, horizontal=False
-    ),
+    KindOfChart(description="Bar", name="plot_bar", kind="bar", stacked=False, horizontal=False),
     KindOfChart(
         description="Line",
         name="plot_line",
@@ -387,19 +377,13 @@ CHART_TYPES: list[KindOfChart] = [
     ),
     # KindOfChart(description='Scatter', name='plot_scatter', kind='scatter', stacked=False, horizontal=False),
     # KindOfChart(description='Histogram', name='plot_hist', kind='hist', stacked=False, horizontal=False),
-    KindOfChart(
-        description="Table", name="table", kind=None, stacked=False, horizontal=False
-    ),
-    KindOfChart(
-        description="Pivot", name="pivot", kind=None, stacked=False, horizontal=False
-    ),
+    KindOfChart(description="Table", name="table", kind=None, stacked=False, horizontal=False),
+    KindOfChart(description="Pivot", name="pivot", kind=None, stacked=False, horizontal=False),
 ]
 
 CHART_TYPE_MAP: dict[str, KindOfChart] = {x.name: x for x in CHART_TYPES}
 CHART_TYPE_OPTIONS: dict[str, str] = {x.name: x.name for x in CHART_TYPES}
-CHART_TYPE_NAME_OPTIONS: list[tuple[str, str]] = [
-    (x.description, x.name) for x in CHART_TYPES
-]
+CHART_TYPE_NAME_OPTIONS: list[tuple[str, str]] = [(x.description, x.name) for x in CHART_TYPES]
 
 # output_charts = ([x.description for x in CHART_TYPES], CHART_TYPES)
 

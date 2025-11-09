@@ -27,9 +27,7 @@ if "extend" not in globals():
 
 class WordcloudUtility:
 
-    def plot_wordcloud(
-        self, df_data, token="token", weight="weight", figsize=(12, 12), dpi=100, **args
-    ):
+    def plot_wordcloud(self, df_data, token="token", weight="weight", figsize=(12, 12), dpi=100, **args):
         token_weights = dict({tuple(x) for x in df_data[[token, weight]].values})
         image = wordcloud.WordCloud(
             **args,
@@ -119,30 +117,20 @@ class PlotNetworkUtility:
             print(f"Max weigth: {max_weight}")
             print(f"Mean weigth: {sum(values) / len(values)}")
 
-            filter_edges = [
-                (u, v)
-                for u, v, d in network.edges(data=True)
-                if d["weight"] >= (threshold * max_weight)
-            ]
+            filter_edges = [(u, v) for u, v, d in network.edges(data=True) if d["weight"] >= (threshold * max_weight)]
 
             sub_network: nx.Graph = network.edge_subgraph(filter_edges)
         else:
             sub_network = network
 
         args = PlotNetworkUtility.layout_args(layout_algorithm, sub_network, scale)
-        layout = (PlotNetworkUtility.get_layout_algorithm(layout_algorithm))(
-            sub_network, **args
-        )
+        layout = (PlotNetworkUtility.get_layout_algorithm(layout_algorithm))(sub_network, **args)
         # lines_source: bm.ColumnDataSource = NetworkUtility.get_edges_source(
         #     sub_network, layout, scale=weight_scale, normalize=normalize_weights
         # )
-        nodes_source: bm.ColumnDataSource = NetworkUtility.create_nodes_data_source(
-            sub_network, layout
-        )
+        nodes_source: bm.ColumnDataSource = NetworkUtility.create_nodes_data_source(sub_network, layout)
 
-        nodes_community: Sequence[int] = NetworkMetricHelper.compute_partition(
-            sub_network
-        )
+        nodes_community: Sequence[int] = NetworkMetricHelper.compute_partition(sub_network)
         community_colors: list[str] = NetworkMetricHelper.partition_colors(
             nodes_community, bokeh.palettes.Category20[20]
         )
@@ -154,9 +142,7 @@ class PlotNetworkUtility:
         if node_proportions is not None:
             # NOTE!!! By pd index - not iloc!!
             nodes_weight = node_proportions.loc[list(sub_network.nodes)]
-            nodes_weight: pd.Series = PlotNetworkUtility.project_series_to_range(
-                nodes_weight, 20, 60
-            )
+            nodes_weight: pd.Series = PlotNetworkUtility.project_series_to_range(nodes_weight, 20, 60)
             nodes_size: str = "size"
             nodes_source.add(nodes_weight, nodes_size)
 
@@ -173,9 +159,7 @@ class PlotNetworkUtility:
         # r_lines = p.multi_line(
         #     "xs", "ys", line_width="weights", source=lines_source, **line_opts
         # )
-        r_nodes = p.circle(
-            "x", "y", radius=nodes_size, source=nodes_source, **node_opts
-        )
+        r_nodes = p.circle("x", "y", radius=nodes_size, source=nodes_source, **node_opts)
 
         #    glyph_hover_callback(nodes_source, 'node_id', text_ids=node_description.index, \
         #                         text=node_description, element_id=element_id))

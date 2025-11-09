@@ -73,15 +73,10 @@ def setup_node_size(nodes, node_size, node_size_range):
 def adjust_node_label_offset(nodes, node_size, default_y_offset=5):
 
     label_x_offset = 0
-    label_y_offset = (
-        "y_offset" if node_size in nodes.keys() else node_size + default_y_offset
-    )
+    label_y_offset = "y_offset" if node_size in nodes.keys() else node_size + default_y_offset
     if label_y_offset == "y_offset":
         nodes["y_offset"] = [
-            y + r
-            for (y, r) in zip(
-                nodes["y"], [r / 2.0 + default_y_offset for r in nodes[node_size]]
-            )
+            y + r for (y, r) in zip(nodes["y"], [r / 2.0 + default_y_offset for r in nodes[node_size]])
         ]
     return label_x_offset, label_y_offset
 
@@ -128,9 +123,7 @@ def plot(  # pylint: disable=W0102
 
     label_y_offset = "y_offset" if node_size in nodes.keys() else node_size + 8
     if label_y_offset == "y_offset":
-        nodes["y_offset"] = [
-            y + r for (y, r) in zip(nodes["y"], [r / 2.0 + 8 for r in nodes[node_size]])
-        ]
+        nodes["y_offset"] = [y + r for (y, r) in zip(nodes["y"], [r / 2.0 + 8 for r in nodes[node_size]])]
 
     edges: Mapping[str, list] = {k: list(v) for k, v in edges.items()}
     nodes: Mapping[str, list] = {k: list(v) for k, v in nodes.items()}
@@ -153,9 +146,7 @@ def plot(  # pylint: disable=W0102
         r_nodes.glyph.fill_color = "fill_color"
 
     if node_description is not None:
-        text_source = ColumnDataSource(
-            {"text_id": node_description.index, "text": node_description}
-        )
+        text_source = ColumnDataSource({"text_id": node_description.index, "text": node_description})
         p.add_tools(
             bokeh.models.HoverTool(
                 renderers=[r_nodes],
@@ -194,9 +185,7 @@ def plot_network(nodes, edges, plot_opts, fig_opts=None):
     p.ygrid.grid_line_color = None
 
     if "line_color" in edges.keys():
-        line_opts = utility.extend(
-            line_opts, {"line_color": "line_color", "alpha": 1.0}
-        )
+        line_opts = utility.extend(line_opts, {"line_color": "line_color", "alpha": 1.0})
 
     _ = p.multi_line("xs", "ys", line_width="weight", source=edges_source, **line_opts)
     r_nodes = p.circle("x", "y", size=node_size, source=nodes_source, **node_opts)
@@ -207,9 +196,7 @@ def plot_network(nodes, edges, plot_opts, fig_opts=None):
     node_description = plot_opts.get("node_description", None)
     if node_description is not None:
         element_id = plot_opts.get("element_id", "_")
-        text_source = ColumnDataSource(
-            {"text_id": node_description.index, "text": node_description}
-        )
+        text_source = ColumnDataSource({"text_id": node_description.index, "text": node_description})
         p.add_tools(
             bokeh.models.HoverTool(
                 renderers=[r_nodes],
@@ -225,25 +212,13 @@ def plot_network(nodes, edges, plot_opts, fig_opts=None):
 
     node_label = plot_opts.get("node_label", None)
     if node_label is not None and node_label in nodes.keys():
-        label_opts = utility.extend(
-            {}, DFLT_LABEL_OPTS, plot_opts.get("node_label_opts", {})
-        )
-        p.add_layout(
-            bokeh.models.LabelSet(
-                source=nodes_source, x="x", y="y", text=node_label, **label_opts
-            )
-        )
+        label_opts = utility.extend({}, DFLT_LABEL_OPTS, plot_opts.get("node_label_opts", {}))
+        p.add_layout(bokeh.models.LabelSet(source=nodes_source, x="x", y="y", text=node_label, **label_opts))
 
     edge_label = plot_opts.get("edge_label", None)
     if edge_label is not None and edge_label in edges.keys():
-        label_opts = utility.extend(
-            {}, DFLT_LABEL_OPTS, plot_opts.get("edge_label_opts", {})
-        )
-        p.add_layout(
-            bokeh.models.LabelSet(
-                source=edges_source, x="m_x", y="m_y", text=edge_label, **label_opts
-            )
-        )
+        label_opts = utility.extend({}, DFLT_LABEL_OPTS, plot_opts.get("edge_label_opts", {}))
+        p.add_layout(bokeh.models.LabelSet(source=edges_source, x="m_x", y="m_y", text=edge_label, **label_opts))
 
     handle = bokeh.plotting.show(p, notebook_handle=True)
 
@@ -268,19 +243,13 @@ def plot_df(
 
     # print([ x.key for x in network_layout.layout_setups])
 
-    g = networkx_utility.df_to_nx(
-        df, source=source, target=target, bipartite=False, weight=weight
-    )
+    g = networkx_utility.df_to_nx(df, source=source, target=target, bipartite=False, weight=weight)
 
-    layout, _ = network_layout.layout_network(
-        g, layout_opts["algorithm"], **layout_opts["args"]
-    )
+    layout, _ = network_layout.layout_network(g, layout_opts["algorithm"], **layout_opts["args"])
 
     edges = networkx_utility.get_positioned_edges2(g, layout)
     nodes = networkx_utility.get_positioned_nodes(g, layout)
 
-    plot_data = plot_network(
-        nodes=nodes, edges=edges, plot_opts=plot_opts, fig_opts=fig_opts
-    )
+    plot_data = plot_network(nodes=nodes, edges=edges, plot_opts=plot_opts, fig_opts=fig_opts)
 
     return plot_data

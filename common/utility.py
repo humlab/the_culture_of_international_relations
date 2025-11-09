@@ -31,9 +31,7 @@ def getLogger(name: str = "cultural_treaties", level=logging.INFO) -> logging.Lo
 
 logger: logging.Logger = getLogger(name=__name__)
 
-__cwd__: str = (
-    os.path.abspath(path=__file__) if "__file__" in globals() else os.getcwd()
-)
+__cwd__: str = os.path.abspath(path=__file__) if "__file__" in globals() else os.getcwd()
 
 sys.path.append(__cwd__)
 
@@ -58,9 +56,7 @@ def isint(s: str) -> bool:
         return False
 
 
-def filter_dict(
-    d: dict[Any, Any], keys: set[Any] | None = None, filter_out: bool = False
-) -> dict[Any, Any]:
+def filter_dict(d: dict[Any, Any], keys: set[Any] | None = None, filter_out: bool = False) -> dict[Any, Any]:
     keys = set(d.keys()) - set(keys or []) if filter_out else (keys or [])  # type: ignore
     return {k: v for k, v in d.items() if k in keys}
 
@@ -199,9 +195,7 @@ def dict_subset(d: dict, keys: set) -> dict:
 def list_of_dicts_to_dict_of_lists(
     list_of_dicts: list[dict],
 ) -> dict[Any, tuple[Any, ...]]:
-    dict_of_lists = dict(
-        zip(list_of_dicts[0], zip(*[d.values() for d in list_of_dicts]))
-    )
+    dict_of_lists = dict(zip(list_of_dicts[0], zip(*[d.values() for d in list_of_dicts])))
     return dict_of_lists
 
 
@@ -217,9 +211,7 @@ def sort_chained(x: list[Any], f: Callable[[Any], Any]) -> list[Any]:
 
 
 def ls_sorted(path: str) -> list[str]:
-    return sort_chained(
-        list(filter(os.path.isfile, glob.glob(pathname=path))), f=os.path.getmtime
-    )
+    return sort_chained(list(filter(os.path.isfile, glob.glob(pathname=path))), f=os.path.getmtime)
 
 
 # def split(delimiters: list[str], string: str, maxsplit: int = 0) -> list[str]:
@@ -240,9 +232,7 @@ def dehyphen(text: str) -> str:
 
 def path_add_suffix(path: str, suffix: str, new_extension: str | None = None) -> str:
     basename, extension = os.path.splitext(path)
-    suffixed_path: str = (
-        basename + suffix + (extension if new_extension is None else new_extension)
-    )
+    suffixed_path: str = basename + suffix + (extension if new_extension is None else new_extension)
     return suffixed_path
 
 
@@ -273,9 +263,7 @@ def zip_get_text(zip_filename: str, filename: str) -> str:
 
 def slim_title(x: str) -> str:
     try:
-        m: re.Match[str] | types.NoneType = re.match(
-            r".*\((.*)\)$", x
-        )  # pylint: disable=W1401
+        m: re.Match[str] | types.NoneType = re.match(r".*\((.*)\)$", x)  # pylint: disable=W1401
         if m is not None:
             g: tuple[str | Any, ...] = m.groups()
             return g[0]
@@ -335,9 +323,7 @@ def normalize_values(values: list[float]) -> list[float]:
     return values
 
 
-def extract_counter_items_within_threshold(
-    counter: dict[int, list[str]], low: int, high: int
-) -> set[str]:
+def extract_counter_items_within_threshold(counter: dict[int, list[str]], low: int, high: int) -> set[str]:
     item_values: set[str] = set()
     for x, wl in counter.items():
         if low <= x <= high:
