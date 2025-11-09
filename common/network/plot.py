@@ -83,91 +83,91 @@ def adjust_node_label_offset(nodes, node_size, default_y_offset=5):
     return label_x_offset, label_y_offset
 
 
-def plot(  # pylint: disable=W0102
-    network,
-    layout: dict,
-    scale: float = 1.0,  # pylint: disable=W0613
-    threshold: float = 0.0,
-    node_description: str | None = None,
-    node_size: int = 5,
-    node_size_range: list[int] = [20, 40],
-    weight_scale: float = 5.0,
-    normalize_weights: bool = True,
-    node_opts: dict | None = None,
-    line_opts: dict | None = None,
-    text_opts: dict | None = None,
-    element_id: str = "nx_id3",
-    figsize: tuple[int, int] = (900, 900),
-    tools: str | None = None,
-    palette: list[str] = DFLT_PALETTE,  # pylint: disable=W0613
-    **figkwargs,
-):
-    if threshold > 0:
-        network = networkx_utility.get_sub_network(network, threshold)
+# def plot(  # pylint: disable=W0102
+#     network,
+#     layout: dict,
+#     scale: float = 1.0,  # pylint: disable=W0613
+#     threshold: float = 0.0,
+#     node_description: str | None = None,
+#     node_size: int = 5,
+#     node_size_range: list[int] = [20, 40],
+#     weight_scale: float = 5.0,
+#     normalize_weights: bool = True,
+#     node_opts: dict | None = None,
+#     line_opts: dict | None = None,
+#     text_opts: dict | None = None,
+#     element_id: str = "nx_id3",
+#     figsize: tuple[int, int] = (900, 900),
+#     tools: str | None = None,
+#     palette: list[str] = DFLT_PALETTE,  # pylint: disable=W0613
+#     **figkwargs,
+# ):
+#     if threshold > 0:
+#         network = networkx_utility.get_sub_network(network, threshold)
 
-    edges = networkx_utility.get_positioned_edges(network, layout)
+#     edges = networkx_utility.get_positioned_edges(network, layout)
 
-    if normalize_weights and "weight" in edges.keys():
-        max_weight = max(edges["weight"])
-        edges["weight"] = [float(x) / max_weight for x in edges["weight"]]
+#     if normalize_weights and "weight" in edges.keys():
+#         max_weight = max(edges["weight"])
+#         edges["weight"] = [float(x) / max_weight for x in edges["weight"]]
 
-    if weight_scale != 1.0 and "weight" in edges.keys():
-        edges["weight"] = [weight_scale * float(x) for x in edges["weight"]]
+#     if weight_scale != 1.0 and "weight" in edges.keys():
+#         edges["weight"] = [weight_scale * float(x) for x in edges["weight"]]
 
-    edges = {"source": u, "target": v, "xs": xs, "ys": ys, "weights": weights}
+#     edges = {"source": u, "target": v, "xs": xs, "ys": ys, "weights": weights}
 
-    nodes = networkx_utility.get_positioned_nodes(network, layout)
+#     nodes = networkx_utility.get_positioned_nodes(network, layout)
 
-    # node_size = setup_node_size(nodes, node_size, node_size_range)
-    if node_size in nodes.keys() and node_size_range is not None:
-        nodes["clamped_size"] = utility.clamp_values(nodes[node_size], node_size_range)
-        node_size = "clamped_size"
+#     # node_size = setup_node_size(nodes, node_size, node_size_range)
+#     if node_size in nodes.keys() and node_size_range is not None:
+#         nodes["clamped_size"] = utility.clamp_values(nodes[node_size], node_size_range)
+#         node_size = "clamped_size"
 
-    label_y_offset = "y_offset" if node_size in nodes.keys() else node_size + 8
-    if label_y_offset == "y_offset":
-        nodes["y_offset"] = [y + r for (y, r) in zip(nodes["y"], [r / 2.0 + 8 for r in nodes[node_size]])]
+#     label_y_offset = "y_offset" if node_size in nodes.keys() else node_size + 8
+#     if label_y_offset == "y_offset":
+#         nodes["y_offset"] = [y + r for (y, r) in zip(nodes["y"], [r / 2.0 + 8 for r in nodes[node_size]])]
 
-    edges: Mapping[str, list] = {k: list(v) for k, v in edges.items()}
-    nodes: Mapping[str, list] = {k: list(v) for k, v in nodes.items()}
+#     edges: Mapping[str, list] = {k: list(v) for k, v in edges.items()}
+#     nodes: Mapping[str, list] = {k: list(v) for k, v in nodes.items()}
 
-    edges_source = bokeh.models.ColumnDataSource(edges)  # type: ignore
-    nodes_source = bokeh.models.ColumnDataSource(nodes)  # type: ignore
+#     edges_source = bokeh.models.ColumnDataSource(edges)  # type: ignore
+#     nodes_source = bokeh.models.ColumnDataSource(nodes)  # type: ignore
 
-    node_opts = utility.extend(DFLT_NODE_OPTS, node_opts or {})
-    line_opts = utility.extend(DFLT_EDGE_OPTS, line_opts or {})
+#     node_opts = utility.extend(DFLT_NODE_OPTS, node_opts or {})
+#     line_opts = utility.extend(DFLT_EDGE_OPTS, line_opts or {})
 
-    p = figure(width=figsize[0], height=figsize[1], tools=tools or TOOLS, **figkwargs)
+#     p = figure(width=figsize[0], height=figsize[1], tools=tools or TOOLS, **figkwargs)
 
-    p.xgrid.grid_line_color = None
-    p.ygrid.grid_line_color = None
+#     p.xgrid.grid_line_color = None
+#     p.ygrid.grid_line_color = None
 
-    _ = p.multi_line("xs", "ys", line_width="weights", source=edges_source, **line_opts)
-    r_nodes = p.circle("x", "y", radius=node_size, source=nodes_source, **node_opts)
+#     _ = p.multi_line("xs", "ys", line_width="weights", source=edges_source, **line_opts)
+#     r_nodes = p.circle("x", "y", radius=node_size, source=nodes_source, **node_opts)
 
-    if "fill_color" in nodes.keys():
-        r_nodes.glyph.fill_color = "fill_color"
+#     if "fill_color" in nodes.keys():
+#         r_nodes.glyph.fill_color = "fill_color"
 
-    if node_description is not None:
-        text_source = ColumnDataSource({"text_id": node_description.index, "text": node_description})  # type: ignore
-        p.add_tools(
-            bokeh.models.HoverTool(
-                renderers=[r_nodes],
-                tooltips=None,
-                callback=widgets_config.glyph_hover_callback(
-                    nodes_source, "node_id", text_source, element_id=element_id
-                ),
-            )
-        )
+#     if node_description is not None:
+#         text_source = ColumnDataSource({"text_id": node_description.index, "text": node_description})  # type: ignore
+#         p.add_tools(
+#             bokeh.models.HoverTool(
+#                 renderers=[r_nodes],
+#                 tooltips=None,
+#                 callback=widgets_config.glyph_hover_callback(
+#                     nodes_source, "node_id", text_source, element_id=element_id
+#                 ),
+#             )
+#         )
 
-    label_opts = utility.extend(
-        DFLT_TEXT_OPTS,
-        {"y_offset": label_y_offset, "text_color": "black", "text_baseline": "bottom"},
-        text_opts or {},
-    )
+#     label_opts = utility.extend(
+#         DFLT_TEXT_OPTS,
+#         {"y_offset": label_y_offset, "text_color": "black", "text_baseline": "bottom"},
+#         text_opts or {},
+#     )
 
-    p.add_layout(bokeh.models.LabelSet(source=nodes_source, **label_opts))
+#     p.add_layout(bokeh.models.LabelSet(source=nodes_source, **label_opts))
 
-    return p
+#     return p
 
 
 def plot_network(nodes, edges, plot_opts, fig_opts=None):
