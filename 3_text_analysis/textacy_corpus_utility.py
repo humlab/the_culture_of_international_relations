@@ -171,10 +171,10 @@ def infrequent_words(corpus, normalize='lemma', weighting='count', threshold=0, 
 
     return words
 
-def frequent_document_words(corpus, normalize='lemma', weighting='freq', dfs_threshold=80, as_strings=True):
+def frequent_document_words(corpus, normalize='lemma', weighting='freq', dfs_threshold=80, as_strings=True):  # pylint: disable=unused-argument
     '''Returns set of words that occurrs freuently in many documents, candidate stopwords'''
     document_freqs = corpus.word_doc_counts(normalize=normalize, weighting=weighting, smooth_idf=True, as_strings=True)
-    frequent_document_words = set([ w for w, f in document_freqs.items() if int(round(f,2)*100) >= dfs_threshold ])
+    frequent_document_words = { w for w, f in document_freqs.items() if int(round(f,2)*100) >= dfs_threshold }
     return frequent_document_words
 
 def extract_document_terms(doc, extract_args):
@@ -263,8 +263,6 @@ def extract_corpus_terms(corpus, extract_args):
     normalize = args.get('normalize', 'lemma')
     substitutions = extract_args.get('substitutions', {})
     extra_stop_words = set(extract_args.get('extra_stop_words', None) or [])
-    chunk_size = extract_args.get('chunk_size', None)
-    min_length = extract_args.get('min_length', 2)
 
     #mask_gpe = extract_args.get('mask_gpe', False)
     #if mask_gpe is True:
@@ -276,14 +274,14 @@ def extract_corpus_terms(corpus, extract_args):
     if min_freq > 1:
         words = infrequent_words(corpus, normalize=normalize, weighting='count', threshold=min_freq, as_strings=True)
         extra_stop_words = extra_stop_words.union(words)
-        logger.info('Ignoring {} low-frequent words!'.format(len(words)))
+        logger.info(f'Ignoring {len(words)} low-frequent words!')
 
     max_doc_freq = extract_args.get('max_doc_freq', 100)
 
     if max_doc_freq < 100 :
         words = frequent_document_words(corpus, normalize=normalize, weighting='freq', dfs_threshold=max_doc_freq, as_strings=True)
         extra_stop_words = extra_stop_words.union(words)
-        logger.info('Ignoring {} high-frequent words!'.format(len(words)))
+        logger.info(f'Ignoring {len(words)} high-frequent words!')
 
     extract_args = {
         'args': args,
@@ -351,14 +349,14 @@ def create_textacy_corpus(corpus_reader, nlp, tick=utility.noop, n_chunk_thresho
     return corpus
 
 @utility.timecall
-def save_corpus(corpus, filename, lang=None, include_tensor=False):
+def save_corpus(corpus, filename, lang=None, include_tensor=False) -> None:  #pylint: disable=unused-argument
     if not include_tensor:
         for doc in corpus:
             doc.tensor = None
     corpus.save(filename)
 
 @utility.timecall
-def load_corpus(filename, lang, document_id='document_id'):
+def load_corpus(filename: str, lang, document_id: str='document_id') -> textacy.Corpus:  #pylint: disable=unused-argument
     corpus = textacy.Corpus.load(lang, filename)
     return corpus
 
