@@ -80,7 +80,7 @@ def plot_network(
     if node_description is not None:
         p.add_tools(HoverTool(renderers=[r_nodes], tooltips=None, callback=glyph_hover_callback2(
             nodes_source, 'node_id', text_ids=node_description.index,
-                                 text=node_description, element_id=element_id)))
+                                 text_source=node_description, element_id=element_id)))
 
     if node_label is not None and node_label in nodes.keys():
         label_opts = extend({}, DFLT_LABEL_OPTS, node_label_opts or {})
