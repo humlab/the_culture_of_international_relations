@@ -40,8 +40,12 @@ class WordcloudUtility:
     # plot_correlation_network
 
 
-DFLT_NODE_OPTS = dict(color="green", level="overlay", alpha=1.0)
-DFLT_EDGE_OPTS = dict(color="black", alpha=0.2)
+DFLT_NODE_OPTS: dict[str, str | float] = {
+    "color": "green",
+    "level": "overlay",
+    "alpha": 1.0,
+}
+DFLT_EDGE_OPTS: dict[str, str | float] = {"color": "black", "alpha": 0.2}
 
 layout_algorithms = {
     "Fruchterman-Reingold": nx.spring_layout,
@@ -68,12 +72,12 @@ class PlotNetworkUtility:
         if layout_algorithm == "Kamada-Kawai":
             args = dict(dim=2, weight="weight", scale=1.0)
 
-        return dict()
+        return args
 
     @staticmethod
     def get_layout_algorithm(layout_algorithm):
         if layout_algorithm not in layout_algorithms:
-            raise Exception("Unknown algorithm {}".format(layout_algorithm))
+            raise Exception(f"Unknown algorithm {layout_algorithm}")
         return layout_algorithms.get(layout_algorithm, None)
 
     @staticmethod
@@ -87,13 +91,13 @@ class PlotNetworkUtility:
         layout_algorithm=None,
         scale=1.0,
         threshold=0.0,
-        node_description=None,
+        node_description=None,  # pylint: disable=unused-argument
         node_proportions=None,
         weight_scale=5.0,
         normalize_weights=True,
         node_opts=None,
         line_opts=None,
-        element_id="nx_id3",
+        element_id="nx_id3",  # pylint: disable=unused-argument
         figsize=(900, 900),
     ):
         if threshold > 0:
@@ -153,20 +157,22 @@ class PlotNetworkUtility:
         r_lines = p.multi_line(
             "xs", "ys", line_width="weights", source=lines_source, **line_opts
         )
-        r_nodes = p.circle("x", "y", size=nodes_size, source=nodes_source, **node_opts)
+        r_nodes = p.circle(
+            "x", "y", radius=nodes_size, source=nodes_source, **node_opts
+        )
 
         #    glyph_hover_callback(nodes_source, 'node_id', text_ids=node_description.index, \
         #                         text=node_description, element_id=element_id))
         # )
 
-        text_opts = dict(
-            x="x",
-            y="y",
-            text="name",
-            level="overlay",
-            text_align="center",
-            text_baseline="middle",
-        )
+        text_opts: dict[str, str] = {
+            "x": "x",
+            "y": "y",
+            "text": "name",
+            "level": "overlay",
+            "text_align": "center",
+            "text_baseline": "middle",
+        }
 
         r_nodes.glyph.fill_color = "lightgreen"  # 'community_color'
 
