@@ -27,7 +27,7 @@ def compute_centrality(network):
 
 
 def compute_partition(network):
-    partition = community.best_partition(network)
+    partition = community.best_partition(network)  # pytlint: disable=no-member
     _, nodes_community = zip(*sorted(partition.items()))
     return nodes_community
 

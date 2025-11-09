@@ -44,7 +44,9 @@ class NetworkMetricHelper:
 
     @staticmethod
     def compute_partition(network: nx.Graph) -> Sequence[int]:
-        partition = community.best_partition(network)
+        partition = community.best_partition(  # pytlint: disable=no-member, c-extension-no-member
+            network
+        )
         _, nodes_community = zip(*sorted(partition.items()))
         return nodes_community
 
