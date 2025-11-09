@@ -6,4 +6,4 @@ import common.widgets_config
 from .color_utility import *
 from .file_utility import FileUtility
 from .utility import *
-from .wordcloud_utility import plot_wordcloud
+from .utility import plot_wordcloud
