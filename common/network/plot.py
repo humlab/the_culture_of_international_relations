@@ -148,7 +148,7 @@ def plot(  # pylint: disable=W0102
         r_nodes.glyph.fill_color = "fill_color"
 
     if node_description is not None:
-        text_source = ColumnDataSource({"text_id": node_description.index, "text": node_description})
+        text_source = ColumnDataSource({"text_id": node_description.index, "text": node_description})  # type: ignore
         p.add_tools(
             bokeh.models.HoverTool(
                 renderers=[r_nodes],
