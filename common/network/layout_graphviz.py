@@ -22,9 +22,9 @@ def layout_network(G, layout_algorithm, **kwargs):
 
 layout_setups = [
     bunch(
-        key="graphviz_{}".format(engine),
+        key=f"graphviz_{engine}",
         package="graphviz",
-        name="graphviz_{}".format(engine),
+        name=f"graphviz_{engine}",
         engine=engine,
         layout_network=layout_network,
         layout_function=nx.nx_pydot.pydot_layout,
