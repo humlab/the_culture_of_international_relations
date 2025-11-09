@@ -30,13 +30,17 @@ class QueryUtility:
     def period_group_mask(pg):
         return lambda df: df.signed_year.isin(period_group_years(pg))
 
-    @staticmethod
-    def is_cultural_mask():
-        def fx(df):
-            df.loc[df.is_cultural, "topic1"] = "7CORR"
-            return True
+    # @staticmethod
+    # def is_cultural_mask():
+    #     def fx(df):
+    #         df.loc[df.is_cultural, "topic1"] = "7CORR"
+    #         return True
 
-        return fx
+    #     return fx
+
+    # @staticmethod
+    # def is_cultural_mask():
+    #     return lambda df: (df.is_cultural)
 
     @staticmethod
     def years_mask(ys):
@@ -45,10 +49,6 @@ class QueryUtility:
             if isinstance(ys, tuple) and len(ys) == 2
             else df.signed_year.isin(ys)
         )
-
-    @staticmethod
-    def is_cultural_mask():
-        return lambda df: (df.is_cultural)
 
     @staticmethod
     def topic_7cult_mask():
