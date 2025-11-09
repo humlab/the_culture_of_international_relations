@@ -160,7 +160,7 @@ def filter_kwargs(f, args) -> dict[Any, Any] | Any:
     """
 
     try:
-        return {k: args[k] for k in args.keys() if k in inspect.getargspec(f).args}
+        return {k: args[k] for k in args.keys() if k in inspect.signature(f).parameters}
     except:  # pylint: disable=W0702
         return args
 
