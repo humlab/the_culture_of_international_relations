@@ -253,9 +253,9 @@ class TreatyState:
 
     def _read_data(self):
         data = {}
-        na_values: list[str] = ["#N/A", "N/A", "NULL", "NaN", "-NaN"]
+        # na_values: list[str] = ["#N/A", "N/A", "NULL", "NaN", "-NaN"]
         for filename, key, xls_filename, xls_sheet in self.csv_files:
-            logger.debug("Reading file: {}...".format(filename))
+            logger.debug(f"Reading file: {filename}...")
             path = os.path.join(self.data_folder, filename)
             if not os.path.exists(path):
                 assert xls_filename is not None
@@ -291,8 +291,8 @@ class TreatyState:
         if column in treaties.columns:
             return treaties[column]
 
-        year_map = {
-            year: "{} to {}".format(d[0], d[1])
+        year_map: dict[int, str] = {
+            year: f"{d[0]} to {d[1]}"
             for d in periods
             for year in list(range(d[0], d[1] + 1))
         }
@@ -594,7 +594,7 @@ class TreatyState:
 
     def get_topic_category(self, df, topic_category, topic_column="topic1"):
         if topic_column not in df.columns:
-            raise Exception("Column {} not found i DataFrame".format(topic_column))
+            raise ArgumentError(f"Column {topic_column} not found in DataFrame")
         if topic_category is not None:
             return df.apply(
                 lambda x: topic_category.get(x[topic_column], "OTHER"), axis=1
