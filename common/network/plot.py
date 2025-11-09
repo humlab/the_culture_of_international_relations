@@ -1,4 +1,5 @@
 import sys
+from typing import Mapping
 
 sys.path = sys.path if "." in sys.path else sys.path + ["."]
 
@@ -125,24 +126,24 @@ def plot(  # pylint: disable=W0102
             y + r for (y, r) in zip(nodes["y"], [r / 2.0 + 8 for r in nodes[node_size]])
         ]
 
-    edges = {k: list(edges[k]) for k in edges}
-    nodes = {k: list(nodes[k]) for k in nodes}
+    edges: Mapping[str, list] = {k: list(edges[k]) for k in edges}
+    nodes: Mapping[str, list] = {k: list(nodes[k]) for k in nodes}
 
-    edges_source = bokeh.models.ColumnDataSource(edges)
-    nodes_source = bokeh.models.ColumnDataSource(nodes)
+    edges_source = bokeh.models.ColumnDataSource(edges)  # type: ignore
+    nodes_source = bokeh.models.ColumnDataSource(nodes)  # type: ignore 
 
     node_opts = utility.extend(DFLT_NODE_OPTS, node_opts or {})
     line_opts = utility.extend(DFLT_EDGE_OPTS, line_opts or {})
 
     p = figure(
-        plot_width=figsize[0], plot_height=figsize[1], tools=tools or TOOLS, **figkwargs
+        width=figsize[0], height=figsize[1], tools=tools or TOOLS, **figkwargs
     )
 
     p.xgrid.grid_line_color = None
     p.ygrid.grid_line_color = None
 
     _ = p.multi_line("xs", "ys", line_width="weights", source=edges_source, **line_opts)
-    r_nodes = p.circle("x", "y", size=node_size, source=nodes_source, **node_opts)
+    r_nodes = p.circle("x", "y", radius=node_size, source=nodes_source, **node_opts)
 
     if "fill_color" in nodes.keys():
         r_nodes.glyph.fill_color = "fill_color"
