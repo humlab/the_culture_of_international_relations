@@ -10,9 +10,11 @@ import ipywidgets as widgets
 import numpy as np
 import pandas as pd
 
+from common import config, utility
+from common.treaty_utility import QueryUtility
+
 warnings.simplefilter(action="ignore", category=FutureWarning)
 
-from common import config, utility
 
 logger = logging.getLogger(__name__)
 
@@ -149,7 +151,6 @@ party_correction_map = {
     "W ALLIES": "IGNORE",
 }
 
-from common.treaty_utility import QueryUtility
 
 
 class TreatyState:

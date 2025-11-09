@@ -1,13 +1,15 @@
 import sys
-
-sys.path = sys.path if ".." in sys.path else sys.path + [".."]
-
 from types import SimpleNamespace as bunch
 
 import networkx as nx
 
 from common.network.networkx_utility import get_bipartite_node_set
 from common.utility import extend_single
+
+sys.path = sys.path if ".." in sys.path else sys.path + [".."]
+
+
+
 
 
 def nx_kamada_kawai_layout(G, **kwargs):  # pylint: disable=W0613

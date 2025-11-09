@@ -1,8 +1,6 @@
 import sys
 from typing import Mapping
 
-sys.path = sys.path if "." in sys.path else sys.path + ["."]
-
 import bokeh.models
 import bokeh.palettes
 from bokeh.models import ColumnDataSource
@@ -11,6 +9,10 @@ from bokeh.plotting import figure
 import common.network.layout as network_layout
 from common import utility, widgets_config
 from common.network import networkx_utility
+
+sys.path = sys.path if "." in sys.path else sys.path + ["."]
+
+
 
 TOOLS = "pan,wheel_zoom,box_zoom,reset,save"
 

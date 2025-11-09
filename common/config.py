@@ -1,3 +1,4 @@
+import collections
 import os
 import re
 from typing import Any
@@ -314,7 +315,6 @@ output_formats: dict[str, str] = {
     "Pivot": "pivot",
 }
 
-import collections
 
 
 class BunchOfStuff:

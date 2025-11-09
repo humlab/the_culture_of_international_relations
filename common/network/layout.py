@@ -1,17 +1,16 @@
 import math
 import sys
 
-sys.path = sys.path if ".." in sys.path else sys.path + [".."]
-
 from common.network.layout_graphviz import layout_setups as gv_layout_setups
 from common.network.layout_networkx import layout_setups as nx_layout_setups
+
+sys.path = sys.path if ".." in sys.path else sys.path + [".."]
+
 
 try:
     import graph_tool.all as gt  # pylint: disable=unused-import
 
-    from common.network.layout_graphtool import (  # pylint: disable=ungrouped-imports
-        layout_setups as gt_layout_setups,
-    )
+    from common.network.layout_graphtool import layout_setups as gt_layout_setups  # pylint: disable=ungrouped-imports
 
     layout_setups = nx_layout_setups + gt_layout_setups + gv_layout_setups
 except ImportError as ex:

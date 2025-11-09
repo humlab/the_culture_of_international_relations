@@ -1,8 +1,14 @@
 from typing import Sequence
 
+import bokeh.models as bm
+import bokeh.palettes
 import matplotlib.pyplot as plt
+import networkx as nx
 import pandas as pd
 import wordcloud
+from bokeh.plotting import figure
+
+from .network_utility import NetworkMetricHelper, NetworkUtility
 
 if "__file__" in globals():
     import os
@@ -12,12 +18,7 @@ if "__file__" in globals():
     if curdir not in sys.path:
         sys.path.append(curdir)
 
-import bokeh.models as bm
-import bokeh.palettes
-import networkx as nx
-from bokeh.plotting import figure
 
-from .network_utility import NetworkMetricHelper, NetworkUtility
 
 if "extend" not in globals():
 
