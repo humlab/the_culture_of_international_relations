@@ -6,7 +6,8 @@ import networkx as nx
 import pandas as pd
 
 if "extend" not in globals():
-    extend = lambda a, b: a.update(b) or a
+    def extend(a: dict, b: dict) -> dict:
+        return a.update(b) or a
 
 if "filter_kwargs" not in globals():
     import inspect
