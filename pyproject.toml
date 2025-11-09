@@ -28,6 +28,13 @@ dev = [
     "pylint>=4.0.2",
 ]
 
+[tool.black]
+line-length = 120
+
+[tool.isort]
+profile = "black"
+
+
 [tool.setuptools.packages.find]
 include = ["common*", "1_quantitative_analysis*", "2_network_analysis*", "3_text_analysis*"]
 
