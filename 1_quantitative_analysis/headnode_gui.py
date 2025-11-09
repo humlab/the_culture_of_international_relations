@@ -6,7 +6,7 @@ from IPython.display import display
 import pandas as pd
 import nltk
 
-os.sys.path = os.sys.path if '..' in os.sys.path else os.sys.path + ['..']
+sys.path = sys.path if '..' in sys.path else sys.path + ['..']
 
 import common.widgets_config as widgets_config
 import common.config as config

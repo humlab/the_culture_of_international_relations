@@ -7,6 +7,7 @@ import zipfile
 import gensim
 import nltk
 import pandas as pd
+import numpy as np
 from gensim.corpora.textcorpus import TextCorpus
 
 logger = logging.getLogger(__name__)
@@ -272,12 +273,9 @@ class MmCorpusStatisticsService():
         return freqencies
 
     def get_document_token_frequencies(self):
-        from itertools import chain
-        '''
-        Returns a DataFrame with per document token frequencies i.e. "melts" doc-term matrix
-        '''
+        """Returns a DataFrame with per document token frequencies i.e. "melts" doc-term matrix"""
         data = ((document_id, x[0], x[1]) for document_id, values in enumerate(self.corpus) for x in values )
-        pd = pd.DataFrame(list(zip(*data)), columns=['document_id', 'token_id', 'count'])
+        pd: pd.DataFrame = pd.DataFrame(list(zip(*data)), columns=['document_id', 'token_id', 'count'])
         pd = pd.merge(self.corpus.document_names, left_on='document_id', right_index=True)
 
         return pd
@@ -285,7 +283,6 @@ class MmCorpusStatisticsService():
     def compute_word_frequencies(self, remove_stopwords):
         id2token = self.dictionary.id2token
         term_freqencies = np.zeros(len(id2token))
-        document_stats = []
         for document in self.corpus:
             for i, f in document:
                 term_freqencies[i] += f
@@ -300,13 +297,12 @@ class MmCorpusStatisticsService():
         if remove_stopwords is True:
             df = df.loc[(df.is_stopword==False)]
         df['frequency'] = df.frequency.astype(np.int64)
-        df = df[['token_id', 'token', 'frequency', 'dfs', 'is_stopword']].sort_values('frequency', ascending=False)
+        df: pd.DataFrame = df[['token_id', 'token', 'frequency', 'dfs', 'is_stopword']].sort_values('frequency', ascending=False)
         return df.set_index('token_id')
 
     def compute_document_stats(self):
         id2token = self.dictionary.id2token
-        stopwords = set(self.stopwords).intersection(set(id2token.values()))
-        df = pd.DataFrame({
+        df: pd.DataFrame = pd.DataFrame({
             'document_id': self.corpus.index,
             'document_name': self.corpus.document_names.document_name,
             'treaty_id': self.corpus.document_names.treaty_id,

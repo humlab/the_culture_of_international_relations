@@ -6,7 +6,7 @@ from pprint import pprint as pp
 from bokeh.io import push_notebook
 from IPython.display import display
 
-os.sys.path = os.sys.path if '..' in os.sys.path else os.sys.path + ['..']
+sys.path = sys.path if '..' in sys.path else sys.path + ['..']
 
 import common.config as config
 import common.widgets_config as widgets_config
