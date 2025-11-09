@@ -7,45 +7,45 @@ import common.config as config
 import common.utility as utility
 import common.treaty_utility as treaty_utility
 import common.color_utility as color_utility
-import analysis_data
-import analysis_plot
+from . import analysis_data
+from . import analysis_plot
 from pprint import pprint as pp
 from IPython.display import display
 import datetime
 
 logger = utility.getLogger('tq_by_party')
 
-OTHER_CATEGORY_OPTIONS = {
+OTHER_CATEGORY_OPTIONS: dict[str, str] = {
     'Other category': 'other_category',
     'All category': 'all_category',
     'Nothing': ''
 }
 
 def display_quantity_by_party(
-    period_group_index=0,
-    party_name='',
-    parties=None,
-    year_limit=None,
-    treaty_filter='',
-    extra_category='',
-    normalize_values=False,
-    chart_type_name=None,
-    plot_style='classic',
-    top_n_parties=5,
-    overlay=True,
+    period_group_index: int = 0,
+    party_name: str = '',
+    parties: list[str] | None = None,
+    year_limit: int | None = None,
+    treaty_filter: str = '',
+    extra_category: str = '',
+    normalize_values: bool = False,
+    chart_type_name: str | None = None,
+    plot_style: str = 'classic',
+    top_n_parties: int = 5,
+    overlay: bool = True,
     progress=utility.noop,
-    wti_index=None,
-    print_args=False,
-    treaty_sources=None,
-    vmax=None,
-    legend=True,
-    output_filename=None
+    wti_index: int | None = None,
+    print_args: bool = False,
+    treaty_sources: list[str] | None = None,
+    vmax: float | None = None,
+    legend: bool = True,
+    output_filename: str | None = None
 ):
     try:
         
         chart_type = config.CHART_TYPE_MAP[chart_type_name]
 
-        static_color_map = color_utility.get_static_color_map()
+        static_color_map: color_utility.StaticColorMap = color_utility.get_static_color_map()
 
         if print_args or (chart_type_name == 'print_args'):
             args = utility.filter_dict(locals(), [ 'progress', 'print_args' ], filter_out=True)
@@ -55,7 +55,7 @@ def display_quantity_by_party(
         progress()
 
         period_group = config.DEFAULT_PERIOD_GROUPS[period_group_index]
-        chart_type = config.CHART_TYPE_MAP[chart_type_name]
+        chart_type: config.KindOfChart = config.CHART_TYPE_MAP[chart_type_name]
 
         parties = list(parties)
 
@@ -95,8 +95,8 @@ def display_quantity_by_party(
 
             columns = pivot.columns
 
-            pivot = pivot.reset_index()[columns]
-            colors = static_color_map.get_palette(columns)
+            pivot: pd.DataFrame = pivot.reset_index()[columns]
+            colors: list[str] = static_color_map.get_palette(columns)
 
             kwargs = analysis_plot.prepare_plot_kwargs(pivot, chart_type, normalize_values, period_group, vmax=vmax)
             kwargs.update(dict(overlay=overlay, colors=colors))
