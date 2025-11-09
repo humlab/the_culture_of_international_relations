@@ -81,25 +81,25 @@ def adjust_node_label_offset(nodes, node_size, default_y_offset=5):
 
 def plot(  # pylint: disable=W0102
     network,
-    layout,
-    scale=1.0,
-    threshold=0.0,
-    node_description=None,
-    node_size=5,
-    node_size_range=[20, 40],
-    weight_scale=5.0,
-    normalize_weights=True,
-    node_opts=None,
-    line_opts=None,
-    text_opts=None,
-    element_id="nx_id3",
-    figsize=(900, 900),
-    tools=None,
-    palette=DFLT_PALETTE,
+    layout: dict,
+    scale: float = 1.0,  # pylint: disable=W0613
+    threshold: float = 0.0,
+    node_description: str | None = None,
+    node_size: int = 5,
+    node_size_range: list[int] = [20, 40],
+    weight_scale: float = 5.0,
+    normalize_weights: bool = True,
+    node_opts: dict | None = None,
+    line_opts: dict | None = None,
+    text_opts: dict | None = None,
+    element_id: str = "nx_id3",
+    figsize: tuple[int, int] = (900, 900),
+    tools: str | None = None,
+    palette: list[str] = DFLT_PALETTE,  # pylint: disable=W0613
     **figkwargs,
 ):
     if threshold > 0:
-        network = get_sub_network(network, threshold)
+        network = networkx_utility.get_sub_network(network, threshold)
 
     edges = networkx_utility.get_positioned_edges(network, layout)
 
