@@ -3,8 +3,8 @@ import logging
 import os
 import re
 import types
-from typing import Any
 import warnings
+from typing import Any
 
 import ipywidgets as widgets
 import numpy as np
@@ -150,7 +150,8 @@ party_correction_map = {
     "W ALLIES": "IGNORE",
 }
 
-from common.treaty_utility import QueryUtility, period_group_years, trim_period_group
+from common.treaty_utility import (QueryUtility, period_group_years,
+                                   trim_period_group)
 
 
 class TreatyState:

@@ -10,7 +10,8 @@ from common.network.layout_networkx import layout_setups as nx_layout_setups
 try:
     import graph_tool.all as gt  # pylint: disable=unused-import
 
-    from common.network.layout_graphtool import layout_setups as gt_layout_setups
+    from common.network.layout_graphtool import \
+        layout_setups as gt_layout_setups
 
     layout_setups = nx_layout_setups + gt_layout_setups + gv_layout_setups
 except ImportError as ex:

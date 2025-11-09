@@ -1,10 +1,11 @@
 import random
 from itertools import cycle, islice
 from signal import set_wakeup_fd
-from typing import Self, Any, Sequence
+from typing import Any, Self, Sequence
 
 import numpy as np
-from bokeh.palettes import Category20_20, Set1_8, all_palettes  # pylint: disable=E0611
+from bokeh.palettes import (Category20_20, Set1_8,  # pylint: disable=E0611
+                            all_palettes)
 
 DEFAULT_ALL_PALETTES = all_palettes
 DEFAULT_PALETTE = Category20_20

@@ -1,7 +1,7 @@
 # from __future__ import print_function
 import ipywidgets as widgets
 
-from common import extend, config
+from common import config, extend
 
 # if __package__:
 #    print('Package named {!r}; __name__ is {!r}'.format(__package__, __name__))

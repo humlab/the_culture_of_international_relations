@@ -1,10 +1,10 @@
 """NetworkX utility functions"""
 
 from re import A
-from pandas import pd
 from typing import Any
 
 import networkx as nx
+from pandas import pd
 
 from common.utility import clamp_values, extend, list_of_dicts_to_dict_of_lists
 

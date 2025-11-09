@@ -1,9 +1,8 @@
 import os
 import re
+from typing import Any
 
 import numpy as np
-
-from typing import Any
 
 
 def project_root(folder: str) -> str:

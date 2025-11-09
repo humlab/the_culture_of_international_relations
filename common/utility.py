@@ -4,16 +4,17 @@ import glob
 import inspect
 import logging
 import os
+import platform
 import re
+import string
 import sys
 import time
 import types
-from typing import Any, Callable, Iterable
-import pandas as pd
 import zipfile
+from typing import Any, Callable, Iterable
+
 import gensim.utils
-import platform
-import string
+import pandas as pd
 
 # pylint: disable=redefined-builtin
 
