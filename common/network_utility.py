@@ -12,8 +12,9 @@ if "extend" not in globals():
 if "filter_kwargs" not in globals():
     import inspect
 
-    def filter_kwargs(f, args) -> dict[Any, Any]:
-        return {k: args[k] for k in args.keys() if k in inspect.getargspec(f).args}
+    def filter_kwargs(f, args) -> Mapping[str, Any]:
+        # FIXME: getargspec has be deprecated in python 3.11
+        return {k: args[k] for k in args.keys() if k in inspect.signature(f).parameters}
 
 
 DISTANCE_METRICS: dict[str, str] = {
