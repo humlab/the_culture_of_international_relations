@@ -1,4 +1,4 @@
-from typing import Any, Sequence
+from typing import Any, Mapping, Sequence
 
 import bokeh.models as bm
 import community  # pip3 install python-louvain packages
@@ -79,7 +79,9 @@ class NetworkMetricHelper:
                 "#a6761d",
                 "#666666",
             ]
-        community_colors = [color_palette[x % len(color_palette)] for x in nodes_community]
+        community_colors = [
+            color_palette[x % len(color_palette)] for x in nodes_community
+        ]
         return community_colors
 
     @staticmethod
@@ -108,33 +110,47 @@ class NetworkUtility:
         return zip(*data)
 
     @staticmethod
-    def get_edges_source(network: nx.Graph, layout, scale=1.0, normalize=False) -> bm.ColumnDataSource:
+    def get_edges_source(
+        network: nx.Graph, layout, scale=1.0, normalize=False
+    ) -> bm.ColumnDataSource:
 
         _, _, weights, xs, ys = NetworkUtility.get_edge_layout_data(network, layout)
         norm = max(weights) if normalize else 1.0
         weights = [scale * x / norm for x in weights]
-        lines_source = bm.ColumnDataSource(dict(xs=xs, ys=ys, weights=weights))
+        lines_source = bm.ColumnDataSource({"xs": xs, "ys": ys, "weights": weights})
         return lines_source
 
     @staticmethod
     def get_node_subset_source(
-        network: nx.Graph, layout, node_list=None
-    ) -> bm.ColumnDataSource:  # pylint: disable=unused-argument
+        network: nx.Graph, layout, node_list=None  # pylint: disable=unused-argument
+    ) -> bm.ColumnDataSource:
 
-        layout_items = layout.items() if node_list is None else [x for x in layout.items() if x[0] in node_list]
+        layout_items = (
+            layout.items()
+            if node_list is None
+            else [x for x in layout.items() if x[0] in node_list]
+        )
 
         nodes, nodes_coordinates = zip(*sorted(layout_items))
         xs, ys = list(zip(*nodes_coordinates))
 
-        nodes_source = bm.ColumnDataSource(dict(x=xs, y=ys, name=nodes, node_id=nodes))
+        nodes_source = bm.ColumnDataSource(
+            {"x": xs, "y": ys, "name": nodes, "node_id": nodes}
+        )
         return nodes_source
 
     @staticmethod
-    def create_nodes_data_source(network: nx.Graph, layout) -> bm.ColumnDataSource:  # pylint: disable=unused-argument
+    def create_nodes_data_source(
+        network: nx.Graph, layout  # pylint: disable=unused-argument
+    ) -> bm.ColumnDataSource:
 
-        nodes, nodes_coordinates = zip(*sorted(x for x in layout.items()))  # if x[0] in line_nodes]))
+        nodes, nodes_coordinates = zip(
+            *sorted(x for x in layout.items())
+        )  # if x[0] in line_nodes]))
         nodes_xs, nodes_ys = list(zip(*nodes_coordinates))
-        nodes_source = bm.ColumnDataSource({"x": nodes_xs, "y": nodes_ys, "name": nodes, "node_id": nodes})
+        nodes_source = bm.ColumnDataSource(
+            {"x": nodes_xs, "y": nodes_ys, "name": nodes, "node_id": nodes}
+        )
         return nodes_source
 
     @staticmethod
@@ -147,7 +163,12 @@ class NetworkUtility:
 
         G: nx.Graph = nx.Graph()
         nodes = list(set(list(df[source_field].values) + list(df[target_field].values)))
-        edges = [(x, y, {weight: z}) for x, y, z in [tuple(x) for x in df[[source_field, target_field, weight]].values]]
+        edges = [
+            (x, y, {weight: z})
+            for x, y, z in [
+                tuple(x) for x in df[[source_field, target_field, weight]].values
+            ]
+        ]
         G.add_nodes_from(nodes)
         G.add_edges_from(edges)
         return G
@@ -175,7 +196,9 @@ class NetworkUtility:
 
     @staticmethod
     def get_bipartite_node_set(network, bipartite=0):
-        nodes = set(n for n, d in network.nodes(data=True) if d["bipartite"] == bipartite)
+        nodes = set(
+            n for n, d in network.nodes(data=True) if d["bipartite"] == bipartite
+        )
         others = set(network) - nodes
         return list(nodes), list(others)
 
