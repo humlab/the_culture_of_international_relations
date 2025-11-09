@@ -1,18 +1,15 @@
+import sys
 
-import os
 import ipywidgets as widgets
 from IPython.display import display
 
-import pandas as pd
-import nltk
 
 sys.path = sys.path if '..' in sys.path else sys.path + ['..']
 
 import common.widgets_config as widgets_config
 import common.config as config
-import common.color_utility as color_utility
 import common.utility as utility
-import headnote_corpus
+import .headnote_corpus
 
 from pprint import pprint as pp
 

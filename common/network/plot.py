@@ -1,10 +1,10 @@
-import os
+import sys
 
 sys.path = sys.path if "." in sys.path else sys.path + ["."]
 
 import bokeh.models
 import bokeh.palettes
-from bokeh.models import ColumnDataSource, HoverTool, LabelSet
+from bokeh.models import ColumnDataSource
 from bokeh.plotting import figure
 
 import common.network.layout as network_layout
@@ -21,7 +21,7 @@ DFLT_NODE_OPTS = dict(color="green", level="overlay", alpha=1.0)
 
 DFLT_EDGE_OPTS = dict(color="black", alpha=0.2)
 
-DFLT_TEXT_OPTS = dict(
+DFLT_TEXT_OPTS: dict[str, str] = dict(
     x="x",
     y="y",
     text="name",
@@ -30,7 +30,7 @@ DFLT_TEXT_OPTS = dict(
     text_baseline="middle",
 )
 
-DFLT_LABEL_OPTS = dict(
+DFLT_LABEL_OPTS: dict[str, str] = dict(
     level="overlay",
     text_align="center",
     text_baseline="middle",
