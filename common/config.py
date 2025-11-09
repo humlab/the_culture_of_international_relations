@@ -270,6 +270,8 @@ DEFAULT_TOPIC_GROUPS: dict[str, dict[str, list[str]]] = {
     },
 }
 
+# pylint: disable=consider-using-dict-items
+
 TOPIC_GROUP_MAPS: dict[str, dict[str, str]] = {
     group_name: {v: k for k in DEFAULT_TOPIC_GROUPS[group_name].keys() for v in DEFAULT_TOPIC_GROUPS[group_name][k]}
     for group_name in DEFAULT_TOPIC_GROUPS
