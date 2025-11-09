@@ -77,7 +77,7 @@ class PlotNetworkUtility:
     @staticmethod
     def get_layout_algorithm(layout_algorithm):
         if layout_algorithm not in layout_algorithms:
-            raise Exception(f"Unknown algorithm {layout_algorithm}")
+            raise ValueError(f"Unknown algorithm {layout_algorithm}")
         return layout_algorithms.get(layout_algorithm, None)
 
     @staticmethod
@@ -104,8 +104,8 @@ class PlotNetworkUtility:
             values = nx.get_edge_attributes(network, "weight").values()
             max_weight = max(1.0, max(values))
 
-            print("Max weigth: {}".format(max_weight))
-            print("Mean weigth: {}".format(sum(values) / len(values)))
+            print(f"Max weigth: {max_weight}")
+            print(f"Mean weigth: {sum(values) / len(values)}")
 
             filter_edges = [
                 (u, v)
