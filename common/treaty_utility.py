@@ -1,4 +1,5 @@
-import common.utility as utility
+from typing import Any
+from common import utility
 
 
 def trim_period_group(period_group, year_limit):
@@ -15,10 +16,10 @@ def trim_period_group(period_group, year_limit):
     return pg
 
 
-def period_group_years(period_group):
+def period_group_years(period_group: dict[str, Any]):
     if period_group["type"] == "range":
         return period_group["periods"]
-    period_years = [list(range(x[0], x[1] + 1)) for x in period_group["periods"]]
+    period_years: list[list[int]] = [list(range(x[0], x[1] + 1)) for x in period_group["periods"]]
     return utility.flatten(period_years)
 
 

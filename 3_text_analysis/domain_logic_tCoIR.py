@@ -103,7 +103,7 @@ def get_treaty_dropdown_options(wti_index, corpus):
 
     def format_treaty_name(x):
 
-        return '{}: {} {} {} {}'.format(x.name, x['signed_year'], x['topic'], x['party1'], x['party2'])
+        return f'{x.name}: {x["signed_year"]} {x["topic"]} {x["party1"]} {x["party2"]}'
 
     documents = wti_index.treaties.loc[get_corpus_documents(corpus).treaty_id]
 
@@ -124,7 +124,7 @@ def get_document_stream(source, lang, document_index=None, id_extractor=None):
     item_filter  = lambda x: lang_pattern.match(x) # and id_extractor(x) in document_index.index
 
     if isinstance(source, str):
-        print('Opening archive: {}'.format(source))
+        print(f'Opening archive: {source}')
         reader = text_corpus.CompressedFileReader(source, pattern=lang_pattern, itemfilter=item_filter)
     else:
         reader = source

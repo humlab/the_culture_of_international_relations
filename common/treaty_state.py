@@ -793,7 +793,7 @@ class TreatyState:
         countries = set(self.get_countries_list()) - set(["ALL", "ALL OTHER"])
 
         for group_id in [1, 2, 3]:
-            preset_options["Region: Not in World {}".format(group_id)] = [
+            preset_options[f"Region: Not in World {group_id}"] = [
                 x
                 for x in countries
                 if x not in set(config.get_region_parties(group_id))
@@ -899,15 +899,7 @@ def load_wti_index(
         )
 
         print(
-            'WTI index loaded! Current index "{}" has {} treaties ({} in English).'.format(
-                WTI_INFO[is_cultural_yesno_column],
-                len(state.treaties[state.treaties.is_cultural]),
-                len(
-                    state.treaties.loc[
-                        (state.treaties.is_cultural) & (state.treaties.english == "en")
-                    ]
-                ),
-            )
+            f'WTI index loaded! Current index "{WTI_INFO[is_cultural_yesno_column]}" has {len(state.treaties[state.treaties.is_cultural])} treaties ({len(state.treaties.loc[(state.treaties.is_cultural) & (state.treaties.english == "en")])} in English).'
         )
 
         return state
