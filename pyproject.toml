@@ -33,10 +33,48 @@ line-length = 120
 
 [tool.isort]
 profile = "black"
+line-length = 120
+target-version = ["py311"]
+exclude = '''
+(
+  \.git
+  | \.pypy_cache
+  | \.pytest_cache
+  | \.mypy_cache
+  | deprecated
+)
+'''
 
+[tool.ruff]
+line-length = 140  # same as rustfmt
+
+[tool.pylint.master]
+extension-pkg-allow-list = ["community"]
+init-hook='import sys; sys.path.append(".")'
+ignore=["deprecated", "other", "documents", "__pycache__"]
+ignore-patterns=[".*deprecated.*", ".*other.*", ".*documents.*"]
+
+[tool.pylint.messages_control]
+disable = [
+    "fixme",
+    "duplicate-code",
+    "missing-function-docstring",
+    "line-too-long",
+    "missing-module-docstring",
+    "missing-class-docstring",
+    "invalid-name",
+    "too-many-arguments",
+    "too-many-positional-arguments",
+    "too-many-instance-attributes",
+    "too-few-public-methods",
+    "too-many-locals",
+    "too-many-public-methods",
+    "wrong-import-position",
+    "logging-fstring-interpolation",
+    "nested-min-max",
+    "c-extension-no-member",
+    "logging-not-lazy"
+]
 
 [tool.setuptools.packages.find]
 include = ["common*", "1_quantitative_analysis*", "2_network_analysis*", "3_text_analysis*"]
-
-[tool.pylint.MASTER]
-init-hook = 'import sys; sys.path.append(".")'
