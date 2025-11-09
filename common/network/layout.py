@@ -1,13 +1,14 @@
 import math
 import os
+import sys
 
-os.sys.path = os.sys.path if ".." in os.sys.path else os.sys.path + [".."]
+sys.path = sys.path if ".." in sys.path else sys.path + [".."]
 
 from common.network.layout_graphviz import layout_setups as gv_layout_setups
 from common.network.layout_networkx import layout_setups as nx_layout_setups
 
 try:
-    import graph_tool.all as gt
+    import graph_tool.all as gt  # pylint: disable=unused-import
 
     from common.network.layout_graphtool import layout_setups as gt_layout_setups
 
