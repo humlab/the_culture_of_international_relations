@@ -270,7 +270,7 @@ TOPIC_GROUP_MAPS: dict[str, dict[str, str]] = {
         for k in DEFAULT_TOPIC_GROUPS[group_name].keys()
         for v in DEFAULT_TOPIC_GROUPS[group_name][k]
     }
-    for group_name in DEFAULT_TOPIC_GROUPS.keys()
+    for group_name in DEFAULT_TOPIC_GROUPS
 }
 
 default_graph_tools: str = "pan,wheel_zoom,box_zoom,reset,hover,save"

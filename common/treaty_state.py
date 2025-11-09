@@ -12,8 +12,8 @@ import pandas as pd
 
 warnings.simplefilter(action="ignore", category=FutureWarning)
 
-import common.config as config
-import common.utility as utility
+from common import config
+from common import utility
 
 logger = logging.getLogger(__name__)
 
@@ -150,8 +150,7 @@ party_correction_map = {
     "W ALLIES": "IGNORE",
 }
 
-from common.treaty_utility import (QueryUtility, period_group_years,
-                                   trim_period_group)
+from common.treaty_utility import QueryUtility
 
 
 class TreatyState:
@@ -159,7 +158,7 @@ class TreatyState:
     def __init__(
         self,
         data_folder: str = "./data",
-        skip_columns: list[str] = default_treaties_skip_columns,
+        skip_columns: list[str] | None = None,
         period_groups=None,
         filename: str | None = None,
         is_cultural_yesno_column: str = "is_cultural_yesno_org",
@@ -167,7 +166,9 @@ class TreatyState:
         filename = filename or "Treaties_Master_List_Treaties.csv"
         self.data_folder: str = data_folder
         self.period_groups = period_groups or config.DEFAULT_PERIOD_GROUPS
-        self.treaties_skip_columns: list[str] = (skip_columns or []) + [
+        self.treaties_skip_columns: list[str] = (
+            skip_columns or default_treaties_skip_columns or []
+        ) + [
             "sequence",
             "is_cultural_yesno",
         ]
@@ -537,7 +538,7 @@ class TreatyState:
             if party in self.parties.index:
                 return self.parties.loc[party, party_name_column]
             return party
-        except Exception as _:  # pylint: disable=too-broad-except
+        except Exception as _:  # pylint: disable=too-broad-except, broad-exception-caught
             logger.warning("Warning: %s not in curated parties list", party)
             return party
 
@@ -546,7 +547,7 @@ class TreatyState:
             d = self.parties.loc[party].to_dict()
             d["party"] = party
             return d
-        except Exception as _:  # pylint: disable=too-broad-except
+        except Exception as _:  # pylint: disable=too-broad-except, broad-exception-caught
             return None
 
     def get_headnotes(self):
@@ -595,7 +596,7 @@ class TreatyState:
 
     def get_topic_category(self, df, topic_category, topic_column="topic1"):
         if topic_column not in df.columns:
-            raise ArgumentError(f"Column {topic_column} not found in DataFrame")
+            raise ValueError(f"Column {topic_column} not found in DataFrame")
         if topic_category is not None:
             return df.apply(
                 lambda x: topic_category.get(x[topic_column], "OTHER"), axis=1
@@ -926,7 +927,7 @@ def current_wti_index():
 
 def load_wti_index_with_gui(data_folder=None) -> None:
 
-    global WTI_INDEX_CONTAINER
+    global WTI_INDEX_CONTAINER  # pylint: disable=W0603
 
     data_folder = data_folder or config.DATA_FOLDER
 

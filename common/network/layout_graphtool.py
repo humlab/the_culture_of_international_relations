@@ -16,14 +16,14 @@ def sfdp_args(G_gt, **kwargs):
     K = kwargs.get("K", 0.1)
     C = kwargs.get("C", 1.0)
     p = kwargs.get("p", 0.1)
-    return dict(eweight=weight, K=K, C=(C / 100.0), gamma=p)
+    return {"eweight": weight, "K": K, "C": (C / 100.0), "gamma": p}
 
 
 def arf_args(G_gt, **kwargs):
     weight = G_gt.edge_properties["weight"]
     K = kwargs.get("K", 0.1)
     C = kwargs.get("C", 1.0)
-    return dict(weight=weight, d=K, a=C)
+    return {"weight": weight, "d": K, "a": C}
 
 
 def fruchterman_reingold_args(G_gt, **kwargs):
@@ -31,7 +31,7 @@ def fruchterman_reingold_args(G_gt, **kwargs):
     K = kwargs.get("K", 0.1)
     C = kwargs.get("C", 1.0)
     N = len(G_gt)  # !! G
-    return dict(weight=weight, a=(2.0 * N * K), r=2.0 * C)
+    return {"weight": weight, "a": (2.0 * N * K), "r": 2.0 * C}
 
 
 def layout_network(G, **kwargs):

@@ -9,9 +9,9 @@ from bokeh.models import ColumnDataSource
 from bokeh.plotting import figure
 
 import common.network.layout as network_layout
-import common.network.networkx_utility as networkx_utility
-import common.utility as utility
-import common.widgets_config as widgets_config
+from common.network import networkx_utility
+from common import utility
+from common import widgets_config
 
 TOOLS = "pan,wheel_zoom,box_zoom,reset,save"
 
@@ -22,24 +22,24 @@ DFLT_NODE_OPTS = dict(color="green", level="overlay", alpha=1.0)
 
 DFLT_EDGE_OPTS = dict(color="black", alpha=0.2)
 
-DFLT_TEXT_OPTS: dict[str, str] = dict(
-    x="x",
-    y="y",
-    text="name",
-    level="overlay",
-    text_align="center",
-    text_baseline="middle",
-)
+DFLT_TEXT_OPTS: dict[str, str] = {
+    "x": "x",
+    "y": "y",
+    "text": "name",
+    "level": "overlay",
+    "text_align": "center",
+    "text_baseline": "middle",
+}
 
-DFLT_LABEL_OPTS: dict[str, str] = dict(
-    level="overlay",
-    text_align="center",
-    text_baseline="middle",
-    render_mode="canvas",
-    text_font="Tahoma",
-    text_font_size="9pt",
-    text_color="black",
-)
+DFLT_LABEL_OPTS: dict[str, str] = {
+    "level": "overlay",
+    "text_align": "center",
+    "text_baseline": "middle",
+    "render_mode": "canvas",
+    "text_font": "Tahoma",
+    "text_font_size": "9pt",
+    "text_color": "black",
+}
 
 
 def get_palette(name):
@@ -164,7 +164,7 @@ def plot(  # pylint: disable=W0102
 
     label_opts = utility.extend(
         DFLT_TEXT_OPTS,
-        dict(y_offset=label_y_offset, text_color="black", text_baseline="bottom"),
+        {"y_offset": label_y_offset, "text_color": "black", "text_baseline": "bottom"},
         text_opts or {},
     )
 
@@ -243,13 +243,12 @@ def plot_network(nodes, edges, plot_opts, fig_opts=None):
 
     handle = bokeh.plotting.show(p, notebook_handle=True)
 
-    return dict(
-        handle=handle,
-        edges=edges,
-        nodes=nodes,
-        edges_source=edges_source,
-        nodes_source=nodes_source,
-    )
+    return {
+        "handle": handle,
+        "edges": edges,
+        "nodes": nodes,
+        "edges_source": edges_source,
+        "nodes_source": nodes_source,}
 
 
 def plot_df(

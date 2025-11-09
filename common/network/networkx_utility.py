@@ -1,10 +1,9 @@
 """NetworkX utility functions"""
 
-from re import A
 from typing import Any
 
 import networkx as nx
-from pandas import pd
+import pandas as pd
 
 from common.utility import clamp_values, extend, list_of_dicts_to_dict_of_lists
 
@@ -326,7 +325,7 @@ def create_bipartite_network(
         zip(
             df[source_field].values,
             df[target_field].values,
-            df[weight].apply(lambda x: dict(weight=x)),
+            df[weight].apply(lambda x: {"weight": x}),
         )
     )
     graph.add_edges_from(edges)

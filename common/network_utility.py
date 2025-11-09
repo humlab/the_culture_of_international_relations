@@ -3,7 +3,7 @@ from typing import Sequence
 import bokeh.models as bm
 import community  # pip3 install python-louvain packages
 import networkx as nx
-from pandas import pd
+import pandas as pd
 
 if "extend" not in globals():
     extend = lambda a, b: a.update(b) or a

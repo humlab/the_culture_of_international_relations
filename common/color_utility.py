@@ -1,6 +1,5 @@
 import random
 from itertools import cycle, islice
-from signal import set_wakeup_fd
 from typing import Any, Self, Sequence
 
 import numpy as np

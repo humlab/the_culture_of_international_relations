@@ -7,7 +7,7 @@ engines = ["neato", "dot", "circo", "fdp", "sfdp"]
 
 def layout_network(G, layout_algorithm, **kwargs):
 
-    global layout_setup_map
+    global layout_setup_map  # pylint: disable=global-variable-not-assigned
 
     setup = layout_setup_map[layout_algorithm]
 
@@ -32,6 +32,7 @@ layout_setups = [
     )
     for engine in engines
 ]
+
 
 layout_setup_map = {x.key: x for x in layout_setups}
 
