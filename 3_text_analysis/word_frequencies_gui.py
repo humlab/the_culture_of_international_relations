@@ -1,16 +1,18 @@
-import spacy, numpy as np
 import collections
-import common.treaty_utility as treaty_utility
-import common.widgets_utility as widgets_utility
-import common.widgets_config as widgets_config
-import common.utility as utility
-import textacy_corpus_utility as textacy_utility
-import ipywidgets as widgets
-import pandas as pd
-
-from spacy import attrs
-from typing import types
 import time
+from typing import types
+
+import ipywidgets as widgets
+import numpy as np
+import pandas as pd
+import spacy
+import textacy_corpus_utility as textacy_utility
+from spacy import attrs
+
+import common.treaty_utility as treaty_utility
+import common.utility as utility
+import common.widgets_config as widgets_config
+import common.widgets_utility as widgets_utility
 
 logger = utility.getLogger('corpus_text_analysis')
 utility.setup_default_pd_display(pd)

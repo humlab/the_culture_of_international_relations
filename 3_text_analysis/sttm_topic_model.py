@@ -18,25 +18,23 @@ Examples
 --------
 
 """
+import io
 import logging
 import os
 import random
-import warnings
 import tempfile
+import warnings
 import xml.etree.ElementTree as et
 import zipfile
 from itertools import chain
 
 import numpy
 import scipy
-import io
-
-from smart_open import smart_open
-
-from gensim import utils, matutils
+from gensim import matutils, utils
 from gensim.models import basemodel
 from gensim.models.ldamodel import LdaModel
 from gensim.utils import check_output, revdict
+from smart_open import smart_open
 
 logger = logging.getLogger(__name__)
 

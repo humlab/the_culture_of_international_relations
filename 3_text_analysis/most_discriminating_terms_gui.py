@@ -1,21 +1,24 @@
 
+import logging
+import sys
+import types
+
+import ipywidgets as widgets
+import pandas as pd
 import spacy
 import textacy
 import textacy.keyterms
-import ipywidgets as widgets
-import pandas as pd
-import logging
-
-import sys, types
 
 sys.path = list(set(['.', '..']) - set(sys.path)) + sys.path
 
-import common.widgets_config as widgets_config
 from IPython.display import display
+
+import common.widgets_config as widgets_config
 
 logger = logging.getLogger(__name__)
 
 from most_discriminating_terms_patch import most_discriminating_terms
+
 
 def compute_most_discriminating_terms(
     wti_index,

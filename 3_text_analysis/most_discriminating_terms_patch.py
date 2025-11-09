@@ -1,12 +1,12 @@
 
-import textacy.vsm as vsm
-from decimal import Decimal
 #import itertools
 import math
 import operator
 from decimal import Decimal
 
 import numpy as np
+import textacy.vsm as vsm
+
 #from cytoolz import itertoolz
 
 #from .. import compat, extract, similarity, vsm

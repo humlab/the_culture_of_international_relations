@@ -2,6 +2,7 @@
 import pandas as pd
 from domain_logic_config import current_domain as domain_logic
 
+
 def get_treaty_dropdown_options(wti_index, corpus):
     
     def format_treaty_name(x):

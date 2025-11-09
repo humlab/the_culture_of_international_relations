@@ -1,6 +1,6 @@
-import os
 import inspect
 import logging
+import os
 
 from gensim import models
 

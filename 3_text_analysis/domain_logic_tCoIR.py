@@ -1,18 +1,19 @@
 
-import os
-import common.utility as utility
-import pandas as pd
-import textacy_corpus_utility
-import text_corpus
-import itertools
-import re
-import fnmatch
 import collections
+import fnmatch
+import itertools
+import os
+import re
 
+import pandas as pd
+import text_corpus
+import textacy
+import textacy_corpus_utility
+
+import common.config as config
 # import domain.tCoIR.treaty_state as treaty_repository
 import common.treaty_state as treaty_repository
-import common.config as config
-import textacy
+import common.utility as utility
 
 # FIXME VARYING ASPECTS
 

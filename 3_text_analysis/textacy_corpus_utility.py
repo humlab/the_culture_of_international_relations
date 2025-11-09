@@ -1,32 +1,26 @@
-# -*- coding: utf-8 -*-
-import re, sys, os
-import zipfile
-import pandas as pd
-import logging
 import collections
+import itertools
+import os
+import re
+import sys
+import zipfile
+
+import ftfy
+import pandas as pd
+import spacy
 import textacy
 import textacy.preprocessing
-import spacy
-import timeit
-import functools
-import itertools
-import time
-import ftfy
-
-from spacy.language import Language
 from spacy import attrs
-from spacy.tokens.doc import Doc as SpacyDoc
+from spacy.language import Language
 
 sys.path = list(set(['.', '..']) - set(sys.path)) + sys.path
 
 import common.utility as utility
-import text_corpus
-from common.utility import deprecated
 
 logger = utility.getLogger('corpus_text_analysis')
 
-LANGUAGE_MODEL_MAP = { 'en': 'en_core_web_sm', 'fr': 'fr_core_news_sm', 'it': 'it_core_web_sm', 'de': 'de_core_web_sm' }
-HYPHEN_REGEXP = re.compile(r'\b(\w+)-\s*\r?\n\s*(\w+)\b', re.UNICODE)
+LANGUAGE_MODEL_MAP: dict[str, str] = { 'en': 'en_core_web_sm', 'fr': 'fr_core_news_sm', 'it': 'it_core_web_sm', 'de': 'de_core_web_sm' }
+HYPHEN_REGEXP: re.Pattern[str] = re.compile(r'\b(\w+)-\s*\r?\n\s*(\w+)\b', re.UNICODE)
 
 def count_documents_by_pivot(corpus, attribute):
     ''' Return a list of document counts per group defined by attribute

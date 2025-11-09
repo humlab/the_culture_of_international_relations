@@ -1,11 +1,13 @@
+import logging
 import types
+
 import ipywidgets as widgets
 import pandas as pd
-import logging
-import common.utility as utility
-import topic_model_utility
-import topic_model
 import textacy_corpus_utility as textacy_utility
+import topic_model
+import topic_model_utility
+
+import common.utility as utility
 
 logger = utility.getLogger('corpus_text_analysis')
 

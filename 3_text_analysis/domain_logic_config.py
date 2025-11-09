@@ -3,6 +3,7 @@ import domain_logic_tCoIR as domain_logic
 current_domain = domain_logic
 
 import os
+
 import pandas as pd
 
 current_domain.SUBSTITUTION_FILENAME = os.path.join(domain_logic.DATA_FOLDER, 'term_substitutions.txt')

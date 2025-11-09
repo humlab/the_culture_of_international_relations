@@ -1,16 +1,19 @@
-import os, glob, types, fnmatch
+import fnmatch
+import glob
 import logging
-import textacy
+import os
+import types
+
 import ipywidgets as widgets
+import text_corpus
+import textacy
+import textacy_corpus_utility as textacy_utility
+from textacy.spacier.utils import merge_spans
+
 import common.config as config
 import common.utility as utility
-import common.widgets_utility as widgets_utility
 import common.widgets_config as widgets_config
-
-import textacy_corpus_utility as textacy_utility
-import text_corpus
-
-from textacy.spacier.utils import merge_spans
+import common.widgets_utility as widgets_utility
 
 logger = utility.getLogger('corpus_text_analysis')
 

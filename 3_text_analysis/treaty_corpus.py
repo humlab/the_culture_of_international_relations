@@ -11,7 +11,6 @@ import nltk
 import pandas as pd
 from gensim.corpora.textcorpus import TextCorpus
 
-
 logger = logging.getLogger(__name__)
 
 HYPHEN_REGEXP = re.compile(r'\b(\w+)-\s*\r?\n\s*(\w+)\b', re.UNICODE)
@@ -231,32 +230,32 @@ class TreatyCorpus(TextCorpus):
 
             return tokens
 
-    def __get_document_info(self, filename):
-        parts = TREATY_FILENAME.match(filename)
-        if not parts:
-            return {
-            'document_name': filename,
-            'treaty_id': None,
-            'language': None
-        }
-        return {
-            'document_name': filename,
-            'treaty_id': parts.groups(0)[0],
-            'language': parts.groups(0)[1]
-        }
+    # def __get_document_info(self, filename):
+    #     parts = TREATY_FILENAME.match(filename)
+    #     if not parts:
+    #         return {
+    #         'document_name': filename,
+    #         'treaty_id': None,
+    #         'language': None
+    #     }
+    #     return {
+    #         'document_name': filename,
+    #         'treaty_id': parts.groups(0)[0],
+    #         'language': parts.groups(0)[1]
+    #     }
 
-    def ___compile_documents(self):
+    # def ___compile_documents(self):
         
-        document_data = map(self.get_document_info, self.filenames)
+    #     document_data = map(self.get_document_info, self.filenames)
 
-        documents = pd.DataFrame(list(document_data))
-        documents.index.names = ['document_id']
-        dupes = documents.groupby(['treaty_id', 'language']).size().loc[lambda x: x > 1]
+    #     documents = pd.DataFrame(list(document_data))
+    #     documents.index.names = ['document_id']
+    #     dupes = documents.groupby(['treaty_id', 'language']).size().loc[lambda x: x > 1]
         
-        if len(dupes) > 0:
-            logger.critical('Warning! Duplicate treaties found in corpus: {}'.format(' '.join(list(dupes.index))))
+    #     if len(dupes) > 0:
+    #         logger.critical('Warning! Duplicate treaties found in corpus: {}'.format(' '.join(list(dupes.index))))
             
-        return documents
+    #     return documents
         
 class MmCorpusStatisticsService():
     

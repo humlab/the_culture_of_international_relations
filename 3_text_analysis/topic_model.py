@@ -1,14 +1,16 @@
-import types
-import textacy
-import pandas as pd
-import gensim
 import os
-import common.utility as utility
+import types
+
+import gensim
+import mallet_topic_model
+import numpy as np
+import pandas as pd
+import sttm_topic_model
+import textacy
 import textacy_corpus_utility as textacy_utility
 import topic_model_utility
-import mallet_topic_model
-import sttm_topic_model
-import numpy as np
+
+import common.utility as utility
 
 # OBS OBS! https://scikit-learn.org/stable/auto_examples/applications/plot_topics_extraction_with_nmf_lda.html
 DEFAULT_VECTORIZE_PARAMS = dict(tf_type='linear', apply_idf=False, idf_type='smooth', norm='l2', min_df=1, max_df=0.95)
@@ -240,6 +242,7 @@ def compute(corpus, tick=utility.noop, method='sklearn_lda', vec_args=None, term
     return model_data
 
 import pickle
+
 
 def store_model(data, filename):
 

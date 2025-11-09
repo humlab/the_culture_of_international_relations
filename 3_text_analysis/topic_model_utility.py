@@ -1,8 +1,10 @@
-import types
-import pandas as pd
 import logging
-import common.utility as utility
+import types
+
 import gensim
+import pandas as pd
+
+import common.utility as utility
 
 logger = utility.getLogger('corpus_text_analysis')
 
@@ -271,8 +273,9 @@ def display_termite_plot(model, id2term, doc_term_matrix):
             save=False
         )
 
-from gensim.models import LdaModel
 import numpy
+from gensim.models import LdaModel
+
 
 def malletmodel2ldamodel(mallet_model, gamma_threshold=0.001, iterations=50):
     """Convert :class:`~gensim.models.wrappers.ldamallet.LdaMallet` to :class:`~gensim.models.ldamodel.LdaModel`.

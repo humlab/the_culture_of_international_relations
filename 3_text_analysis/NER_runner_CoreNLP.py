@@ -1,13 +1,15 @@
-import os
-import io
 import codecs
-import time
 import collections
-import nltk.tag
-from nltk.tag.stanford import CoreNLPNERTagger
-import nltk.tokenize.stanford as st
+import io
+import os
 import re
+import time
 import zipfile
+
+import nltk.tag
+import nltk.tokenize.stanford as st
+from nltk.tag.stanford import CoreNLPNERTagger
+
 
 def extract_entity_phrases(data, classes=[ 'LOCATION', 'PERSON']):
 

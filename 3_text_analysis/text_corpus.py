@@ -1,14 +1,13 @@
-import os
-import pandas as pd
-import glob
-import nltk
-import gensim
-import zipfile
 import fnmatch
 import logging
+import os
 import re
-import typing.re
+import zipfile
 
+import gensim
+import nltk
+import numpy as np
+import pandas as pd
 from gensim.corpora.textcorpus import TextCorpus
 
 logger = logging.getLogger(__name__)
@@ -72,7 +71,7 @@ class CompressedFileReader:
 
 class GenericTextCorpus(TextCorpus):
 
-    def __init__(self, stream, dictionary=None, metadata=False, character_filters=None, tokenizer=None, token_filters=None, bigram_transform=False):
+    def __init__(self, stream, dictionary=None, metadata=False, character_filters=None, tokenizer=None, token_filters=None, bigram_transform=False):  # pylint: disable=unused-argument
         self.stream = stream
         self.filenames = None
         self.documents = None
@@ -160,19 +159,19 @@ class GenericTextCorpus(TextCorpus):
 
             return tokens
 
-    def __get_document_info(self, filename):
-        return {
-            'document_name': filename,
-        }
+    # def __get_document_info(self, filename):
+    #     return {
+    #         'document_name': filename,
+    #     }
 
-    def ___compile_documents(self):
+    # def ___compile_documents(self):
 
-        document_data = map(self.get_document_info, self.filenames)
+    #     document_data = map(self.get_document_info, self.filenames)
 
-        documents = pd.DataFrame(list(document_data))
-        documents.index.names = ['document_id']
+    #     documents = pd.DataFrame(list(document_data))
+    #     documents.index.names = ['document_id']
 
-        return documents
+    #     return documents
 
 class SimplePreparedTextCorpus(GenericTextCorpus):
     """Reads content in stream and returns tokenized text. No other processing.
@@ -204,8 +203,7 @@ class MmCorpusStatisticsService():
     def get_total_token_frequencies(self):
         dictionary = self.corpus.dictionary
         freqencies = np.zeros(len(dictionary.id2token))
-        document_stats = []
-        for document in corpus:
+        for document in self.corpus:
             for i, f in document:
                 freqencies[i] += f
         return freqencies
