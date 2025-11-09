@@ -14,5 +14,7 @@ disable = missing-function-docstring,
           too-many-positional-arguments,
           too-many-instance-attributes,
           too-few-public-methods,
+          too-many-locals,
           wrong-import-position,
-          logging-fstring-interpolation
+          logging-fstring-interpolation,
+          nested-min-max
