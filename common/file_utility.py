@@ -30,7 +30,6 @@ class FileUtility:
         with pd.ExcelWriter(filename) as writer:
             for df, name in data:
                 df.to_excel(writer, name, engine="xlsxwriter")
-            writer.save()
 
     @staticmethod
     def data_path(directory, filename):
