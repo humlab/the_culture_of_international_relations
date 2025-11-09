@@ -15,6 +15,7 @@ dependencies = [
     "jupyterlab>=4.4.10",
     "matplotlib>=3.10.7",
     "networkx>=3.5",
+    "nltk>=3.9.2",
     "wordcloud>=1.9.4",
 ]
 
