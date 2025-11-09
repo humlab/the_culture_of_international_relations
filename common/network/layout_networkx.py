@@ -1,4 +1,4 @@
-import os
+import sys
 
 sys.path = sys.path if ".." in sys.path else sys.path + [".."]
 

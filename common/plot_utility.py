@@ -148,15 +148,15 @@ class PlotNetworkUtility:
         line_opts = extend(DFLT_EDGE_OPTS, line_opts or {})
 
         p = figure(
-            plot_width=figsize[0],
-            plot_height=figsize[1],
+            width=figsize[0],
+            height=figsize[1],
             x_axis_type=None,
             y_axis_type=None,
         )
         # node_size = 'size' if node_proportions is not None else 5
-        r_lines = p.multi_line(
-            "xs", "ys", line_width="weights", source=lines_source, **line_opts
-        )
+        # r_lines = p.multi_line(
+        #     "xs", "ys", line_width="weights", source=lines_source, **line_opts
+        # )
         r_nodes = p.circle(
             "x", "y", radius=nodes_size, source=nodes_source, **node_opts
         )
@@ -176,6 +176,6 @@ class PlotNetworkUtility:
 
         r_nodes.glyph.fill_color = "lightgreen"  # 'community_color'
 
-        p.add_layout(bm.LabelSet(source=nodes_source, text_color="black", **text_opts))
+        p.add_layout(bm.LabelSet(source=nodes_source, text_color="black", **text_opts))  # type: ignore
 
         return p
