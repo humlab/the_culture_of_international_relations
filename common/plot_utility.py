@@ -6,7 +6,10 @@ import matplotlib.pyplot as plt
 import networkx as nx
 import pandas as pd
 import wordcloud
+
 from bokeh.plotting import figure
+
+from common.network.networkx_utility import get_bipartite_node_set
 
 from .network_utility import NetworkMetricHelper, NetworkUtility
 
@@ -59,7 +62,6 @@ layout_algorithms = {
     "Kamada-Kawai": nx.kamada_kawai_layout,
 }
 
-
 class PlotNetworkUtility:
 
     @staticmethod
@@ -104,8 +106,8 @@ class PlotNetworkUtility:
         threshold: float = 0.0,
         node_description: str | None = None,  # pylint: disable=unused-argument
         node_proportions: pd.Series | None = None,
-        weight_scale: float = 5.0,
-        normalize_weights: bool = True,
+        weight_scale: float = 5.0,  # pylint: disable=unused-argument
+        normalize_weights: bool = True,  # pylint: disable=unused-argument
         node_opts: dict[str, str | float] | None = None,
         line_opts: dict[str, str | float] | None = None,
         element_id: str = "nx_id3",  # pylint: disable=unused-argument
