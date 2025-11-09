@@ -12,8 +12,7 @@ import pandas as pd
 
 warnings.simplefilter(action="ignore", category=FutureWarning)
 
-from common import config
-from common import utility
+from common import config, utility
 
 logger = logging.getLogger(__name__)
 
@@ -538,7 +537,9 @@ class TreatyState:
             if party in self.parties.index:
                 return self.parties.loc[party, party_name_column]
             return party
-        except Exception as _:  # pylint: disable=too-broad-except, broad-exception-caught
+        except (
+            Exception
+        ) as _:  # pylint: disable=too-broad-except, broad-exception-caught
             logger.warning("Warning: %s not in curated parties list", party)
             return party
 
@@ -547,7 +548,9 @@ class TreatyState:
             d = self.parties.loc[party].to_dict()
             d["party"] = party
             return d
-        except Exception as _:  # pylint: disable=too-broad-except, broad-exception-caught
+        except (
+            Exception
+        ) as _:  # pylint: disable=too-broad-except, broad-exception-caught
             return None
 
     def get_headnotes(self):

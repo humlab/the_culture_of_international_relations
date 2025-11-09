@@ -99,8 +99,8 @@ def display_quantity_by_party(
             colors: list[str] = static_color_map.get_palette(columns)
 
             kwargs = analysis_plot.prepare_plot_kwargs(pivot, chart_type, normalize_values, period_group, vmax=vmax)
-            kwargs.update(dict(overlay=overlay, colors=colors))
-            kwargs.update(dict(legend=legend))
+            kwargs.update({"overlay": overlay, "colors": colors})
+            kwargs.update({"legend": legend})
 
             progress()
 

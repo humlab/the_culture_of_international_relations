@@ -16,7 +16,9 @@ from common.utility import clamp_values, extend, list_of_dicts_to_dict_of_lists
 #    return G
 
 
-def df_to_nx_edge_format(data: pd.DataFrame, source_index: int = 0, target_index: int = 1) -> list[tuple[Any, Any, dict[Any, Any]]]:
+def df_to_nx_edge_format(
+    data: pd.DataFrame, source_index: int = 0, target_index: int = 1
+) -> list[tuple[Any, Any, dict[Any, Any]]]:
     """Transform a dataframe's edge data into nx style i.e. as a list of (source, target, attributes) triplets
 
     The source and target nodes are assumed to be the first to columns.
@@ -47,7 +49,12 @@ def df_to_nx_edge_format(data: pd.DataFrame, source_index: int = 0, target_index
     ]
 
 
-def df_to_nx_edges_list(df: pd.DataFrame, source: str = "source", target: str = "target", **edge_attributes: Any) -> list[tuple[Any, Any, dict[Any, Any]]]:
+def df_to_nx_edges_list(
+    df: pd.DataFrame,
+    source: str = "source",
+    target: str = "target",
+    **edge_attributes: Any,
+) -> list[tuple[Any, Any, dict[Any, Any]]]:
     """More generic implementation"""
     attr_fields: list[Any] = list(edge_attributes.values())
     attr_names: dict[Any, str] = {v: k for k, v in edge_attributes.items()}
@@ -62,7 +69,13 @@ def df_to_nx_edges_list(df: pd.DataFrame, source: str = "source", target: str = 
     return list(edges)
 
 
-def df_to_nx(df: pd.DataFrame, source: str = "source", target: str = "target", bipartite: bool = False, **edge_attributes: Any) -> nx.Graph:
+def df_to_nx(
+    df: pd.DataFrame,
+    source: str = "source",
+    target: str = "target",
+    bipartite: bool = False,
+    **edge_attributes: Any,
+) -> nx.Graph:
     """Creates a new networkx graph from values in a dataframe.
 
     Parameters
@@ -115,7 +128,9 @@ def df_to_nx(df: pd.DataFrame, source: str = "source", target: str = "target", b
 create_nx_graph = df_to_nx
 
 
-def get_subgraph(g: nx.Graph, attribute: str = "weight", threshold: float = 0.0) -> nx.Graph:
+def get_subgraph(
+    g: nx.Graph, attribute: str = "weight", threshold: float = 0.0
+) -> nx.Graph:
     """Creates a subgraph of g of all edges having a attribute value equal to or above threshold.
 
     Parameters
@@ -144,7 +159,9 @@ def get_subgraph(g: nx.Graph, attribute: str = "weight", threshold: float = 0.0)
 get_sub_network = get_subgraph
 
 
-def get_positioned_nodes(network: nx.Graph, layout: dict, nodes: list[str] | None = None) -> dict[str, list[Any]]:
+def get_positioned_nodes(
+    network: nx.Graph, layout: dict, nodes: list[str] | None = None
+) -> dict[str, list[Any]]:
     """Returns nodes assigned position from given layout.
 
     Parameters
@@ -178,14 +195,16 @@ def get_positioned_nodes(network: nx.Graph, layout: dict, nodes: list[str] | Non
         zip(list_of_attribs[0], zip(*[d.values() for d in list_of_attribs]))
     )
 
-    attrib_lists.update({'x': xs, 'y': ys, 'name': nodes, 'node_id': nodes})
+    attrib_lists.update({"x": xs, "y": ys, "name": nodes, "node_id": nodes})
 
     dict_of_lists: dict[str, list[Any]] = {k: list(v) for k, v in attrib_lists.items()}
 
     return dict_of_lists
 
 
-def get_positioned_edges(network: nx.Graph, layout: dict, sort_attr: str | None = None) -> list[dict[str, Any]]:
+def get_positioned_edges(
+    network: nx.Graph, layout: dict, sort_attr: str | None = None
+) -> list[dict[str, Any]]:
     """Extracts network edge attributes and assigns coordinates to endpoints, and computes midpoint coordinate
 
     Parameters
@@ -219,12 +238,12 @@ def get_positioned_edges(network: nx.Graph, layout: dict, sort_attr: str | None 
     list_of_dicts = [
         extend(
             {
-                'source': u,
-                'target': v,
-                'xs': [layout[u][0], layout[v][0]],
-                'ys': [layout[u][1], layout[v][1]],
-                'm_x': [(layout[u][0] + layout[v][0]) / 2.0],
-                'm_y': [(layout[u][1] + layout[v][1]) / 2.0],
+                "source": u,
+                "target": v,
+                "xs": [layout[u][0], layout[v][0]],
+                "ys": [layout[u][1], layout[v][1]],
+                "m_x": [(layout[u][0] + layout[v][0]) / 2.0],
+                "m_y": [(layout[u][1] + layout[v][1]) / 2.0],
             },
             d,
         )
@@ -237,7 +256,9 @@ def get_positioned_edges(network: nx.Graph, layout: dict, sort_attr: str | None 
     return list_of_dicts
 
 
-def get_positioned_edges2(network: nx.Graph, layout: dict, sort_attr: str | None = None) -> dict[str, list[Any]]:
+def get_positioned_edges2(
+    network: nx.Graph, layout: dict, sort_attr: str | None = None
+) -> dict[str, list[Any]]:
     """Returns positioned edges as and all associated attributes.
 
     Is simply a reformat of result from get_layout_edges_attributes
@@ -269,7 +290,9 @@ def get_positioned_edges2(network: nx.Graph, layout: dict, sort_attr: str | None
             computed by midpoint formula
 
     """
-    list_of_dicts: list[dict[str, Any]] = get_positioned_edges(network, layout, sort_attr)
+    list_of_dicts: list[dict[str, Any]] = get_positioned_edges(
+        network, layout, sort_attr
+    )
 
     dict_of_tuples = list_of_dicts_to_dict_of_lists(list_of_dicts)
     dict_of_lists: dict[str, list[Any]] = {
@@ -296,7 +319,12 @@ def get_positioned_edges2(network: nx.Graph, layout: dict, sort_attr: str | None
 #    return layedout_edges
 
 
-def get_positioned_nodes_as_dict(graph: nx.Graph, layout: dict, node_size: str, node_size_range: tuple[float, float] | None) -> dict[str, list[Any]]:
+def get_positioned_nodes_as_dict(
+    graph: nx.Graph,
+    layout: dict,
+    node_size: str,
+    node_size_range: tuple[float, float] | None,
+) -> dict[str, list[Any]]:
 
     nodes: dict[str, list[Any]] = get_positioned_nodes(graph, layout)
 
@@ -316,7 +344,10 @@ def get_positioned_nodes_as_dict(graph: nx.Graph, layout: dict, node_size: str, 
 
 
 def create_bipartite_network(
-    df: pd.DataFrame, source_field: str = "source", target_field: str = "target", weight: str = "weight"
+    df: pd.DataFrame,
+    source_field: str = "source",
+    target_field: str = "target",
+    weight: str = "weight",
 ) -> nx.Graph:
     graph: nx.Graph = nx.Graph()
     graph.add_nodes_from(set(df[source_field].values), bipartite=0)
@@ -332,7 +363,9 @@ def create_bipartite_network(
     return graph
 
 
-def get_bipartite_node_set(graph: nx.Graph, bipartite: int = 0) -> tuple[list[str], list[str]]:
+def get_bipartite_node_set(
+    graph: nx.Graph, bipartite: int = 0
+) -> tuple[list[str], list[str]]:
     nodes = set(n for n, d in graph.nodes(data=True) if d["bipartite"] == bipartite)
     others = set(graph) - nodes
     return list(nodes), list(others)

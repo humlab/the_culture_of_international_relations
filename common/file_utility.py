@@ -38,9 +38,7 @@ class FileUtility:
 
     @staticmethod
     def ts_data_path(directory: str, filename: str) -> str:
-        return os.path.join(
-            directory, f"{time.strftime('%Y%m%d%H%M')}_{filename}"
-        )
+        return os.path.join(directory, f"{time.strftime('%Y%m%d%H%M')}_{filename}")
 
     @staticmethod
     def data_path_ts(directory: str, path: str) -> str:

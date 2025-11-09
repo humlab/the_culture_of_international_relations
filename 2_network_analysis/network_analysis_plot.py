@@ -2,8 +2,8 @@ from bokeh.models import ColumnDataSource, HoverTool, LabelSet
 from bokeh.plotting import show, figure
 from bokeh.palettes import all_palettes, RdYlBu, Set1  # pylint: disable=E0611
 from common.utility import extend
-from common.widgets_utility import WidgetUtility
-import common.config as config
+from common.widgets_config import glyph_hover_callback2
+from common import config
 
 def get_palette(palette_name):
     if palette_name not in all_palettes.keys():
@@ -63,7 +63,7 @@ def plot_network(
     node_opts = extend(DFLT_NODE_OPTS, node_opts or {})
     line_opts = extend(DFLT_EDGE_OPTS, line_opts or {})
 
-    p = figure(plot_width=figsize[0], plot_height=figsize[1], tools=tools or TOOLS, **figkwargs)
+    p = figure(width=figsize[0], height=figsize[1], tools=tools or TOOLS, **figkwargs)
 
     p.xgrid.grid_line_color = None
     p.ygrid.grid_line_color = None
@@ -72,14 +72,14 @@ def plot_network(
         line_opts = extend(line_opts, { 'line_color': 'line_color', 'alpha': 1.0})
 
     _ = p.multi_line('xs', 'ys', line_width='weight', source=edges_source, **line_opts)
-    r_nodes = p.circle('x', 'y', size=node_size, source=nodes_source, **node_opts)
+    r_nodes = p.circle('x', 'y', radius=node_size, source=nodes_source, **node_opts)
 
     if 'fill_color' in nodes.keys():
         r_nodes.glyph.fill_color = 'fill_color'
 
     if node_description is not None:
-        p.add_tools(HoverTool(renderers=[r_nodes], tooltips=None, callback=WidgetUtility.
-            glyph_hover_callback(nodes_source, 'node_id', text_ids=node_description.index,
+        p.add_tools(HoverTool(renderers=[r_nodes], tooltips=None, callback=glyph_hover_callback2(
+            nodes_source, 'node_id', text_ids=node_description.index,
                                  text=node_description, element_id=element_id)))
 
     if node_label is not None and node_label in nodes.keys():

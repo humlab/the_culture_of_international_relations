@@ -9,19 +9,25 @@ from bokeh.models import ColumnDataSource
 from bokeh.plotting import figure
 
 import common.network.layout as network_layout
+from common import utility, widgets_config
 from common.network import networkx_utility
-from common import utility
-from common import widgets_config
 
 TOOLS = "pan,wheel_zoom,box_zoom,reset,save"
 
 DFLT_PALETTE = bokeh.palettes.Set3[12]
-DFLT_FIG_OPTS = dict(plot_height=900, plot_width=900, tools=TOOLS)
+DFLT_FIG_OPTS: dict[str, int | str] = {
+    "plot_height": 900,
+    "plot_width": 900,
+    "tools": TOOLS,
+}
 
-DFLT_NODE_OPTS = dict(color="green", level="overlay", alpha=1.0)
+DFLT_NODE_OPTS: dict[str, str | float] = {
+    "color": "green",
+    "level": "overlay",
+    "alpha": 1.0,
+}
 
-DFLT_EDGE_OPTS = dict(color="black", alpha=0.2)
-
+DFLT_EDGE_OPTS: dict[str, str | float] = {"color": "black", "alpha": 0.2}
 DFLT_TEXT_OPTS: dict[str, str] = {
     "x": "x",
     "y": "y",
@@ -111,7 +117,7 @@ def plot(  # pylint: disable=W0102
     if weight_scale != 1.0 and "weight" in edges.keys():
         edges["weight"] = [weight_scale * float(x) for x in edges["weight"]]
 
-    edges = dict(source=u, target=v, xs=xs, ys=ys, weights=weights)
+    edges = {"source": u, "target": v, "xs": xs, "ys": ys, "weights": weights}
 
     nodes = networkx_utility.get_positioned_nodes(network, layout)
 
@@ -130,14 +136,12 @@ def plot(  # pylint: disable=W0102
     nodes: Mapping[str, list] = {k: list(nodes[k]) for k in nodes}
 
     edges_source = bokeh.models.ColumnDataSource(edges)  # type: ignore
-    nodes_source = bokeh.models.ColumnDataSource(nodes)  # type: ignore 
+    nodes_source = bokeh.models.ColumnDataSource(nodes)  # type: ignore
 
     node_opts = utility.extend(DFLT_NODE_OPTS, node_opts or {})
     line_opts = utility.extend(DFLT_EDGE_OPTS, line_opts or {})
 
-    p = figure(
-        width=figsize[0], height=figsize[1], tools=tools or TOOLS, **figkwargs
-    )
+    p = figure(width=figsize[0], height=figsize[1], tools=tools or TOOLS, **figkwargs)
 
     p.xgrid.grid_line_color = None
     p.ygrid.grid_line_color = None
@@ -150,7 +154,7 @@ def plot(  # pylint: disable=W0102
 
     if node_description is not None:
         text_source = ColumnDataSource(
-            dict(text_id=node_description.index, text=node_description)
+            {"text_id": node_description.index, "text": node_description}
         )
         p.add_tools(
             bokeh.models.HoverTool(
@@ -248,7 +252,8 @@ def plot_network(nodes, edges, plot_opts, fig_opts=None):
         "edges": edges,
         "nodes": nodes,
         "edges_source": edges_source,
-        "nodes_source": nodes_source,}
+        "nodes_source": nodes_source,
+    }
 
 
 def plot_df(

@@ -184,9 +184,7 @@ def vstepper(vmax) -> int:
 
 def prepare_plot_kwargs(data, chart_type, normalize_values, period_group, vmax = None):
 
-    kwargs = dict(
-        figsize=(1000, 500)
-    )
+    kwargs = { "figsize": (1000, 500) }
 
     label = 'Number of treaties' if not normalize_values else 'Share%'
 

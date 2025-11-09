@@ -1,5 +1,8 @@
 # from __future__ import print_function
+from typing import Any
+
 import ipywidgets as widgets
+from bokeh.models import ColumnDataSource, CustomJS
 
 from common import config, extend
 
@@ -25,14 +28,14 @@ def toggles(description, options, value, **kwopts):  # pylint: disable=W0613
 
 
 def select_multiple(description, options, values, **kwopts):
-    default_opts = dict(
-        options=options,
-        value=values,
-        rows=4,
-        description=description,
-        disabled=False,
-        layout=widgets.Layout(width="180px"),
-    )
+    default_opts: dict[str, Any] = {
+        "options": options,
+        "value": values,
+        "rows": 4,
+        "description": description,
+        "disabled": False,
+        "layout": widgets.Layout(width="180px"),
+    }
     return widgets.SelectMultiple(**extend(default_opts, kwopts))
 
 
@@ -63,11 +66,7 @@ def itext(min, max, value, **kwargs):  # pylint: disable=W0613, W0622
 
 
 def wrap_id_text(dom_id, value=""):
-    value = (
-        "<span class='{}'>{}</span>".format(dom_id, value)
-        if dom_id is not None
-        else value
-    )
+    value = f"<span class='{dom_id}'>{value}</span>" if dom_id is not None else value
     return value
 
 
@@ -121,101 +120,113 @@ def glyph_hover_callback(glyph_source, glyph_id, text_source, element_id):
     return callback
 
 
-def treaty_filter_widget(**kwopts):
-    default_opts = dict(
-        options=config.TREATY_FILTER_OPTIONS,
-        description="Topic filter:",
-        button_style="",
-        tooltips=config.TREATY_FILTER_TOOLTIPS,
-        value="is_cultural",
-        layout=widgets.Layout(width="200px"),
+def glyph_hover_callback2(glyph_source, glyph_id, text_ids, text, element_id):
+    source = ColumnDataSource({"text_id": text_ids, "text": text})
+    code = glyph_hover_js_code(
+        element_id, glyph_id, "text", glyph_name="glyph", glyph_data="glyph_data"
     )
+    callback = CustomJS(args={"glyph": glyph_source, "glyph_data": source}, code=code)
+    return callback
+
+
+def treaty_filter_widget(**kwopts):
+    default_opts: dict[str, Any] = {
+        "options": config.TREATY_FILTER_OPTIONS,
+        "description": "Topic filter:",
+        "button_style": "",
+        "tooltips": config.TREATY_FILTER_TOOLTIPS,
+        "value": "is_cultural",
+        "layout": widgets.Layout(width="200px"),
+    }
     return widgets.ToggleButtons(**extend(default_opts, kwopts))
 
 
 def period_group_widget(index_as_value=False, **kwopts):
-    default_opts = dict(
-        options={
+    default_opts: dict[str, Any] = {
+        "options": {
             x["title"]: i if index_as_value else x
             for i, x in enumerate(config.DEFAULT_PERIOD_GROUPS)
         },
-        value=(
+        "value": (
             len(config.DEFAULT_PERIOD_GROUPS) - 1
             if index_as_value
             else config.DEFAULT_PERIOD_GROUPS[-1]
         ),
-        description="Divisions",
-        layout=widgets.Layout(width="200px"),
-    )
+        "description": "Divisions",
+        "layout": widgets.Layout(width="200px"),
+    }
     return widgets.Dropdown(**extend(default_opts, kwopts))
 
 
 def party_name_widget(**kwopts):
-    default_opts = dict(
-        options=config.PARTY_NAME_OPTIONS,
-        value="party_name",
-        description="Name",
-        layout=widgets.Layout(width="200px"),
-    )
+    default_opts: dict[str, Any] = {
+        "options": config.PARTY_NAME_OPTIONS,
+        "value": "party_name",
+        "description": "Name",
+        "layout": widgets.Layout(width="200px"),
+    }
     return widgets.Dropdown(**extend(default_opts, kwopts))
 
 
 def aggregate_function_widget(**kwopts):
-    default_opts = dict(
-        options=["mean", "sum", "std", "min", "max"],
-        value="mean",
-        description="Aggregate",
-        layout=widgets.Layout(width="200px"),
-    )
+    default_opts: dict[str, Any] = {
+        "options": ["mean", "sum", "std", "min", "max"],
+        "value": "mean",
+        "description": "Aggregate",
+        "layout": widgets.Layout(width="200px"),
+    }
     return widgets.Dropdown(**extend(default_opts, kwopts))
 
 
 def years_widget(**kwopts):
-    default_opts = dict(
-        options=[], value=None, description="Year", layout=widgets.Layout(width="200px")
-    )
+    default_opts: dict[str, Any] = {
+        "options": [],
+        "value": None,
+        "description": "Year",
+        "layout": widgets.Layout(width="200px"),
+    }
     return widgets.Dropdown(**extend(default_opts, kwopts))
 
 
 def parties_widget(**kwopts):
-    default_opts = dict(
-        options=[],
-        value=None,
-        rows=12,
-        description="Parties",
-        disabled=False,
-        layout=widgets.Layout(width="180px"),
-    )
+    default_opts: dict[str, Any] = {
+        "options": [],
+        "value": None,
+        "rows": 12,
+        "description": "Parties",
+        "disabled": False,
+        "layout": widgets.Layout(width="180px"),
+    }
     return widgets.SelectMultiple(**extend(default_opts, kwopts))
 
 
 def topic_groups_widget(**kwopts):
-    default_opts = dict(
-        options=config.TOPIC_GROUP_MAPS.keys(),
-        description="Category:",
-        value="7CORR",
-        layout=widgets.Layout(width="200px"),
-    )
+    default_opts: dict[str, Any] = {
+        "options": config.TOPIC_GROUP_MAPS.keys(),
+        "description": "Category:",
+        "value": "7CORR",
+        "layout": widgets.Layout(width="200px"),
+    }
     return widgets.Dropdown(**extend(default_opts, kwopts))
 
 
 def topic_groups_widget2(**kwopts):
-    default_opts = dict(
-        options=config.TOPIC_GROUP_MAPS,
-        value=config.TOPIC_GROUP_MAPS["7CORR"],
-        description="Category:",
-        layout=widgets.Layout(width="200px"),
-    )
+    default_opts: dict[str, Any] = {
+        "options": config.TOPIC_GROUP_MAPS,
+        "value": config.TOPIC_GROUP_MAPS["7CORR"],
+        "description": "Category:",
+        "layout": widgets.Layout(width="200px"),
+    }
     return widgets.Dropdown(**extend(default_opts, kwopts))
 
 
 def plot_style_widget(**kwopts):
-    default_opts = dict(
-        options=[x for x in config.MATPLOTLIB_PLOT_STYLES if "seaborn" in x],
-        value="seaborn-pastel",
-        description="Style:",
-        layout=widgets.Layout(width="200px"),
-    )
+    default_opts: dict[str, Any] = {
+        "options": [x for x in config.MATPLOTLIB_PLOT_STYLES if "seaborn" in x],
+        "value": "seaborn-pastel",
+        "description": "Style:",
+        "layout": widgets.Layout(width="200px"),
+    }
     return widgets.Dropdown(**extend(default_opts, kwopts))
 
 
@@ -230,12 +241,12 @@ def plot_style_widget(**kwopts):
 
 
 def recode_7corr_widget(**kwopts):
-    default_opts = dict(
-        description="Recode 7CORR",
-        tooltip="Recode all treaties with cultural=yes as 7CORR",
-        value=True,
-        layout=widgets.Layout(width="120px"),
-    )
+    default_opts: dict[str, Any] = {
+        "description": "Recode 7CORR",
+        "tooltip": "Recode all treaties with cultural=yes as 7CORR",
+        "value": True,
+        "layout": widgets.Layout(width="120px"),
+    }
     return widgets.ToggleButton(**extend(default_opts, kwopts))
 
 

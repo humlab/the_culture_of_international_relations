@@ -13,7 +13,12 @@ def project_root(folder: str) -> str:
 
 DATA_FOLDER: str = os.path.join(project_root(os.getcwd()), "data")
 
-LANGUAGE_MAP: dict[str, str] = {"en": "english", "fr": "french", "it": "other", "de": "other"}
+LANGUAGE_MAP: dict[str, str] = {
+    "en": "english",
+    "fr": "french",
+    "it": "other",
+    "de": "other",
+}
 
 AGGREGATES: dict[str, np.ufunc] = {"mean": np.mean, "sum": np.sum, "max": np.max, "std": np.std}  # type: ignore
 
@@ -94,7 +99,9 @@ DEFAULT_PERIOD_GROUPS: list[dict[str, Any]] = [
     },
 ]
 
-PERIOD_GROUPS_ID_MAP: dict[Any, dict[str, Any]] = {x["id"]: x for x in DEFAULT_PERIOD_GROUPS}
+PERIOD_GROUPS_ID_MAP: dict[Any, dict[str, Any]] = {
+    x["id"]: x for x in DEFAULT_PERIOD_GROUPS
+}
 
 DEFAULT_TOPIC_GROUPS: dict[str, dict[str, list[str]]] = {
     "7CORR, 7SCIEN, and 7EDUC": {
@@ -390,7 +397,9 @@ CHART_TYPES: list[KindOfChart] = [
 
 CHART_TYPE_MAP: dict[str, KindOfChart] = {x.name: x for x in CHART_TYPES}
 CHART_TYPE_OPTIONS: dict[str, str] = {x.name: x.name for x in CHART_TYPES}
-CHART_TYPE_NAME_OPTIONS: list[tuple[str, str]] = [(x.description, x.name) for x in CHART_TYPES]
+CHART_TYPE_NAME_OPTIONS: list[tuple[str, str]] = [
+    (x.description, x.name) for x in CHART_TYPES
+]
 
 # output_charts = ([x.description for x in CHART_TYPES], CHART_TYPES)
 

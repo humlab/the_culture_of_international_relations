@@ -1,4 +1,7 @@
+from typing import Sequence
+
 import matplotlib.pyplot as plt
+import pandas as pd
 import wordcloud
 
 if "__file__" in globals():
@@ -17,7 +20,9 @@ from bokeh.plotting import figure
 from .network_utility import NetworkMetricHelper, NetworkUtility
 
 if "extend" not in globals():
-    extend = lambda a, b: a.update(b) or a
+
+    def extend(a, b):
+        return a.update(b) or a
 
 
 class WordcloudUtility:
@@ -59,18 +64,25 @@ layout_algorithms = {
 class PlotNetworkUtility:
 
     @staticmethod
-    def layout_args(layout_algorithm, network, scale):
+    def layout_args(layout_algorithm, network: nx.Graph, scale: float):
+        args = {}
         if layout_algorithm == "Shell":
             if nx.is_bipartite(network):
                 nodes, other_nodes = get_bipartite_node_set(network, bipartite=0)
-                args = dict(nlist=[nodes, other_nodes])
+                args = {"nlist": [nodes, other_nodes]}
 
         if layout_algorithm == "Fruchterman-Reingold":
             k = scale  # / math.sqrt(network.number_of_nodes())
-            args = dict(dim=2, k=k, iterations=20, weight="weight", scale=0.5)
+            args = {
+                "dim": 2,
+                "k": k,
+                "iterations": 20,
+                "weight": "weight",
+                "scale": 0.5,
+            }
 
         if layout_algorithm == "Kamada-Kawai":
-            args = dict(dim=2, weight="weight", scale=1.0)
+            args = {"dim": 2, "weight": "weight", "scale": 1.0}
 
         return args
 
@@ -78,7 +90,7 @@ class PlotNetworkUtility:
     def get_layout_algorithm(layout_algorithm):
         if layout_algorithm not in layout_algorithms:
             raise ValueError(f"Unknown algorithm {layout_algorithm}")
-        return layout_algorithms.get(layout_algorithm, None)
+        return layout_algorithms[layout_algorithm]
 
     @staticmethod
     def project_series_to_range(series, low, high):
@@ -87,22 +99,22 @@ class PlotNetworkUtility:
 
     @staticmethod
     def plot_network(
-        network,
-        layout_algorithm=None,
-        scale=1.0,
-        threshold=0.0,
-        node_description=None,  # pylint: disable=unused-argument
-        node_proportions=None,
-        weight_scale=5.0,
-        normalize_weights=True,
-        node_opts=None,
-        line_opts=None,
-        element_id="nx_id3",  # pylint: disable=unused-argument
-        figsize=(900, 900),
+        network: nx.Graph,
+        layout_algorithm: str | None = None,
+        scale: float = 1.0,
+        threshold: float = 0.0,
+        node_description: str | None = None,  # pylint: disable=unused-argument
+        node_proportions: pd.Series | None = None,
+        weight_scale: float = 5.0,
+        normalize_weights: bool = True,
+        node_opts: dict[str, str | float] | None = None,
+        line_opts: dict[str, str | float] | None = None,
+        element_id: str = "nx_id3",  # pylint: disable=unused-argument
+        figsize: tuple[int, int] = (900, 900),
     ):
         if threshold > 0:
             values = nx.get_edge_attributes(network, "weight").values()
-            max_weight = max(1.0, max(values))
+            max_weight: float = max(1.0, max(values))
 
             print(f"Max weigth: {max_weight}")
             print(f"Mean weigth: {sum(values) / len(values)}")
@@ -113,7 +125,7 @@ class PlotNetworkUtility:
                 if d["weight"] >= (threshold * max_weight)
             ]
 
-            sub_network = network.edge_subgraph(filter_edges)
+            sub_network: nx.Graph = network.edge_subgraph(filter_edges)
         else:
             sub_network = network
 
@@ -121,31 +133,35 @@ class PlotNetworkUtility:
         layout = (PlotNetworkUtility.get_layout_algorithm(layout_algorithm))(
             sub_network, **args
         )
-        lines_source = NetworkUtility.get_edges_source(
-            sub_network, layout, scale=weight_scale, normalize=normalize_weights
+        # lines_source: bm.ColumnDataSource = NetworkUtility.get_edges_source(
+        #     sub_network, layout, scale=weight_scale, normalize=normalize_weights
+        # )
+        nodes_source: bm.ColumnDataSource = NetworkUtility.create_nodes_data_source(
+            sub_network, layout
         )
-        nodes_source = NetworkUtility.create_nodes_data_source(sub_network, layout)
 
-        nodes_community = NetworkMetricHelper.compute_partition(sub_network)
-        community_colors = NetworkMetricHelper.partition_colors(
+        nodes_community: Sequence[int] = NetworkMetricHelper.compute_partition(
+            sub_network
+        )
+        community_colors: list[str] = NetworkMetricHelper.partition_colors(
             nodes_community, bokeh.palettes.Category20[20]
         )
 
         nodes_source.add(nodes_community, "community")
         nodes_source.add(community_colors, "community_color")
 
-        nodes_size = 5
+        nodes_size: int | str = 5
         if node_proportions is not None:
             # NOTE!!! By pd index - not iloc!!
             nodes_weight = node_proportions.loc[list(sub_network.nodes)]
-            nodes_weight = PlotNetworkUtility.project_series_to_range(
+            nodes_weight: pd.Series = PlotNetworkUtility.project_series_to_range(
                 nodes_weight, 20, 60
             )
-            nodes_size = "size"
+            nodes_size: str = "size"
             nodes_source.add(nodes_weight, nodes_size)
 
-        node_opts = extend(DFLT_NODE_OPTS, node_opts or {})
-        line_opts = extend(DFLT_EDGE_OPTS, line_opts or {})
+        node_opts = DFLT_NODE_OPTS | (node_opts or {})
+        line_opts = DFLT_EDGE_OPTS | (line_opts or {})
 
         p = figure(
             width=figsize[0],

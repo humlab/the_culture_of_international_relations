@@ -1,4 +1,4 @@
-from typing import Sequence
+from typing import Any, Sequence
 
 import bokeh.models as bm
 import community  # pip3 install python-louvain packages
@@ -11,9 +11,9 @@ if "extend" not in globals():
 if "filter_kwargs" not in globals():
     import inspect
 
-    filter_kwargs = lambda f, args: {
-        k: args[k] for k in args.keys() if k in inspect.getargspec(f).args
-    }
+    def filter_kwargs(f, args) -> dict[Any, Any]:
+        return {k: args[k] for k in args.keys() if k in inspect.getargspec(f).args}
+
 
 DISTANCE_METRICS: dict[str, str] = {
     # 'Bray-Curtis': 'braycurtis',
@@ -106,7 +106,9 @@ class NetworkUtility:
         return zip(*data)
 
     @staticmethod
-    def get_edges_source(network: nx.Graph, layout, scale=1.0, normalize=False) -> bm.ColumnDataSource:
+    def get_edges_source(
+        network: nx.Graph, layout, scale=1.0, normalize=False
+    ) -> bm.ColumnDataSource:
 
         _, _, weights, xs, ys = NetworkUtility.get_edge_layout_data(network, layout)
         norm = max(weights) if normalize else 1.0
@@ -115,7 +117,9 @@ class NetworkUtility:
         return lines_source
 
     @staticmethod
-    def get_node_subset_source(network: nx.Graph, layout, node_list=None) -> bm.ColumnDataSource:  # pylint: disable=unused-argument
+    def get_node_subset_source(
+        network: nx.Graph, layout, node_list=None
+    ) -> bm.ColumnDataSource:  # pylint: disable=unused-argument
 
         layout_items = (
             layout.items()
@@ -130,20 +134,25 @@ class NetworkUtility:
         return nodes_source
 
     @staticmethod
-    def create_nodes_data_source(network: nx.Graph, layout) -> bm.ColumnDataSource:  # pylint: disable=unused-argument
+    def create_nodes_data_source(
+        network: nx.Graph, layout
+    ) -> bm.ColumnDataSource:  # pylint: disable=unused-argument
 
         nodes, nodes_coordinates = zip(
-            *sorted([x for x in layout.items()])
+            *sorted(x for x in layout.items())
         )  # if x[0] in line_nodes]))
         nodes_xs, nodes_ys = list(zip(*nodes_coordinates))
         nodes_source = bm.ColumnDataSource(
-            {'x': nodes_xs, 'y': nodes_ys, 'name': nodes, 'node_id': nodes}
+            {"x": nodes_xs, "y": nodes_ys, "name": nodes, "node_id": nodes}
         )
         return nodes_source
 
     @staticmethod
     def create_network(
-        df: pd.DataFrame, source_field: str = "source", target_field: str = "target", weight: str = "weight"
+        df: pd.DataFrame,
+        source_field: str = "source",
+        target_field: str = "target",
+        weight: str = "weight",
     ) -> nx.Graph:
 
         G: nx.Graph = nx.Graph()
@@ -160,7 +169,10 @@ class NetworkUtility:
 
     @staticmethod
     def create_bipartite_network(
-        df: pd.DataFrame, source_field: str = "source", target_field: str = "target", weight: str = "weight"
+        df: pd.DataFrame,
+        source_field: str = "source",
+        target_field: str = "target",
+        weight: str = "weight",
     ) -> nx.Graph:
 
         G: nx.Graph = nx.Graph()
@@ -170,7 +182,7 @@ class NetworkUtility:
             zip(
                 df[source_field].values,
                 df[target_field].values,
-                df[weight].apply(lambda x: dict(weight=x)),
+                df[weight].apply(lambda x: {"weight": x}),
             )
         )
         G.add_edges_from(edges)
@@ -185,7 +197,9 @@ class NetworkUtility:
         return list(nodes), list(others)
 
     @staticmethod
-    def create_network_from_xyw_list(values: list, threshold: float=0.0) -> nx.Graph:  # pylint: disable=unused-argument
+    def create_network_from_xyw_list(
+        values: list, threshold: float = 0.0
+    ) -> nx.Graph:  # pylint: disable=unused-argument
         graph: nx.Graph = nx.Graph()
         graph.add_weighted_edges_from(values)
         return graph

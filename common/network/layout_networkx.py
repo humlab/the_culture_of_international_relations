@@ -11,14 +11,14 @@ from common.utility import extend_single
 
 
 def nx_kamada_kawai_layout(G, **kwargs):  # pylint: disable=W0613
-    args = dict(weight="weight", scale=1.0)
+    args = {"weight": "weight", "scale": 1.0}
     layout = nx.kamada_kawai_layout(G, **args)
     return layout, None
 
 
 def nx_spring_layout(G, **kwargs):
     k = kwargs.get("K", 0.1)
-    args = dict(weight="weight", scale=1.0, k=k)
+    args = {"weight": "weight", "scale": 1.0, "k": k}
     args = extend_single(args, kwargs, "iterations")
     layout = nx.spring_layout(G, **args)
     return layout, None
@@ -26,7 +26,7 @@ def nx_spring_layout(G, **kwargs):
 
 def nx_shell_layout(G, **kwargs):  # pylint: disable=W0613
     if not nx.is_bipartite(G):
-        raise Exception("NX: Shell layout only applicable on bipartite graphs")
+        raise ValueError("NX: Shell layout only applicable on bipartite graphs")
     nodes, other_nodes = get_bipartite_node_set(G, bipartite=0)
     layout = nx.shell_layout(G, nlist=[nodes, other_nodes])
     return layout, None
