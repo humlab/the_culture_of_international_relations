@@ -1,14 +1,10 @@
 
 import collections
-import fnmatch
-import itertools
-import os
 import re
 
 import pandas as pd
 import text_corpus
 import textacy
-import textacy_corpus_utility
 
 import common.config as config
 # import domain.tCoIR.treaty_state as treaty_repository
@@ -19,7 +15,7 @@ import common.utility as utility
 
 logger = utility.getLogger('corpus_text_analysis')
 
-DATA_FOLDER = config.DATA_FOLDER
+DATA_FOLDER: str = config.DATA_FOLDER
 
 CORPUS_NAME_PATTERN = 'tCoIR_*.txt.zip'
 CORPUS_TEXT_FILES_PATTERN = '*.txt'
