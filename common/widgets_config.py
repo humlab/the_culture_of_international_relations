@@ -1,5 +1,5 @@
 # from __future__ import print_function
-from typing import Any
+from typing import Any, Sequence
 
 import ipywidgets as widgets
 from bokeh.models import ColumnDataSource, CustomJS
@@ -10,7 +10,7 @@ from common import config, extend
 #    print('Package named {!r}; __name__ is {!r}'.format(__package__, __name__))
 
 
-def kwargser(d):
+def kwargser(d) -> dict[str, Any]:
     args = dict(d)
     if "kwargs" in args:
         kwargs = args["kwargs"]
@@ -68,15 +68,15 @@ def wrap_id_text(dom_id, value=""):
     return value
 
 
-def text(dom_id=None, value=""):
-    return widgets.HTML(value=wrap_id_text(dom_id, value), placeholder="", description="")
+# def text(dom_id=None, value=""):
+#     return widgets.HTML(value=wrap_id_text(dom_id, value), placeholder="", description="")
 
 
-def button(description: str, **kwargs):  # pylint: disable=W0613
-    return widgets.Button(**kwargser(locals()))
+# def button(description: str, **kwargs):  # pylint: disable=W0613
+#     return widgets.Button(**kwargser(locals()))
 
 
-def glyph_hover_js_code(element_id, id_name, text_name, glyph_name="glyph", glyph_data="glyph_data"):
+def glyph_hover_js_code(element_id: str, id_name: str, text_name: str, glyph_name: str="glyph", glyph_data: str="glyph_data") -> str:
     return (
         """
         var indices = cb_data.index['1d'].indices;
@@ -104,14 +104,14 @@ def glyph_hover_js_code(element_id, id_name, text_name, glyph_name="glyph", glyp
     )
 
 
-def glyph_hover_callback(glyph_source, glyph_id, text_source, element_id):
+def glyph_hover_callback(glyph_source, glyph_id, text_source, element_id) -> CustomJS:
     code = glyph_hover_js_code(element_id, glyph_id, "text", glyph_name="glyph", glyph_data="glyph_data")
     callback = CustomJS(args={"glyph": glyph_source, "glyph_data": text_source}, code=code)
     return callback
 
 
-def glyph_hover_callback2(glyph_source, glyph_id, text_ids, text, element_id):
-    source = ColumnDataSource({"text_id": text_ids, "text": text})
+def glyph_hover_callback2(glyph_source, glyph_id, text_ids: Sequence[str], text_source: Sequence[str], element_id: str) -> CustomJS:
+    source = ColumnDataSource({"text_id": text_ids, "text": text_source})
     code = glyph_hover_js_code(element_id, glyph_id, "text", glyph_name="glyph", glyph_data="glyph_data")
     callback = CustomJS(args={"glyph": glyph_source, "glyph_data": source}, code=code)
     return callback
