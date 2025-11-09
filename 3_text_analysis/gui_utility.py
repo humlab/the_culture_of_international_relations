@@ -1,14 +1,13 @@
 
-import textacy_corpus_utility as textacy_utility
-
+import pandas as pd
 from domain_logic_config import current_domain as domain_logic
 
 def get_treaty_dropdown_options(wti_index, corpus):
     
     def format_treaty_name(x):
-        return '{}: {} {} {} {}'.format(x.name, x['signed_year'], x['topic'], x['party1'], x['party2'])
+        return f'{x.name}: {x["signed_year"]} {x["topic"]} {x["party1"]} {x["party2"]}'
     
-    treaties = domain_logic.get_corpus_documents(corpus)
+    treaties: pd.DataFrame = domain_logic.get_corpus_documents(corpus)
     df = wti_index.treaties.loc[treaties.treaty_id]
 
     options = [ (v, k) for k, v in df.apply(format_treaty_name, axis=1).to_dict().items() ]
