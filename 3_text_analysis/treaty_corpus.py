@@ -1,9 +1,7 @@
 import fnmatch
-import glob
 import logging
 import os
 import re
-import typing.re
 import zipfile
 
 import gensim
@@ -142,7 +140,7 @@ class TreatyCorpus(TextCorpus):
                  character_filters=None,
                  tokenizer=None,
                  token_filters=None,
-                 bigram_transform=False
+                 bigram_transform=False  # pylint: disable=unused-argument
     ):
         self.stream = stream
         self.filenames = None
@@ -268,8 +266,7 @@ class MmCorpusStatisticsService():
     def get_total_token_frequencies(self):
         dictionary = self.corpus.dictionary
         freqencies = np.zeros(len(dictionary.id2token))
-        document_stats = []
-        for document in corpus:
+        for document in self.corpus:
             for i, f in document:
                 freqencies[i] += f
         return freqencies
