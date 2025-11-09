@@ -543,7 +543,8 @@ class TreatyState:
     def filter_by_is_cultural(self, df, treaty_filter):
 
         if treaty_filter == "is_cultural":
-            return df.loc[(df.is_cultural == True)]
+            # NOTE: changed from df.is_cultural == True to bool(...) to avoid pandas warning
+            return df.loc[bool(df.is_cultural)]
 
         if treaty_filter == "is_7cult":
             return df.loc[(df.topic1 == "7CULT")]
