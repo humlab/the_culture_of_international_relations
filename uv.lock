@@ -1800,6 +1800,15 @@ wheels = [
 ]
 
 [[package]]
+name = "pydotplus"
+version = "2.0.2"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "pyparsing" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/60/bf/62567830b700d9f6930e9ab6831d6ba256f7b0b730acb37278b0ccdffacf/pydotplus-2.0.2.tar.gz", hash = "sha256:91e85e9ee9b85d2391ead7d635e3d9c7f5f44fd60a60e59b13e2403fa66505c4", size = 278677, upload-time = "2014-12-09T00:53:49.515Z" }
+
+[[package]]
 name = "pygments"
 version = "2.19.2"
 source = { registry = "https://pypi.org/simple" }
@@ -2419,6 +2428,7 @@ dependencies = [
     { name = "matplotlib" },
     { name = "networkx" },
     { name = "nltk" },
+    { name = "pydotplus" },
     { name = "scipy" },
     { name = "wordcloud" },
 ]
@@ -2439,6 +2449,7 @@ requires-dist = [
     { name = "matplotlib", specifier = ">=3.10.7" },
     { name = "networkx", specifier = ">=3.5" },
     { name = "nltk", specifier = ">=3.9.2" },
+    { name = "pydotplus", specifier = ">=2.0.2" },
     { name = "scipy", specifier = ">=1.16.3" },
     { name = "wordcloud", specifier = ">=1.9.4" },
 ]
