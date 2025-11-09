@@ -164,14 +164,14 @@ class TreatyState:
         is_cultural_yesno_column: str = "is_cultural_yesno_org",
     ) -> None:  # pylint: disable=W0102
         filename = filename or "Treaties_Master_List_Treaties.csv"
-        self.data_folder = data_folder
+        self.data_folder: str = data_folder
         self.period_groups = period_groups or config.DEFAULT_PERIOD_GROUPS
-        self.treaties_skip_columns = (skip_columns or []) + [
+        self.treaties_skip_columns: list[str] = (skip_columns or []) + [
             "sequence",
             "is_cultural_yesno",
         ]
-        self.treaties_columns = treaties_column_names
-        self.is_cultural_yesno_column = is_cultural_yesno_column
+        self.treaties_columns: list[str] = treaties_column_names
+        self.is_cultural_yesno_column: str = is_cultural_yesno_column
         self.csv_files = [
             (filename, "treaties", "Treaties_Master_List.xlsx", "Treaties"),
             ("country_continent.csv", "country_continent", None, None),
@@ -196,7 +196,7 @@ class TreatyState:
 
         self.groups = self.get_groups()
         self.continents = self.get_continents()
-        self.parties = self.get_parties()
+        self.parties: pd.DataFrame = self.get_parties()
 
         self._treaties = None
         self._stacked_treaties = None
@@ -210,7 +210,7 @@ class TreatyState:
         party1 = self.treaties.party1.unique().tolist()
         party2 = self.treaties.party2.unique().tolist()
         df_party = pd.DataFrame(data={"party": list(set(party1 + party2))})
-        df = df_party.merge(
+        df: pd.DataFrame = df_party.merge(
             right=self.parties, left_on="party", right_index=True, how="left"
         )
 
@@ -253,7 +253,7 @@ class TreatyState:
 
     def _read_data(self):
         data = {}
-        na_values = ["#N/A", "N/A", "NULL", "NaN", "-NaN"]
+        na_values: list[str] = ["#N/A", "N/A", "NULL", "NaN", "-NaN"]
         for filename, key, xls_filename, xls_sheet in self.csv_files:
             logger.debug("Reading file: {}...".format(filename))
             path = os.path.join(self.data_folder, filename)
@@ -261,7 +261,7 @@ class TreatyState:
                 assert xls_filename is not None
                 xls_path = os.path.join(self.data_folder, xls_filename)
                 assert os.path.exists(xls_path)
-                df = pd.read_excel(xls_path, sheet_name=xls_sheet)
+                df: pd.DataFrame = pd.read_excel(xls_path, sheet_name=xls_sheet)
                 df.to_csv(path, sep="\t", index=True)
             data[key] = pd.read_csv(
                 path, sep="\t", low_memory=False, keep_default_na=False, na_values=None
@@ -931,7 +931,7 @@ def current_wti_index():
     return WTI_INDEX_CONTAINER.value
 
 
-def load_wti_index_with_gui(data_folder=None):
+def load_wti_index_with_gui(data_folder=None) -> None:
 
     global WTI_INDEX_CONTAINER
 
