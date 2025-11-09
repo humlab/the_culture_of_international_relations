@@ -1,12 +1,10 @@
 # from __future__ import print_function
 import ipywidgets as widgets
 
-import common.config as config
-from common import extend
+from common import extend, config
 
 # if __package__:
 #    print('Package named {!r}; __name__ is {!r}'.format(__package__, __name__))
-
 
 
 def kwargser(d):
@@ -16,9 +14,6 @@ def kwargser(d):
         del args["kwargs"]
         args.update(kwargs)
     return args
-
-
-# FIXME Keep project specific stuff in widget_config", move generic to "widget_utility"
 
 
 def toggle(description, value, **kwargs):  # pylint: disable=W0613
@@ -82,7 +77,7 @@ def text(dom_id=None, value=""):
     )
 
 
-def button(description):
+def button(description: str, **kwargs):  # pylint: disable=W0613
     return widgets.Button(**kwargser(locals()))
 
 
