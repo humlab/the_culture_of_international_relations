@@ -198,8 +198,8 @@ class NetworkUtility:
 
     @staticmethod
     def create_network_from_xyw_list(
-        values: list, threshold: float = 0.0
-    ) -> nx.Graph:  # pylint: disable=unused-argument
+        values: list, threshold: float = 0.0  # pylint: disable=unused-argument
+    ) -> nx.Graph:
         graph: nx.Graph = nx.Graph()
         graph.add_weighted_edges_from(values)
         return graph

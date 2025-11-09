@@ -132,8 +132,8 @@ def plot(  # pylint: disable=W0102
             y + r for (y, r) in zip(nodes["y"], [r / 2.0 + 8 for r in nodes[node_size]])
         ]
 
-    edges: Mapping[str, list] = {k: list(edges[k]) for k in edges}
-    nodes: Mapping[str, list] = {k: list(nodes[k]) for k in nodes}
+    edges: Mapping[str, list] = {k: list(v) for k, v in edges.items()}
+    nodes: Mapping[str, list] = {k: list(v) for k, v in nodes.items()}
 
     edges_source = bokeh.models.ColumnDataSource(edges)  # type: ignore
     nodes_source = bokeh.models.ColumnDataSource(nodes)  # type: ignore
@@ -208,7 +208,7 @@ def plot_network(nodes, edges, plot_opts, fig_opts=None):
     if node_description is not None:
         element_id = plot_opts.get("element_id", "_")
         text_source = ColumnDataSource(
-            dict(text_id=node_description.index, text=node_description)
+            {"text_id": node_description.index, "text": node_description}
         )
         p.add_tools(
             bokeh.models.HoverTool(
