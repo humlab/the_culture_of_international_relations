@@ -1,11 +1,9 @@
-import math
-from itertools import product
+from pandas import pd
+from typing import Sequence
 
 import bokeh.models as bm
-import bokeh.palettes
 import community  # pip3 install python-louvain packages
 import networkx as nx
-from networkx.algorithms import bipartite
 
 if "extend" not in globals():
     extend = lambda a, b: a.update(b) or a
@@ -17,7 +15,7 @@ if "filter_kwargs" not in globals():
         k: args[k] for k in args.keys() if k in inspect.getargspec(f).args
     }
 
-DISTANCE_METRICS = {
+DISTANCE_METRICS: dict[str, str] = {
     # 'Bray-Curtis': 'braycurtis',
     # 'Canberra': 'canberra',
     # 'Chebyshev': 'chebyshev',
@@ -37,7 +35,7 @@ DISTANCE_METRICS = {
 class NetworkMetricHelper:
 
     @staticmethod
-    def compute_centrality(network):
+    def compute_centrality(network: nx.Graph) -> list[float]:
         centrality = nx.algorithms.centrality.betweenness_centrality(network)
         _, nodes_centrality = zip(*sorted(centrality.items()))
         max_centrality = max(nodes_centrality)
@@ -45,9 +43,9 @@ class NetworkMetricHelper:
         return centrality_vector
 
     @staticmethod
-    def compute_partition(network):
+    def compute_partition(network: nx.Graph) -> Sequence[int]:
         partition = community.best_partition(network)
-        p_, nodes_community = zip(*sorted(partition.items()))
+        _, nodes_community = zip(*sorted(partition.items()))
         return nodes_community
 
     @staticmethod
@@ -107,9 +105,8 @@ class NetworkUtility:
 
         return zip(*data)
 
-    # FIXME Merge these two methods, return dict instead (lose bokeh dependency)
     @staticmethod
-    def get_edges_source(network, layout, scale=1.0, normalize=False):
+    def get_edges_source(network: nx.Graph, layout, scale=1.0, normalize=False) -> bm.ColumnDataSource:
 
         _, _, weights, xs, ys = NetworkUtility.get_edge_layout_data(network, layout)
         norm = max(weights) if normalize else 1.0
@@ -118,7 +115,7 @@ class NetworkUtility:
         return lines_source
 
     @staticmethod
-    def get_node_subset_source(network, layout, node_list=None):
+    def get_node_subset_source(network: nx.Graph, layout, node_list=None) -> bm.ColumnDataSource:  # pylint: disable=unused-argument
 
         layout_items = (
             layout.items()
@@ -133,23 +130,23 @@ class NetworkUtility:
         return nodes_source
 
     @staticmethod
-    def create_nodes_data_source(network, layout):
+    def create_nodes_data_source(network: nx.Graph, layout) -> bm.ColumnDataSource:  # pylint: disable=unused-argument
 
         nodes, nodes_coordinates = zip(
             *sorted([x for x in layout.items()])
         )  # if x[0] in line_nodes]))
         nodes_xs, nodes_ys = list(zip(*nodes_coordinates))
         nodes_source = bm.ColumnDataSource(
-            dict(x=nodes_xs, y=nodes_ys, name=nodes, node_id=nodes)
+            {'x': nodes_xs, 'y': nodes_ys, 'name': nodes, 'node_id': nodes}
         )
         return nodes_source
 
     @staticmethod
     def create_network(
-        df, source_field="source", target_field="target", weight="weight"
-    ):
+        df: pd.DataFrame, source_field: str = "source", target_field: str = "target", weight: str = "weight"
+    ) -> nx.Graph:
 
-        G = nx.Graph()
+        G: nx.Graph = nx.Graph()
         nodes = list(set(list(df[source_field].values) + list(df[target_field].values)))
         edges = [
             (x, y, {weight: z})
@@ -163,10 +160,10 @@ class NetworkUtility:
 
     @staticmethod
     def create_bipartite_network(
-        df, source_field="source", target_field="target", weight="weight"
-    ):
+        df: pd.DataFrame, source_field: str = "source", target_field: str = "target", weight: str = "weight"
+    ) -> nx.Graph:
 
-        G = nx.Graph()
+        G: nx.Graph = nx.Graph()
         G.add_nodes_from(set(df[source_field].values), bipartite=0)
         G.add_nodes_from(set(df[target_field].values), bipartite=1)
         edges = list(
@@ -188,10 +185,10 @@ class NetworkUtility:
         return list(nodes), list(others)
 
     @staticmethod
-    def create_network_from_xyw_list(values, threshold=0.0):
-        G = nx.Graph()
-        G.add_weighted_edges_from(values)
-        return G
+    def create_network_from_xyw_list(values: list, threshold: float=0.0) -> nx.Graph:  # pylint: disable=unused-argument
+        graph: nx.Graph = nx.Graph()
+        graph.add_weighted_edges_from(values)
+        return graph
 
     # @staticmethod
     # def create_network_from_correlation_matrix(matrix, threshold=0.0):
