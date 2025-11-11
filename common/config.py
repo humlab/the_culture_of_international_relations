@@ -318,7 +318,6 @@ output_formats: dict[str, str] = {
 }
 
 
-
 class BunchOfStuff:
     def __init__(self, **kwds) -> None:
         self.__dict__.update(kwds)

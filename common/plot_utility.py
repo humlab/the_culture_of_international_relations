@@ -5,13 +5,14 @@ import bokeh.palettes
 import matplotlib.pyplot as plt
 import networkx as nx
 import pandas as pd
-import wordcloud
-
 from bokeh.plotting import figure
 
 from common.network.networkx_utility import get_bipartite_node_set
 
 from .network_utility import NetworkMetricHelper, NetworkUtility
+
+# import wordcloud
+
 
 if "__file__" in globals():
     import os
@@ -22,29 +23,28 @@ if "__file__" in globals():
         sys.path.append(curdir)
 
 
-
 if "extend" not in globals():
 
     def extend(a, b):
         return a.update(b) or a
 
 
-class WordcloudUtility:
+# class WordcloudUtility:
 
-    def plot_wordcloud(self, df_data, token="token", weight="weight", figsize=(12, 12), dpi=100, **args):
-        token_weights = dict({tuple(x) for x in df_data[[token, weight]].values})
-        image = wordcloud.WordCloud(
-            **args,
-        )
-        image.fit_words(token_weights)
-        plt.figure(figsize=figsize, dpi=dpi)
-        plt.imshow(image, interpolation="bilinear")
-        plt.axis("off")
-        # plt.set_facecolor('w')
-        # plt.tight_layout()
-        plt.show()
+#     def plot_wordcloud(self, df_data, token="token", weight="weight", figsize=(12, 12), dpi=100, **args):
+#         token_weights = dict({tuple(x) for x in df_data[[token, weight]].values})
+#         image = wordcloud.WordCloud(
+#             **args,
+#         )
+#         image.fit_words(token_weights)
+#         plt.figure(figsize=figsize, dpi=dpi)
+#         plt.imshow(image, interpolation="bilinear")
+#         plt.axis("off")
+#         # plt.set_facecolor('w')
+#         # plt.tight_layout()
+#         plt.show()
 
-    # plot_correlation_network
+#     # plot_correlation_network
 
 
 DFLT_NODE_OPTS: dict[str, str | float] = {
@@ -61,6 +61,7 @@ layout_algorithms = {
     "Shell": nx.shell_layout,
     "Kamada-Kawai": nx.kamada_kawai_layout,
 }
+
 
 class PlotNetworkUtility:
 
