@@ -2,7 +2,6 @@ from typing import Sequence
 
 import bokeh.models as bm
 import bokeh.palettes
-import matplotlib.pyplot as plt
 import networkx as nx
 import pandas as pd
 from bokeh.plotting import figure
