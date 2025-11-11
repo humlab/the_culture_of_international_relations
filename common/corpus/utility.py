@@ -2,7 +2,7 @@ import fnmatch
 import os
 import re
 import zipfile
-from typing import Any, Generator, Self
+from typing import Any, Callable, Generator, Self
 
 import gensim
 
@@ -14,11 +14,15 @@ def dehyphen(text: str) -> str:
     return result
 
 
-def list_archive_files(archivename: str, pattern: str | re.Pattern) -> list[str]:
+def list_archive_files(archivename: str, pattern: str | re.Pattern | Callable[[str], bool]) -> list[str]:
     def px(x: str) -> bool:
         if isinstance(pattern, str):
             return fnmatch.fnmatch(x, pattern)
-        return bool(pattern.match(x))
+        if isinstance(pattern, re.Pattern):
+            return bool(pattern.match(x))
+        if callable(pattern):
+            return bool(pattern(x))
+        return False
 
     with zipfile.ZipFile(archivename) as zf:
         return [name for name in zf.namelist() if px(name)]
@@ -26,7 +30,9 @@ def list_archive_files(archivename: str, pattern: str | re.Pattern) -> list[str]
 
 class CompressedFileReader:
 
-    def __init__(self, path: str, pattern: str = "*.txt", itemfilter: str | None = None) -> None:
+    def __init__(
+        self, path: str, pattern: str = "*.txt", itemfilter: re.Pattern | str | Callable[[str], bool] | None = None
+    ) -> None:
         self.path: str = path
         self.filename_pattern: str = pattern
         self.archive_filenames: list[str] = list_archive_files(path, pattern)
@@ -50,7 +56,7 @@ class CompressedFileReader:
             self.iterator = self.get_iterator()
         return next(self.iterator)
 
-    def get_file(self, filename: str):
+    def get_file(self, filename: str) -> Generator[tuple[str, None] | tuple[str, str], Any, None]:
 
         if filename not in self.filenames:
             yield os.path.basename(filename), None
