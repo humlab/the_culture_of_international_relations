@@ -9,14 +9,12 @@ from typing import Any, Sequence
 import ipywidgets as widgets
 import numpy as np
 import pandas as pd
+from loguru import logger
 
 from common import config, utility
 from common.treaty_utility import QueryUtility
 
 warnings.simplefilter(action="ignore", category=FutureWarning)
-
-
-logger = logging.getLogger(__name__)
 
 default_treaties_skip_columns: list[str] = [
     "extra_entry",
@@ -164,12 +162,8 @@ class TreatyState:
     ) -> None:  # pylint: disable=W0102
         filename = filename or "Treaties_Master_List_Treaties.csv"
         self.data_folder: str = data_folder
-        self.period_groups: list[dict[str, Any]] = (
-            period_groups or config.DEFAULT_PERIOD_GROUPS
-        )
-        self.treaties_skip_columns: list[str] = (
-            skip_columns or default_treaties_skip_columns or []
-        ) + [
+        self.period_groups: list[dict[str, Any]] = period_groups or config.DEFAULT_PERIOD_GROUPS
+        self.treaties_skip_columns: list[str] = (skip_columns or default_treaties_skip_columns or []) + [
             "sequence",
             "is_cultural_yesno",
         ]
@@ -212,12 +206,8 @@ class TreatyState:
         # party2 = self.treaties[~self.treaties.group2.isin([0, 8])].party2.unique().tolist()
         party1: list[str] = self.treaties.party1.unique().tolist()
         party2: list[str] = self.treaties.party2.unique().tolist()
-        df_party: pd.DataFrame = pd.DataFrame(
-            data={"party": list(set(party1 + party2))}
-        )
-        df: pd.DataFrame = df_party.merge(
-            right=self.parties, left_on="party", right_index=True, how="left"
-        )
+        df_party: pd.DataFrame = pd.DataFrame(data={"party": list(set(party1 + party2))})
+        df: pd.DataFrame = df_party.merge(right=self.parties, left_on="party", right_index=True, how="left")
 
         unknown_parties: Sequence[str] | str = df[df.group_no.isna()].party.tolist()
         if len(unknown_parties) > 0:
@@ -252,26 +242,23 @@ class TreatyState:
     def cultural_treaties_of_interest(self) -> pd.DataFrame:
         return self.cultural_treaties[(self.cultural_treaties.signed_period != "OTHER")]
 
-    def _read_data(self):# -> dict[Any, Any]:
-        data = {}
+    def _read_data(self) -> dict[str, pd.DataFrame]:  # -> dict[Any, Any]:
+        data: dict[str, pd.DataFrame] = {}
         # na_values: list[str] = ["#N/A", "N/A", "NULL", "NaN", "-NaN"]
         for filename, key, xls_filename, xls_sheet in self.csv_files:
             logger.debug(f"Reading file: {filename}...")
-            path = os.path.join(self.data_folder, filename)
+            path: str = os.path.join(self.data_folder, filename)
             if not os.path.exists(path):
                 assert xls_filename is not None
-                xls_path = os.path.join(self.data_folder, xls_filename)
+                xls_path: str = os.path.join(self.data_folder, xls_filename)
                 assert os.path.exists(xls_path)
                 df: pd.DataFrame = pd.read_excel(xls_path, sheet_name=xls_sheet)
+                assert isinstance(df, pd.DataFrame)
                 df.to_csv(path, sep="\t", index=True)
-            data[key] = pd.read_csv(
-                path, sep="\t", low_memory=False, keep_default_na=False, na_values=None
-            )
+            data[key] = pd.read_csv(path, sep="\t", low_memory=False, keep_default_na=False, na_values=None)
         return data
 
-    def get_treaty_period_group_categories(
-        self, period_group: dict, treaties: pd.DataFrame
-    ) -> pd.Series:
+    def get_treaty_period_group_categories(self, period_group: dict, treaties: pd.DataFrame) -> pd.Series:
         """Returns treaties categorized according to given period group's divisions
 
         Parameters
@@ -290,20 +277,14 @@ class TreatyState:
 
         """
         periods: Sequence[tuple[int, int]] = period_group["periods"]
-        column = period_group["column"]
+        column: str = period_group["column"]
 
         if column in treaties.columns:
             return treaties[column]
 
-        year_map: dict[int, str] = {
-            year: f"{d[0]} to {d[1]}"
-            for d in periods
-            for year in list(range(d[0], d[1] + 1))
-        }
+        year_map: dict[int, str] = {year: f"{d[0]} to {d[1]}" for d in periods for year in list(range(d[0], d[1] + 1))}
 
-        series: pd.Series = treaties.signed_year.apply(
-            lambda x: year_map.get(x, "OTHER")
-        )
+        series: pd.Series = treaties.signed_year.apply(lambda x: year_map.get(x, "OTHER"))
 
         return series
 
@@ -326,38 +307,26 @@ class TreatyState:
         for period_group in self.period_groups:
             column: str = period_group["column"]
             if not column in treaties.columns:
-                treaties[column] = self.get_treaty_period_group_categories(
-                    period_group, treaties
-                )
+                treaties[column] = self.get_treaty_period_group_categories(period_group, treaties)
                 # treaties[column] = treaties.signed.apply(lambda x: get_period(definition['periods'], x.year))
 
         treaties["force"] = pd.to_datetime(treaties.force, errors="coerce")
         treaties["sequence"] = treaties.sequence.astype("int", errors="ignore")
         # treaties['group1'] = treaties.group1.fillna(0).astype('int', errors='ignore')
         # treaties['group2'] = treaties.group2.fillna(0).astype('int', errors='ignore')
-        treaties["is_cultural"] = treaties.is_cultural_yesno.apply(
-            lambda x: x.lower() == "yes"
-        )
+        treaties["is_cultural"] = treaties.is_cultural_yesno.apply(lambda x: x.lower() == "yes")
         treaties["headnote"] = treaties.headnote.fillna("").astype(str).str.upper()
 
         treaties["party1"] = treaties.party1.fillna("").astype(str).str.upper()
         treaties["party2"] = treaties.party2.fillna("").astype(str).str.upper()
 
-        treaties["party1"] = treaties.party1.apply(
-            lambda x: party_correction_map.get(x, x)
-        )
-        treaties["party2"] = treaties.party2.apply(
-            lambda x: party_correction_map.get(x, x)
-        )
+        treaties["party1"] = treaties.party1.apply(lambda x: party_correction_map.get(x, x))
+        treaties["party2"] = treaties.party2.apply(lambda x: party_correction_map.get(x, x))
 
-        treaties.loc[
-            (treaties.topic1 == "7CULT") | (treaties.topic2 == "7CULT"), "topic"
-        ] = "7CULT"
+        treaties.loc[(treaties.topic1 == "7CULT") | (treaties.topic2 == "7CULT"), "topic"] = "7CULT"
 
         # Drop columns not used
-        skip_columns = list(
-            set(treaties.columns).intersection(set(self.treaties_skip_columns))
-        )
+        skip_columns = list(set(treaties.columns).intersection(set(self.treaties_skip_columns)))
         if skip_columns is not None and len(skip_columns) > 0:
             treaties.drop(skip_columns, axis=1, inplace=True)
 
@@ -405,9 +374,7 @@ class TreatyState:
             "party_group",
             "party_short_name",
         ]
-        treaties = treaties.merge(
-            parties, how="left", left_on="party", right_index=True
-        )
+        treaties = treaties.merge(parties, how="left", left_on="party", right_index=True)
 
         # Add fields for party_other's country, continent and WTI group
         parties.columns = [
@@ -417,9 +384,7 @@ class TreatyState:
             "party_other_group",
             "party_other_short_name",
         ]
-        treaties = treaties.merge(
-            parties, how="left", left_on="party_other", right_index=True
-        )
+        treaties = treaties.merge(parties, how="left", left_on="party_other", right_index=True)
 
         # set 7CULT as topic when it is secondary topic
         treaties.loc[treaties.topic2 == "7CULT", "topic"] = "7CULT"
@@ -436,7 +401,7 @@ class TreatyState:
 
     def get_continents(self) -> pd.DataFrame:
         """Returns continent reference data"""
-        mask: pd.Series[bool] = self.data["continent"]["country_code2"] != ""
+        mask: pd.Series = self.data["continent"]["country_code2"] != ""
         self.data["continent"] = self.data["continent"][mask]
         df: pd.DataFrame = self.data["continent"].set_index("country_code2")
 
@@ -468,9 +433,7 @@ class TreatyState:
 
         return df
 
-    def get_parties(
-        self, extra_parties: dict | None = None
-    ) -> pd.DataFrame:  # pylint: disable=W0102
+    def get_parties(self, extra_parties: dict | None = None) -> pd.DataFrame:  # pylint: disable=W0102
         extra_parties = extra_parties or default_extra_parties
         parties: pd.DataFrame = (
             self.data["parties"]
@@ -490,23 +453,13 @@ class TreatyState:
         )
 
         parties["group_no"] = parties.group_no.astype(np.int32)
-        parties["party_name"] = parties.party_name.apply(
-            lambda x: re.sub(r"\(.*\)", "", x)
-        )
-        parties["short_name"] = parties.short_name.apply(
-            lambda x: re.sub(r"\(.*\)", "", x)
-        )
-        parties[["party_name", "short_name"]] = parties[
-            ["party_name", "short_name"]
-        ].apply(lambda x: x.str.strip())
+        parties["party_name"] = parties.party_name.apply(lambda x: re.sub(r"\(.*\)", "", x))
+        parties["short_name"] = parties.short_name.apply(lambda x: re.sub(r"\(.*\)", "", x))
+        parties[["party_name", "short_name"]] = parties[["party_name", "short_name"]].apply(lambda x: x.str.strip())
 
-        parties.loc[
-            (parties.group_no == 8), ["country", "country_code", "country_code3"]
-        ] = ""
+        parties.loc[(parties.group_no == 8), ["country", "country_code", "country_code3"]] = ""
 
-        parties = pd.merge(
-            parties, self.groups, how="left", left_on="group_no", right_index=True
-        )
+        parties = pd.merge(parties, self.groups, how="left", left_on="group_no", right_index=True)
 
         parties = pd.merge(
             parties,
@@ -519,9 +472,7 @@ class TreatyState:
         extra_keys: list[str] = list(extra_parties.keys())
         extract_values: list[dict] = list(extra_parties.values())
         df: pd.DataFrame = pd.DataFrame(
-            extract_values,
-            columns=extra_parties[extra_keys[0]].keys(),
-            index=extra_parties.keys(),
+            extract_values, columns=extra_parties[extra_keys[0]].keys(), index=extra_parties.keys()
         )
         parties = pd.concat([parties, df], axis=0)
 
@@ -539,9 +490,7 @@ class TreatyState:
 
         return self._get_countries_list
 
-    def get_party_name(
-        self, party: pd.DataFrame, party_name_column: str
-    ) -> pd.DataFrame:
+    def get_party_name(self, party: pd.DataFrame, party_name_column: str) -> pd.DataFrame:
         try:
             if party in self.parties.index:
                 return self.parties.loc[party, party_name_column]
@@ -564,9 +513,7 @@ class TreatyState:
     def get_tagged_headnotes(self, tags=None) -> pd.DataFrame:
         if self.tagged_headnotes is None:
             filename = os.path.join(self.data_folder, "tagged_headnotes.csv")
-            self.tagged_headnotes: pd.DataFrame = pd.read_csv(filename, sep="\t").drop(
-                "Unnamed: 0", axis=1
-            )
+            self.tagged_headnotes: pd.DataFrame = pd.read_csv(filename, sep="\t").drop("Unnamed: 0", axis=1)
         if tags is None:
             return self.tagged_headnotes
         return self.tagged_headnotes.loc[(self.tagged_headnotes.pos.isin(tags))]
@@ -587,14 +534,10 @@ class TreatyState:
         if options.get("to_year", None) is not None:
             df = df.loc[df.signed < datetime.date(options["to_year"] + 1, 1, 1)]
         if options.get("parties", None) is not None:
-            df = df.loc[
-                df.party1.isin(options["parties"]) | df.party2.isin(options["parties"])
-            ]
+            df = df.loc[df.party1.isin(options["parties"]) | df.party2.isin(options["parties"])]
         return df  # .set_index('treaty_id')
 
-    def filter_by_is_cultural(
-        self, df: pd.DataFrame, treaty_filter: str
-    ) -> pd.DataFrame:
+    def filter_by_is_cultural(self, df: pd.DataFrame, treaty_filter: str) -> pd.DataFrame:
 
         if treaty_filter == "is_cultural":
             # NOTE: changed from df.is_cultural == True to bool(...) to avoid pandas warning
@@ -614,9 +557,7 @@ class TreatyState:
         if topic_column not in df.columns:
             raise ValueError(f"Column {topic_column} not found in DataFrame")
         if topic_category is not None:
-            return df.apply(
-                lambda x: topic_category.get(x[topic_column], "OTHER"), axis=1
-            )
+            return df.apply(lambda x: topic_category.get(x[topic_column], "OTHER"), axis=1)
         return df[topic_column]
 
     def get_treaties_within_division(
@@ -675,14 +616,10 @@ class TreatyState:
         period_column: str = period_group["column"]
 
         if not period_column in treaties2.columns:
-            raise ValueError(
-                f"get_treaties_within_division: got unknown {period_column!r} as column"
-            )
+            raise ValueError(f"get_treaties_within_division: got unknown {period_column!r} as column")
 
         if period_group is not None:
-            treaties2 = QueryUtility.query_treaties(
-                treaties2, QueryUtility.period_group_mask(period_group)
-            )
+            treaties2 = QueryUtility.query_treaties(treaties2, QueryUtility.period_group_mask(period_group))
         # if period_column != 'signed_year':
         #    df = base[base[period_column] != 'OTHER']
         # else:
@@ -692,17 +629,14 @@ class TreatyState:
             # base = QueryUtility.query_treaties(base, QueryUtility.years_mask(year_limit))
             if isinstance(year_limit, tuple) and len(year_limit) == 2:
                 treaties2 = treaties2[
-                    (year_limit[0] <= treaties2.signed_year)
-                    & (treaties2.signed_year <= year_limit[1])
+                    (year_limit[0] <= treaties2.signed_year) & (treaties2.signed_year <= year_limit[1])
                 ]
             else:
                 treaties2 = treaties2[treaties2.signed_year.isin(year_limit)]
 
         if isinstance(parties, list):
             # base = QueryUtility.query_treaties(base, QueryUtility.parties_mask(parties))
-            treaties2 = treaties2.loc[
-                (treaties2.party1.isin(parties)) | (treaties2.party2.isin(parties))
-            ]
+            treaties2 = treaties2.loc[(treaties2.party1.isin(parties)) | (treaties2.party2.isin(parties))]
 
         # if (treaty_filter or '') != '':
         treaties2 = self.filter_by_is_cultural(treaties2, treaty_filter)
@@ -715,12 +649,12 @@ class TreatyState:
 
         return treaties2
 
-    def get_categorized_treaties(self, treaties: pd.DataFrame | None = None, topic_category=None, **kwargs) -> pd.DataFrame:
+    def get_categorized_treaties(
+        self, treaties: pd.DataFrame | None = None, topic_category=None, **kwargs
+    ) -> pd.DataFrame:
 
         df: pd.DataFrame = self.get_treaties_within_division(treaties, **kwargs)
-        df["topic_category"] = self.get_topic_category(
-            df, topic_category, topic_column="topic1"
-        )
+        df["topic_category"] = self.get_topic_category(df, topic_category, topic_column="topic1")
         return df
 
     def get_party_network(self, party_name, topic_category, parties, **kwargs):
@@ -729,11 +663,7 @@ class TreatyState:
 
         treaties: pd.DataFrame = self.stacked_treaties.loc[treaty_ids]
 
-        mask: pd.Series = (
-            treaties.party.isin(parties)
-            if isinstance(parties, list)
-            else ~treaties.reversed
-        )
+        mask: pd.Series = treaties.party.isin(parties) if isinstance(parties, list) else ~treaties.reversed
 
         treaties = treaties.loc[mask]
 
@@ -744,15 +674,11 @@ class TreatyState:
             treaties.loc[treaties.is_cultural, "topic"] = "7CORR"
 
         party_other_name = party_name.replace("party", "party_other")
-        treaties = treaties[
-            [party_name, party_other_name, "signed", "topic", "headnote"]
-        ]
+        treaties = treaties[[party_name, party_other_name, "signed", "topic", "headnote"]]
         treaties.columns = ["party", "party_other", "signed", "topic", "headnote"]
 
         treaties["weight"] = 1.0
-        treaties["category"] = self.get_topic_category(
-            treaties, topic_category, topic_column="topic"
-        )
+        treaties["category"] = self.get_topic_category(treaties, topic_category, topic_column="topic")
 
         return treaties.sort_values("signed")
 
@@ -792,17 +718,13 @@ class TreatyState:
     def get_continent_states(self):
         df: pd.DataFrame = self.parties
         df = df[~df.continent.isna()]
-        cf: pd.Series = (
-            df[["continent"]].groupby("continent").apply(lambda x: list(x.index))
-        )
+        cf: pd.Series = df[["continent"]].groupby("continent").apply(lambda x: list(x.index))
         return cf
 
     def get_wti_group_states(self):
         df: pd.DataFrame = self.parties
         df = df[~df.group_no.isin([1, 8])]
-        cf: pd.Series = (
-            df[["group_name"]].groupby("group_name").apply(lambda x: list(x.index))
-        )
+        cf: pd.Series = df[["group_name"]].groupby("group_name").apply(lambda x: list(x.index))
         return cf
 
     def get_party_preset_options(self):
@@ -821,23 +743,15 @@ class TreatyState:
 
         for group_id in [1, 2, 3]:
             preset_options[f"Region: Not in World {group_id}"] = [
-                x
-                for x in countries
-                if x not in set(config.get_region_parties(group_id))
+                x for x in countries if x not in set(config.get_region_parties(group_id))
             ]
 
         if self._party_preset_options is None:
 
             options = []
             options += list(preset_options.items())
-            options += [
-                ("Continent: " + x.title(), y)
-                for x, y in self.get_continent_states().to_dict().items()
-            ]
-            options += [
-                ("WTI:" + x, y)
-                for x, y in self.get_wti_group_states().to_dict().items()
-            ]
+            options += [("Continent: " + x.title(), y) for x, y in self.get_continent_states().to_dict().items()]
+            options += [("WTI:" + x, y) for x, y in self.get_wti_group_states().to_dict().items()]
 
             options = sorted(options, key=lambda x: x[0])
 
@@ -973,9 +887,7 @@ def load_wti_index_with_gui(data_folder: str | None = None) -> None:
     def compute_callback(*_args):
         gui.output.clear_output()
         with gui.output:
-            WTI_INDEX_CONTAINER.value = load_wti_index(
-                data_folder, is_cultural_yesno_column=gui.wti.value
-            )
+            WTI_INDEX_CONTAINER.value = load_wti_index(data_folder, is_cultural_yesno_column=gui.wti.value)
 
     gui.wti.observe(compute_callback, names="value")
     compute_callback()
