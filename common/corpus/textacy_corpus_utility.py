@@ -5,15 +5,16 @@ import re
 import sys
 import zipfile
 from logging import Logger
-from typing import Any
+from typing import Any, Callable, Generator, Literal
 
 import ftfy
 import pandas as pd
 import spacy
-import textacy
+import spacy.tokens
 import textacy.preprocessing
 from spacy import attrs
 from spacy.language import Language
+from textacy.corpus import Corpus
 
 import common.utility as utility
 
@@ -31,7 +32,7 @@ LANGUAGE_MODEL_MAP: dict[str, str] = {
 HYPHEN_REGEXP: re.Pattern[str] = re.compile(r"\b(\w+)-\s*\r?\n\s*(\w+)\b", re.UNICODE)
 
 
-def count_documents_by_pivot(corpus, attribute):
+def count_documents_by_pivot(corpus: Corpus, attribute: str) -> list[int]:
     """Return a list of document counts per group defined by attribute
     Assumes documents are sorted by attribute!
     """
@@ -39,7 +40,7 @@ def count_documents_by_pivot(corpus, attribute):
     return [len(list(g)) for _, g in itertools.groupby(corpus, fx_key)]
 
 
-def count_documents_in_index_by_pivot(documents, attribute):
+def count_documents_in_index_by_pivot(documents: pd.DataFrame, attribute: str) -> list[int]:
     """Return a list of document counts per group defined by attribute
     Assumes documents are sorted by attribute!
     Same as count_documents_by_pivot but uses document index instead of (textacy) corpus
@@ -55,18 +56,22 @@ def count_documents_in_index_by_pivot(documents, attribute):
 
 
 # @jit(nopython=True)
-def generate_word_count_score(corpus, normalize, count):
-    wc = corpus.word_counts(normalize=normalize, weighting="count", as_strings=True)
+def generate_word_count_score(corpus: Corpus, normalize: str, count: int) -> dict[int, set[str]]:
+    wc: dict[int, int | float] | dict[str, int | float] = corpus.word_counts(
+        normalize=normalize, weighting="count", as_strings=True
+    )
     d = {i: set([]) for i in range(1, count + 1)}
     for k, v in wc.items():
         if v <= count:
-            d[v].add(k)
+            d[int(v)].add(k)
     return d
 
 
 # @jit(nopython=True)
-def generate_word_document_count_score(corpus, normalize, threshold=75):
-    wc = corpus.word_doc_counts(normalize=normalize, weighting="freq", smooth_idf=True, as_strings=True)
+def generate_word_document_count_score(corpus: Corpus, normalize: str, threshold: int = 75) -> dict[int, set[str]]:
+    wc: dict[int, int | float] | dict[str, int | float] = corpus.word_doc_counts(
+        normalize=normalize, weighting="freq", smooth_idf=True, as_strings=True
+    )
     d = {i: set([]) for i in range(threshold, 101)}
     for k, v in wc.items():
         slot = int(round(v, 2) * 100)
@@ -84,38 +89,38 @@ class CorpusContainer:
         pass
 
     def __init__(self):
-        self.language = None
-        self.source_path = None
-        self.prepped_source_path = None
-        self.textacy_corpus_path = None
-        self.textacy_corpus = None
-        self.nlp = None
-        self.word_count_scores = None
-        self.document_index = None
+        self.language: str | None = None
+        self.source_path: str | None = None
+        self.prepped_source_path: str | None = None
+        self.textacy_corpus_path: str | None = None
+        self.textacy_corpus: Corpus | None = None
+        self.nlp: Language | None = None
+        self.word_count_scores: dict[str, dict[int, set[str]]] | None = None
+        self.document_index: pd.DataFrame | None = None
 
-    def get_word_count(self, normalize):
-        key = "word_count_" + normalize
+    def get_word_count(self, normalize) -> dict[int, set[str]]:
+        key: str = "word_count_" + normalize
         self.word_count_scores = self.word_count_scores or {}
         if key not in self.word_count_scores:
             self.word_count_scores[key] = generate_word_count_score(self.textacy_corpus, normalize, 100)
         return self.word_count_scores[key]
 
-    def get_word_document_count(self, normalize):
-        key = "word_document_count_" + normalize
+    def get_word_document_count(self, normalize: str) -> dict[int, set[str]]:
+        key: str = "word_document_count_" + normalize
         self.word_count_scores = self.word_count_scores or {}
         if key not in self.word_count_scores:
             self.word_count_scores[key] = generate_word_document_count_score(self.textacy_corpus, normalize, 75)
         return self.word_count_scores[key]
 
     @staticmethod
-    def container():
+    def container() -> "CorpusContainer":
 
         CorpusContainer.corpus_container = CorpusContainer.corpus_container or CorpusContainer()
 
         return CorpusContainer.corpus_container
 
     @staticmethod
-    def corpus():
+    def corpus() -> Corpus | None:
 
         class CorpusNotLoaded(Exception):
             pass
@@ -126,7 +131,7 @@ class CorpusContainer:
         return CorpusContainer.container().textacy_corpus
 
 
-def preprocess_text(source_filename, target_filename, tick=utility.noop):
+def preprocess_text(source_filename: str, target_filename: str, tick=utility.noop):
     """
     Pre-process of zipped archive that contains text documents
 
@@ -135,19 +140,21 @@ def preprocess_text(source_filename, target_filename, tick=utility.noop):
     Zip-archive
     """
 
-    filenames = utility.zip_get_filenames(source_filename)
-    texts = ((filename, utility.zip_get_text(source_filename, filename)) for filename in filenames)
+    filenames: list[str] = utility.zip_get_filenames(source_filename)
+    texts: Generator[tuple[str, str], None, None] = (
+        (filename, utility.zip_get_text(source_filename, filename)) for filename in filenames
+    )
     logger.info("Preparing text corpus...")
     tick(0, len(filenames))
     with zipfile.ZipFile(target_filename, "w", zipfile.ZIP_DEFLATED) as zf:
         for filename, text in texts:
-            text = re.sub(HYPHEN_REGEXP, r"\1\2\n", text)
-            text = textacy.preprocessing.normalize_whitespace(text)
+            text: str = re.sub(HYPHEN_REGEXP, r"\1\2\n", text)
+            text = textacy.preprocessing.normalize.whitespace(text)
             text = ftfy.fix_text(text)
-            text = textacy.preprocessing.replace_currency_symbols(text)
+            # text = textacy.preprocessing..replace_currency_symbols(text)
             # logger.info("Deprecation warning: textacy.preprocessing.unpack_contractions")
             # text = textacy.preprocessing.unpack_contractions(text)
-            text = textacy.preprocessing.remove_accents(text)
+            text = textacy.preprocessing.remove.accents(text)
             zf.writestr(filename, text)
             tick()
     tick(0)
@@ -175,28 +182,40 @@ def preprocess_text(source_filename, target_filename, tick=utility.noop):
 #    return tokens
 
 
-def infrequent_words(corpus, normalize="lemma", weighting="count", threshold=0, as_strings=False):
+def infrequent_words(
+    corpus: Corpus,
+    normalize: str = "lemma",
+    weighting: Literal["count", "freq"] = "count",
+    threshold: int = 0,
+    as_strings: bool = False,
+) -> set[int | str]:
     """Returns set of infrequent words i.e. words having total count less than given threshold"""
 
     if weighting == "count" and threshold <= 1:
         return set([])
 
-    word_counts = corpus.word_counts(normalize=normalize, weighting=weighting, as_strings=as_strings)
-    words = set([w for w in word_counts if word_counts[w] < threshold])
+    word_counts: dict[int, int | float] | dict[str, int | float] = corpus.word_counts(
+        normalize=normalize, weighting=weighting, as_strings=as_strings
+    )
+    words: set[int | str] = set([w for w in word_counts if word_counts[w] < threshold])
 
     return words
 
 
 def frequent_document_words(
-    corpus, normalize="lemma", weighting="freq", dfs_threshold=80, as_strings=True
-):  # pylint: disable=unused-argument
+    corpus: Corpus, normalize: str = "lemma", weighting: str = "freq", dfs_threshold: int = 80, as_strings: bool = True
+) -> set[str]:
     """Returns set of words that occurrs freuently in many documents, candidate stopwords"""
-    document_freqs = corpus.word_doc_counts(normalize=normalize, weighting=weighting, smooth_idf=True, as_strings=True)
-    frequent_document_words = {w for w, f in document_freqs.items() if int(round(f, 2) * 100) >= dfs_threshold}
+    document_freqs: dict[int, int | float] | dict[str, int | float] = corpus.word_doc_counts(
+        normalize=normalize, weighting=weighting, smooth_idf=True, as_strings=True
+    )
+    frequent_document_words: set[int | str] = {
+        w for w, f in document_freqs.items() if int(round(f, 2) * 100) >= dfs_threshold
+    }
     return frequent_document_words
 
 
-def extract_document_terms(doc, extract_args):
+def extract_document_terms(doc: spacy.tokens.Doc, extract_args: dict[str, Any]):
     """Extracts documents and terms from a corpus
 
     Parameters
@@ -217,7 +236,7 @@ def extract_document_terms(doc, extract_args):
         Documents where terms have ben filtered and transformed according to args.
 
     """
-    kwargs = extract_args.get("kwargs", {})
+    kwargs: dict[str, Any] = extract_args.get("kwargs", {})
     args = extract_args.get("args", {})
 
     extra_stop_words = set(extract_args.get("extra_stop_words", None) or [])
@@ -229,7 +248,7 @@ def extract_document_terms(doc, extract_args):
     normalize = args.get("normalize", "lemma")
     as_strings = args.get("as_strings", True)
 
-    def tranform_token(w, substitutions=None):
+    def transform_token(w: str, substitutions: dict[str, str] | None = None) -> str:
         if "\n" in w:
             w = w.replace("\n", "_")
         if substitutions is not None and w in substitutions:
@@ -356,7 +375,7 @@ def get_disabled_pipes_from_filename(filename) -> list[str] | Any | None:
 
 def create_textacy_corpus(corpus_reader, nlp, tick=utility.noop, n_chunk_threshold=100000):
 
-    corpus = textacy.Corpus(nlp)
+    corpus = Corpus(nlp)
     counter = 0
 
     for filename, document_id, text, metadata in corpus_reader:
@@ -391,10 +410,8 @@ def save_corpus(
 
 
 @utility.timecall
-def load_corpus(
-    filename: str, lang, document_id: str = "document_id"
-) -> textacy.Corpus:  # pylint: disable=unused-argument
-    corpus = textacy.Corpus.load(lang, filename)
+def load_corpus(filename: str, lang, document_id: str = "document_id") -> Corpus:  # pylint: disable=unused-argument
+    corpus: Corpus = Corpus.load(lang, filename)
     return corpus
 
 
@@ -432,10 +449,10 @@ def setup_nlp_language_model(language, **nlp_args):
     # if not model_name.endswith('lg'):
     #    logger.warning('Selected model is not the largest availiable.')
 
-    nlp = _load_spacy(model_name, **nlp_args)
+    nlp: Language = _load_spacy(model_name, **nlp_args)
     nlp.tokenizer = keep_hyphen_tokenizer(nlp)
 
-    pipeline = lambda: [x[0] for x in nlp.pipeline]
+    pipeline: Callable[[], list[str | Any]] = lambda: [x[0] for x in nlp.pipeline]
 
     logger.info("Using pipeline: " + " ".join(pipeline()))
 
@@ -458,7 +475,7 @@ POS_TO_COUNT: dict[str, int] = {
     "PROPN": 0,
 }
 
-POS_NAMES = list(sorted(POS_TO_COUNT.keys()))
+POS_NAMES: list[str] = list(sorted(POS_TO_COUNT.keys()))
 
 
 def _get_pos_statistics(doc):
@@ -468,11 +485,11 @@ def _get_pos_statistics(doc):
     return stats
 
 
-def get_corpus_data(corpus, document_index, title, columns_of_interest=None):
+def get_corpus_data(corpus, document_index, title, columns_of_interest=None) -> pd.DataFrame:
     metadata = [
         utility.extend({}, dict(document_id=doc._.meta["document_id"]), _get_pos_statistics(doc)) for doc in corpus
     ]
-    df = pd.DataFrame(metadata)[["document_id"] + POS_NAMES]
+    df: pd.DataFrame = pd.DataFrame(metadata)[["document_id"] + POS_NAMES]
     if columns_of_interest is not None:
         document_index = document_index[columns_of_interest]
     df = pd.merge(df, document_index, left_on="document_id", right_index=True, how="inner")
