@@ -9,9 +9,6 @@ from common.utility import extend_single
 sys.path = sys.path if ".." in sys.path else sys.path + [".."]
 
 
-
-
-
 def nx_kamada_kawai_layout(G, **kwargs):  # pylint: disable=W0613
     args = {"weight": "weight", "scale": 1.0}
     layout = nx.kamada_kawai_layout(G, **args)

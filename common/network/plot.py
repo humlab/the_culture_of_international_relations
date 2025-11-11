@@ -13,7 +13,6 @@ from common.network import networkx_utility
 sys.path = sys.path if "." in sys.path else sys.path + ["."]
 
 
-
 TOOLS = "pan,wheel_zoom,box_zoom,reset,save"
 
 DFLT_PALETTE = bokeh.palettes.Set3[12]
