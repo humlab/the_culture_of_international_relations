@@ -76,7 +76,9 @@ def wrap_id_text(dom_id, value=""):
 #     return widgets.Button(**kwargser(locals()))
 
 
-def glyph_hover_js_code(element_id: str, id_name: str, text_name: str, glyph_name: str="glyph", glyph_data: str="glyph_data") -> str:
+def glyph_hover_js_code(
+    element_id: str, id_name: str, text_name: str, glyph_name: str = "glyph", glyph_data: str = "glyph_data"
+) -> str:
     return (
         """
         var indices = cb_data.index['1d'].indices;
@@ -110,7 +112,9 @@ def glyph_hover_callback(glyph_source, glyph_id, text_source, element_id) -> Cus
     return callback
 
 
-def glyph_hover_callback2(glyph_source, glyph_id, text_ids: Sequence[str], text_source: Sequence[str], element_id: str) -> CustomJS:
+def glyph_hover_callback2(
+    glyph_source, glyph_id, text_ids: Sequence[str], text_source: Sequence[str], element_id: str
+) -> CustomJS:
     source = ColumnDataSource({"text_id": text_ids, "text": text_source})
     code = glyph_hover_js_code(element_id, glyph_id, "text", glyph_name="glyph", glyph_data="glyph_data")
     callback = CustomJS(args={"glyph": glyph_source, "glyph_data": source}, code=code)
