@@ -117,10 +117,10 @@ class SimpleStruct(types.SimpleNamespace):
         self.__dict__.update(kwargs)
 
 
-def flatten(l: list[list[Any]]) -> list[Any]:
+def flatten(list_of_lists: list[list[Any]]) -> list[Any]:
     """Returns a flat single list out of supplied list of lists."""
 
-    return [item for sublist in l for item in sublist]
+    return [item for sublist in list_of_lists for item in sublist]
 
 
 def project_series_to_range(series: pd.Series, low: float, high: float) -> pd.Series:
@@ -328,13 +328,13 @@ def extract_counter_items_within_threshold(counter: dict[int, list[str]], low: i
     return item_values
 
 
-def chunks(l: list[Any], n: int | None) -> Iterable[Any]:
+def chunks(lst: list[Any], n: int | None) -> Iterable[Any]:
 
     if (n or 0) == 0:
-        yield l
+        yield lst
     n = n or 1
-    for i in range(0, len(l), n):
-        yield l[i : i + n]
+    for i in range(0, len(lst), n):
+        yield lst[i : i + n]
 
 
 def plot_wordcloud(df_data: pd.DataFrame, token: str = "token", weight: str = "weight", **args):
