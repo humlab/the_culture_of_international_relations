@@ -4,7 +4,7 @@ import os
 import re
 import sys
 import zipfile
-from collections.abc import Callable, Generator
+from collections.abc import Generator, Iterable
 from logging import Logger
 from typing import Any, Literal
 
@@ -15,6 +15,7 @@ import spacy.tokens
 import textacy.preprocessing
 from spacy import attrs
 from spacy.language import Language
+from spacy.strings import StringStore
 from textacy.corpus import Corpus
 
 import common.utility as utility
@@ -37,7 +38,10 @@ def count_documents_by_pivot(corpus: Corpus, attribute: str) -> list[int]:
     """Return a list of document counts per group defined by attribute
     Assumes documents are sorted by attribute!
     """
-    fx_key = lambda doc: doc._.meta[attribute]
+
+    def fx_key(doc):
+        return doc._.meta[attribute]
+
     return [len(list(g)) for _, g in itertools.groupby(corpus, fx_key)]
 
 
@@ -238,16 +242,16 @@ def extract_document_terms(doc: spacy.tokens.Doc, extract_args: dict[str, Any]):
 
     """
     kwargs: dict[str, Any] = extract_args.get("kwargs", {})
-    args = extract_args.get("args", {})
+    args: dict[str, Any] = extract_args.get("args", {})
 
-    extra_stop_words = set(extract_args.get("extra_stop_words") or [])
-    substitutions = extract_args.get("substitutions")
-    min_length = extract_args.get("min_length", 2)
+    extra_stop_words: set[str] = set(extract_args.get("extra_stop_words") or [])
+    substitutions: dict[str, str] = extract_args.get("substitutions", {})
+    min_length: int = extract_args.get("min_length", 2)
 
-    ngrams = args.get("ngrams", None)
-    named_entities = args.get("named_entities", False)
-    normalize = args.get("normalize", "lemma")
-    as_strings = args.get("as_strings", True)
+    ngrams: int | None = args.get("ngrams")
+    named_entities: bool = args.get("named_entities", False)
+    normalize: str = args.get("normalize", "lemma")
+    as_strings: bool = args.get("as_strings", True)
 
     def transform_token(w: str, substitutions: dict[str, str] | None = None) -> str:
         if "\n" in w:
@@ -256,10 +260,10 @@ def extract_document_terms(doc: spacy.tokens.Doc, extract_args: dict[str, Any]):
             w = substitutions[w]
         return w
 
-    terms = (
+    terms: Generator[str, None, None] = (
         z
         for z in (
-            tranform_token(w, substitutions)
+            transform_token(w, substitutions)
             for w in doc._.to_terms_list(ngrams, named_entities, normalize, as_strings, **kwargs)
             if len(w) >= min_length  # and w not in extra_stop_words
         )
@@ -269,7 +273,7 @@ def extract_document_terms(doc: spacy.tokens.Doc, extract_args: dict[str, Any]):
     return terms
 
 
-def extract_corpus_terms(corpus, extract_args):
+def extract_corpus_terms(corpus: Corpus, extract_args: dict[str, Any]) -> Iterable[Iterable[str]]:
     """Extracts documents and terms from a corpus
 
     Parameters
@@ -301,12 +305,11 @@ def extract_corpus_terms(corpus, extract_args):
 
     """
 
-    kwargs = dict(extract_args.get("kwargs", {}))
-    args = dict(extract_args.get("args", {}))
-    normalize = args.get("normalize", "lemma")
-    substitutions = extract_args.get("substitutions", {})
-    extra_stop_words = set(extract_args.get("extra_stop_words", None) or [])
-
+    kwargs: dict[str, Any] = dict(extract_args.get("kwargs", {}))
+    args: dict[str, Any] = dict(extract_args.get("args", {}))
+    normalize: str = args.get("normalize", "lemma")
+    substitutions: dict[str, str] = extract_args.get("substitutions", {})
+    extra_stop_words: set[str] = set(extract_args.get("extra_stop_words") or [])
     # mask_gpe = extract_args.get('mask_gpe', False)
     # if mask_gpe is True:
     #    gpe_names = { x: '_gpe_' for x in get_gpe_names(corpus) }
@@ -315,7 +318,7 @@ def extract_corpus_terms(corpus, extract_args):
     min_freq = extract_args.get("min_freq", 1)
 
     if min_freq > 1:
-        words = infrequent_words(corpus, normalize=normalize, weighting="count", threshold=min_freq, as_strings=True)
+        words: set[str] = infrequent_words(corpus, normalize=normalize, weighting="count", threshold=min_freq, as_strings=True) # noqa: E501
         extra_stop_words = extra_stop_words.union(words)
         logger.info(f"Ignoring {len(words)} low-frequent words!")
 
@@ -336,15 +339,13 @@ def extract_corpus_terms(corpus, extract_args):
         "chunk_size": None,
     }
 
-    terms = (extract_document_terms(doc, extract_args) for doc in corpus)
-
-    return terms
+    return (extract_document_terms(doc, extract_args) for doc in corpus)
 
 
 def get_document_by_id(corpus, document_id, field_name="document_id"):
     for doc in corpus.get(lambda x: x._.meta[field_name] == document_id, limit=1):
         return doc
-    assert False, f"Document {document_id} not found in corpus"
+    assert doc is not None, f"Document {document_id} not found in corpus"
     return None
 
 
@@ -434,7 +435,7 @@ _load_spacy = textacy.load_spacy_lang if hasattr(textacy, "load_spacy_lang") els
 
 
 @utility.timecall
-def setup_nlp_language_model(language, **nlp_args):
+def setup_nlp_language_model(language: str, **nlp_args) -> Language | Any:
 
     if len(nlp_args.get("disable", [])) == 0:
         nlp_args.pop("disable")
@@ -453,7 +454,8 @@ def setup_nlp_language_model(language, **nlp_args):
     nlp: Language = _load_spacy(model_name, **nlp_args)
     nlp.tokenizer = keep_hyphen_tokenizer(nlp)
 
-    pipeline: Callable[[], list[str | Any]] = lambda: [x[0] for x in nlp.pipeline]
+    def pipeline() -> list[str | Any]:
+        return [pipe for pipe, _ in nlp.pipeline]
 
     logger.info("Using pipeline: " + " ".join(pipeline()))
 
@@ -479,9 +481,9 @@ POS_TO_COUNT: dict[str, int] = {
 POS_NAMES: list[str] = list(sorted(POS_TO_COUNT.keys()))
 
 
-def _get_pos_statistics(doc):
-    pos_iter = (x.pos_ for x in doc if x.pos_ not in ["NUM", "PUNCT", "SPACE"])
-    pos_counts = dict(collections.Counter(pos_iter))
+def _get_pos_statistics(doc: spacy.tokens.Doc) -> dict[str, int]:
+    pos_iter: Generator[str, None, None] = (x.pos_ for x in doc if x.pos_ not in ["NUM", "PUNCT", "SPACE"])
+    pos_counts: dict[str, int] = dict(collections.Counter(pos_iter))
     stats = utility.extend(dict(POS_TO_COUNT), pos_counts)
     return stats
 
@@ -499,38 +501,53 @@ def get_corpus_data(corpus, document_index, title, columns_of_interest=None) -> 
     return df
 
 
-def textacy_doc_to_bow(doc, target="lemma", weighting="count", as_strings=False, include=None, n_min_count=2):
+def textacy_doc_to_bow(
+    doc: spacy.tokens.Doc,
+    target: str = "lemma",
+    weighting: str = "count",
+    as_strings: bool = False,
+    include=None,
+    n_min_count: int = 2,
+) -> dict[str, int] | dict[int, int]:
 
     weighing_keys: set[str] = {"count", "freq"}
-    target_keys = {"lemma": attrs.LEMMA, "lower": attrs.LOWER, "orth": attrs.ORTH}
+    target_keys: dict[str, int] = {"lemma": attrs.LEMMA, "lower": attrs.LOWER, "orth": attrs.ORTH}
 
-    default_exclude = lambda x: x.is_stop or x.is_punct or x.is_space
+    def default_exclude(x) -> bool:
+        return x.is_stop or x.is_punct or x.is_space
+
     exclude = default_exclude if include is None else lambda x: x.is_stop or x.is_punct or x.is_space or not include(x)
 
     assert weighting in weighing_keys
     assert target in target_keys
 
-    target_weights = doc.count_by(target_keys[target], exclude=exclude)
+    target_weights: dict[int, int] = doc.count_by(target_keys[target], exclude=exclude)
     n_tokens = doc._.n_tokens
 
     if weighting == "freq":
         target_weights = {id_: weight / n_tokens for id_, weight in target_weights.items()}
 
-    store = doc.vocab.strings
+    store: StringStore = doc.vocab.strings
+
     if as_strings:
-        bow = {store[word_id]: count for word_id, count in target_weights.items() if count >= n_min_count}
-    else:
-        bow = target_weights  # { word_id: count for word_id, count in target_weights.items() }
+        return {store[word_id]: count for word_id, count in target_weights.items() if count >= n_min_count}
 
-    return bow
+    return target_weights  # { word_id: count for word_id, count in target_weights.items() }
 
 
-def get_most_frequent_words(corpus, n_top: int, normalize: str = "lemma", include_pos=None, weighting: str = "count"):
+def get_most_frequent_words(
+    corpus, n_top: int, normalize: str = "lemma", include_pos: list[str] | None = None, weighting: str = "count"
+):
     include_pos = include_pos or ["VERB", "NOUN", "PROPN"]
-    include = lambda x: x.pos_ in include_pos
+
+    def include(x) -> bool:
+        return x.pos_ in include_pos
+
     word_counts = collections.Counter()
     for doc in corpus:
-        bow = textacy_doc_to_bow(doc, target=normalize, weighting=weighting, as_strings=True, include=include)
+        bow: dict[str, int] | dict[int, int] = textacy_doc_to_bow(
+            doc, target=normalize, weighting=weighting, as_strings=True, include=include
+        )
         word_counts.update(bow)
     return word_counts.most_common(n_top)
 
@@ -538,18 +555,20 @@ def get_most_frequent_words(corpus, n_top: int, normalize: str = "lemma", includ
 def store_tokens_to_file(corpus, filename) -> None:
     import itertools
 
-    doc_tokens = lambda d: (
-        dict(
-            i=t.i,
-            token=t.lower_,
-            lemma=t.lemma_,
-            pos=t.pos_,
-            year=d._.meta["year"],
-            document_id=d._.meta["document_id"],
+    def doc_tokens(d):
+        return (
+            {
+                "i": t.i,
+                "token": t.lower_,
+                "lemma": t.lemma_,
+                "pos": t.pos_,
+                "year": d._.meta["year"],
+                "document_id": d._.meta["document_id"],
+            }
+            for t in d
         )
-        for t in d
-    )
-    tokens = pd.DataFrame(list(itertools.chain.from_iterable(doc_tokens(d) for d in corpus)))
+
+    tokens: pd.DataFrame = pd.DataFrame(list(itertools.chain.from_iterable(doc_tokens(d) for d in corpus)))
 
     if filename.endswith(".xlxs"):
         tokens.to_excel(filename)

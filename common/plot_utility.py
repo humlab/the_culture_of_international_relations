@@ -1,4 +1,5 @@
 from collections.abc import Sequence
+from typing import Any
 
 import bokeh.models as bm
 import bokeh.palettes
@@ -66,14 +67,13 @@ class PlotNetworkUtility:
 
     @staticmethod
     def layout_args(layout_algorithm, network: nx.Graph, scale: float):
-        args = {}
-        if layout_algorithm == "Shell":
-            if nx.is_bipartite(network):
-                nodes, other_nodes = get_bipartite_node_set(network, bipartite=0)
-                args = {"nlist": [nodes, other_nodes]}
+        args: dict[str, Any] = {}
+        if layout_algorithm == "Shell" and nx.is_bipartite(network):
+            nodes, other_nodes = get_bipartite_node_set(network, bipartite=0)
+            args = {"nlist": [nodes, other_nodes]}
 
         if layout_algorithm == "Fruchterman-Reingold":
-            k = scale  # / math.sqrt(network.number_of_nodes())
+            k: float = scale  # / math.sqrt(network.number_of_nodes())
             args = {
                 "dim": 2,
                 "k": k,

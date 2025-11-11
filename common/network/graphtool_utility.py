@@ -85,7 +85,7 @@ def nx2gt(nxG):
 
     # Add the edge properties second
     eprops = set()  # cache keys to only add properties once
-    for src, dst, data in nxG.edges.data():
+    for _, _, data in nxG.edges.data():
 
         # Go through all the edge properties if not seen and add them.
         for key, val in data.items():

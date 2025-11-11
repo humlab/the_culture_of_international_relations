@@ -44,7 +44,7 @@ class CompressedFileReader:
             elif callable(itemfilter):
                 filenames = [x for x in self.archive_filenames if itemfilter(x)]
             else:
-                assert False
+                raise ValueError("itemfilter must be a list or callable")
         self.filenames: list[str] = filenames or self.archive_filenames
         self.iterator: Generator[tuple[str, str], Any, None] | None = None
 

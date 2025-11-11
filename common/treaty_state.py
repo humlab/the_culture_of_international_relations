@@ -503,10 +503,10 @@ class TreatyState:
 
     def get_party(self, party: pd.DataFrame) -> dict | None:
         try:
-            d = self.parties.loc[party].to_dict()
+            d: dict = self.parties.loc[party].to_dict()
             d["party"] = party
             return d
-        except:  # pylint: disable=bare-except
+        except:  #  pylint: disable=bare-except
             return None
 
     def get_headnotes(self) -> pd.Series:

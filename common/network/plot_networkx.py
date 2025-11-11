@@ -36,16 +36,16 @@ from IPython.display import Image
 # }
 
 
-def plot(G, **kwargs):  # pylint: disable=W0613
+def plot(G, **kwargs) -> None | Image:  # pylint: disable=W0613
 
-    P = nx.nx_pydot.to_pydot(G)
-    P.format = "svg"
+    pd_graph = nx.nx_pydot.to_pydot(G)
+    pd_graph.format = "svg"
     # if root is not None :
     #    P.set("root",make_str(root))
-    D = P.create_dot(prog="circo")
-    if D == "":
+    data = pd_graph.create_dot(prog="circo")
+    if data == "":
         return None
-    Q = pydotplus.graph_from_dot_data(D)
+    graph = pydotplus.graph_from_dot_data(data)
     # Q = apply_styles(Q, styles)
-    I = Image(Q.create_png())
-    return I
+    image = Image(graph.create_png())
+    return image

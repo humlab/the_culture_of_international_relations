@@ -2,7 +2,7 @@ import fnmatch
 import os
 import re
 import zipfile
-from collections.abc import Sequence
+from collections.abc import Callable, Sequence
 from typing import Self
 
 import gensim
@@ -21,19 +21,22 @@ def language_filename_pattern(language: str) -> re.Pattern:
     return re.compile(rf"^(\w*)_{language}([_-]corr)?\.txt$")
 
 
-def dehyphen(text) -> str:
+def dehyphen(text: str) -> str:
     result: str = re.sub(HYPHEN_REGEXP, r"\1\2\n", text)
     return result
 
 
-def list_treaty_archive_files(archivename, pattern) -> list[str]:
-    px = lambda x: pattern.match(x) if isinstance(pattern, typing.re.Pattern) else fnmatch.fnmatch(x, pattern)
+def list_treaty_archive_files(archivename, pattern: re.Pattern | str) -> list[str]:
+
+    def px(x) -> bool:
+        return bool(pattern.match(x) if isinstance(pattern, re.Pattern) else fnmatch.fnmatch(x, pattern))
+
     with zipfile.ZipFile(archivename) as zf:
         return [name for name in zf.namelist() if px(name)]
 
 
 # @deprecated('Moved to TreatyCompressedFileReader.get_treaty_filename_lookups')
-def get_treaty_filename_lookup(archivename, language) -> dict[str, str]:
+def get_treaty_filename_lookup(archivename: str, language: str) -> dict[str, str]:
     pattern = language_filename_pattern(language)
     filenames: list[str] = list_treaty_archive_files(archivename, pattern)
     treaty_lookup: dict[str, str] = {x.split("_")[0]: x for x in filenames}
@@ -51,10 +54,11 @@ class CompressedFileReader:
             if isinstance(itemfilter, list):
                 filenames = [x for x in itemfilter if x in self.archive_filenames]
             elif callable(itemfilter):
-                filenames: list[str] = [x for x in self.archive_filenames if itemfilter(self.archive_filenames, x)]
+                filenames = [x for x in self.archive_filenames if itemfilter(self.archive_filenames, x)]
             else:
-                assert False
-        self.filenames: list[str] = filenames or self.archive_filenames
+                raise ValueError("itemfilter must be a list or callable")
+        
+        self.filenames = filenames or self.archive_filenames
         self.iterator = None
 
     def __iter__(self) -> Self:
@@ -98,25 +102,26 @@ class TreatyCompressedFileReader(CompressedFileReader):
         treaty_lookup: dict[str, str] = {x.split("_")[0]: x for x in self._ls_archive(path, pattern)}
 
         self.treaty_ids: list[str] = [x for x in treaty_ids if x in treaty_lookup]
-        self.filenames = [treaty_lookup[x] for x in self.treaty_ids]
+        self.filenames: list[str] = [treaty_lookup[x] for x in self.treaty_ids]
 
         if len(set(treaty_ids) - set(self.treaty_ids)) > 0:
             logger.warning("Treaties not found in archive: " + ", ".join(list(set(treaty_ids) - set(self.treaty_ids))))
 
-        CompressedFileReader.__init__(self, path, pattern=pattern, itemfilter=self.filenames)
+        super().__init__(path, pattern=pattern, itemfilter=self.filenames)
 
     def _ls_archive(self, path, pattern) -> list[str]:
 
-        px = lambda x: pattern.match(x) if isinstance(pattern, re.Pattern) else fnmatch.fnmatch(x, pattern)
+        def px(x) -> bool:
+            return bool(pattern.match(x) if isinstance(pattern, re.Pattern) else fnmatch.fnmatch(x, pattern))
 
         with zipfile.ZipFile(path) as f:
             return [x for x in f.namelist() if px(x)]
 
     def __next__(self) -> tuple[str | int, str | int, str, str]:
 
-        filename, content = super(TreatyCompressedFileReader, self).__next__()
+        filename, content = super().__next__()
 
-        m: re.Match[str] | None = TREATY_FILENAME.match(filename)
+        m: re.Match | None = TREATY_FILENAME.match(filename)
 
         assert m is not None, f"Filename does not match treaty pattern: {filename}"
 
@@ -143,18 +148,18 @@ class TreatyCorpus(TextCorpus):
 
     def __init__(
         self,
-        stream,
-        dictionary=None,
-        metadata=False,
-        character_filters=None,
-        tokenizer=None,
-        token_filters=None,
-        bigram_transform=False,  # pylint: disable=unused-argument
+        stream: Sequence[tuple[str | int, str | int, str, str]],
+        dictionary: dict | None = None,
+        metadata: bool = False,
+        character_filters: list[Callable[[str], str]] | None = None,
+        tokenizer: Callable[[str], list[str]] | None = None,
+        token_filters: list[Callable[[list[str]], list[str]]] | None = None,
+        bigram_transform: bool = False,  # pylint: disable=unused-argument
     ):
         self.stream = stream
-        self.filenames = None
-        self.documents = None
-        self.length = None
+        self.filenames: list[str] | None = None
+        self.documents: pd.DataFrame | None = None
+        self.length: int | None = None
 
         # if 'filenames' in content_iterator.__dict__:
         #    self.filenames = content_iterator.filenames
@@ -174,7 +179,7 @@ class TreatyCorpus(TextCorpus):
         #        lambda tokens: bigram[tokens]
         #    )
 
-        super(TreatyCorpus, self).__init__(
+        super().__init__(
             input=True,
             dictionary=dictionary,
             metadata=metadata,
@@ -300,8 +305,8 @@ class MmCorpusStatisticsService:
             }
         )
         df["is_stopword"] = df.token.apply(lambda x: x in stopwords)
-        if remove_stopwords is True:
-            df = df.loc[(df.is_stopword == False)]
+        if remove_stopwords:
+            df = df.loc[~df.is_stopword]
         df["frequency"] = df.frequency.astype(np.int64)
         df: pd.DataFrame = df[["token_id", "token", "frequency", "dfs", "is_stopword"]].sort_values(
             "frequency", ascending=False

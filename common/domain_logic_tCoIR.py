@@ -189,8 +189,8 @@ def compile_documents_by_filename(filenames: list[str]) -> pd.DataFrame:
 
 
 def compile_documents(
-    corpus: Corpus, corpus_index: pd.DataFrame | None = None
-) -> pd.DataFrame | None:  # pylint: disable=unused-argument
+    corpus: Corpus, corpus_index: pd.DataFrame | None = None  # pylint: disable=unused-argument
+) -> pd.DataFrame | None:
 
     if len(corpus) == 0:
         return None
@@ -206,11 +206,11 @@ def compile_documents(
 
 
 def add_domain_attributes(
-    df: pd.DataFrame, document_index: pd.DataFrame
-) -> pd.DataFrame:  # pylint: disable=unused-argument
+    df: pd.DataFrame, document_index: pd.DataFrame  # pylint: disable=unused-argument
+) -> pd.DataFrame:
 
     treaties: pd.DataFrame = _get_treaties()
-    group_map: dict[str, str] = get_parties()["group_name"].to_dict()
+    # group_map: dict[str, str] = get_parties()["group_name"].to_dict()
 
     df_extended: pd.DataFrame = pd.merge(df, treaties, left_index=True, right_index=True, how="inner")
     return df_extended

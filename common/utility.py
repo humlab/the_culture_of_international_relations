@@ -157,7 +157,7 @@ def filter_kwargs(f, args) -> dict[Any, Any] | Any:
     """
 
     try:
-        return {k: args[k] for k in args.keys() if k in inspect.signature(f).parameters}
+        return {k: args[k] for k in args if k in inspect.signature(f).parameters}
     except:  # pylint: disable=W0702
         return args
 
@@ -265,7 +265,7 @@ def slim_title(x: str) -> str:
             g: tuple[str | Any, ...] = m.groups()
             return g[0]
         return " ".join(x.split(" ")[:3]) + "..."
-    except:  # pylint: disable=W0702
+    except:  # pylint: disable=bare-except
         return x
 
 

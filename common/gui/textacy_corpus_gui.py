@@ -7,6 +7,7 @@ import ipywidgets as widgets
 import pandas as pd
 import textacy
 from domain_logic_config import current_domain as domain_logic
+from IPython.display import display
 from loguru import logger
 from textacy.spacier.utils import merge_spans
 
@@ -18,7 +19,7 @@ from common.corpus.utility import CompressedFileReader
 
 
 def generate_textacy_corpus(
-    data_folder: str,
+    data_folder: str,  # noqa pylint: disable=unused-argument
     wti_index: pd.DataFrame,
     container: textacy_utility.CorpusContainer,
     source_path: str,
@@ -98,13 +99,14 @@ def generate_textacy_corpus(
 
 def display_corpus_load_gui(data_folder: str, wti_index: pd.DataFrame, container: textacy_utility.CorpusContainer):
 
-    lw = lambda w: widgets.Layout(width=w)
+    def lw(w):
+        return widgets.Layout(width=w)
 
     treaty_source_options = wti_index.unique_sources
     treaty_default_source_options: list[str] = ["LTS", "UNTS", "UNXX"]
 
     language_options: dict[str, str] = {
-        config.LANGUAGE_MAP[k].title(): k for k in config.LANGUAGE_MAP.keys() if k in ["en", "fr"]
+        config.LANGUAGE_MAP[k].title(): k for k in config.LANGUAGE_MAP if k in ["en", "fr"]
     }
 
     period_group_options = {config.PERIOD_GROUPS_ID_MAP[k]["title"]: k for k in config.PERIOD_GROUPS_ID_MAP}

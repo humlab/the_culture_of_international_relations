@@ -17,7 +17,7 @@ if "filter_kwargs" not in globals():
 
     def filter_kwargs(f, args) -> Mapping[str, Any]:
         # FIXME: getargspec has be deprecated in python 3.11
-        return {k: args[k] for k in args.keys() if k in inspect.signature(f).parameters}
+        return {k: args[k] for k in args if k in inspect.signature(f).parameters}
 
 
 DISTANCE_METRICS: dict[str, str] = {
