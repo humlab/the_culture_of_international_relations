@@ -1,14 +1,15 @@
 import datetime
-import logging
 import os
 import re
 import types
 import warnings
+from dataclasses import dataclass
 from typing import Any, Sequence
 
 import ipywidgets as widgets
 import numpy as np
 import pandas as pd
+from IPython.display import display
 from loguru import logger
 
 from common import config, utility
@@ -715,13 +716,13 @@ class TreatyState:
         )
         return treaty_langs
 
-    def get_continent_states(self):
+    def get_continent_states(self) -> pd.Series:
         df: pd.DataFrame = self.parties
         df = df[~df.continent.isna()]
         cf: pd.Series = df[["continent"]].groupby("continent").apply(lambda x: list(x.index))
         return cf
 
-    def get_wti_group_states(self):
+    def get_wti_group_states(self) -> pd.Series:
         df: pd.DataFrame = self.parties
         df = df[~df.group_no.isin([1, 8])]
         cf: pd.Series = df[["group_name"]].groupby("group_name").apply(lambda x: list(x.index))
@@ -729,7 +730,7 @@ class TreatyState:
 
     def get_party_preset_options(self):
 
-        preset_options = dict(config.PARTY_PRESET_OPTIONS)
+        preset_options: dict[str, list[str]] = dict(config.PARTY_PRESET_OPTIONS)
 
         preset_options.update(
             {
@@ -739,7 +740,7 @@ class TreatyState:
             }
         )
 
-        countries = set(self.get_countries_list()) - set(["ALL", "ALL OTHER"])
+        countries: set[str] = set(self.get_countries_list()) - set(["ALL", "ALL OTHER"])
 
         for group_id in [1, 2, 3]:
             preset_options[f"Region: Not in World {group_id}"] = [
@@ -748,14 +749,14 @@ class TreatyState:
 
         if self._party_preset_options is None:
 
-            options = []
+            options: list[tuple[str, list[str]]] = []
             options += list(preset_options.items())
             options += [("Continent: " + x.title(), y) for x, y in self.get_continent_states().to_dict().items()]
             options += [("WTI:" + x, y) for x, y in self.get_wti_group_states().to_dict().items()]
 
             options = sorted(options, key=lambda x: x[0])
 
-            self._party_preset_options = options
+            self._party_preset_options: list[tuple[str, list[str]]] = options
 
         return self._party_preset_options
 
@@ -815,7 +816,7 @@ WTI_OPTIONS: list[tuple[str, str]] = [
     ("WTI 7CULTGen", "is_cultural_yesno_gen"),
 ]
 
-WTI_INFO = {x[1]: x[0] for x in WTI_OPTIONS}
+WTI_INFO: dict[str, str] = {x[1]: x[0] for x in WTI_OPTIONS}
 
 
 def load_wti_index(
@@ -852,10 +853,16 @@ def load_wti_index(
 
 # load_treaty_state = load_wti_index
 
-WTI_INDEX_CONTAINER = types.SimpleNamespace(value=None)
+
+@dataclass
+class WTIIndexContainer:
+    value: TreatyState | None = None
 
 
-def current_wti_index():
+WTI_INDEX_CONTAINER = WTIIndexContainer()
+
+
+def current_wti_index() -> TreatyState:
     if WTI_INDEX_CONTAINER.value is None:
         raise AttributeError(
             "WTI Index not loaded. Please call load_wti_index or load_wti_index_with_gui prior to calling this method"
