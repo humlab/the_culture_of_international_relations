@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 import ipywidgets as widgets
 import itertools
 import types
@@ -22,6 +23,7 @@ OTHER_CATEGORY_OPTIONS: dict[str, str] = {
 }
 
 def display_quantity_by_party(
+    *,
     period_group_index: int = 0,
     party_name: str = '',
     parties: list[str] | None = None,
@@ -43,7 +45,7 @@ def display_quantity_by_party(
 ):
     try:
         
-        chart_type = config.CHART_TYPE_MAP[chart_type_name]
+        chart_type: config.KindOfChart = config.CHART_TYPE_MAP[chart_type_name]
 
         static_color_map: color_utility.StaticColorMap = color_utility.get_static_color_map()
 
@@ -124,6 +126,25 @@ def display_quantity_by_party(
     finally:
         progress(0)
 
+@dataclass
+class PartyAnalysisGUI:
+    year_limit: widgets.IntRangeSlider
+    sources: widgets.SelectMultiple
+    period_group_index: widgets.Dropdown
+    party_name: widgets.Dropdown
+    normalize_values: widgets.ToggleButton
+    chart_type_name: widgets.Dropdown
+
+    plot_style: widgets.Dropdown
+    top_n_parties: widgets.IntRangeSlider
+    party_preset: widgets.Dropdown
+    parties: widgets.SelectMultiple
+    treaty_filter: widgets.Dropdown
+    extra_category: widgets.Dropdown
+
+    progress: widgets.IntProgress
+    info: widgets.Label
+    
 def display_gui(wti_index, print_args=False):
 
     def lw(width='100px', left='0'):
@@ -150,7 +171,7 @@ def display_gui(wti_index, print_args=False):
 
     min_year, max_year = period_group_window(period_group_index_widget.value)
 
-    gui = types.SimpleNamespace(
+    gui = PartyAnalysisGUI(
         year_limit = widgets_config.rangeslider('Window', min_year, max_year, [min_year, max_year], layout=lw('900px'), continuous_update=False),
         sources=widgets_config.select_multiple(description='Sources', options=treaty_source_options, values=treaty_source_options, disabled=False, layout=lw('200px')),
         period_group_index=period_group_index_widget,
@@ -206,7 +227,7 @@ def display_gui(wti_index, print_args=False):
 
             if gui.top_n_parties.value > 0:
                 gui.top_n_parties.value = 0
-        except Exception as ex:
+        except Exception as ex:  # pylint: disable=W0703
             logger.info(ex)
         finally:
             gui.parties.observe(on_parties_change, names='value')
