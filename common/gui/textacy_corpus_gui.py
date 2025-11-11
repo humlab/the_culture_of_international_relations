@@ -1,8 +1,11 @@
 import glob
 import os
 import types
+from re import A
+from typing import Callable
 
 import ipywidgets as widgets
+import pandas as pd
 import textacy
 from domain_logic_config import current_domain as domain_logic
 from loguru import logger
@@ -12,22 +15,23 @@ import common.corpus.textacy_corpus_utility as textacy_utility
 import common.utility as utility
 import common.widgets_config as widgets_config
 from common import config
+from common.corpus.utility import CompressedFileReader
 
 
 def generate_textacy_corpus(
-    data_folder,
-    wti_index,
-    container,
-    source_path,
-    language,
-    merge_entities,
-    overwrite=False,
-    period_group="years_1935-1972",
-    treaty_filter="",
-    parties=None,
-    disabled_pipes=None,
-    tick=utility.noop,
-    treaty_sources=None,
+    data_folder: str,
+    wti_index: pd.DataFrame,
+    container: textacy_utility.CorpusContainer,
+    source_path: str,
+    language: str,
+    merge_entities: bool,
+    overwrite: bool = False,
+    period_group: str = "years_1935-1972",
+    treaty_filter: str = "",
+    parties: list[str] | None = None,
+    disabled_pipes: list[str] | None = None,
+    tick: Callable[[int, int], None] = utility.noop,
+    treaty_sources: list[str] | None = None,
 ):
 
     for key in container.__dict__:
@@ -93,7 +97,7 @@ def generate_textacy_corpus(
     logger.info("Done!")
 
 
-def display_corpus_load_gui(data_folder: str, wti_index, container):
+def display_corpus_load_gui(data_folder: str, wti_index: pd.DataFrame, container: textacy_utility.CorpusContainer):
 
     lw = lambda w: widgets.Layout(width=w)
 
@@ -172,7 +176,7 @@ def display_corpus_load_gui(data_folder: str, wti_index, container):
         )
     )
 
-    def tick(step=None, max_step=None):
+    def tick(step: int | None = None, max_step: int | None = None) -> types.NoneType:
         if max_step is not None:
             gui.progress.max = max_step
         gui.progress.value = gui.progress.value + 1 if step is None else step
