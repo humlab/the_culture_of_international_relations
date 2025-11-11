@@ -1,5 +1,4 @@
 import fnmatch
-import logging
 import os
 import re
 import zipfile
@@ -11,15 +10,14 @@ import numpy as np
 import pandas as pd
 from gensim.corpora.textcorpus import TextCorpus
 from loguru import logger
-from pandas.core.reshape import encoding
 
 HYPHEN_REGEXP: re.Pattern = re.compile(r"\b(\w+)-\s*\r?\n\s*(\w+)\b", re.UNICODE)
 TREATY_FILENAME: re.Pattern = re.compile(r"^([a-zA-Z0-9]*)\_(en|fr|de|it).*\.txt$")
 
 
 # @deprecated('Moved to TreatyCompressedFileReader.language_filename_pattern')
-def language_filename_pattern(language: str):
-    return re.compile("^(\w*)\_" + language + "([\_\-]corr)?\.txt$")
+def language_filename_pattern(language: str) -> re.Pattern:
+    return re.compile(rf"^(\w*)_{language}([_-]corr)?\.txt$")
 
 
 def dehyphen(text) -> str:
@@ -95,7 +93,7 @@ class TreatyCompressedFileReader(CompressedFileReader):
         self.path: str = path
         self.language = language
 
-        pattern: re.Pattern = re.compile("^(\w*)\_" + language + "([\_\-]corr)?\.txt$")
+        pattern: re.Pattern = re.compile(rf"^(\w*)_{language}([_-]corr)?\.txt$")
         treaty_lookup: dict[str, str] = {x.split("_")[0]: x for x in self._ls_archive(path, pattern)}
 
         self.treaty_ids: list[str] = [x for x in treaty_ids if x in treaty_lookup]
