@@ -1,5 +1,4 @@
 import sys
-from typing import Mapping
 
 import bokeh.models
 import bokeh.palettes

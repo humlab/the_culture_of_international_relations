@@ -1,6 +1,6 @@
 import collections
 import re
-from typing import Generator
+from collections.abc import Generator
 
 import pandas as pd
 from loguru import logger
@@ -8,7 +8,7 @@ from textacy.corpus import Corpus
 
 from common import config, utility
 from common.corpus.utility import CompressedFileReader
-from common.treaty_state import TreatyState, current_wti_index
+from common.treaty_state import current_wti_index
 
 DATA_FOLDER: str = config.DATA_FOLDER
 
@@ -159,7 +159,7 @@ def get_document_stream(source: str | Generator, lang: str, document_index: pd.D
 
     for filename, text in reader:
 
-        document_id: str | None = id_map.get(filename, None)
+        document_id: str | None = id_map.get(filename)
 
         if document_id not in df.index:
             continue

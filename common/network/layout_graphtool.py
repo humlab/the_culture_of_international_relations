@@ -5,7 +5,7 @@ from common.network.graphtool_utility import nx2gt
 try:
     import graph_tool.all as gt
     import graph_tool.draw as gt_draw
-except ImportError as ex:
+except ImportError:
     gt_draw = None
     gt = None
     print("warning: graph_tool not installed!")

@@ -2,7 +2,8 @@ import fnmatch
 import os
 import re
 import zipfile
-from typing import Self, Sequence
+from collections.abc import Sequence
+from typing import Self
 
 import gensim
 import nltk

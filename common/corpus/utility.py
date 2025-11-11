@@ -2,7 +2,8 @@ import fnmatch
 import os
 import re
 import zipfile
-from typing import Any, Callable, Generator, Self
+from collections.abc import Callable, Generator
+from typing import Any, Self
 
 import gensim
 

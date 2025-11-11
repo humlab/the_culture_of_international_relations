@@ -304,11 +304,11 @@ def get_positioned_nodes_as_dict(
 
     nodes: dict[str, list[Any]] = get_positioned_nodes(graph, layout)
 
-    if node_size in nodes.keys() and node_size_range is not None:
+    if node_size in nodes and node_size_range is not None:
         nodes["clamped_size"] = clamp_values(nodes[node_size], node_size_range)
         node_size = "clamped_size"
 
-    label_y_offset = "y_offset" if node_size in nodes.keys() else int(node_size) + 8
+    label_y_offset = "y_offset" if node_size in nodes else int(node_size) + 8
     if label_y_offset == "y_offset":
         nodes["y_offset"] = [y + r for (y, r) in zip(nodes["y"], [r / 2.0 + 8 for r in nodes[node_size]])]
 

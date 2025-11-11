@@ -4,8 +4,9 @@ import os
 import re
 import sys
 import zipfile
+from collections.abc import Callable, Generator
 from logging import Logger
-from typing import Any, Callable, Generator, Literal
+from typing import Any, Literal
 
 import ftfy
 import pandas as pd
@@ -239,8 +240,8 @@ def extract_document_terms(doc: spacy.tokens.Doc, extract_args: dict[str, Any]):
     kwargs: dict[str, Any] = extract_args.get("kwargs", {})
     args = extract_args.get("args", {})
 
-    extra_stop_words = set(extract_args.get("extra_stop_words", None) or [])
-    substitutions = extract_args.get("substitutions", None)
+    extra_stop_words = set(extract_args.get("extra_stop_words") or [])
+    substitutions = extract_args.get("substitutions")
     min_length = extract_args.get("min_length", 2)
 
     ngrams = args.get("ngrams", None)

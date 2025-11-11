@@ -3,8 +3,9 @@ import os
 import re
 import types
 import warnings
+from collections.abc import Sequence
 from dataclasses import dataclass
-from typing import Any, Sequence
+from typing import Any
 
 import ipywidgets as widgets
 import numpy as np
@@ -307,7 +308,7 @@ class TreatyState:
 
         for period_group in self.period_groups:
             column: str = period_group["column"]
-            if not column in treaties.columns:
+            if column not in treaties.columns:
                 treaties[column] = self.get_treaty_period_group_categories(period_group, treaties)
                 # treaties[column] = treaties.signed.apply(lambda x: get_period(definition['periods'], x.year))
 
@@ -616,7 +617,7 @@ class TreatyState:
 
         period_column: str = period_group["column"]
 
-        if not period_column in treaties2.columns:
+        if period_column not in treaties2.columns:
             raise ValueError(f"get_treaties_within_division: got unknown {period_column!r} as column")
 
         if period_group is not None:

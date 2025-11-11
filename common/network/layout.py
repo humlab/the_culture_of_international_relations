@@ -13,7 +13,7 @@ try:
     from common.network.layout_graphtool import layout_setups as gt_layout_setups  # pylint: disable=ungrouped-imports
 
     layout_setups = nx_layout_setups + gt_layout_setups + gv_layout_setups
-except ImportError as ex:
+except ImportError:
     layout_setups = nx_layout_setups + gv_layout_setups
     # print(ex)
 

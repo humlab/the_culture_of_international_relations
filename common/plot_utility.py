@@ -1,4 +1,4 @@
-from typing import Sequence
+from collections.abc import Sequence
 
 import bokeh.models as bm
 import bokeh.palettes

@@ -1,8 +1,7 @@
 import glob
 import os
 import types
-from re import A
-from typing import Callable
+from collections.abc import Callable
 
 import ipywidgets as widgets
 import pandas as pd
@@ -82,7 +81,7 @@ def generate_textacy_corpus(
         logger.info("Working: Loading corpus " + container.textacy_corpus_path + "...")
         tick(1, 2)
         container.textacy_corpus = textacy.Corpus.load(container.nlp, container.textacy_corpus_path)
-        logger.info("Loaded corpus with {} documents.".format(len(container.textacy_corpus)))
+        logger.info(f"Loaded corpus with {len(container.textacy_corpus)} documents.")
 
         tick(0)
 

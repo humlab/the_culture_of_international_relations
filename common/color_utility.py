@@ -1,6 +1,7 @@
 import random
+from collections.abc import Sequence
 from itertools import cycle, islice
-from typing import Any, Self, Sequence
+from typing import Any, Self
 
 import numpy as np
 from bokeh.palettes import Category20_20, Set1_8, all_palettes  # pylint: disable=E0611

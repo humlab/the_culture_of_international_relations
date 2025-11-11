@@ -1,5 +1,6 @@
 # from __future__ import print_function
-from typing import Any, Sequence
+from collections.abc import Sequence
+from typing import Any
 
 import ipywidgets as widgets
 from bokeh.models import ColumnDataSource, CustomJS

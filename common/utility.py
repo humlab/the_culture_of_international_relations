@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import functools
 import glob
 import inspect
@@ -11,7 +10,8 @@ import sys
 import time
 import types
 import zipfile
-from typing import Any, Callable, Iterable
+from collections.abc import Callable, Iterable
+from typing import Any
 
 import matplotlib.pyplot as plt
 import pandas as pd
