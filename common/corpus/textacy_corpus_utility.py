@@ -318,7 +318,9 @@ def extract_corpus_terms(corpus: Corpus, extract_args: dict[str, Any]) -> Iterab
     min_freq = extract_args.get("min_freq", 1)
 
     if min_freq > 1:
-        words: set[str] = infrequent_words(corpus, normalize=normalize, weighting="count", threshold=min_freq, as_strings=True) # noqa: E501
+        words: set[str] = infrequent_words(
+            corpus, normalize=normalize, weighting="count", threshold=min_freq, as_strings=True
+        )  # noqa: E501
         extra_stop_words = extra_stop_words.union(words)
         logger.info(f"Ignoring {len(words)} low-frequent words!")
 

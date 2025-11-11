@@ -195,10 +195,9 @@ def compile_documents(
     if len(corpus) == 0:
         return None
 
-    if isinstance(corpus, Corpus):
-        filenames = [doc._.meta["filename"] for doc in corpus]
-    else:
-        filenames = corpus.filenames
+    filenames: list[str] = (
+        [doc._.meta["filename"] for doc in corpus] if isinstance(corpus, Corpus) else corpus.filenames
+    )
 
     df: pd.DataFrame = compile_documents_by_filename(filenames)
 

@@ -57,7 +57,7 @@ class CompressedFileReader:
                 filenames = [x for x in self.archive_filenames if itemfilter(self.archive_filenames, x)]
             else:
                 raise ValueError("itemfilter must be a list or callable")
-        
+
         self.filenames = filenames or self.archive_filenames
         self.iterator = None
 

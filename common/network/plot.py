@@ -169,7 +169,9 @@ def adjust_node_label_offset(nodes: dict[str, Any], node_size: str | int, defaul
 #     return p
 
 
-def plot_network(nodes: dict[str, Any], edges: dict[str, Any], plot_opts: dict[str, Any], fig_opts: dict[str, Any] | None = None) -> dict[str, Any]:
+def plot_network(
+    nodes: dict[str, Any], edges: dict[str, Any], plot_opts: dict[str, Any], fig_opts: dict[str, Any] | None = None
+) -> dict[str, Any]:
 
     edges_source = bokeh.models.ColumnDataSource(edges)
     nodes_source = bokeh.models.ColumnDataSource(nodes)
