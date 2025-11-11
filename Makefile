@@ -13,4 +13,9 @@ isort:
 
 black:
 	@uv run black --version
-	@uv run black --line-length 120 --target-version py311 $(SOURCE_FOLDERS)
+	@uv run black $(SOURCE_FOLDERS)
+
+# concise, full, json, json-lines, junit, grouped, github, gitlab, pylint, rdjson, azure, sarif
+ruff:
+	@uv run ruff --version
+	@uv run ruff check --fix --output-format concise  $(SOURCE_FOLDERS)
