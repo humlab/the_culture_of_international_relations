@@ -18,6 +18,7 @@
         "temp",
         "__pycache__",
         "*.pyc",
+        "*.svg",
         "node_modules",
         ".git",
         ".vscode",
