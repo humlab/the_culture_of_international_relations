@@ -1,6 +1,6 @@
 import collections
+import os
 import re
-from collections.abc import Generator
 
 import pandas as pd
 from loguru import logger
@@ -11,6 +11,7 @@ from common.corpus.utility import CompressedFileReader
 from common.treaty_state import current_wti_index
 
 DATA_FOLDER: str = config.DATA_FOLDER
+SUBSTITUTION_FILENAME: str = os.path.join(DATA_FOLDER, "term_substitutions.txt")
 
 CORPUS_NAME_PATTERN: str = "tCoIR_*.txt.zip"
 CORPUS_TEXT_FILES_PATTERN: str = "*.txt"
@@ -22,14 +23,14 @@ DOCUMENT_FILTERS = [
     #             'type': 'multiselect',
     #             'description': 'Party #1',
     #             'field': 'party1'
-    #             # FIXME: Not implemented:
+    #             # Not implemented:
     #             # 'filter_query': '(party1=={0}) | (party2=={0})'
     #         },
     #         {
     #             'type': 'multiselect',
     #             'description': 'Party #2',
     #             'field': 'party2'
-    #             # FIXME: Not implemented:
+    #             # Not implemented:
     #             # 'filter_query': '(party1=={0}) | (party2=={0})'
     #         },
     #         {
@@ -54,6 +55,13 @@ GROUP_BY_OPTIONS: list[tuple[str, list[str]]] = [
     ("Group1, Year", ["group1", "signed_year"]),
     ("Group2, Year", ["group2", "signed_year"]),
 ]
+
+
+def get_tagset() -> pd.DataFrame | None:
+    filepath: str = os.path.join(DATA_FOLDER, "tagset.csv")
+    if os.path.isfile(filepath):
+        return pd.read_csv(filepath, sep="\t").fillna("")
+    return None
 
 
 def get_parties() -> pd.DataFrame:
@@ -100,7 +108,7 @@ def _get_pos_statistics(doc) -> dict[str, int]:
 
 
 def get_corpus_documents(corpus: Corpus) -> pd.DataFrame:
-    metadata = [utility.extend({}, doc._.meta, _get_pos_statistics(doc)) for doc in corpus]
+    metadata = [utility.extend({}, doc._.meta, _get_pos_statistics(doc)) for doc in corpus.docs]
     df: pd.DataFrame = pd.DataFrame(metadata)[["treaty_id", "filename", "signed_year", "party1", "party2"] + POS_NAMES]
     df["title"] = df.treaty_id
     df["lang"] = df.filename.str.extract(r"\w{4,6}\_(\w\w)")
@@ -122,7 +130,7 @@ def get_treaty_dropdown_options(wti_index: pd.DataFrame, corpus: Corpus):
     return options
 
 
-def get_document_stream(source: str | Generator, lang: str, document_index: pd.DataFrame | None = None):
+def get_document_stream(source: CompressedFileReader | str, lang: str, document_index: pd.DataFrame | None = None):
 
     assert document_index is not None
 
@@ -142,11 +150,13 @@ def get_document_stream(source: str | Generator, lang: str, document_index: pd.D
 
     if isinstance(source, str):
         print(f"Opening archive: {source}")
-        reader = CompressedFileReader(source, pattern=lang_pattern, itemfilter=item_filter)
+        reader: CompressedFileReader = CompressedFileReader(source, pattern=lang_pattern, itemfilter=item_filter)
     else:
         reader = source
 
-    id_map = {filename: id_extractor(filename) for filename in reader.filenames if item_filter(filename)}
+    id_map: dict[str, str] = {
+        filename: id_extractor(filename) for filename in reader.filenames if item_filter(filename)
+    }
 
     if len(set(document_index.index) - set(id_map.values())) > 0:
         logger.warning(
@@ -196,7 +206,7 @@ def compile_documents(
         return None
 
     filenames: list[str] = (
-        [doc._.meta["filename"] for doc in corpus] if isinstance(corpus, Corpus) else corpus.filenames
+        [doc._.meta["filename"] for doc in corpus.docs] if isinstance(corpus, Corpus) else corpus.filenames
     )
 
     df: pd.DataFrame = compile_documents_by_filename(filenames)

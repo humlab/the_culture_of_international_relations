@@ -1,6 +1,6 @@
 import pandas as pd
 
-from common.domain_logic_config import current_domain as domain_logic
+from common import domain_logic
 
 
 def get_treaty_dropdown_options(wti_index, corpus):

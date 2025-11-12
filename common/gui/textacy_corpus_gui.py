@@ -14,7 +14,6 @@ from textacy.spacier.utils import merge_spans
 from common import config, utility, widgets_config
 from common.corpus import textacy_corpus_utility as textacy_utility
 from common.corpus.utility import CompressedFileReader
-from common.domain_logic_config import current_domain as domain_logic
 from common.treaty_state import TreatyState
 
 
