@@ -1,12 +1,13 @@
+import types
 from types import SimpleNamespace as bunch
 
 from common.network.graphtool_utility import nx2gt
 
 try:
-    import graph_tool.all as gt
-    import graph_tool.draw as gt_draw
+    import graph_tool.all as gt  # type: ignore ;  pylint: disable=import-error
+    import graph_tool.draw as gt_draw  # type: ignore ;  pylint: disable=import-error
 except ImportError:
-    gt_draw = None
+    gt_draw = types.SimpleNamespace(arf_layout={}, sfdp_layout={}, fruchterman_reingold_layout={})
     gt = None
     print("warning: graph_tool not installed!")
 
