@@ -80,6 +80,8 @@ class QuantityByParty():
             treaties_of_parties = df.merge(df_top, how='inner', left_on=[period_column, party_name], right_index=True)
 
         df_extra: pd.DataFrame | None = None
+        extra_party: dict[str, Any] | None = None
+
         if extra_category == 'other_category':
             extra_ids = treaty_subset[~treaty_subset.index.isin(treaties_of_parties.index)].index
             df_extra = df[df.index.isin(extra_ids)&(~df.reversed)]
@@ -161,7 +163,7 @@ class QuantityByTopic():
         if party_group['label'] == 'ALL' or parties is None or 'ALL' in parties:
             parties_treaties: pd.DataFrame = categorized_treaties
         else:
-            mask: pd.Series[bool] = (categorized_treaties.party1.isin(parties)|(categorized_treaties.party2.isin(parties)))
+            mask: pd.Series = (categorized_treaties.party1.isin(parties)|(categorized_treaties.party2.isin(parties)))
             if party_group['label'] == 'ALL OTHER':
                 parties_treaties = categorized_treaties.loc[~mask]
             else:
@@ -193,7 +195,7 @@ class QuantityByTopic():
             stacked_treaties['continent_code_other'] = stacked_treaties['continent_code_other'].fillna(value='IO')
 
             if not 'ALL' in parties:
-                 stacked_treaties = stacked_treaties.loc[stacked_treaties.party.isin(parties)]
+                stacked_treaties = stacked_treaties.loc[stacked_treaties.party.isin(parties)]
 
             data = stacked_treaties\
                     .groupby([period_group['column'], target_column[target_quantity]])\

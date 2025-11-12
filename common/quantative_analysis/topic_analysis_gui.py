@@ -11,6 +11,7 @@ import analysis_plot
 import logging
 import types
 import datetime
+from common.treaty_state import TreatyState
 
 from IPython.display import display
 from pprint import pprint as pp
@@ -18,17 +19,18 @@ from pprint import pprint as pp
 logger = utility.getLogger('tq_by_topic', level=logging.WARNING)
 
 def display_topic_quantity(
+    *,
+    wti_index: TreatyState,
+    chart_type_name: str,
     period_group=0,
     topic_group=None,
     party_group=None,
     recode_is_cultural=False,
     normalize_values=False,
     extra_other_category=False,
-    chart_type_name=None,
     plot_style='classic',
     target_quantity="topic",
     treaty_sources=None,
-    wti_index=None,
     progress=utility.noop,
     vmax=None,
     legend=True,
@@ -45,9 +47,7 @@ def display_topic_quantity(
             
         chart_type = config.CHART_TYPE_MAP[chart_type_name]
 
-        period_column = period_group['column']
-
-        data = analysis_data.QuantityByTopic.get_treaty_topic_quantity_stat(
+        data: pd.DataFrame | None= analysis_data.QuantityByTopic.get_treaty_topic_quantity_stat(
             wti_index,
             period_group,
             topic_group,

@@ -265,16 +265,9 @@ class TreatyCorpus(TextCorpus):
 
     #     return documents
 
-    def save_load(self, fname: str) -> None:
-        """Save/load corpus to/from file.
-
-        Parameters
-        ----------
-        fname : str
-            Filename to save/load corpus.
-
-        """
-        gensim.corpora.MmCorpus.serialize(fname, self, id2word=self.dictionary.id2token)
+    @staticmethod
+    def save_corpus(fname, corpus, id2word=None, metadata=False) -> None:
+        gensim.corpora.MmCorpus.serialize(fname, corpus, id2word=corpus.dictionary.id2token)
 
 
 class MmCorpusStatisticsService:
