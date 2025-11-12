@@ -170,17 +170,14 @@ def get_positioned_nodes(network: nx.Graph, layout: dict, nodes: list[str] | Non
     """
     layout_items = layout.items() if nodes is None else [x for x in layout.items() if x[0] in nodes]
 
-    nodes, nodes_coordinates = zip(*sorted(layout_items))
+    filtered_node_ids, nodes_coordinates = zip(*sorted(layout_items))
     xs, ys = list(zip(*nodes_coordinates))
 
-    list_of_attribs: list[dict[str, Any]] = [network.nodes[k] for k in (nodes or [])]
+    list_of_attribs: list[dict[str, Any]] = [network.nodes[k] for k in (filtered_node_ids or [])]
 
-    attrib_lists: dict[str, tuple[Any, ...]] = dict(
-        zip(list_of_attribs[0], zip(*[d.values() for d in list_of_attribs]))
-    )
+    attrib_lists: dict[str, Any] = dict(zip(list_of_attribs[0], zip(*[d.values() for d in list_of_attribs])))
 
-    attrib_lists.update({"x": xs, "y": ys, "name": nodes, "node_id": nodes})
-
+    attrib_lists.update({"x": xs, "y": ys, "name": filtered_node_ids, "node_id": filtered_node_ids})
     dict_of_lists: dict[str, list[Any]] = {k: list(v) for k, v in attrib_lists.items()}
 
     return dict_of_lists

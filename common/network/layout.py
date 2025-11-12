@@ -8,7 +8,7 @@ sys.path = sys.path if ".." in sys.path else sys.path + [".."]
 
 
 try:
-    import graph_tool.all as gt  # pylint: disable=unused-import; noqa: F401
+    import graph_tool.all as gt  # type: ignore ; pylint: disable=unused-import; noqa: F401
 
     from common.network.layout_graphtool import layout_setups as gt_layout_setups  # pylint: disable=ungrouped-imports
 

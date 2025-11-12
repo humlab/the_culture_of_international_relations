@@ -1,5 +1,5 @@
 try:
-    import graph_tool.all as gt
+    import graph_tool.all as gt  # type: ignore ;  pylint: disable=import-error
 except ImportError:
     print("warning: graph_tool not installed!")
 
