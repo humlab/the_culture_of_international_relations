@@ -1,15 +1,24 @@
 import time
+from types import SimpleNamespace
+from typing import Any, Iterable
 
 import ipywidgets as widgets
 import numpy as np
 import pandas as pd
-import textacy_corpus_utility as textacy_utility
-from spacy import attrs
+import spacy
+import spacy.tokens
+from IPython.display import display
+from loguru import logger
+from spacy.attrs import LEMMA, LOWER, ORTH  # noqa ; pylint: disable=no-name-in-module ; type: ignore
+from textacy.corpus import Corpus
 
-import common.utility as utility
-import common.widgets_config as widgets_config
+from common import utility, widgets_config
+from common.corpus import textacy_corpus_utility as textacy_utility
 
-utility.setup_default_pd_display(pd)
+# pylint: disable=no-name-in-module
+
+
+utility.setup_default_pd_display()
 
 # def count_words_by(doc, target='lemma', include=None):
 
@@ -46,23 +55,23 @@ def corpus_size_by_grouping(corpus, treaty_time_groups, group_by_column):
 
 
 def compute_list_of_most_frequent_words(
-    corpus,
+    corpus: Corpus,
     gui,
-    treaty_time_groups,
-    group_by_column="signed_year",
+    treaty_time_groups: dict,
+    group_by_column: str = "signed_year",
     parties=None,
-    target="lemma",
-    weighting="count",
-    include_pos=None,
-    stop_words=None,
+    target: str = "lemma",
+    weighting: str = "count",
+    include_pos: set[str] | None = None,
+    stop_words: set[str] | None = None,
     display_score=False,
-):
+) -> pd.DataFrame:
 
-    stop_words = stop_words or set()
+    stop_words = set(stop_words or set())
     include_pos = set(include_pos) if include_pos is not None and len(include_pos) > 0 else None
-    target_keys = {"lemma": attrs.LEMMA, "lower": attrs.LOWER, "orth": attrs.ORTH}
+    target_keys = {"lemma": LEMMA, "lower": LOWER, "orth": ORTH}
 
-    def exclude(x):
+    def exclude(x) -> bool:
 
         if x.is_stop or x.is_punct or x.is_space:
             return True
@@ -73,19 +82,16 @@ def compute_list_of_most_frequent_words(
         if x.lemma_ in stop_words:
             return True
 
-        if len(x.lemma_) < 2:
-            return True
-
-        return False
+        return len(x.lemma_) < 2
 
     df_counts = pd.DataFrame({"treaty_id": [], "signed_year": [], "word_id": [], "word": [], "word_count": []})
 
     parties_set = set(parties or [])
 
-    docs = (
-        corpus
+    docs: Iterable[spacy.tokens.Doc] = (
+        corpus.docs
         if len(parties_set) == 0
-        else (x for x in corpus if len(set((x._.meta["party1"], x._.meta["party2"])) & parties_set) > 0)
+        else (x for x in corpus.docs if len(set((x._.meta["party1"], x._.meta["party2"])) & parties_set) > 0)
     )
 
     gui.progress.max = len(corpus)
@@ -103,13 +109,13 @@ def compute_list_of_most_frequent_words(
             {
                 "treaty_id": doc._.meta["treaty_id"],
                 "signed_year": int(doc._.meta["signed_year"]),
-                "word_id": [np.uint64(key) for key in word_counts.keys()],
+                "word_id": [np.uint64(key) for key in word_counts],
                 "word": [spacy_store[key].lower() for key in word_counts.keys()],
                 "word_count": list(word_counts.values()),
             }
         )
 
-        df_counts = df_counts.append(df)
+        df_counts = df_counts.append(df)  # type: ignore
 
         gui.progress.value = gui.progress.value + 1
 
@@ -141,7 +147,7 @@ def compute_list_of_most_frequent_words(
             df_counts.word
             + "*"
             + (
-                df_counts.word_frequency.apply("{:,.3f}".format)
+                df_counts.word_frequency.apply("{:,.3f}".format)  # pylint: disable=consider-using-f-string
                 if weighting == "freq"
                 else df_counts.word_count.astype(str)
             )
@@ -154,13 +160,13 @@ def compute_list_of_most_frequent_words(
         + 1
     )
 
-    df_counts = df_counts[[group_by_column, "word", "word_count", "word_frequency", "position"]]
+    df_counts: pd.DataFrame = df_counts[[group_by_column, "word", "word_count", "word_frequency", "position"]]
     gui.progress.value = 0
 
     return df_counts
 
 
-def sanitize_name(x):
+def sanitize_name(x) -> str:
     sane_x = "_".join([c if (c.isalpha() or c.isdigit()) else "_" for c in (x or "")]).strip()
     return sane_x.lower()
 
@@ -200,32 +206,33 @@ def display_list_of_most_frequent_words(gui, df):
         print("Excel written: " + filename)
 
 
-def word_frequency_gui(wti_index, corpus):
+def word_frequency_gui(wti_index, corpus) -> SimpleNamespace:
 
     treaty_time_groups = wti_index.get_treaty_time_groupings()
 
-    lw = lambda w: widgets.Layout(width=w)
+    def lw(w):
+        return widgets.Layout(width=w)
 
-    include_pos_tags = ["ADJ", "VERB", "ADV", "NOUN", "PROPN"]
-    weighting_options = {"Count": "count", "Frequency": "freq"}
-    normalize_options = {"": False, "Lemma": "lemma", "Lower": "lower"}
-    pos_options = include_pos_tags
-    default_include_pos = ["NOUN", "PROPN"]
-    frequent_words = [
+    include_pos_tags: list[str] = ["ADJ", "VERB", "ADV", "NOUN", "PROPN"]
+    weighting_options: dict[str, str] = {"Count": "count", "Frequency": "freq"}
+    normalize_options: dict[str, str | bool] = {"": False, "Lemma": "lemma", "Lower": "lower"}
+    pos_options: list[str] = include_pos_tags
+    default_include_pos: list[str] = ["NOUN", "PROPN"]
+    frequent_words: list[str] = [
         x[0].lower() for x in textacy_utility.get_most_frequent_words(corpus, 100, include_pos=default_include_pos)
     ]
 
-    group_by_options = {treaty_time_groups[k]["title"]: k for k in treaty_time_groups}
-    output_type_options = [
+    group_by_options: dict[str, str] = {treaty_time_groups[k]["title"]: k for k in treaty_time_groups}
+    output_type_options: list[tuple[str, str]] = [
         ("Sample", "table"),
         ("Rank", "rank"),
         ("Excel", "excel"),
     ]
-    ngrams_options = {"-": None, "1": [1], "1,2": [1, 2], "1,2,3": [1, 2, 3]}
-    party_preset_options = wti_index.get_party_preset_options()
-    parties_options = [x for x in wti_index.get_countries_list() if x != "ALL OTHER"]
+    ngrams_options: dict[str, Any] = {"-": None, "1": [1], "1,2": [1, 2], "1,2,3": [1, 2, 3]}
+    party_preset_options: dict[str, Any] = wti_index.get_party_preset_options()
+    parties_options: list[str] = [x for x in wti_index.get_countries_list() if x != "ALL OTHER"]
 
-    gui = types.SimpleNamespace(
+    gui = SimpleNamespace(
         progress=widgets.IntProgress(value=0, min=0, max=5, step=1, description="", layout=lw("98%")),
         parties=widgets.SelectMultiple(
             description="Parties", options=parties_options, value=[], rows=7, layout=lw("200px")
@@ -313,11 +320,11 @@ def word_frequency_gui(wti_index, corpus):
 
     gui.party_preset.observe(on_party_preset_change, names="value")
 
-    def pos_change_handler(*args):
+    def pos_change_handler(*args) -> None:  # pylint: disable=unused-argument
         with gui.output:
             gui.compute.disabled = True
-            selected = set(gui.stop_words.value)
-            frequent_words = [
+            selected: set[str] = set(gui.stop_words.value)
+            frequent_words: list[str] = [
                 x[0].lower()
                 for x in textacy_utility.get_most_frequent_words(
                     corpus,
@@ -341,7 +348,7 @@ def word_frequency_gui(wti_index, corpus):
         with gui.output:
             try:
                 gui.compute.disabled = True
-                df_counts = compute_list_of_most_frequent_words(
+                df_counts: pd.DataFrame = compute_list_of_most_frequent_words(
                     corpus=corpus,
                     gui=gui,
                     target=gui.normalize.value,
