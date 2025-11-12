@@ -9,14 +9,11 @@ import spacy
 import spacy.tokens
 from IPython.display import display
 from loguru import logger
-from spacy.attrs import LEMMA, LOWER, ORTH  # noqa ; pylint: disable=no-name-in-module ; type: ignore
+from spacy.attrs import LEMMA, LOWER, ORTH  # pylint: disable=no-name-in-module
 from textacy.corpus import Corpus
 
 from common import utility, widgets_config
 from common.corpus import textacy_corpus_utility as textacy_utility
-
-# pylint: disable=no-name-in-module
-
 
 utility.setup_default_pd_display()
 

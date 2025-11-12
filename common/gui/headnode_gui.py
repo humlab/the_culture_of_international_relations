@@ -1,18 +1,17 @@
-from re import A
 import sys
 from pprint import pprint as pp
-import pandas as pd
-from common.treaty_state import TreatyState
-from common.corpus import headnote_corpus
-import ipywidgets as widgets
-from IPython.display import display
-import pandas as pd
-from common import config
-from common import utility
-from common import widgets_config
+from re import A
 from typing import Any
-from common.utility import remove_snake_case
+
+import ipywidgets as widgets
+import pandas as pd
 from ipydatagrid import DataGrid
+from IPython.display import display
+
+from common import config, utility, widgets_config
+from common.corpus import headnote_corpus
+from common.treaty_state import TreatyState
+from common.utility import remove_snake_case
 
 sys.path = sys.path if ".." in sys.path else sys.path + [".."]
 
@@ -196,7 +195,7 @@ def display_headnote_toplist(
 
 def display_gui(wti_index, print_args=False):
 
-    def lw(width: str="180px", left: str="0"):  # pylint: disable=unused-argument
+    def lw(width: str = "180px", left: str = "0"):  # pylint: disable=unused-argument
         return widgets.Layout(width=width)
 
     def parties_options() -> list[str]:

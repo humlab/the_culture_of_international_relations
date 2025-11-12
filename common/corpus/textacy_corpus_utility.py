@@ -1,3 +1,5 @@
+# pylint: disable=no-name-in-module
+
 import collections
 import itertools
 import os
@@ -14,7 +16,7 @@ import spacy.tokenizer
 import spacy.tokens
 import textacy.preprocessing
 from loguru import logger
-from spacy.attrs import LEMMA, LOWER, ORTH
+from spacy.attrs import LEMMA, LOWER, ORTH  # pylint: disable=no-name-in-module
 from spacy.language import Language
 from textacy.corpus import Corpus
 from textacy.spacier.utils import make_doc_from_text_chunks
@@ -22,7 +24,6 @@ from textacy.spacier.utils import make_doc_from_text_chunks
 from common import utility
 
 # pylint: disable=no-name-in-module
-
 
 
 # pylint: disable=no-name-in-module
