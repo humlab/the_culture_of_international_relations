@@ -1,19 +1,25 @@
-
-#import itertools
 import math
 import operator
+
+# import itertools
+from collections.abc import Sequence
 from decimal import Decimal
 
 import numpy as np
-import textacy.vsm as vsm
+from textacy.representations.matrix_utils import get_doc_freqs
+from textacy.representations.vectorizers import Vectorizer
 
-#from cytoolz import itertoolz
+# from cytoolz import itertoolz
 
-#from .. import compat, extract, similarity, vsm
-#from .. import utils as t_utils
+# from .. import compat, extract, similarity, vsm
+# from .. import utils as t_utils
+
 
 def most_discriminating_terms(
-    terms_lists, bool_array_grp1, max_n_terms=1000, top_n_terms=25
+    terms_lists: Sequence[Sequence[str]],
+    bool_array_grp1: Sequence[bool],
+    max_n_terms: int = 1000,
+    top_n_terms: int = 25,
 ):
     """
     Given a collection of documents assigned to 1 of 2 exclusive groups, get the
@@ -48,7 +54,7 @@ def most_discriminating_terms(
     bool_array_grp1 = np.array(bool_array_grp1)
     bool_array_grp2 = np.invert(bool_array_grp1)
 
-    vectorizer = vsm.Vectorizer(
+    vectorizer = Vectorizer(
         tf_type="linear",
         norm=None,
         idf_type="smooth",
@@ -62,22 +68,18 @@ def most_discriminating_terms(
     # get doc freqs for all terms in grp1 documents
     dtm_grp1 = dtm[bool_array_grp1, :]
     n_docs_grp1 = dtm_grp1.shape[0]
-    doc_freqs_grp1 = vsm.get_doc_freqs(dtm_grp1)
+    doc_freqs_grp1 = get_doc_freqs(dtm_grp1)
 
     # get doc freqs for all terms in grp2 documents
     dtm_grp2 = dtm[bool_array_grp2, :]
     n_docs_grp2 = dtm_grp2.shape[0]
-    doc_freqs_grp2 = vsm.get_doc_freqs(dtm_grp2)
+    doc_freqs_grp2 = get_doc_freqs(dtm_grp2)
 
     # get terms that occur in a larger fraction of grp1 docs than grp2 docs
-    term_ids_grp1 = np.where(
-        doc_freqs_grp1 / n_docs_grp1 > doc_freqs_grp2 / n_docs_grp2
-    )[0]
+    term_ids_grp1 = np.where(doc_freqs_grp1 / n_docs_grp1 > doc_freqs_grp2 / n_docs_grp2)[0]
 
     # get terms that occur in a larger fraction of grp2 docs than grp1 docs
-    term_ids_grp2 = np.where(
-        doc_freqs_grp1 / n_docs_grp1 < doc_freqs_grp2 / n_docs_grp2
-    )[0]
+    term_ids_grp2 = np.where(doc_freqs_grp1 / n_docs_grp1 < doc_freqs_grp2 / n_docs_grp2)[0]
 
     # get grp1 terms doc freqs in and not-in grp1 and grp2 docs, plus marginal totals
     grp1_terms_grp1_df = doc_freqs_grp1[term_ids_grp1]
@@ -101,23 +103,11 @@ def most_discriminating_terms(
         term1 = (
             Decimal(math.factorial(grp1_terms_grp1_df[idx] + alpha_grp1 - 1))
             * Decimal(math.factorial(grp1_terms_grp2_df[idx] + alpha_grp2 - 1))
-            / Decimal(
-                math.factorial(
-                    grp1_terms_grp1_df[idx]
-                    + grp1_terms_grp2_df[idx]
-                    + alpha_grp1
-                    + alpha_grp2
-                    - 1
-                )
-            )
+            / Decimal(math.factorial(grp1_terms_grp1_df[idx] + grp1_terms_grp2_df[idx] + alpha_grp1 + alpha_grp2 - 1))
         )
         term2 = (
-            Decimal(
-                math.factorial(n_docs_grp1 - grp1_terms_grp1_df[idx] + alpha_grp1 - 1)
-            )
-            * Decimal(
-                math.factorial(n_docs_grp2 - grp1_terms_grp2_df[idx] + alpha_grp2 - 1)
-            )
+            Decimal(math.factorial(n_docs_grp1 - grp1_terms_grp1_df[idx] + alpha_grp1 - 1))
+            * Decimal(math.factorial(n_docs_grp2 - grp1_terms_grp2_df[idx] + alpha_grp2 - 1))
             / Decimal(
                 (
                     math.factorial(
@@ -135,9 +125,9 @@ def most_discriminating_terms(
         grp1_terms_likelihoods[id2term[term_id]] = term1 * term2
     top_grp1_terms = [
         (term, likelihood)
-        for term, likelihood in sorted(
-            grp1_terms_likelihoods.items(), key=operator.itemgetter(1), reverse=True
-        )[:top_n_terms]
+        for term, likelihood in sorted(grp1_terms_likelihoods.items(), key=operator.itemgetter(1), reverse=True)[
+            :top_n_terms
+        ]
     ]
 
     # get grp2 terms likelihoods, then sort for most discriminating grp2-not-grp1 terms
@@ -146,23 +136,11 @@ def most_discriminating_terms(
         term1 = (
             Decimal(math.factorial(grp2_terms_grp2_df[idx] + alpha_grp2 - 1))
             * Decimal(math.factorial(grp2_terms_grp1_df[idx] + alpha_grp1 - 1))
-            / Decimal(
-                math.factorial(
-                    grp2_terms_grp2_df[idx]
-                    + grp2_terms_grp1_df[idx]
-                    + alpha_grp2
-                    + alpha_grp1
-                    - 1
-                )
-            )
+            / Decimal(math.factorial(grp2_terms_grp2_df[idx] + grp2_terms_grp1_df[idx] + alpha_grp2 + alpha_grp1 - 1))
         )
         term2 = (
-            Decimal(
-                math.factorial(n_docs_grp2 - grp2_terms_grp2_df[idx] + alpha_grp2 - 1)
-            )
-            * Decimal(
-                math.factorial(n_docs_grp1 - grp2_terms_grp1_df[idx] + alpha_grp1 - 1)
-            )
+            Decimal(math.factorial(n_docs_grp2 - grp2_terms_grp2_df[idx] + alpha_grp2 - 1))
+            * Decimal(math.factorial(n_docs_grp1 - grp2_terms_grp1_df[idx] + alpha_grp1 - 1))
             / Decimal(
                 (
                     math.factorial(
@@ -180,10 +158,9 @@ def most_discriminating_terms(
         grp2_terms_likelihoods[id2term[term_id]] = term1 * term2
     top_grp2_terms = [
         (term, likelihood)
-        for term, likelihood in sorted(
-            grp2_terms_likelihoods.items(), key=operator.itemgetter(1), reverse=True
-        )[:top_n_terms]
+        for term, likelihood in sorted(grp2_terms_likelihoods.items(), key=operator.itemgetter(1), reverse=True)[
+            :top_n_terms
+        ]
     ]
 
     return (top_grp1_terms, top_grp2_terms)
-
