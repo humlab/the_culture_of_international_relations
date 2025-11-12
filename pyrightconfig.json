@@ -8,6 +8,9 @@
     ],
     "exclude": [
         ".*",
+        ".venv/**",
+        "venv/**",
+        "env/**",
         "deprecated",
         "other", 
         "documents",
@@ -20,12 +23,12 @@
         ".vscode",
         "*.egg-info",
         "build",
-        "dist",
-        "venv",
-        "env",
-        ".venv"
+        "dist"
     ],
     "ignore": [
+        ".venv/**/*.py",
+        "venv/**/*.py",
+        "env/**/*.py",
         "deprecated/**/*.py",
         "other/**/*.py", 
         "documents/**/*.py",
