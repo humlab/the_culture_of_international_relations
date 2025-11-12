@@ -189,18 +189,15 @@ class TreatyState:
             ("parties_curated_group.csv", "group", "parties_curated.xlsx", "group"),
         ]
         self.data: dict[str, pd.DataFrame] = self._read_data()
-
-        self.treaty_headnote_corpus = None
-        self.tagged_headnotes = None
-
+        self.tagged_headnotes: pd.DataFrame | None = None
         self.groups: pd.DataFrame = self.get_groups()
         self.continents: pd.DataFrame = self.get_continents()
         self.parties: pd.DataFrame = self.get_parties()
 
         self._treaties: pd.DataFrame | None = None
         self._stacked_treaties: pd.DataFrame | None = None
-        self._get_countries_list = None
-        self._party_preset_options = None
+        self._get_countries_list: list[str] | None = None
+        self._party_preset_options: list[str] | None = None
         self._unique_sources: list[str] = []
 
     def check_party(self) -> str:
@@ -328,7 +325,7 @@ class TreatyState:
         treaties.loc[(treaties.topic1 == "7CULT") | (treaties.topic2 == "7CULT"), "topic"] = "7CULT"
 
         # Drop columns not used
-        skip_columns = list(set(treaties.columns).intersection(set(self.treaties_skip_columns)))
+        skip_columns: list[str] = list(set(treaties.columns).intersection(set(self.treaties_skip_columns)))
         if skip_columns is not None and len(skip_columns) > 0:
             treaties.drop(skip_columns, axis=1, inplace=True)
 
@@ -485,7 +482,7 @@ class TreatyState:
         if self._get_countries_list is None:
             parties: pd.DataFrame = self.get_parties()
             parties: pd.DataFrame = parties.loc[~parties.group_no.isin([0, 8, 11])]
-            self._get_countries_list: list[Any] = list(parties.index)
+            self._get_countries_list = parties.index.to_list()
 
         if len(excludes or []) > 0:
             return [x for x in self._get_countries_list if x not in excludes]
@@ -514,8 +511,8 @@ class TreatyState:
 
     def get_tagged_headnotes(self, tags=None) -> pd.DataFrame:
         if self.tagged_headnotes is None:
-            filename = os.path.join(self.data_folder, "tagged_headnotes.csv")
-            self.tagged_headnotes: pd.DataFrame = pd.read_csv(filename, sep="\t").drop("Unnamed: 0", axis=1)
+            filename: str = os.path.join(self.data_folder, "tagged_headnotes.csv")
+            self.tagged_headnotes = pd.read_csv(filename, sep="\t").drop("Unnamed: 0", axis=1)
         if tags is None:
             return self.tagged_headnotes
         return self.tagged_headnotes.loc[(self.tagged_headnotes.pos.isin(tags))]

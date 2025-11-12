@@ -4,19 +4,22 @@ import os
 import re
 import sys
 import zipfile
-from collections.abc import Generator, Iterable
+from collections.abc import Generator, Iterable, Sequence
 from logging import Logger
 from typing import Any, Literal
 
 import ftfy
 import pandas as pd
 import spacy
+import spacy.tokenizer
 import spacy.tokens
 import textacy.preprocessing
+import textacy.utils
 from spacy import attrs
 from spacy.language import Language
 from spacy.strings import StringStore
 from textacy.corpus import Corpus
+from textacy.spacier.utils import make_doc_from_text_chunks
 
 import common.utility as utility
 
@@ -352,32 +355,39 @@ def get_document_by_id(corpus, document_id, field_name="document_id"):
 
 
 def generate_corpus_filename(
-    source_path, language, nlp_args=None, preprocess_args=None, compression="bz2", period_group="", extension="bin"
-):
+    source_path: str,
+    language: str,
+    nlp_args: dict[str, Any] | None = None,
+    preprocess_args: dict[str, Any] | None = None,
+    compression: str = "bz2",
+    period_group: str = "",
+    extension: str = "bin",
+) -> str:
     nlp_args = nlp_args or {}
     preprocess_args = preprocess_args or {}
-    disabled_pipes = nlp_args.get("disable", ())
-    suffix = "_{}_{}{}_{}".format(
-        language,
-        "_".join([k for k in preprocess_args if preprocess_args[k]]),
-        "_disable({})".format(",".join(disabled_pipes)) if len(disabled_pipes) > 0 else "",
-        (period_group or ""),
-    )
+    disabled_pipes: Sequence[str] = nlp_args.get("disable", ())
+    disables_str: str = f"_disable({','.join(disabled_pipes)})" if len(disabled_pipes) > 0 else ""
+    preprocess_str: str = "_".join([k for k in preprocess_args if preprocess_args[k]])
+    suffix: str = f"_{language}_{preprocess_str}{disables_str}_{(period_group or '')}"
+
     filename = utility.path_add_suffix(source_path, suffix, new_extension="." + extension)
     if (compression or "") != "":
         filename += "." + compression
     return filename
 
 
-def get_disabled_pipes_from_filename(filename) -> list[str] | Any | None:
+def get_disabled_pipes_from_filename(filename: str) -> list[str] | Any | None:
     re_pipes = r"^.*disable\((.*)\).*$"
-    x = re.match(re_pipes, filename).groups(0)
+    m: re.Match | None = re.match(re_pipes, filename)
+    if not m or m.groups(0) is None:
+        return None
+    x: tuple[str | int, ...] = m.groups(0)
     if len(x or []) > 0:
-        return x[0].split(",")
+        return str(x[0]).split(",")
     return None
 
 
-def create_textacy_corpus(corpus_reader, nlp, tick=utility.noop, n_chunk_threshold=100000):
+def create_textacy_corpus(corpus_reader, nlp: Language, tick=utility.noop, n_chunk_threshold: int = 100000) -> Corpus:
 
     corpus = Corpus(nlp)
     counter = 0
@@ -387,7 +397,7 @@ def create_textacy_corpus(corpus_reader, nlp, tick=utility.noop, n_chunk_thresho
         metadata = utility.extend(metadata, dict(filename=filename, document_id=document_id))
 
         if len(text) > n_chunk_threshold:
-            doc = textacy.spacier.utils.make_doc_from_text_chunks(text, lang=nlp, chunk_size=n_chunk_threshold)
+            doc: spacy.tokens.Doc = make_doc_from_text_chunks(text, lang=nlp, chunk_size=n_chunk_threshold)
             corpus.add_doc(doc)
             doc._.meta = metadata
         else:
@@ -420,9 +430,9 @@ def load_corpus(filename: str, lang, document_id: str = "document_id") -> Corpus
 
 
 def keep_hyphen_tokenizer(nlp):
-    infix_re: re.Pattern[str] = re.compile(r"""[.\,\?\:\;\...\‘\’\`\“\”\"\'~]""")
-    prefix_re = spacy.util.compile_prefix_regex(nlp.Defaults.prefixes)
-    suffix_re = spacy.util.compile_suffix_regex(nlp.Defaults.suffixes)
+    infix_re: re.Pattern = re.compile(r"""[.\,\?\:\;\...\‘\’\`\“\”\"\'~]""")
+    prefix_re: re.Pattern = spacy.util.compile_prefix_regex(nlp.Defaults.prefixes)
+    suffix_re: re.Pattern = spacy.util.compile_suffix_regex(nlp.Defaults.suffixes)
 
     return spacy.tokenizer.Tokenizer(
         nlp.vocab,
@@ -431,9 +441,6 @@ def keep_hyphen_tokenizer(nlp):
         infix_finditer=infix_re.finditer,
         token_match=None,
     )
-
-
-_load_spacy = textacy.load_spacy_lang if hasattr(textacy, "load_spacy_lang") else textacy.load_spacy
 
 
 @utility.timecall
@@ -453,7 +460,7 @@ def setup_nlp_language_model(language: str, **nlp_args) -> Language | Any:
     # if not model_name.endswith('lg'):
     #    logger.warning('Selected model is not the largest availiable.')
 
-    nlp: Language = _load_spacy(model_name, **nlp_args)
+    nlp: Language = textacy.load_spacy_lang(model_name, **nlp_args)
     nlp.tokenizer = keep_hyphen_tokenizer(nlp)
 
     def pipeline() -> list[str | Any]:

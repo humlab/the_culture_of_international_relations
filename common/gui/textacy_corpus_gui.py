@@ -1,26 +1,26 @@
 import glob
 import os
 import types
-from collections.abc import Callable
+from collections.abc import Callable, Iterable
 
 import ipywidgets as widgets
 import pandas as pd
-import textacy
-from domain_logic_config import current_domain as domain_logic
 from IPython.display import display
 from loguru import logger
+from textacy.corpus import Corpus
+from textacy.extract import entities as extract_entities
 from textacy.spacier.utils import merge_spans
 
-import common.corpus.textacy_corpus_utility as textacy_utility
-import common.utility as utility
-import common.widgets_config as widgets_config
-from common import config
+from common import config, utility, widgets_config
+from common.corpus import textacy_corpus_utility as textacy_utility
 from common.corpus.utility import CompressedFileReader
+from common.domain_logic_config import current_domain as domain_logic
+from common.treaty_state import TreatyState
 
 
 def generate_textacy_corpus(
     data_folder: str,  # noqa pylint: disable=unused-argument
-    wti_index: pd.DataFrame,
+    wti_index: TreatyState,
     container: textacy_utility.CorpusContainer,
     source_path: str,
     language: str,
@@ -60,7 +60,7 @@ def generate_textacy_corpus(
     if overwrite or not os.path.isfile(container.textacy_corpus_path):
 
         logger.info("Working: Computing new corpus " + container.textacy_corpus_path + "...")
-        treaties = wti_index.get_treaties(
+        treaties: pd.DataFrame = wti_index.get_treaties(
             language=container.language,
             period_group=period_group,
             treaty_filter=treaty_filter,
@@ -81,7 +81,7 @@ def generate_textacy_corpus(
     else:
         logger.info("Working: Loading corpus " + container.textacy_corpus_path + "...")
         tick(1, 2)
-        container.textacy_corpus = textacy.Corpus.load(container.nlp, container.textacy_corpus_path)
+        container.textacy_corpus = Corpus.load(container.nlp, container.textacy_corpus_path)
         logger.info(f"Loaded corpus with {len(container.textacy_corpus)} documents.")
 
         tick(0)
@@ -89,7 +89,7 @@ def generate_textacy_corpus(
     if merge_entities:
         logger.info("Working: Merging named entities...")
         for doc in container.textacy_corpus:
-            named_entities = textacy.extract.named_entities(doc)
+            named_entities: Iterable[Span] = extract_entities(doc)
             merge_spans(named_entities, doc.spacy_doc)
     else:
         logger.info("Named entities not merged")

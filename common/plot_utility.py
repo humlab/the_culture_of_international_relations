@@ -112,7 +112,7 @@ class PlotNetworkUtility:
         line_opts: dict[str, str | float] | None = None,
         element_id: str = "nx_id3",  # pylint: disable=unused-argument
         figsize: tuple[int, int] = (900, 900),
-    ):
+    ) -> figure:
         if threshold > 0:
             values = nx.get_edge_attributes(network, "weight").values()
             max_weight: float = max(1.0, max(values))
@@ -126,7 +126,7 @@ class PlotNetworkUtility:
         else:
             sub_network = network
 
-        args = PlotNetworkUtility.layout_args(layout_algorithm, sub_network, scale)
+        args: dict[str, Any] = PlotNetworkUtility.layout_args(layout_algorithm, sub_network, scale)
         layout = (PlotNetworkUtility.get_layout_algorithm(layout_algorithm))(sub_network, **args)
         # lines_source: bm.ColumnDataSource = NetworkUtility.get_edges_source(
         #     sub_network, layout, scale=weight_scale, normalize=normalize_weights
@@ -146,7 +146,7 @@ class PlotNetworkUtility:
             # NOTE!!! By pd index - not iloc!!
             nodes_weight = node_proportions.loc[list(sub_network.nodes)]
             nodes_weight: pd.Series = PlotNetworkUtility.project_series_to_range(nodes_weight, 20, 60)
-            nodes_size: str = "size"
+            nodes_size = "size"
             nodes_source.add(nodes_weight, nodes_size)
 
         node_opts = DFLT_NODE_OPTS | (node_opts or {})
