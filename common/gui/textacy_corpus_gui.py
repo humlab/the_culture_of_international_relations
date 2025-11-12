@@ -1,17 +1,17 @@
 import glob
 import os
 import types
-from collections.abc import Callable, Iterable
+from collections.abc import Callable, Iterable, Sequence
 
 import ipywidgets as widgets
 import pandas as pd
 from IPython.display import display
 from loguru import logger
 from textacy.corpus import Corpus
-from textacy.extract import entities as extract_entities
+from textacy.extract.basics import entities as extract_entities
 from textacy.spacier.utils import merge_spans
 
-from common import config, utility, widgets_config
+from common import config, domain_logic, utility, widgets_config
 from common.corpus import textacy_corpus_utility as textacy_utility
 from common.corpus.utility import CompressedFileReader
 from common.treaty_state import TreatyState
@@ -28,7 +28,7 @@ def generate_textacy_corpus(
     period_group: str = "years_1935-1972",
     treaty_filter: str = "",
     parties: list[str] | None = None,
-    disabled_pipes: list[str] | None = None,
+    disabled_pipes: Sequence[str] | None = None,
     tick: Callable[[int, int], None] = utility.noop,
     treaty_sources: list[str] | None = None,
 ):
@@ -50,7 +50,6 @@ def generate_textacy_corpus(
         container.prepped_source_path,
         container.language,
         nlp_args=nlp_args,
-        compression=None,
         period_group=period_group,
     )
 
@@ -66,7 +65,7 @@ def generate_textacy_corpus(
             parties=parties,
             treaty_sources=treaty_sources,
         )
-        reader = CompressedFileReader(container.prepped_source_path)
+        reader: CompressedFileReader = CompressedFileReader(container.prepped_source_path)
 
         stream = domain_logic.get_document_stream(reader, container.language, document_index=treaties)
 
@@ -75,7 +74,7 @@ def generate_textacy_corpus(
         tick(0, len(treaties))
         container.textacy_corpus = textacy_utility.create_textacy_corpus(stream, container.nlp, tick)
         container.textacy_corpus.save(container.textacy_corpus_path)
-        tick(0)
+        tick(0, 0)
 
     else:
         logger.info("Working: Loading corpus " + container.textacy_corpus_path + "...")
@@ -83,20 +82,20 @@ def generate_textacy_corpus(
         container.textacy_corpus = Corpus.load(container.nlp, container.textacy_corpus_path)
         logger.info(f"Loaded corpus with {len(container.textacy_corpus)} documents.")
 
-        tick(0)
+        tick(0, 0)
 
     if merge_entities:
         logger.info("Working: Merging named entities...")
-        for doc in container.textacy_corpus:
-            named_entities: Iterable[Span] = extract_entities(doc)
-            merge_spans(named_entities, doc.spacy_doc)
+        for doc in container.textacy_corpus.docs:
+            named_entities: Iterable = extract_entities(doc)
+            merge_spans(named_entities, doc)
     else:
         logger.info("Named entities not merged")
 
     logger.info("Done!")
 
 
-def display_corpus_load_gui(data_folder: str, wti_index: pd.DataFrame, container: textacy_utility.CorpusContainer):
+def display_corpus_load_gui(data_folder: str, wti_index: TreatyState, container: textacy_utility.CorpusContainer):
 
     def lw(w):
         return widgets.Layout(width=w)
@@ -104,11 +103,9 @@ def display_corpus_load_gui(data_folder: str, wti_index: pd.DataFrame, container
     treaty_source_options = wti_index.unique_sources
     treaty_default_source_options: list[str] = ["LTS", "UNTS", "UNXX"]
 
-    language_options: dict[str, str] = {
-        config.LANGUAGE_MAP[k].title(): k for k in config.LANGUAGE_MAP if k in ["en", "fr"]
-    }
+    language_options: dict[str, str] = {v.title(): k for k, v in config.LANGUAGE_MAP.items() if k in ["en", "fr"]}
 
-    period_group_options = {config.PERIOD_GROUPS_ID_MAP[k]["title"]: k for k in config.PERIOD_GROUPS_ID_MAP}
+    period_group_options = {v["title"]: k for k, v in config.PERIOD_GROUPS_ID_MAP.items()}
 
     corpus_files: list[str] = list(
         sorted(
