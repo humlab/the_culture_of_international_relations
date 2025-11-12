@@ -2,7 +2,7 @@ from types import SimpleNamespace as bunch
 
 import networkx as nx
 
-engines = ["neato", "dot", "circo", "fdp", "sfdp"]
+engines: list[str] = ["neato", "dot", "circo", "fdp", "sfdp"]
 
 
 def layout_network(G, layout_algorithm, **kwargs):

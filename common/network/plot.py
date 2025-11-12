@@ -3,8 +3,9 @@ from typing import Any
 
 import bokeh.models
 import bokeh.palettes
+import pandas as pd
 from bokeh.models import ColumnDataSource
-from bokeh.plotting import figure
+from bokeh.plotting import figure, show
 
 import common.network.layout as network_layout
 from common import utility, widgets_config
@@ -74,10 +75,10 @@ def setup_node_size(nodes, node_size, node_size_range):
 def adjust_node_label_offset(nodes: dict[str, Any], node_size: str | int, default_y_offset: int = 5):
 
     label_x_offset: int = 0
-    label_y_offset = "y_offset" if node_size in nodes else node_size + default_y_offset
+    label_y_offset = "y_offset" if node_size in nodes else int(node_size) + default_y_offset
     if label_y_offset == "y_offset":
         nodes["y_offset"] = [
-            y + r for (y, r) in zip(nodes["y"], [r / 2.0 + default_y_offset for r in nodes[node_size]])
+            y + r for (y, r) in zip(nodes["y"], [r / 2.0 + default_y_offset for r in nodes[str(node_size)]])
         ]
     return label_x_offset, label_y_offset
 
@@ -191,7 +192,7 @@ def plot_network(
         line_opts = utility.extend(line_opts, {"line_color": "line_color", "alpha": 1.0})
 
     _ = p.multi_line("xs", "ys", line_width="weight", source=edges_source, **line_opts)
-    r_nodes = p.circle("x", "y", size=node_size, source=nodes_source, **node_opts)
+    r_nodes = p.circle("x", "y", radius=int(node_size), source=nodes_source, **node_opts)
 
     if "fill_color" in nodes:
         r_nodes.glyph.fill_color = "fill_color"
@@ -223,7 +224,7 @@ def plot_network(
         label_opts = utility.extend({}, DFLT_LABEL_OPTS, plot_opts.get("edge_label_opts", {}))
         p.add_layout(bokeh.models.LabelSet(source=edges_source, x="m_x", y="m_y", text=edge_label, **label_opts))
 
-    handle = bokeh.plotting.show(p, notebook_handle=True)
+    handle = show(p, notebook_handle=True)
 
     return {
         "handle": handle,
@@ -235,23 +236,25 @@ def plot_network(
 
 
 def plot_df(
-    df,
-    source="source",
-    target="target",
-    weight="weight",
-    layout_opts=None,
-    plot_opts=None,
-    fig_opts=None,
-):
+    df: pd.DataFrame,
+    source: str = "source",
+    target: str = "target",
+    weight: str = "weight",
+    layout_opts: dict[str, Any] | None = None,
+    plot_opts: dict[str, Any] | None = None,
+    fig_opts: dict[str, Any] | None = None,
+) -> dict[str, Any]:
 
     # print([ x.key for x in network_layout.layout_setups])
+    assert layout_opts is not None, "layout_opts must be provided"
+    assert plot_opts is not None, "plot_opts must be provided"
 
     g = networkx_utility.df_to_nx(df, source=source, target=target, bipartite=False, weight=weight)
 
     layout, _ = network_layout.layout_network(g, layout_opts["algorithm"], **layout_opts["args"])
 
-    edges = networkx_utility.get_positioned_edges2(g, layout)
-    nodes = networkx_utility.get_positioned_nodes(g, layout)
+    edges: dict[str, list[Any]] = networkx_utility.get_positioned_edges2(g, layout)
+    nodes: dict[str, list[Any]] = networkx_utility.get_positioned_nodes(g, layout)
 
     plot_data = plot_network(nodes=nodes, edges=edges, plot_opts=plot_opts, fig_opts=fig_opts)
 

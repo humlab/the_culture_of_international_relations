@@ -41,9 +41,10 @@ class QuantityByParty():
     @staticmethod
     def get_treaties_statistics(
         wti_index: TreatyState,
+        *,
         period_group: dict[str, Any],
-        party_name: str = 'party_name',
-        parties: None | list[str] | list[int] = None,
+        party_name: str,
+        parties: list[str] | list[int],
         treaty_filter: str ='',
         extra_category: str ='',
         n_top: int = 0,
@@ -89,6 +90,7 @@ class QuantityByParty():
             extra_party = wti_index.get_party('ALL')
 
         if df_extra is not None:
+            assert extra_party is not None, 'Extra party information could not be found'
             df_extra = df_extra.assign(party=extra_party['party'],
                                        party_name=extra_party['party_name'],
                                        party_short_name=extra_party['short_name'],
@@ -96,7 +98,7 @@ class QuantityByParty():
 
             treaties_of_parties = pd.concat([treaties_of_parties, df_extra])
 
-        data = treaties_of_parties.groupby([period_column, party_name]).size().reset_index()\
+        data: pd.DataFrame = treaties_of_parties.groupby([period_column, party_name]).size().reset_index()\
                 .rename(columns={ period_column: 'Period', party_name: 'Party', 0: 'Count' })
 
         data = complete_missing_data_points(data, period_group, category_column='Party', value_column='Count')

@@ -88,14 +88,14 @@ class StaticColorMap:
         self.color_index = (self.color_index + 1) % len(self.palette)
         return self.palette[self.color_index]
 
-    def add_categories(self, categories: list[str]) -> Self:
+    def add_categories(self, categories: Sequence[str]) -> Self:
         unseen_categories: list[str] = list(set(categories) - set(self.color_map.keys() - {np.nan}))
         if len(unseen_categories) == 0:
             return self
         self.color_map.update({v: self.next_color() for v in unseen_categories})
         return self
 
-    def add_categories2(self, categories: list[str]) -> Self:
+    def add_categories2(self, categories: Sequence[str]) -> Self:
         categories = list(set(categories) - set(self.color_map.keys() - {np.nan}))
         if len(categories) == 0:
             return self
@@ -103,7 +103,7 @@ class StaticColorMap:
         self.color_map.update({v: colors[i] for i, v in enumerate(categories)})
         return self
 
-    def get_palette(self, categories: list[str]) -> list[str]:
+    def get_palette(self, categories: Sequence[str]) -> list[str]:
         # add new categories
         self.add_categories(categories)
         return [self.color_map[k] for k in categories]
