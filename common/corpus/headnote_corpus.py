@@ -2,10 +2,9 @@ from collections.abc import Sequence
 
 import nltk
 import pandas as pd
+from loguru import logger
 
-import common.utility as utility
-
-logger = utility.getLogger(name="title_analysis")
+from common import utility
 
 uniquify = utility.uniquify
 
@@ -30,7 +29,7 @@ class HeadnoteTokenCorpus:
         ]
 
         if ignore_word_count:
-            transforms = transforms + [lambda ws: uniquify(ws)]
+            transforms = transforms + [uniquify]
 
         headnote_tokens = treaties.headnote.str.lower().apply(tokenize)
         for f in transforms:

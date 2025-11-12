@@ -189,15 +189,13 @@ def display_list_of_most_frequent_words(gui, df):
         display(df_unstacked_freqs)
 
     else:
-        sanitized_suffix = sanitize_name(gui.file_suffix.value)
+        sanitized_suffix: str = sanitize_name(gui.file_suffix.value)
+        sanitized_suffix = "_" + sanitized_suffix if len(sanitized_suffix) > 0 else ""
         # if gui.party_preset.value is not None:
         #    sanitized_suffix = sanitize_name(gui.party_preset.value[0])
         print("Writing excel...")
-        filename = "{}_word_trends_{}_{}{}.xlsx".format(
-            time.strftime("%Y%m%d_%H%M%S"),
-            gui.normalize.value,
-            "_".join(gui.include_pos.value),
-            "_" + sanitized_suffix if len(sanitized_suffix) > 0 else "",
+        filename: str = (
+            f"{time.strftime('%Y%m%d_%H%M%S')}_word_trends_{gui.normalize.value}_{'_'.join(gui.include_pos.value)}{sanitized_suffix}.xlsx"
         )
         df.to_excel(filename)
         print("Excel written: " + filename)

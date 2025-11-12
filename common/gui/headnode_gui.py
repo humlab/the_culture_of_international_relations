@@ -1,6 +1,5 @@
 import sys
 from pprint import pprint as pp
-from re import A
 from typing import Any
 
 import ipywidgets as widgets

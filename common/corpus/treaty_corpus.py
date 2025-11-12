@@ -155,7 +155,7 @@ class TreatyCorpus(TextCorpus):
         tokenizer: Callable[[str], list[str]] | None = None,
         token_filters: list[Callable[[list[str]], list[str]]] | None = None,
         bigram_transform: bool = False,  # pylint: disable=unused-argument
-    ):
+    ) -> None:
         self.stream = stream
         self.filenames: list[str] | None = None
         self.documents: pd.DataFrame | None = None
@@ -264,6 +264,17 @@ class TreatyCorpus(TextCorpus):
     #         logger.critical('Warning! Duplicate treaties found in corpus: {}'.format(' '.join(list(dupes.index))))
 
     #     return documents
+
+    def save_load(self, fname: str) -> None:
+        """Save/load corpus to/from file.
+
+        Parameters
+        ----------
+        fname : str
+            Filename to save/load corpus.
+
+        """
+        gensim.corpora.MmCorpus.serialize(fname, self, id2word=self.dictionary.id2token)
 
 
 class MmCorpusStatisticsService:
