@@ -45,9 +45,9 @@ def get_treaty_filename_lookup(archivename: str, language: str) -> dict[str, str
 
 class CompressedFileReader:
 
-    def __init__(self, path: str, pattern: str = "*.txt", itemfilter=None) -> None:
+    def __init__(self, path: str, pattern: str | re.Pattern = "*.txt", itemfilter=None) -> None:
         self.path: str = path
-        self.filename_pattern: str = pattern
+        self.filename_pattern: str | re.Pattern = pattern
         self.archive_filenames: list[str] = list_treaty_archive_files(path, pattern)
         filenames: list[str] | None = None
         if itemfilter is not None:
@@ -84,7 +84,7 @@ class CompressedFileReader:
                 yield os.path.basename(filename), self._read_content(zip_file, filename)
 
     def _read_content(self, zip_file: zipfile.ZipFile, filename: str) -> str:
-        with zip_file.open(filename, "rU") as text_file:
+        with zip_file.open(filename, "rU") as text_file:  # type: ignore
             byte_str: bytes = text_file.read()
             content: str = gensim.utils.to_unicode(byte_str, "utf8", errors="ignore")
             content = dehyphen(content)
@@ -322,7 +322,7 @@ class MmCorpusStatisticsService:
                 "treaty_id": self.corpus.document_names.treaty_id,
                 "size": [sum(list(zip(*document))[1]) for document in self.corpus],
                 "stopwords": [
-                    sum([v for (i, v) in document if id2token[i] in self.stopwords]) for document in self.corpus
+                    sum(v for (i, v) in document if id2token[i] in self.stopwords) for document in self.corpus
                 ],
             }
         ).set_index("document_name")
@@ -355,7 +355,7 @@ class ExtMmCorpus(gensim.corpora.MmCorpus):
 
     @staticmethod
     def norm_tf_by_D(doc):
-        D = sum([x[1] for x in doc])
+        D: int = sum(x[1] for x in doc)
         return doc if D == 0 else map(lambda tf: (tf[0], tf[1] / D), doc)
 
     def __init__(self, fname):

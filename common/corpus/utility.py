@@ -32,10 +32,13 @@ def list_archive_files(archivename: str, pattern: str | re.Pattern | Callable[[s
 class CompressedFileReader:
 
     def __init__(
-        self, path: str, pattern: str = "*.txt", itemfilter: re.Pattern | str | Callable[[str], bool] | None = None
+        self,
+        path: str,
+        pattern: str | re.Pattern = "*.txt",
+        itemfilter: re.Pattern | str | Callable[[str], bool] | None = None,
     ) -> None:
         self.path: str = path
-        self.filename_pattern: str = pattern
+        self.filename_pattern: str | re.Pattern = pattern
         self.archive_filenames: list[str] = list_archive_files(path, pattern)
         filenames: list[str] | None = None
         if itemfilter is not None:
