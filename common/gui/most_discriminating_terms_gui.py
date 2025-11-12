@@ -1,44 +1,41 @@
 import sys
 import types
 
+# pylint: disable=no-name-in-module
 import ipywidgets as widgets
 import pandas as pd
-import spacy
-import textacy
 from IPython.display import display
 from loguru import logger
-from spacy import attrs
+from spacy.attrs import LEMMA, LOWER, ORTH  # noqa ; pylint: disable=no-name-in-module ; type: ignore
 from textacy.corpus import Corpus
 
-import common.widgets_config as widgets_config
+from common import widgets_config
 from common.treaty_state import TreatyState
+from common.utils import most_discriminating_terms
 
-from .most_discriminating_terms_patch import most_discriminating_terms
+# from .most_discriminating_terms_patch import most_discriminating_terms
 
 sys.path = list(set([".", ".."]) - set(sys.path)) + sys.path
 
 
-
-
-
 def compute_most_discriminating_terms(
-    wti_index: TreatyState,
+    wti_index: TreatyState,  # pylint: disable=unused-argument; noqa
     corpus: Corpus,
-    group1: list[str] = None,
-    group2: list[str] = None,
+    group1: list[str] | None = None,
+    group2: list[str] | None = None,
     top_n_terms: int = 25,
     max_n_terms: int = 1000,
     include_pos: list[str] | None = None,
     period1: tuple[int, int] | None = None,
     period2: tuple[int, int] | None = None,
     closed_region: bool = False,
-    normalize: int = attrs.LEMMA,
+    normalize: int = LEMMA,
     output_filename=None,
 ) -> types.NoneType | pd.DataFrame:
     def get_token_attr(token, feature):
-        if feature == attrs.LEMMA:
+        if feature == LEMMA:
             return token.lemma_.lower().strip("_")
-        if feature == attrs.LOWER:
+        if feature == LOWER:
             return token.lower_
         return token.orth_
 
@@ -70,9 +67,7 @@ def compute_most_discriminating_terms(
 
     in_group1 = [True] * len(docs1) + [False] * len(docs2)
 
-    terms = textacy.keyterms.most_discriminating_terms(
-        docs, in_group1, top_n_terms=top_n_terms, max_n_terms=max_n_terms
-    )
+    terms = most_discriminating_terms(docs, in_group1, top_n_terms=top_n_terms, max_n_terms=max_n_terms)
     # terms = most_discriminating_terms(docs, in_group1, top_n_terms=top_n_terms, max_n_terms=max_n_terms)
     min_terms = min(len(terms[0]), len(terms[1]))
     df = pd.DataFrame({"Group 1": terms[0][:min_terms], "Group 2": terms[1][:min_terms]})
@@ -106,11 +101,12 @@ def display_gui(wti_index, corpus):
     compute_callback = compute_most_discriminating_terms
     display_callback = display_most_discriminating_terms
 
-    lw = lambda w: widgets.Layout(width=w)
+    def lw(w: str):
+        return widgets.Layout(width=w)
 
     include_pos_tags: list[str] = ["ADJ", "VERB", "NUM", "ADV", "NOUN", "PROPN"]
 
-    normalize_options = {"Lemma": spacy.attrs.LEMMA, "Lower": spacy.attrs.LOWER, "Orth": spacy.attrs.ORTH}
+    normalize_options = {"Lemma": LEMMA, "Lower": LOWER, "Orth": ORTH}
     party_preset_options = wti_index.get_party_preset_options()
     parties_options = [x for x in wti_index.get_countries_list() if x not in ["ALL", "ALL OTHER"]]
 
@@ -156,9 +152,7 @@ def display_gui(wti_index, corpus):
         sync_period=widgets.ToggleButton(
             description="Sync period", icon="check", value=False, disabled=False, layout=lw("140px"), tooltop="HEJ"
         ),
-        normalize=widgets.Dropdown(
-            description="Normalize", options=normalize_options, value=spacy.attrs.LEMMA, layout=lw("200px")
-        ),
+        normalize=widgets.Dropdown(description="Normalize", options=normalize_options, value=LEMMA, layout=lw("200px")),
         compute=widgets.Button(description="Compute", icon="", button_style="Success", layout=lw("120px")),
         output=widgets.Output(layout={"border": "1px solid black"}),
     )
@@ -197,21 +191,21 @@ def display_gui(wti_index, corpus):
 
     display(boxes)
 
-    def on_group1_preset_change(change):
+    def on_group1_preset_change(_):
         if gui.group1_preset.value is None:
             return
         gui.group1.value = gui.group1.options if "ALL" in gui.group1_preset.value else gui.group1_preset.value
 
-    def on_group2_preset_change(change):
+    def on_group2_preset_change(_):
         if gui.group2_preset.value is None:
             return
         gui.group2.value = gui.group2.options if "ALL" in gui.group2_preset.value else gui.group2_preset.value
 
-    def on_period1_change(change):
+    def on_period1_change(_):
         if gui.sync_period.value:
             gui.period2.value = gui.period1.value
 
-    def on_period2_change(change):
+    def on_period2_change(_):
         if gui.sync_period.value:
             gui.period1.value = gui.period2.value
 
@@ -243,7 +237,7 @@ def display_gui(wti_index, corpus):
                     display_callback(df)
                 else:
                     logger.info("No data for selected groups or periods.")
-            except Exception as ex:
+            except Exception as ex:  # pylint: disable=broad-except, broad-exception-caught; noqa
                 logger.error(ex)
             finally:
                 gui.compute.disabled = False
