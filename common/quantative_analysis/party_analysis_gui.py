@@ -1,21 +1,23 @@
-from collections.abc import Sequence
-from dataclasses import dataclass
-from typing import Any
-import ipywidgets as widgets
+import datetime
 import itertools
 import types
-import pandas as pd
-from common.treaty_state import TreatyState
-import common.widgets_config as widgets_config
-import common.config as config
-import common.utility as utility
-import common.treaty_utility as treaty_utility
-import common.color_utility as color_utility
-from . import analysis_data
-from . import analysis_plot
+from collections.abc import Sequence
+from dataclasses import dataclass
 from pprint import pprint as pp
+from typing import Any
+
+import ipywidgets as widgets
+import pandas as pd
 from IPython.display import display
-import datetime
+
+import common.color_utility as color_utility
+import common.config as config
+import common.treaty_utility as treaty_utility
+import common.utility as utility
+import common.widgets_config as widgets_config
+from common.treaty_state import TreatyState
+
+from . import analysis_data, analysis_plot
 
 logger = utility.getLogger("tq_by_party")
 
@@ -104,7 +106,9 @@ def display_quantity_by_party(
             pivot: pd.DataFrame = pivot.reset_index()[columns]
             colors: list[str] = static_color_map.get_palette(columns)
 
-            kwargs: dict[str, Any] = analysis_plot.prepare_plot_kwargs(pivot, chart_type, normalize_values, period_group, vmax=vmax)
+            kwargs: dict[str, Any] = analysis_plot.prepare_plot_kwargs(
+                pivot, chart_type, normalize_values, period_group, vmax=vmax
+            )
             kwargs.update({"overlay": overlay, "colors": colors})
             kwargs.update({"legend": legend})
 

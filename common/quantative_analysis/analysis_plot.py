@@ -1,6 +1,8 @@
 import matplotlib
 import pandas as pd
+
 import common.color_utility as color_utility
+
 
 def quantity_plot(
     data,
@@ -8,9 +10,9 @@ def quantity_plot(
     chart_type,
     plot_style,
     overlay: bool = True,
-    figsize=(1000,600),
-    xlabel='',
-    ylabel='',
+    figsize=(1000, 600),
+    xlabel: str = "",
+    ylabel: str = "",
     xticks=None,
     yticks=None,
     xticklabels=None,
@@ -19,14 +21,15 @@ def quantity_plot(
     ylim=None,
     dpi=48,
     colors=color_utility.DEFAULT_PALETTE,
-    **kwargs):  # pylint: disable=W0613
+    **kwargs,
+):  # pylint: disable=W0613
 
     matplotlib.style.use(plot_style)
 
-    figsize=(figsize[0]/dpi, figsize[1]/dpi)
+    figsize = (figsize[0] / dpi, figsize[1] / dpi)
 
     kind: str = f'{chart_type.kind}{"h" if chart_type.horizontal else ""}'
-   
+
     ax = pivot.plot(kind=kind, stacked=chart_type.stacked, figsize=figsize, color=colors, **kwargs)
 
     if xticks is not None:
@@ -41,9 +44,9 @@ def quantity_plot(
     if yticklabels is not None:
         ax.set_yticklabels(yticklabels)
 
-    ax.set_xlabel(xlabel or '')
-    ax.set_ylabel(ylabel or '')
-    ax.set_title(None) # TODO: Add as argument
+    ax.set_xlabel(xlabel or "")
+    ax.set_ylabel(ylabel or "")
+    ax.set_title(None)  # TODO: Add as argument
 
     if xlim is not None:
         ax.set_xlim(xlim)
@@ -58,8 +61,8 @@ def quantity_plot(
 
     # Put a legend to the right of the current axis
     # TODO: Add `loc` as argument
-    if kwargs.get('legend'):
-        legend = ax.legend(loc='center left', bbox_to_anchor=(1, 0.5))
+    if kwargs.get("legend"):
+        legend = ax.legend(loc="center left", bbox_to_anchor=(1, 0.5))
         legend.get_frame().set_linewidth(0.0)
 
     if ax.get_xticklabels() is not None:
@@ -68,63 +71,62 @@ def quantity_plot(
 
     return ax.get_figure()
 
+
 def create_party_name_map(parties, palette=color_utility.DEFAULT_PALETTE):
 
     rev_dict = lambda d: {v: k for k, v in d.items()}
 
-    df: pd.DataFrame = parties.rename(columns=dict(short_name='party_short_name', country='party_country'))
-    df['party'] = df.index
+    df: pd.DataFrame = parties.rename(columns=dict(short_name="party_short_name", country="party_country"))
+    df["party"] = df.index
 
-    rd = df[~df.group_no.isin([0, 8])][['party', 'party_short_name', 'party_name', 'party_country']].to_dict()
+    rd = df[~df.group_no.isin([0, 8])][["party", "party_short_name", "party_name", "party_country"]].to_dict()
 
-    party_name_map = {
-        k: rev_dict(rd[k]) for k in rd.keys()
-    }
+    party_name_map = {k: rev_dict(rd[k]) for k in rd.keys()}
 
-    party_color_map = { party: palette[i % len(palette)] for i, party in enumerate(parties.index) }
+    party_color_map = {party: palette[i % len(palette)] for i, party in enumerate(parties.index)}
 
     return party_name_map, party_color_map
 
+
 def vstepper(vmax) -> int:
-    for step, value in [ (1, 15), (5, 30), (10, 250), (25, 500), (100, 2000)]:
+    for step, value in [(1, 15), (5, 30), (10, 250), (25, 500), (100, 2000)]:
         if vmax < value:
             return step
     return 500
 
-def prepare_plot_kwargs(data, chart_type, normalize_values, period_group, vmax = None):
 
-    kwargs = { "figsize": (1000, 500) }
+def prepare_plot_kwargs(data, chart_type, normalize_values, period_group, vmax=None):
 
-    label = 'Number of treaties' if not normalize_values else 'Share%'
+    kwargs = {"figsize": (1000, 500)}
 
-    c, v = ('x', 'y') if not chart_type.horizontal else ('y', 'x')
+    label = "Number of treaties" if not normalize_values else "Share%"
 
-    kwargs.setdefault('%slabel' %(v,), label)
-    
-    if period_group['type'] == 'range':
-        ticklabels = [ str(x) for x in period_group['periods'] ]
+    c, v = ("x", "y") if not chart_type.horizontal else ("y", "x")
+
+    kwargs.setdefault("%slabel" % (v,), label)
+
+    if period_group["type"] == "range":
+        ticklabels = [str(x) for x in period_group["periods"]]
     else:
-        ticklabels = [ '{} to {}'.format(x[0], x[1]) for x in period_group['periods'] ]
+        ticklabels = ["{} to {}".format(x[0], x[1]) for x in period_group["periods"]]
 
-    kwargs.setdefault('%sticks' %(c,), list(data.index))
+    kwargs.setdefault("%sticks" % (c,), list(data.index))
 
     if vmax is None:
         if chart_type.stacked:
             vmax = data.sum(axis=1).max()
         else:
-            vmax = data.max().max()    
+            vmax = data.max().max()
 
     vstep: int = vstepper(vmax)
-    
-    
+
     if not normalize_values:
-        kwargs.setdefault('%sticks' %(v,), list(range(0,vmax+vstep, vstep)))
+        kwargs.setdefault("%sticks" % (v,), list(range(0, vmax + vstep, vstep)))
 
     if ticklabels is not None:
-        kwargs.setdefault('%sticklabels' %(c,), ticklabels)
+        kwargs.setdefault("%sticklabels" % (c,), ticklabels)
 
     if normalize_values:
-        kwargs.setdefault('%slim' %(v,), [0, 100])
-        
-    return kwargs
+        kwargs.setdefault("%slim" % (v,), [0, 100])
 
+    return kwargs
