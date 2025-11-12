@@ -197,7 +197,7 @@ class TreatyState:
         self._treaties: pd.DataFrame | None = None
         self._stacked_treaties: pd.DataFrame | None = None
         self._get_countries_list: list[str] | None = None
-        self._party_preset_options: list[str] | None = None
+        self._party_preset_options: list[tuple[str, list[str]]] | None = None
         self._unique_sources: list[str] = []
 
     def check_party(self) -> str:
@@ -251,7 +251,7 @@ class TreatyState:
                 assert xls_filename is not None
                 xls_path: str = os.path.join(self.data_folder, xls_filename)
                 assert os.path.exists(xls_path)
-                df: pd.DataFrame = pd.read_excel(xls_path, sheet_name=xls_sheet)
+                df: pd.DataFrame | Any = pd.read_excel(xls_path, sheet_name=xls_sheet)
                 assert isinstance(df, pd.DataFrame)
                 df.to_csv(path, sep="\t", index=True)
             data[key] = pd.read_csv(path, sep="\t", low_memory=False, keep_default_na=False, na_values=None)
@@ -359,7 +359,7 @@ class TreatyState:
             }
         ).assign(reversed=True)
 
-        treaties: pd.DataFrame = df1.append(df2)  # .set_index(['treaty_id'])
+        treaties: pd.DataFrame = df1.append(df2)  # type: ignore
 
         # Add fields for party's name, country, continent and WTI group
         parties: pd.DataFrame = self.parties[
@@ -432,7 +432,7 @@ class TreatyState:
 
         return df
 
-    def get_parties(self, extra_parties: dict | None = None) -> pd.DataFrame:  # pylint: disable=W0102
+    def get_parties(self, extra_parties: dict[str, Any] | None = None) -> pd.DataFrame:  # pylint: disable=W0102
         extra_parties = extra_parties or default_extra_parties
         parties: pd.DataFrame = (
             self.data["parties"]
@@ -471,13 +471,13 @@ class TreatyState:
         extra_keys: list[str] = list(extra_parties.keys())
         extract_values: list[dict] = list(extra_parties.values())
         df: pd.DataFrame = pd.DataFrame(
-            extract_values, columns=extra_parties[extra_keys[0]].keys(), index=extra_parties.keys()
+            extract_values, columns=extra_parties[extra_keys[0]].keys(), index=list(extra_parties.keys())
         )
         parties = pd.concat([parties, df], axis=0)
 
         return parties
 
-    def get_countries_list(self, excludes=None) -> list[Any]:
+    def get_countries_list(self, excludes: Sequence[str] | None = None) -> list[Any]:
 
         if self._get_countries_list is None:
             parties: pd.DataFrame = self.get_parties()
@@ -485,20 +485,12 @@ class TreatyState:
             self._get_countries_list = parties.index.to_list()
 
         if len(excludes or []) > 0:
+            assert excludes is not None
             return [x for x in self._get_countries_list if x not in excludes]
 
         return self._get_countries_list
 
-    def get_party_name(self, party: pd.DataFrame, party_name_column: str) -> pd.DataFrame:
-        try:
-            if party in self.parties.index:
-                return self.parties.loc[party, party_name_column]
-            return party
-        except:  # pylint: disable=bare-except
-            logger.warning(f"Warning: {party} not in curated parties list")
-            return party
-
-    def get_party(self, party: pd.DataFrame) -> dict | None:
+    def get_party(self, party: str) -> dict | None:
         try:
             d: dict = self.parties.loc[party].to_dict()
             d["party"] = party
@@ -539,8 +531,7 @@ class TreatyState:
     def filter_by_is_cultural(self, df: pd.DataFrame, treaty_filter: str) -> pd.DataFrame:
 
         if treaty_filter == "is_cultural":
-            # NOTE: changed from df.is_cultural == True to bool(...) to avoid pandas warning
-            return df.loc[bool(df.is_cultural)]
+            return df.loc[df.is_cultural.astype(bool)]
 
         if treaty_filter == "is_7cult":
             return df.loc[(df.topic1 == "7CULT")]
@@ -726,7 +717,7 @@ class TreatyState:
         cf: pd.Series = df[["group_name"]].groupby("group_name").apply(lambda x: list(x.index))
         return cf
 
-    def get_party_preset_options(self):
+    def get_party_preset_options(self) -> list[tuple[str, list[str]]]:
 
         preset_options: dict[str, list[str]] = dict(config.PARTY_PRESET_OPTIONS)
 
@@ -754,7 +745,7 @@ class TreatyState:
 
             options = sorted(options, key=lambda x: x[0])
 
-            self._party_preset_options: list[tuple[str, list[str]]] = options
+            self._party_preset_options = options
 
         return self._party_preset_options
 

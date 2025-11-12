@@ -94,8 +94,8 @@ class PlotNetworkUtility:
         return layout_algorithms[layout_algorithm]
 
     @staticmethod
-    def project_series_to_range(series, low, high):
-        norm_series = series / series.max()
+    def project_series_to_range(series: pd.Series, low: float, high: float) -> pd.Series:
+        norm_series: pd.Series = series / series.max()
         return norm_series.apply(lambda x: low + (high - low) * x)
 
     @staticmethod
@@ -144,10 +144,12 @@ class PlotNetworkUtility:
         nodes_size: int | str = 5
         if node_proportions is not None:
             # NOTE!!! By pd index - not iloc!!
-            nodes_weight = node_proportions.loc[list(sub_network.nodes)]
-            nodes_weight: pd.Series = PlotNetworkUtility.project_series_to_range(nodes_weight, 20, 60)
+            assert node_proportions is not None
+
+            nodes_weight: pd.Series = node_proportions.loc[list(sub_network.nodes)]
+            nodes_weight = PlotNetworkUtility.project_series_to_range(nodes_weight, 20, 60)
             nodes_size = "size"
-            nodes_source.add(nodes_weight, nodes_size)
+            nodes_source.add(nodes_weight, nodes_size)  # type: ignore ; noqa; pylint: disable=E1101
 
         node_opts = DFLT_NODE_OPTS | (node_opts or {})
         line_opts = DFLT_EDGE_OPTS | (line_opts or {})
@@ -158,15 +160,7 @@ class PlotNetworkUtility:
             x_axis_type=None,
             y_axis_type=None,
         )
-        # node_size = 'size' if node_proportions is not None else 5
-        # r_lines = p.multi_line(
-        #     "xs", "ys", line_width="weights", source=lines_source, **line_opts
-        # )
-        r_nodes = p.circle("x", "y", radius=nodes_size, source=nodes_source, **node_opts)
-
-        #    glyph_hover_callback(nodes_source, 'node_id', text_ids=node_description.index, \
-        #                         text=node_description, element_id=element_id))
-        # )
+        r_nodes = p.circle("x", "y", radius=nodes_size, source=nodes_source, **node_opts)  # type: ignore
 
         text_opts: dict[str, str] = {
             "x": "x",
