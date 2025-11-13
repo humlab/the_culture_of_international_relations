@@ -1,6 +1,7 @@
 import math
 import operator
 
+# FIXME: Check if this code is from textacy, in such a case add license info
 # import itertools
 from collections.abc import Sequence
 from decimal import Decimal

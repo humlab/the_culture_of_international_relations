@@ -71,7 +71,7 @@ def timecall(f):
     return f_wrapper
 
 
-def extend(target: dict, *args: dict, **kwargs: dict) -> dict:
+def extend(target: dict, *args, **kwargs) -> dict:
     """Returns dictionary 'target' extended by supplied dictionaries (args) or named keywords
 
     Parameters

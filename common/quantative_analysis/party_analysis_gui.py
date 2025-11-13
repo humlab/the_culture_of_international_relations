@@ -1,6 +1,5 @@
 import datetime
 import itertools
-import types
 from collections.abc import Sequence
 from dataclasses import dataclass
 from pprint import pprint as pp
@@ -9,17 +8,12 @@ from typing import Any
 import ipywidgets as widgets
 import pandas as pd
 from IPython.display import display
+from loguru import logger
 
-import common.color_utility as color_utility
-import common.config as config
-import common.treaty_utility as treaty_utility
-import common.utility as utility
-import common.widgets_config as widgets_config
+from common import color_utility, config, treaty_utility, utility, widgets_config
 from common.treaty_state import TreatyState
 
 from . import analysis_data, analysis_plot
-
-logger = utility.getLogger("tq_by_party")
 
 OTHER_CATEGORY_OPTIONS: dict[str, str] = {
     "Other category": "other_category",
@@ -62,7 +56,7 @@ def display_quantity_by_party(
 
         progress()
 
-        period_group = config.DEFAULT_PERIOD_GROUPS[period_group_index]
+        period_group: dict[str, Any] = config.DEFAULT_PERIOD_GROUPS[period_group_index]
         chart_type: config.KindOfChart = config.CHART_TYPE_MAP[chart_type_name]
 
         parties = list(parties or [])
@@ -119,7 +113,7 @@ def display_quantity_by_party(
 
             if output_filename:
                 basename = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
-                ax.savefig("{}_{}.{}".format(basename, output_filename, "eps"), format="eps", dpi=300)
+                ax.savefig(f"{basename}_{output_filename}.eps", format="eps", dpi=300)
 
         elif chart_type.name == "table":
             display(data)
@@ -128,10 +122,10 @@ def display_quantity_by_party(
 
         progress()
 
-    except Exception as ex:
+    except Exception as ex:  # pylint: disable=broad-except
         logger.error(ex)
         # raise
-    finally:
+    finally:  # pylint: disable=lost-exception
         progress(0)
 
 
@@ -250,7 +244,7 @@ def display_gui(wti_index, print_args=False):
             else:
                 gui.parties.value = gui.party_preset.value
 
-            if gui.top_n_parties.value > 0:
+            if gui.top_n_parties.value > 0:  # pylint: disable=consider-using-min-builtin
                 gui.top_n_parties.value = 0
         except Exception as ex:  # pylint: disable=W0703
             logger.info(ex)

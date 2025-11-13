@@ -17,7 +17,7 @@ def complete_missing_data_points(data, period_group, category_column="Party", va
     periods = (
         period_group["periods"]
         if period_group["type"] == "range"
-        else ["{} to {}".format(x[0], x[1]) for x in period_group["periods"]]
+        else [f"{x[0]} to {x[1]}" for x in period_group["periods"]]
     )
 
     period_categories = pd.DataFrame(list(product(periods, categories)), columns=["Period", category_column]).set_index(

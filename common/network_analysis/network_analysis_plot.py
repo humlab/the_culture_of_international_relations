@@ -1,3 +1,6 @@
+from typing import Any
+
+import pandas as pd
 from bokeh.models import ColumnDataSource, HoverTool, LabelSet
 from bokeh.palettes import RdYlBu, Set1, all_palettes  # pylint: disable=E0611
 from bokeh.plotting import figure, show
@@ -7,35 +10,35 @@ from common.utility import extend
 from common.widgets_config import glyph_hover_callback2
 
 
-def get_palette(palette_name):
+def get_palette(palette_name: str) -> list[str]:
     if palette_name not in all_palettes.keys():
         return RdYlBu[11]
-    key = max(all_palettes[palette_name].keys())
+    key: int = max(all_palettes[palette_name].keys())
     return all_palettes[palette_name][key]
 
 
-def get_line_color(data, topic_group_name):
+def get_line_color(data: pd.DataFrame, topic_group_name: str) -> pd.Series:
     line_palette = Set1[8]
     group_keys = config.DEFAULT_TOPIC_GROUPS[topic_group_name].keys()
-    line_palette_map = {k: i % len(line_palette) for i, k in enumerate(group_keys)}
+    line_palette_map: dict[str, int] = {k: i % len(line_palette) for i, k in enumerate(group_keys)}
     return data.category.apply(lambda x: line_palette[line_palette_map[x]])
 
 
 TOOLS = "pan,wheel_zoom,box_zoom,reset,save"
 
-DFLT_NODE_OPTS = dict(color="green", level="overlay", alpha=1.0)
+DFLT_NODE_OPTS: dict[str, Any] = {"color": "green", "level": "overlay", "alpha": 1.0}
 
-DFLT_EDGE_OPTS = dict(color="black", alpha=0.2)
+DFLT_EDGE_OPTS: dict[str, Any] = {"color": "black", "alpha": 0.2}
 
-DFLT_LABEL_OPTS = dict(
-    level="overlay",
-    text_align="center",
-    text_baseline="middle",
-    render_mode="canvas",
-    text_font="Tahoma",
-    text_font_size="9pt",
-    text_color="black",
-)
+DFLT_LABEL_OPTS: dict[str, str] = {
+    "level": "overlay",
+    "text_align": "center",
+    "text_baseline": "middle",
+    "render_mode": "canvas",
+    "text_font": "Tahoma",
+    "text_font_size": "9pt",
+    "text_color": "black",
+}
 
 
 def plot_network(
@@ -100,4 +103,10 @@ def plot_network(
 
     handle = show(p, notebook_handle=True)
 
-    return dict(handle=handle, edges=edges, nodes=nodes, edges_source=edges_source, nodes_source=nodes_source)
+    return {
+        "handle": handle,
+        "edges": edges,
+        "nodes": nodes,
+        "edges_source": edges_source,
+        "nodes_source": nodes_source,
+    }

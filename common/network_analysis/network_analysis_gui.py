@@ -1,18 +1,18 @@
 import sys
 import warnings
+from collections.abc import Sequence
 from pprint import pprint as pp
+from typing import Any
 
 import ipywidgets as widgets
+import pandas as pd
 from bokeh.io import push_notebook
 from IPython.display import display
 from loguru import logger
 
-import common.color_utility as color_utility
-import common.config as config
-import common.network.layout as network_layout
-import common.network.networkx_utility as networkx_utility
-import common.utility as utility
-import common.widgets_config as widgets_config
+from common import color_utility, config, utility, widgets_config
+from common.network import layout as network_layout
+from common.network import networkx_utility
 from common.network_analysis.network_analysis import (
     adjust_node_label_offset,
     create_party_network,
@@ -21,22 +21,24 @@ from common.network_analysis.network_analysis import (
 )
 from common.network_analysis.network_analysis_gui import NETWORK_PLOT_OPTS
 from common.network_analysis.network_analysis_plot import get_palette, plot_network
+from common.treaty_state import TreatyState
 
 sys.path = sys.path if ".." in sys.path else sys.path + [".."]
 
+# pylint: disable=consider-using-f-string
 
-NETWORK_LAYOUT_OPTIONS = {x.name: x.key for x in network_layout.layout_setups}
+NETWORK_LAYOUT_OPTIONS: dict[str, Any] = {x.name: x.key for x in network_layout.layout_setups}
 warnings.filterwarnings("ignore")
 
-NETWORK_PLOT_OPTS = dict(
-    x_axis_type=None,
-    y_axis_type=None,
-    background_fill_color="white",
-    line_opts=dict(color="green", alpha=0.5),
-    node_opts=dict(color=None, level="overlay", alpha=1.0),
-)
+NETWORK_PLOT_OPTS: dict[str, Any] = {
+    "x_axis_type": None,
+    "y_axis_type": None,
+    "background_fill_color": "white",
+    "line_opts": {"color": "green", "alpha": 0.5},
+    "node_opts": {"color": None, "level": "overlay", "alpha": 1.0},
+}
 
-NODE_SIZE_OPTIONS = {
+NODE_SIZE_OPTIONS: dict[str, Any] = {
     "(default)": None,
     "Degree centrality": "degree",
     "Closeness centrality": "closeness",
@@ -47,12 +49,12 @@ NODE_SIZE_OPTIONS = {
 PALETTE_OPTIONS: dict[str, str] = {
     palette_name: palette_name
     for palette_name in color_utility.DEFAULT_ALL_PALETTES.keys()
-    if any([len(x) > 7 for x in color_utility.DEFAULT_ALL_PALETTES[palette_name].values()])
+    if any(len(x) > 7 for x in color_utility.DEFAULT_ALL_PALETTES[palette_name].values())
 }
 
-OUTPUT_OPTIONS = {"Network": "network", "Table": "table", "Arguments": "print_args"}
+OUTPUT_OPTIONS: dict[str, str] = {"Network": "network", "Table": "table", "Arguments": "print_args"}
 
-COMMUNITY_OPTIONS = {"(default)": None, "Louvain": "louvain"}
+COMMUNITY_OPTIONS: dict[str, Any] = {"(default)": None, "Louvain": "louvain"}
 SLICE_TYPE_OPTIONS, SLICE_TYPE_DEFAULT = {"Sequence": 1, "Year": 2}, 1
 
 
@@ -91,32 +93,33 @@ def display_partial_party_network(plot_data, slice_range_type, slice_range, slic
 
 
 def display_party_network(
-    parties=None,
-    period_group_index=0,
-    treaty_filter="",
-    plot_data=None,
-    topic_group=None,
-    recode_is_cultural=False,
-    layout_algorithm="",
-    C=1.0,
-    K=0.10,
-    p1=0.10,
-    output="network",
-    party_name="party",
-    node_size_range=[40, 60],
-    palette_name=None,
-    width=900,
-    height=900,
+    wti_index: TreatyState,
+    *,
+    parties: Sequence[str] | None = None,
+    period_group_index: int = 0,
+    treaty_filter: str = "",
+    plot_data: Any = None,
+    topic_group: dict[str, Any] | None = None,
+    recode_is_cultural: bool = False,
+    layout_algorithm: str = "",
+    C: float = 1.0,
+    K: float = 0.10,
+    p1: float = 0.10,
+    output: str = "network",
+    party_name: str = "party",
+    node_size_range: list[int] | None = None,
+    palette_name: str | None = None,
+    width: int = 900,
+    height: int = 900,
     node_size=None,
     node_partition=None,
-    wti_index=None,
     treaty_sources=None,
     year_limit=None,
     progress=utility.noop,
     done_callback=None,
 ):
     try:
-
+        node_size_range = node_size_range or [40, 60]
         if output == "print_args":
             args = utility.filter_dict(locals(), {"progress", "done_callback"}, filter_out=True)
             args["wti_index"] = None
@@ -128,21 +131,21 @@ def display_party_network(
         plot_data = plot_data or utility.SimpleStruct(
             handle=None, nodes=None, edges=None, slice_range_type=2, slice_range=year_limit
         )
-        weight_threshold = 0.0
+        weight_threshold: float = 0.0
 
-        palette = get_palette(palette_name)
+        palette: list[str] = get_palette(palette_name)
 
         progress(1)
-        period_group = config.DEFAULT_PERIOD_GROUPS[period_group_index]
-        kwargs = dict(
-            period_group=period_group,
-            treaty_filter=treaty_filter,
-            recode_is_cultural=recode_is_cultural,
-            year_limit=year_limit,
-            treaty_sources=treaty_sources,
-        )
-        parties = list(parties)
-        party_data = wti_index.get_party_network(party_name, topic_group, parties, **kwargs)
+        period_group: dict[str, Any] = config.DEFAULT_PERIOD_GROUPS[period_group_index]
+        kwargs: dict[str, Any] = {
+            "period_group": period_group,
+            "treaty_filter": treaty_filter,
+            "recode_is_cultural": recode_is_cultural,
+            "year_limit": year_limit,
+            "treaty_sources": treaty_sources,
+        }
+        parties = list(parties or [])
+        party_data: pd.DataFrame | None = wti_index.get_party_network(party_name, topic_group, parties, **kwargs)
 
         if party_data is None or party_data.shape[0] == 0:
             print("No data for selection")
@@ -178,9 +181,9 @@ def display_party_network(
         if output == "network":
 
             if weight_threshold > 0:
-                G = get_subgraph(G, weight_threshold)
+                G = networkx_utility.get_subgraph(G, weight_threshold)
 
-            layout, _ = network_layout.layout_network(G, layout_algorithm, **dict(scale=1.0, K=K, C=C, p=p1))
+            layout, _ = network_layout.layout_network(G, layout_algorithm, **{"scale": 1.0, "K": K, "C": C, "p": p1})
 
             progress(4)
 
@@ -198,7 +201,7 @@ def display_party_network(
                 NETWORK_PLOT_OPTS,
                 figsize=(width, height),
                 node_size=node_size,
-                node_label_opts=dict(y_offset=y_offset, x_offset=x_offset),
+                node_label_opts={"y_offset": y_offset, "x_offset": x_offset},
                 edge_label_opts={},
             )
 
@@ -216,7 +219,7 @@ def display_party_network(
                 done_callback(None)
 
         elif output == "table":
-            party_data.columns = [dict(party="source", party_other="target").get(x, x) for x in party_data.columns]
+            party_data.columns = [{"party": "source", "party_other": "target"}.get(x, x) for x in party_data.columns]
             display(party_data)
 
     except Exception as ex:
@@ -226,14 +229,14 @@ def display_party_network(
         progress(0)
 
 
-def display_network_analyis_gui(wti_index, plot_data):
+def display_network_analyis_gui(wti_index: TreatyState, plot_data):
 
     box = widgets.Layout()
 
     def lw(w="200px"):
         return widgets.Layout(width=w)
 
-    treaty_source_options = wti_index.unique_sources
+    treaty_source_options: list[str] = wti_index.unique_sources
 
     party_preset_widget = widgets_config.dropdown("Presets", config.PARTY_PRESET_OPTIONS, None, layout=lw())
 
@@ -274,7 +277,7 @@ def display_network_analyis_gui(wti_index, plot_data):
     )
     time_travel_label_widget = widgets.Label(value="")
 
-    label_map = {
+    label_map: dict[str, dict[str, str]] = {
         "graphtool_sfdp": {"K": "K", "C": "C", "p": "gamma"},
         "graphtool_arf": {"K": "d", "C": "a", "p": "_"},
         "graphtool_fr": {"K": "a/(2*N)", "C": "r/2", "p": "_"},
@@ -288,16 +291,16 @@ def display_network_analyis_gui(wti_index, plot_data):
 
     def on_layout_type_change(change):
         layout = change["new"]
-        opts = label_map.get(layout, label_map.get("other"))
-        gv = ["graphviz_neato", "graphviz_dot", "graphviz_circo", "graphviz_fdp", "graphviz_sfdp"]
+        opts: dict[str, str] = label_map.get(layout, label_map.get("other", {}))
+        gv: list[str] = ["graphviz_neato", "graphviz_dot", "graphviz_circo", "graphviz_fdp", "graphviz_sfdp"]
         C_widget.disabled = layout not in ["graphtool_sfdp", "graphtool_arf", "graphtool_fr"]
         C_widget.description = " " if C_widget.disabled else opts.get("C")
         K_widget.disabled = layout not in ["graphtool_sfdp", "graphtool_arf", "graphtool_fr", "nx_spring_layout"] + gv
-        K_widget.description = " " if K_widget.disabled else opts.get("K")
+        K_widget.description = " " if K_widget.disabled else opts.get("K", " ")
         p_widget.disabled = layout not in [
             "graphtool_sfdp",
         ]
-        p_widget.description = " " if p_widget.disabled else opts.get("p")
+        p_widget.description = " " if p_widget.disabled else opts.get("p", " ")
 
     def on_simple_mode_value_change(change):
         display_mode = "none" if change["new"] is True else ""
@@ -312,7 +315,7 @@ def display_network_analyis_gui(wti_index, plot_data):
         fig_height_widget.layout.display = display_mode
         palette_widget.layout.display = display_mode
         if change["new"] is True:
-            on_layout_type_change(dict(new=layout_algorithm_widget.value))
+            on_layout_type_change({"new": layout_algorithm_widget.value})
 
     def progress_callback(step=0):
         progress_widget.value = step

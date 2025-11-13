@@ -8,9 +8,7 @@ import pandas as pd
 from IPython.display import display
 from loguru import logger
 
-import common.config as config
-import common.utility as utility
-import common.widgets_config as widgets_config
+from common import config, utility, widgets_config
 from common.quantative_analysis import analysis_data, analysis_plot
 from common.treaty_state import TreatyState
 
@@ -94,7 +92,7 @@ def display_topic_quantity(
 
         progress()
 
-    except Exception as ex:
+    except Exception as ex:  # pylint: disable=broad-except ; noqa
         logger.error(ex)
         # raise
     finally:
@@ -107,23 +105,23 @@ def party_group_label(parties: list[str]) -> str:
 
 def display_topic_quantity_groups(
     wti_index: TreatyState,
+    *,
     period_group_index: int,
     topic_group_name: str,
     parties: list[str],
-    *,
+    include_other_category: bool,
+    chart_type_name: str,
     recode_is_cultural: bool = False,
     normalize_values: bool = False,
-    include_other_category=None,
-    chart_type_name: str | None = None,
     plot_style: str = "classic",
     chart_per_category: bool = False,
     target_quantity: str = "topic",
     treaty_sources=None,
     progress=utility.noop,
-    print_args=False,
-    vmax=None,
-    legend=True,
-    output_filename=None,
+    print_args: bool = False,
+    vmax: float | None = None,
+    legend: bool = True,
+    output_filename: None | str = None,
 ):
 
     if print_args or (chart_type_name == "print_args"):
@@ -171,7 +169,7 @@ def display_topic_quantity_groups(
             )
 
 
-def display_gui(wti_index, print_args=False):
+def display_gui(wti_index, print_args=False) -> types.NoneType:
 
     def lw(width="120px"):
         return widgets.Layout(width=width)

@@ -1,7 +1,9 @@
+from typing import Any
+
 import matplotlib
 import pandas as pd
 
-import common.color_utility as color_utility
+from common import color_utility, config
 
 
 def quantity_plot(
@@ -24,7 +26,7 @@ def quantity_plot(
     **kwargs,
 ):  # pylint: disable=W0613
 
-    matplotlib.style.use(plot_style)
+    matplotlib.style.use(plot_style)  # type: ignore ; noqa
 
     figsize = (figsize[0] / dpi, figsize[1] / dpi)
 
@@ -74,9 +76,10 @@ def quantity_plot(
 
 def create_party_name_map(parties, palette=color_utility.DEFAULT_PALETTE):
 
-    rev_dict = lambda d: {v: k for k, v in d.items()}
+    def rev_dict(d) -> dict[Any, Any]:
+        return {v: k for k, v in d.items()}
 
-    df: pd.DataFrame = parties.rename(columns=dict(short_name="party_short_name", country="party_country"))
+    df: pd.DataFrame = parties.rename(columns={"short_name": "party_short_name", "country": "party_country"})
     df["party"] = df.index
 
     rd = df[~df.group_no.isin([0, 8])][["party", "party_short_name", "party_name", "party_country"]].to_dict()
@@ -95,7 +98,13 @@ def vstepper(vmax) -> int:
     return 500
 
 
-def prepare_plot_kwargs(data, chart_type, normalize_values, period_group, vmax=None) -> dict[str, tuple[int, int]]:
+def prepare_plot_kwargs(
+    data: pd.DataFrame,
+    chart_type: config.KindOfChart,
+    normalize_values: bool,
+    period_group: dict[str, Any],
+    vmax: float | None = None,
+) -> dict[str, tuple[int, int]]:
 
     kwargs: dict[str, tuple[int, int]] = {"figsize": (1000, 500)}
 
@@ -103,14 +112,14 @@ def prepare_plot_kwargs(data, chart_type, normalize_values, period_group, vmax=N
 
     c, v = ("x", "y") if not chart_type.horizontal else ("y", "x")
 
-    kwargs.setdefault("%slabel" % (v,), label)
+    kwargs.setdefault(f"{v}label", label)  # type: ignore ; noqa
 
     if period_group["type"] == "range":
         ticklabels: list[str] = [str(x) for x in period_group["periods"]]
     else:
-        ticklabels = ["{} to {}".format(x[0], x[1]) for x in period_group["periods"]]
+        ticklabels = [f"{x[0]} to {x[1]}" for x in period_group["periods"]]
 
-    kwargs.setdefault("%sticks" % (c,), list(data.index))
+    kwargs.setdefault(f"{c}ticks", list(data.index))  # type: ignore ; noqa
 
     if vmax is None:
         if chart_type.stacked:
@@ -121,12 +130,12 @@ def prepare_plot_kwargs(data, chart_type, normalize_values, period_group, vmax=N
     vstep: int = vstepper(vmax)
 
     if not normalize_values:
-        kwargs.setdefault("%sticks" % (v,), list(range(0, vmax + vstep, vstep)))
+        kwargs.setdefault(f"{v}ticks", list(range(0, vmax + vstep, vstep)))  # type: ignore ; noqa
 
     if ticklabels is not None:
-        kwargs.setdefault("%sticklabels" % (c,), ticklabels)
+        kwargs.setdefault(f"{c}ticklabels", ticklabels)  # type: ignore ; noqa
 
     if normalize_values:
-        kwargs.setdefault("%slim" % (v,), [0, 100])
+        kwargs.setdefault(f"{v}lim", [0, 100])  # type: ignore ; noqa
 
     return kwargs

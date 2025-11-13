@@ -501,7 +501,7 @@ class TreatyState:
     def get_headnotes(self) -> pd.Series:
         return self.treaties.headnote.fillna("").astype(str)
 
-    def get_tagged_headnotes(self, tags=None) -> pd.DataFrame:
+    def get_tagged_headnotes(self, tags: pd.DataFrame | None = None) -> pd.DataFrame:
         if self.tagged_headnotes is None:
             filename: str = os.path.join(self.data_folder, "tagged_headnotes.csv")
             self.tagged_headnotes = pd.read_csv(filename, sep="\t").drop("Unnamed: 0", axis=1)
@@ -509,7 +509,7 @@ class TreatyState:
             return self.tagged_headnotes
         return self.tagged_headnotes.loc[(self.tagged_headnotes.pos.isin(tags))]
 
-    def get_treaty_subset(self, options, language) -> pd.DataFrame:
+    def get_treaty_subset(self, options: dict[str, Any], language: str) -> pd.DataFrame:
         lang_field: str = {
             "en": "english",
             "fr": "french",
@@ -519,7 +519,7 @@ class TreatyState:
         df: pd.DataFrame = self.treaties
         df = df.loc[df[lang_field] == language]
         if options.get("source", None) is not None:
-            df = df.loc[df.source.isin(options.get("source", None))]
+            df = df.loc[df.source.isin(options.get("source", None))]  # type: ignore
         if options.get("from_year", None) is not None:
             df = df.loc[df.signed >= datetime.date(options["from_year"], 1, 1)]
         if options.get("to_year", None) is not None:
@@ -541,7 +541,7 @@ class TreatyState:
     def get_topic_category(
         self,
         df: pd.DataFrame,
-        topic_category: dict | None,
+        topic_category: dict[str, Any] | None,
         topic_column: str = "topic1",
     ) -> pd.Series:
         if topic_column not in df.columns:
@@ -640,14 +640,14 @@ class TreatyState:
         return treaties2
 
     def get_categorized_treaties(
-        self, treaties: pd.DataFrame | None = None, topic_category=None, **kwargs
+        self, treaties: pd.DataFrame | None = None, topic_category: dict[str, Any] | None = None, **kwargs
     ) -> pd.DataFrame:
 
         df: pd.DataFrame = self.get_treaties_within_division(treaties, **kwargs)
         df["topic_category"] = self.get_topic_category(df, topic_category, topic_column="topic1")
         return df
 
-    def get_party_network(self, party_name, topic_category, parties, **kwargs):
+    def get_party_network(self, party_name: str, topic_category, parties: list[str], **kwargs):
 
         treaty_ids = self.get_treaties_within_division(parties=parties, **kwargs).index
 
