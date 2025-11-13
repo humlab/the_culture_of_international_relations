@@ -10,6 +10,7 @@ readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
     "bokeh>=3.8.1",
+    "dotenv>=0.9.9",
     "ftfy>=6.3.1",
     "gensim>=4.4.0",
     "ipydatagrid>=1.4.0",
