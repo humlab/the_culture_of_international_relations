@@ -116,7 +116,7 @@ def display_corpus_load_gui(data_folder: str, wti_index: TreatyState, container:
 
     if len(corpus_files) == 0:
         print("No prepared corpus")
-        return
+        return None
 
     corpus_files = [os.path.basename(x) for x in corpus_files]
 
@@ -202,3 +202,5 @@ def display_corpus_load_gui(data_folder: str, wti_index: TreatyState, container:
             )
 
     gui.compute.on_click(compute_callback)
+
+    return gui
