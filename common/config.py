@@ -1,6 +1,7 @@
 import collections
 import os
 import re
+import pandas as pd
 from typing import Any
 
 import numpy as np
@@ -20,6 +21,10 @@ LANGUAGE_MAP: dict[str, str] = {
     "it": "other",
     "de": "other",
 }
+
+def get_tag_set() -> pd.DataFrame:
+    df_tagset: pd.DataFrame = pd.read_csv(os.path.join(DATA_FOLDER, "tagset.csv"), sep="\t").fillna("")
+    return df_tagset
 
 AGGREGATES: dict[str, np.ufunc] = {"mean": np.mean, "sum": np.sum, "max": np.max, "std": np.std}  # type: ignore
 
