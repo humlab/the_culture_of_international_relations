@@ -294,6 +294,18 @@ class TreatyState:
         #    return '{} to {}'.format(match[0][0], match[0][1]) if len(match) > 0 else 'OTHER'
 
         treaties: pd.DataFrame = self.data["treaties"]
+
+        if len(treaties.columns) != len(self.treaties_columns):
+            logger.error(
+                f"WTI Treaties columns length mismatch! Expected {len(self.treaties_columns)} but got {len(treaties.columns)}"
+            )
+
+            expected_cols: set[str] = set(self.treaties_columns)
+            actual_cols: set[str] = set(t.lower() for t in treaties.columns)
+            logger.error(f"Expected columns: {expected_cols}")
+            logger.error(f"Actual columns: {actual_cols}")
+            raise ValueError("WTI Treaties columns length mismatch!")
+
         treaties.columns = self.treaties_columns
 
         treaties["is_cultural_yesno"] = treaties[self.is_cultural_yesno_column]
@@ -835,7 +847,7 @@ def load_wti_index(
         return state
     except Exception as ex:  # pylint: disable=broad-exception-caught
         logger.error(ex)
-        # raise
+        raise
         logger.info("Load failed! Have you run setup cell above?")
         return None
 
