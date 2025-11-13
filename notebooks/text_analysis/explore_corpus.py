@@ -20,18 +20,21 @@
 # %% code_folding=[]
 
 import os
+
 import pandas as pd
 import spacy
 from loguru import logger
 
 from common import config, treaty_state, utility
-from common.gui import textacy_corpus_gui
 from common.corpus import textacy_corpus_utility as textacy_utility
+from common.gui import textacy_corpus_gui
+
 utility.setup_default_pd_display()
 
 PATTERN = '*.txt'
 PERIOD_GROUP = 'years_1945-1972'
-DF_TAGSET = pd.read_csv('../data/tagset.csv', sep='\t').fillna('')
+
+DF_TAGSET: pd.DataFrame = config.get_tag_set()
 treaty_state.load_wti_index_with_gui(data_folder=config.DATA_FOLDER)
 
 # %matplotlib inline
@@ -48,7 +51,7 @@ current_corpus = lambda: textacy_utility.CorpusContainer.corpus()
 # %%
 
 try:
-    container = current_corpus_container()
+    container: textacy_utility.CorpusContainer = current_corpus_container()
     textacy_corpus_gui.display_corpus_load_gui(config.DATA_FOLDER, treaty_state.current_wti_index(), container)
 except Exception as ex:
     logger.error(ex)
@@ -76,6 +79,7 @@ except Exception as ex:
 # %% code_folding=[0]
 # Document Key Terms
 from notebooks.text_analysis.src import rake_gui
+
 try:
     rake_gui.display_rake_gui(current_corpus(), language='english')
 except Exception as ex:
@@ -90,6 +94,7 @@ except Exception as ex:
 
 # %% code_folding=[0]
 from notebooks.text_analysis.src.rake_key_terms_gui import display_document_key_terms_gui
+
 try:
     display_document_key_terms_gui(current_corpus(), treaty_state.current_wti_index())
 except Exception as ex:
@@ -100,7 +105,8 @@ except Exception as ex:
 # ## <span style='color: green'>PREPARE/DESCRIBE </span> Clean Up the Text <span style='float: right; color: green'>TRY IT</span>
 
 # %% code_folding=[]
-from notebooks.text_analysis.src.cleanup_gui import display_cleanup_text_gui   
+from notebooks.text_analysis.src.cleanup_gui import display_cleanup_text_gui
+
 try:
     xgui, xuix = display_cleanup_text_gui(current_corpus_container(), treaty_state.current_wti_index())
 except Exception as ex:
@@ -146,7 +152,12 @@ except Exception as ex:
 
 # %%
 
-from notebooks.text_analysis.src.corpus_statistics_gui import corpus_statistics_gui, compute_corpus_statistics, display_corpus_statistics
+from notebooks.text_analysis.src.corpus_statistics_gui import (
+    compute_corpus_statistics,
+    corpus_statistics_gui,
+    display_corpus_statistics,
+)
+
 try:
     gui = corpus_statistics_gui(config.DATA_FOLDER, treaty_state.current_wti_index(), current_corpus_container(), compute_callback=compute_corpus_statistics, display_callback=display_corpus_statistics)
 except Exception as ex:
@@ -159,9 +170,12 @@ import spacy
 
 
 def create_mdt(group1, group2, include_pos, closed_region):  
+    corpus = current_corpus()
+    assert corpus is not None, 'Please load corpus!'
+    
     most_discriminating_terms_gui.compute_most_discriminating_terms(
         treaty_state.current_wti_index(),
-        current_corpus(),
+        corpus,
         group1=config.get_region_parties(*group1),
         group2=config.get_region_parties(*group2),
         top_n_terms=100,
@@ -170,7 +184,7 @@ def create_mdt(group1, group2, include_pos, closed_region):
         period1=(1945, 1972),
         period2=(1945, 1972),
         closed_region=closed_region,
-        normalize=spacy.attrs.LEMMA,
+        normalize=spacy.attrs.LEMMA,  # type: ignore
         output_filename = os.path.join(config.DATA_FOLDER,
             'MDT_{}_vs_{}_({})_{}.xlsx'.format(
                 '+'.join(['R{}'.format(x) for x in group1]),
