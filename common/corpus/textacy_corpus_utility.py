@@ -458,8 +458,16 @@ def keep_hyphen_tokenizer(nlp: Language) -> spacy.tokenizer.Tokenizer:
         token_match=None,
     )
 
+@Language.factory("remove_whitespace_entities")
+class RemoveWhitespaceEntities:
+    def __init__(self, nlp, name):
+        self.nlp = nlp
 
-@utility.timecall
+    def __call__(self, doc):
+        doc.ents = [e for e in doc.ents if not e.text.isspace()]
+        return doc
+
+
 def setup_nlp_language_model(language: str, **nlp_args) -> Language:
 
     if len(nlp_args.get("disable", [])) == 0:
@@ -477,6 +485,10 @@ def setup_nlp_language_model(language: str, **nlp_args) -> Language:
     #    logger.warning('Selected model is not the largest availiable.')
 
     nlp: Language = textacy.load_spacy_lang(model_name, **nlp_args)  # type: ignore
+
+    if "remove_whitespace_entities" not in nlp.pipe_names:
+        nlp.add_pipe("remove_whitespace_entities", last=True)
+
     nlp.tokenizer = keep_hyphen_tokenizer(nlp)
 
     logger.info("Using pipeline: " + " ".join(pipename for pipename in nlp.pipe_names))
