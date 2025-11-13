@@ -823,6 +823,12 @@ wheels = [
 ]
 
 [[package]]
+name = "en-core-web-lg"
+version = "3.8.0"
+source = { url = "https://github.com/explosion/spacy-models/releases/download/en_core_web_lg-3.8.0/en_core_web_lg-3.8.0.tar.gz" }
+sdist = { hash = "sha256:7a3c89f3243950000a102c5f124277bbbde2dec467d548eee28b23bd1938ed62" }
+
+[[package]]
 name = "executing"
 version = "2.2.1"
 source = { registry = "https://pypi.org/simple" }
@@ -3316,6 +3322,7 @@ source = { editable = "." }
 dependencies = [
     { name = "bokeh" },
     { name = "dotenv" },
+    { name = "en-core-web-lg" },
     { name = "ftfy" },
     { name = "gensim" },
     { name = "ipydatagrid" },
@@ -3347,6 +3354,7 @@ dev = [
 requires-dist = [
     { name = "bokeh", specifier = ">=3.8.1" },
     { name = "dotenv", specifier = ">=0.9.9" },
+    { name = "en-core-web-lg", url = "https://github.com/explosion/spacy-models/releases/download/en_core_web_lg-3.8.0/en_core_web_lg-3.8.0.tar.gz" },
     { name = "ftfy", specifier = ">=6.3.1" },
     { name = "gensim", specifier = ">=4.4.0" },
     { name = "ipydatagrid", specifier = ">=1.4.0" },
