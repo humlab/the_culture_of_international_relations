@@ -1,7 +1,7 @@
 
 spacy:
   models:
-    en: "en_core_web_sm"
-    fr: "fr_core_news_sm"
+    en: "en_core_web_lg"
+    fr: "fr_core_news_lg"
     it: "it_core_web_sm"
     de: "de_core_web_sm"
