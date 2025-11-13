@@ -479,10 +479,7 @@ def setup_nlp_language_model(language: str, **nlp_args) -> Language:
     nlp: Language = textacy.load_spacy_lang(model_name, **nlp_args)  # type: ignore
     nlp.tokenizer = keep_hyphen_tokenizer(nlp)
 
-    def pipeline() -> list[str | Any]:
-        return [pipe for pipe, _ in nlp.pipeline]
-
-    logger.info("Using pipeline: " + " ".join(pipeline()))
+    logger.info("Using pipeline: " + " ".join(pipename for pipename in nlp.pipe_names))
 
     return nlp
 
