@@ -459,7 +459,7 @@ def keep_hyphen_tokenizer(nlp: Language) -> spacy.tokenizer.Tokenizer:
 
 @Language.factory("remove_whitespace_entities")
 class RemoveWhitespaceEntities:
-    def __init__(self, nlp, name):
+    def __init__(self, nlp, name):  # pylint: disable=unused-argument; noqa
         self.nlp = nlp
 
     def __call__(self, doc):
