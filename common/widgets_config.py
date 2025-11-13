@@ -4,11 +4,21 @@ from typing import Any
 
 import ipywidgets as widgets
 from bokeh.models import ColumnDataSource, CustomJS
+from IPython.display import Javascript
+
 
 from common import config, extend
 
 # if __package__:
 #    print('Package named {!r}; __name__ is {!r}'.format(__package__, __name__))
+
+
+def get_ipython_clear_output() -> None:
+    Javascript(
+        """
+    Jupyter.notebook.clear_all_output();
+    """
+    )
 
 
 def kwargser(d) -> dict[str, Any]:
