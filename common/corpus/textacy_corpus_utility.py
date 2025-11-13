@@ -1,6 +1,7 @@
 # pylint: disable=no-name-in-module
 
 import collections
+import importlib
 import itertools
 import os
 import re
@@ -17,17 +18,15 @@ import spacy.tokens
 import textacy.preprocessing
 from loguru import logger
 from spacy.attrs import LEMMA, LOWER, ORTH  # pylint: disable=no-name-in-module
+from spacy.cli import download as spacy_download  # type: ignore
 from spacy.language import Language
 from textacy.corpus import Corpus
 from textacy.spacier.utils import make_doc_from_text_chunks
 
 from common import utility
+from common.configuration.resolve import ConfigValue
 
 # pylint: disable=no-name-in-module
-
-
-# pylint: disable=no-name-in-module
-
 
 sys.path = list(set([".", ".."]) - set(sys.path)) + sys.path
 
@@ -473,16 +472,14 @@ def setup_nlp_language_model(language: str, **nlp_args) -> Language:
     if len(nlp_args.get("disable", [])) == 0:
         nlp_args.pop("disable")
 
-    def remove_whitespace_entities(doc):
-        doc.ents = [e for e in doc.ents if not e.text.isspace()]
-        return doc
+    model_name: str = ConfigValue(f"spacy.models.{language}").resolve()
+    logger.info('using model "%s"', model_name)
 
-    logger.info("Loading model: %s...", language)
-
-    Language.factories["remove_whitespace_entities"] = lambda nlp, **cfg: remove_whitespace_entities
-    model_name = LANGUAGE_MODEL_MAP[language]
-    # if not model_name.endswith('lg'):
-    #    logger.warning('Selected model is not the largest availiable.')
+    try:
+        importlib.import_module(model_name)
+    except ModuleNotFoundError:
+        logger.warning('spaCy model "%s" not found — downloading...', model_name)
+        spacy_download(model_name)
 
     nlp: Language = textacy.load_spacy_lang(model_name, **nlp_args)  # type: ignore
 
