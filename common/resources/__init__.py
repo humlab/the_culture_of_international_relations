@@ -8,12 +8,12 @@ def get_fox_stopwords() -> set[str]:
     filepath: str = os.path.join(os.path.dirname(__file__), "fox_stopwords.txt")
     stopwords: set[str] = set()
     try:
-        with open(filepath, "r", encoding="utf-8") as f:
+        with open(filepath, encoding="utf-8") as f:
             for line in f:
                 word: str = line.strip()
                 if word:
                     stopwords.add(word)
-    except Exception as ex:
+    except Exception:
         raise
     return stopwords
 
@@ -24,12 +24,15 @@ def get_fox_stopwords() -> set[str]:
 #     with open(filepath, "w", encoding="utf-8") as f:
 #         yaml.dump(WORLD_REGIONS, f, default_flow_style=False)
 
+
 def load_yaml_file(filepath: str) -> dict:
-    with open(filepath, "r", encoding="utf-8") as f:
+    with open(filepath, encoding="utf-8") as f:
         data: dict = yaml.load(f, Loader=yaml.FullLoader)
     return data
 
+
 _world_regions: dict[int, list[str]] = {}
+
 
 def get_world_regions() -> dict[int, list[str]]:
     global _world_regions
@@ -38,6 +41,7 @@ def get_world_regions() -> dict[int, list[str]]:
     filepath: str = os.path.join(os.path.dirname(__file__), "world_regions.yml")
     _world_regions = load_yaml_file(filepath)
     return _world_regions
+
 
 def get_region_parties(*region_ids) -> list[str]:
 

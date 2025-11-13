@@ -68,7 +68,7 @@ class HeadnoteTokenCorpus:
         """
         tokens: pd.DataFrame = self.tokens
 
-        if not treaty_ids is None:
+        if treaty_ids is not None:
             tokens = tokens[tokens.index.get_level_values(0).isin(treaty_ids)]
 
         tokens = tokens.loc[~tokens.is_stopword]

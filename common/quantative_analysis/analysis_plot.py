@@ -84,7 +84,7 @@ def create_party_name_map(parties, palette=color_utility.DEFAULT_PALETTE):
 
     rd = df[~df.group_no.isin([0, 8])][["party", "party_short_name", "party_name", "party_country"]].to_dict()
 
-    party_name_map = {k: rev_dict(rd[k]) for k in rd.keys()}
+    party_name_map = {k: rev_dict(rd[k]) for k in rd}
 
     party_color_map = {party: palette[i % len(palette)] for i, party in enumerate(parties.index)}
 
@@ -122,10 +122,7 @@ def prepare_plot_kwargs(
     kwargs.setdefault(f"{c}ticks", list(data.index))  # type: ignore ; noqa
 
     if vmax is None:
-        if chart_type.stacked:
-            vmax = data.sum(axis=1).max()
-        else:
-            vmax = data.max().max()
+        vmax = data.sum(axis=1).max() if chart_type.stacked else data.max().max()
 
     vstep: int = vstepper(vmax)
 

@@ -19,7 +19,6 @@ from common.network_analysis.network_analysis import (
     setup_node_size,
     slice_network_datasource,
 )
-from common.network_analysis.network_analysis_gui import NETWORK_PLOT_OPTS
 from common.network_analysis.network_analysis_plot import get_palette, plot_network
 from common.treaty_state import TreatyState
 
@@ -48,7 +47,7 @@ NODE_SIZE_OPTIONS: dict[str, Any] = {
 
 PALETTE_OPTIONS: dict[str, str] = {
     palette_name: palette_name
-    for palette_name in color_utility.DEFAULT_ALL_PALETTES.keys()
+    for palette_name in color_utility.DEFAULT_ALL_PALETTES
     if any(len(x) > 7 for x in color_utility.DEFAULT_ALL_PALETTES[palette_name].values())
 }
 
@@ -98,6 +97,7 @@ def display_party_network(
     parties: Sequence[str] | None = None,
     period_group_index: int = 0,
     treaty_filter: str = "",
+    palette_name: str,
     plot_data: Any = None,
     topic_group: dict[str, Any] | None = None,
     recode_is_cultural: bool = False,
@@ -108,7 +108,6 @@ def display_party_network(
     output: str = "network",
     party_name: str = "party",
     node_size_range: list[int] | None = None,
-    palette_name: str | None = None,
     width: int = 900,
     height: int = 900,
     node_size=None,
@@ -181,7 +180,7 @@ def display_party_network(
         if output == "network":
 
             if weight_threshold > 0:
-                G = networkx_utility.get_subgraph(G, weight_threshold)
+                G = networkx_utility.get_subgraph(G, threshold=weight_threshold)
 
             layout, _ = network_layout.layout_network(G, layout_algorithm, **{"scale": 1.0, "K": K, "C": C, "p": p1})
 
@@ -342,7 +341,7 @@ def display_network_analyis_gui(wti_index: TreatyState, plot_data):
         time_travel_range_widget.value = (range_min, range_max)
 
     def slice_changed_callback(min_year, max_year):
-        time_travel_range_widget.description = "{}-{}".format(min_year, max_year)
+        time_travel_range_widget.description = f"{min_year}-{max_year}"
 
     def on_slice_range_type_change(change):
         update_slice_range(change["new"])

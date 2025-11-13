@@ -16,6 +16,7 @@ from typing import Any
 import matplotlib.pyplot as plt
 import pandas as pd
 import wordcloud
+import yaml
 
 # pylint: disable=redefined-builtin
 
@@ -349,3 +350,61 @@ def plot_wordcloud(df_data: pd.DataFrame, token: str = "token", weight: str = "w
     # plt.set_facecolor('w')
     # plt.tight_layout()
     plt.show()
+
+
+def _ensure_key_property(cls):
+    if not hasattr(cls, "key"):
+
+        def key(self) -> str:
+            return getattr(self, "_registry_key", "unknown")
+
+        cls.key = property(key)
+    return cls
+
+
+class Registry:
+    items: dict = {}
+
+    @classmethod
+    def get(cls, key: str) -> Any | None:
+        if key not in cls.items:
+            raise KeyError(f"preprocessor {key} is not registered")
+        return cls.items.get(key)
+
+    @classmethod
+    def register(cls, **args) -> Callable[..., Any]:
+        def decorator(fn_or_class):
+            key: str = args.get("key") or fn_or_class.__name__
+            if args.get("type") == "function":
+                fn_or_class = fn_or_class()
+            else:
+                fn_or_class._registry_key = key
+                fn_or_class = _ensure_key_property(fn_or_class)
+
+            cls.items[key] = fn_or_class
+            return fn_or_class
+
+        return decorator
+
+    @classmethod
+    def is_registered(cls, key: str) -> bool:
+        return key in cls.items
+
+
+def create_db_uri(*, host: str, port: int | str, user: str, dbname: str) -> str:
+    """
+    Builds database URI from the individual config elements.
+    """
+    return f"postgresql://{user}@{host}:{port}/{dbname}"
+
+
+def load_resource_yaml(key: str) -> dict[str, Any] | None:
+    """Loads a resource YAML file from the resources folder."""
+
+    resource_path = os.path.join(os.path.dirname(__file__), "resources", f"{key}.yaml")
+    if not os.path.exists(resource_path):
+        return None
+
+    with open(resource_path, encoding="utf-8") as f:
+        data = yaml.safe_load(f)
+    return data

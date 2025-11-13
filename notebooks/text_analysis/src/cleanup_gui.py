@@ -142,7 +142,6 @@ def display_cleanup_text_gui(container, wti_index):
     gpe_filename = os.path.join(config.DATA_FOLDER, 'gpe_substitutions.txt')
     gpe_substitutions = textacy_utility.load_term_substitutions(filepath=gpe_filename)
 
-    #pos_options = [ x for x in DF_TAGSET.POS.unique() if x not in ['PUNCT', '', 'DET', 'X', 'SPACE', 'PART', 'CONJ', 'SYM', 'INTJ', 'PRON']]  # groupby(['POS'])['DESCRIPTION'].apply(list).apply(lambda x: ', '.join(x)).to_dict()
     pos_tags = config.get_tag_set().groupby(['POS'])['DESCRIPTION'].apply(list).apply(lambda x: ', '.join(x[:1])).to_dict()
     pos_options = [('(All)', None)] + sorted([(k + ' (' + v + ')', k) for k,v in pos_tags.items() ])
     display_options: dict[str, str] = {

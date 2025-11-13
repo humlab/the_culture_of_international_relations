@@ -1,6 +1,7 @@
 import time
+from collections.abc import Iterable
 from types import SimpleNamespace
-from typing import Any, Iterable
+from typing import Any
 
 import ipywidgets as widgets
 import numpy as np
@@ -107,7 +108,7 @@ def compute_list_of_most_frequent_words(
                 "treaty_id": doc._.meta["treaty_id"],
                 "signed_year": int(doc._.meta["signed_year"]),
                 "word_id": [np.uint64(key) for key in word_counts],
-                "word": [spacy_store[key].lower() for key in word_counts.keys()],
+                "word": [spacy_store[key].lower() for key in word_counts],
                 "word_count": list(word_counts.values()),
             }
         )

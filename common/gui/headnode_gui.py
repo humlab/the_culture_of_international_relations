@@ -109,7 +109,7 @@ def display_headnote_toplist(
             recode_is_cultural=recode_is_cultural,
         )
 
-        if parties is not None and not "ALL" in parties:
+        if parties is not None and "ALL" not in parties:
             treaties = treaties.loc[(treaties.party1.isin(parties)) | (treaties.party2.isin(parties))]
 
         if treaties.shape[0] == 0:
@@ -145,7 +145,7 @@ def display_headnote_toplist(
         progress()
 
         groupbys: list[str] = (
-            ([period_group["column"]] if not period_group is None else []) + (extra_groupbys or []) + [token_or_lemma]
+            ([period_group["column"]] if period_group is not None else []) + (extra_groupbys or []) + [token_or_lemma]
         )
 
         result: pd.DataFrame = treaty_tokens.groupby(groupbys).size().reset_index().rename(columns={0: "Count"})

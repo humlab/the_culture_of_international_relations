@@ -82,7 +82,7 @@ class QuantityByParty:
             treaties_of_parties: pd.DataFrame = df[(~df.reversed)]
         elif isinstance(parties, list) and len(parties) > 0:
             treaty_ids = treaty_subset[
-                (treaty_subset.party1.isin(parties)) | ((treaty_subset.party2.isin(parties)))
+                (treaty_subset.party1.isin(parties)) | (treaty_subset.party2.isin(parties))
             ].index
             treaties_of_parties = df[
                 df.index.isin(treaty_ids) & df.party.isin(parties)
@@ -187,10 +187,11 @@ class QuantityByTopic:
             parties_treaties: pd.DataFrame = categorized_treaties
         else:
             mask: pd.Series = categorized_treaties.party1.isin(parties) | (categorized_treaties.party2.isin(parties))
-            if party_group["label"] == "ALL OTHER":
-                parties_treaties = categorized_treaties.loc[~mask]
-            else:
-                parties_treaties = categorized_treaties.loc[mask]
+            parties_treaties = (
+                categorized_treaties.loc[~mask]
+                if party_group["label"] == "ALL OTHER"
+                else categorized_treaties.loc[mask]
+            )
 
         if parties_treaties.shape[0] == 0:
             print("No data for: " + ",".join(parties))
@@ -227,7 +228,7 @@ class QuantityByTopic:
 
             stacked_treaties["continent_code_other"] = stacked_treaties["continent_code_other"].fillna(value="IO")
 
-            if not "ALL" in parties:
+            if "ALL" not in parties:
                 stacked_treaties = stacked_treaties.loc[stacked_treaties.party.isin(parties)]
 
             data = (

@@ -11,7 +11,7 @@ from common.widgets_config import glyph_hover_callback2
 
 
 def get_palette(palette_name: str) -> list[str]:
-    if palette_name not in all_palettes.keys():
+    if palette_name not in all_palettes:
         return RdYlBu[11]
     key: int = max(all_palettes[palette_name].keys())
     return all_palettes[palette_name][key]
@@ -69,13 +69,13 @@ def plot_network(
     p.xgrid.grid_line_color = None
     p.ygrid.grid_line_color = None
 
-    if "line_color" in edges.keys():
+    if "line_color" in edges:
         line_opts = extend(line_opts, {"line_color": "line_color", "alpha": 1.0})
 
     _ = p.multi_line("xs", "ys", line_width="weight", source=edges_source, **line_opts)
     r_nodes = p.circle("x", "y", radius=node_size, source=nodes_source, **node_opts)
 
-    if "fill_color" in nodes.keys():
+    if "fill_color" in nodes:
         r_nodes.glyph.fill_color = "fill_color"
 
     if node_description is not None:
@@ -93,11 +93,11 @@ def plot_network(
             )
         )
 
-    if node_label is not None and node_label in nodes.keys():
+    if node_label is not None and node_label in nodes:
         label_opts = extend({}, DFLT_LABEL_OPTS, node_label_opts or {})
         p.add_layout(LabelSet(source=nodes_source, x="x", y="y", text=node_label, **label_opts))
 
-    if edge_label is not None and edge_label in edges.keys():
+    if edge_label is not None and edge_label in edges:
         label_opts = extend({}, DFLT_LABEL_OPTS, edge_label_opts or {})
         p.add_layout(LabelSet(source=edges_source, x="m_x", y="m_y", text=edge_label, **label_opts))
 

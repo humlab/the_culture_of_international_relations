@@ -518,13 +518,13 @@ class TreatyState:
         }[language]
         df: pd.DataFrame = self.treaties
         df = df.loc[df[lang_field] == language]
-        if options.get("source", None) is not None:
-            df = df.loc[df.source.isin(options.get("source", None))]  # type: ignore
-        if options.get("from_year", None) is not None:
+        if options.get("source") is not None:
+            df = df.loc[df.source.isin(options.get("source"))]  # type: ignore
+        if options.get("from_year") is not None:
             df = df.loc[df.signed >= datetime.date(options["from_year"], 1, 1)]
-        if options.get("to_year", None) is not None:
+        if options.get("to_year") is not None:
             df = df.loc[df.signed < datetime.date(options["to_year"] + 1, 1, 1)]
-        if options.get("parties", None) is not None:
+        if options.get("parties") is not None:
             df = df.loc[df.party1.isin(options["parties"]) | df.party2.isin(options["parties"])]
         return df  # .set_index('treaty_id')
 

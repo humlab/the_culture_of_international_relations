@@ -1,12 +1,13 @@
 import collections
 import os
 import re
-import pandas as pd
 from typing import Any
 
 import numpy as np
+import pandas as pd
 
 from common.resources import get_region_parties
+
 
 def project_root(folder: str) -> str:
     while not os.path.exists(os.path.join(folder, "common")):
@@ -23,9 +24,16 @@ LANGUAGE_MAP: dict[str, str] = {
     "de": "other",
 }
 
+
+_tag_set: pd.DataFrame | None = None
+
+
 def get_tag_set() -> pd.DataFrame:
-    df_tagset: pd.DataFrame = pd.read_csv(os.path.join(DATA_FOLDER, "tagset.csv"), sep="\t").fillna("")
-    return df_tagset
+    global _tag_set
+    if _tag_set is None:
+        _tag_set = pd.read_csv(os.path.join(DATA_FOLDER, "tagset.csv"), sep="\t").fillna("")
+    return _tag_set
+
 
 AGGREGATES: dict[str, np.ufunc] = {"mean": np.mean, "sum": np.sum, "max": np.max, "std": np.std}  # type: ignore
 

@@ -1,3 +1,5 @@
+import contextlib
+
 import community
 import networkx as nx
 import numpy as np
@@ -15,7 +17,7 @@ def create_party_network(df_party_data, K, node_partition, palette):  # , multig
     graph.add_edges_from(edges_data)
 
     if node_partition is not None:
-        partition = community.best_partition(graph)
+        partition = community.best_partition(graph)  # type: ignore
         partition_color = {n: palette[p % len(palette)] for n, p in partition.items()}
         nx.set_node_attributes(graph, partition, "community")
         nx.set_node_attributes(graph, partition_color, "fill_color")
@@ -23,11 +25,10 @@ def create_party_network(df_party_data, K, node_partition, palette):  # , multig
         # nx.set_node_attributes(G, 0, 'community')
         nx.set_node_attributes(graph, palette[0], "fill_color")
 
-    nx.set_node_attributes(graph, dict(graph.degree()), name="degree")
-    try:
+    nx.set_node_attributes(graph, values={"degree": graph.degree}, name="degree")
+
+    with contextlib.suppress(Exception):  # type: ignore ; pylint: disable=broad-except
         nx.set_node_attributes(graph, dict(nx.betweenness_centrality(graph, weight=None)), name="betweenness")
-    except:  # type: ignore ; pylint: disable=bare-except ; noqa
-        ...
 
     nx.set_node_attributes(graph, dict(nx.closeness_centrality(graph)), name="closeness")
 
@@ -68,7 +69,7 @@ def slice_network_datasource(edges, nodes, slice_range, slice_range_type) -> tup
         df_edges = df_edges[(df_edges.signed >= lower) & (df_edges.signed < upper)]
 
     nodes_indices: set[str] = set(df_edges.source.unique()) | set(df_edges.target.unique())
-    df_nodes: pd.DataFrame = pd.DataFrame(nodes).set_index("node_id").loc[nodes_indices].reset_index()
+    df_nodes: pd.DataFrame = pd.DataFrame(nodes).set_index("node_id").loc[nodes_indices].reset_index()  # type: ignore
 
     sliced_edges: dict = df_edges.to_dict(orient="list")
     sliced_nodes: dict = df_nodes.to_dict(orient="list")
@@ -81,7 +82,7 @@ def setup_node_size(nodes, node_size, node_size_range):
     if node_size is None:
         node_size = node_size_range[0]
 
-    if node_size in nodes.keys() and node_size_range is not None:
+    if node_size in nodes and node_size_range is not None:
         nodes["clamped_size"] = clamp_values(nodes[node_size], node_size_range)
         node_size = "clamped_size"
 
@@ -91,7 +92,7 @@ def setup_node_size(nodes, node_size, node_size_range):
 def adjust_node_label_offset(nodes, node_size):
 
     label_x_offset = 0
-    label_y_offset = "y_offset" if node_size in nodes.keys() else node_size + 5
+    label_y_offset = "y_offset" if node_size in nodes else node_size + 5
     if label_y_offset == "y_offset":
         nodes["y_offset"] = [y + r for (y, r) in zip(nodes["y"], [r / 2.0 + 5 for r in nodes[node_size]])]
     return label_x_offset, label_y_offset
