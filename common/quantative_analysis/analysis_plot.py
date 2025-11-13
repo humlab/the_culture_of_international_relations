@@ -95,9 +95,9 @@ def vstepper(vmax) -> int:
     return 500
 
 
-def prepare_plot_kwargs(data, chart_type, normalize_values, period_group, vmax=None):
+def prepare_plot_kwargs(data, chart_type, normalize_values, period_group, vmax=None) -> dict[str, tuple[int, int]]:
 
-    kwargs = {"figsize": (1000, 500)}
+    kwargs: dict[str, tuple[int, int]] = {"figsize": (1000, 500)}
 
     label = "Number of treaties" if not normalize_values else "Share%"
 
@@ -106,7 +106,7 @@ def prepare_plot_kwargs(data, chart_type, normalize_values, period_group, vmax=N
     kwargs.setdefault("%slabel" % (v,), label)
 
     if period_group["type"] == "range":
-        ticklabels = [str(x) for x in period_group["periods"]]
+        ticklabels: list[str] = [str(x) for x in period_group["periods"]]
     else:
         ticklabels = ["{} to {}".format(x[0], x[1]) for x in period_group["periods"]]
 

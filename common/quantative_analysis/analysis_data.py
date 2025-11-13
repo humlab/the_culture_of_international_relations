@@ -155,7 +155,7 @@ class QuantityByTopic:
         topic_category: dict[str, str],
         party_group: dict[str, Any],
         recode_is_cultural: bool,
-        extra_other_category: bool,
+        include_other_category: bool,
         target_quantity: str = "topic",
         treaty_sources: None | list[str] = None,
     ) -> None | pd.DataFrame:
@@ -180,7 +180,7 @@ class QuantityByTopic:
             treaty_sources=treaty_sources,
         )
 
-        if not extra_other_category:
+        if not include_other_category:
             categorized_treaties = categorized_treaties[categorized_treaties.topic_category != "OTHER"]
 
         if party_group["label"] == "ALL" or parties is None or "ALL" in parties:

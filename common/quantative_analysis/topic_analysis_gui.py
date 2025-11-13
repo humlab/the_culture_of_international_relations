@@ -1,42 +1,39 @@
 import datetime
-import logging
+from typing import Any
 import types
 from pprint import pprint as pp
 
-import analysis_data
-import analysis_plot
+from  common.quantative_analysis import analysis_data
+from  common.quantative_analysis import analysis_plot
 import ipywidgets as widgets
 import pandas as pd
 from IPython.display import display
 
-import common.color_utility as color_utility
 import common.config as config
-import common.treaty_utility as treaty_utility
 import common.utility as utility
 import common.widgets_config as widgets_config
 from common.treaty_state import TreatyState
-
-logger = utility.getLogger("tq_by_topic", level=logging.WARNING)
+from loguru import logger
 
 
 def display_topic_quantity(
     *,
     wti_index: TreatyState,
     chart_type_name: str,
-    period_group=0,
-    topic_group=None,
-    party_group=None,
-    recode_is_cultural=False,
-    normalize_values=False,
-    extra_other_category=False,
-    plot_style="classic",
-    target_quantity="topic",
+    topic_group: dict[str, str],
+    period_group: dict[str, Any],
+    party_group: dict[str, Any],
+    recode_is_cultural: bool = False,
+    normalize_values: bool = False,
+    include_other_category: bool = False,
+    plot_style: str = "classic",
+    target_quantity: str = "topic",
     treaty_sources=None,
     progress=utility.noop,
     vmax=None,
-    legend=True,
-    output_filename=None,
-):
+    legend: bool = True,
+    output_filename: None | str = None,
+) -> types.NoneType:
     try:
         progress()
 
@@ -54,7 +51,7 @@ def display_topic_quantity(
             topic_group,
             party_group,
             recode_is_cultural,
-            extra_other_category,
+            include_other_category,
             target_quantity=target_quantity,
             treaty_sources=treaty_sources,
         )
@@ -64,7 +61,7 @@ def display_topic_quantity(
 
         progress()
 
-        pivot = pd.pivot_table(data, index=["Period"], values=["Count"], columns=["Category"], fill_value=0)
+        pivot: pd.DataFrame = pd.pivot_table(data, index=["Period"], values=["Count"], columns=["Category"], fill_value=0)
         pivot.columns = [x[-1] for x in pivot.columns]
 
         if normalize_values is True:
@@ -75,17 +72,17 @@ def display_topic_quantity(
             columns = pivot.columns
             pivot = pivot.reset_index()[columns]
 
-            kwargs = analysis_plot.prepare_plot_kwargs(pivot, chart_type, normalize_values, period_group, vmax=vmax)
+            kwargs: dict[str, Any] = analysis_plot.prepare_plot_kwargs(pivot, chart_type, normalize_values, period_group, vmax=vmax)
             progress()
             # kwargs.update(dict(overlay=False, colors=colors))
-            kwargs.update(dict(title=party_group["label"]))
-            kwargs.update(dict(legend=legend))
+            kwargs.update({'title': party_group["label"]})
+            kwargs.update({'legend': legend})
 
             ax = analysis_plot.quantity_plot(data, pivot, chart_type, plot_style, **kwargs)
 
             if output_filename:
                 basename = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
-                ax.savefig("{}_{}.{}".format(basename, output_filename, "eps"), format="eps", dpi=300)
+                ax.savefig(f"{basename}_{output_filename}.eps", format="eps", dpi=300)
 
         elif chart_type.name == "table":
             display(data)
@@ -101,23 +98,24 @@ def display_topic_quantity(
         progress(0)
 
 
-def party_group_label(parties):
-    return ", ".join(parties[:6]) + ("" if len(parties) <= 6 else " +{} parties".format(len(parties) - 6))
+def party_group_label(parties: list[str]) -> str:
+    return ", ".join(parties[:6]) + ("" if len(parties) <= 6 else f" +{len(parties) - 6} parties")
 
 
 def display_topic_quantity_groups(
-    period_group_index,
-    topic_group_name,
-    recode_is_cultural=False,
-    normalize_values=False,
-    extra_other_category=None,
-    chart_type_name=None,
-    plot_style="classic",
-    parties=None,
-    chart_per_category=False,
-    target_quantity="topic",
+    wti_index: TreatyState,
+    period_group_index: int,
+    topic_group_name: str,
+    parties: list[str],
+    *,
+    recode_is_cultural: bool = False,
+    normalize_values: bool = False,
+    include_other_category=None,
+    chart_type_name: str | None = None,
+    plot_style: str = "classic",
+    chart_per_category: bool = False,
+    target_quantity: str="topic",
     treaty_sources=None,
-    wti_index=None,
     progress=utility.noop,
     print_args=False,
     vmax=None,
@@ -126,19 +124,20 @@ def display_topic_quantity_groups(
 ):
 
     if print_args or (chart_type_name == "print_args"):
-        args = utility.filter_dict(locals(), ["progress", "print_args"], filter_out=True)
+        args: dict[str, Any] = utility.filter_dict(locals(), {"progress", "print_args"}, filter_out=True)
         args["wti_index"] = None
         pp(args)
 
-    period_group = config.DEFAULT_PERIOD_GROUPS[period_group_index]
-    topic_group = config.TOPIC_GROUP_MAPS[topic_group_name]
-    topic_groups = [topic_group]
-    wti_parties = [x for x in parties if x not in ["ALL OTHER"]]
+    period_group: dict[str, Any] = config.DEFAULT_PERIOD_GROUPS[period_group_index]
+    topic_group: dict[str, str] = config.TOPIC_GROUP_MAPS[topic_group_name]
+    topic_groups: list[dict[str, Any]] = [topic_group]
+    wti_parties: list[str] = [x for x in parties if x not in ["ALL OTHER"]]
 
+    party_groups: list[dict[str, Any]] = []
     if target_quantity in ["party", "region"]:
         party_groups = [{"label": topic_group_name, "parties": wti_parties}]
         if chart_per_category:
-            topic_groups = [{k: {k: topic_group[k]}} for k in topic_group.keys()]
+            topic_groups = [{k: {k: v}} for k,v in topic_group.items()]
     else:
         if not chart_per_category:
             if "ALL" in parties:
@@ -156,7 +155,7 @@ def display_topic_quantity_groups(
                 topic_group=t_c,
                 recode_is_cultural=recode_is_cultural,
                 normalize_values=normalize_values,
-                extra_other_category=extra_other_category,
+                include_other_category=include_other_category,
                 chart_type_name=chart_type_name,
                 plot_style=plot_style,
                 target_quantity=target_quantity,
@@ -202,7 +201,7 @@ def display_gui(wti_index, print_args=False):
         chart_per_category=widgets_config.toggle(
             "Chart per Qty", False, tooltip="Display one chart per selected quantity category", layout=lw()
         ),
-        extra_other_category=widgets_config.toggle("Add OTHER topics", False, layout=lw()),
+        include_other_category=widgets_config.toggle("Add OTHER topics", False, layout=lw()),
         target_quantity=widgets_config.dropdown(
             "Quantity", ["topic", "party", "source", "continent", "group"], "topic", layout=lw(width="200px")
         ),
@@ -234,7 +233,7 @@ def display_gui(wti_index, print_args=False):
         parties=gui.parties,
         recode_is_cultural=gui.recode_is_cultural,
         normalize_values=gui.normalize_values,
-        extra_other_category=gui.extra_other_category,
+        include_other_category=gui.include_other_category,
         chart_type_name=gui.chart_type_name,
         plot_style=gui.plot_style,
         chart_per_category=gui.chart_per_category,
@@ -249,7 +248,7 @@ def display_gui(wti_index, print_args=False):
         [
             widgets.VBox([gui.period_group_index, gui.topic_group_name, gui.target_quantity, gui.party_preset]),
             widgets.VBox([gui.treaty_sources, gui.parties]),
-            widgets.VBox([gui.recode_is_cultural, gui.extra_other_category, gui.chart_per_category]),
+            widgets.VBox([gui.recode_is_cultural, gui.include_other_category, gui.chart_per_category]),
             widgets.VBox([gui.chart_type_name, gui.plot_style]),
             widgets.VBox([gui.normalize_values, gui.progress]),
         ]
