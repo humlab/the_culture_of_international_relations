@@ -396,20 +396,23 @@ def get_disabled_pipes_from_filename(filename: str) -> list[str] | Any | None:
 def create_textacy_corpus(
     corpus_reader, nlp: Language | str, tick=utility.noop, n_chunk_threshold: int = 100000
 ) -> Corpus:
-
+    doc: spacy.tokens.Doc
     corpus: Corpus = Corpus(nlp)
     counter: int = 0
 
     for filename, document_id, text, metadata in corpus_reader:
-
-        metadata: dict[str, Any] = utility.extend(metadata, {"filename": filename, "document_id": document_id})
+        
+        metadata: dict[str, Any] = metadata | {"filename": filename, "document_id": document_id}
 
         if len(text) > n_chunk_threshold:
-            doc: spacy.tokens.Doc = make_doc_from_text_chunks(text, lang=nlp, chunk_size=n_chunk_threshold)
+            doc = make_doc_from_text_chunks(text, lang=nlp, chunk_size=n_chunk_threshold)
             corpus.add_doc(doc)
             doc._.meta = metadata
         else:
             corpus.add((text, metadata))  # type: ignore
+
+        doc = corpus.docs[-1]
+        doc._.meta['n_tokens'] = len(doc)
 
         counter += 1
         if counter % 100 == 0:
