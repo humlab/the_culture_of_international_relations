@@ -11,6 +11,7 @@ requires-python = ">=3.11"
 dependencies = [
     "bokeh>=3.8.1",
     "dotenv>=0.9.9",
+    "en-core-web-lg",
     "ftfy>=6.3.1",
     "gensim>=4.4.0",
     "ipydatagrid>=1.4.0",
@@ -37,6 +38,9 @@ dev = [
     "pytest>=9.0.1",
     "ruff>=0.14.4",
 ]
+
+# [tool.uv.venv]
+# seed = true
 
 [tool.black]
 line-length = 120
@@ -122,3 +126,6 @@ disable = [
 
 [tool.setuptools.packages.find]
 include = ["common*", "1_quantitative_analysis*", "2_network_analysis*", "3_text_analysis*"]
+
+[tool.uv.sources]
+en-core-web-lg = { url = "https://github.com/explosion/spacy-models/releases/download/en_core_web_lg-3.8.0/en_core_web_lg-3.8.0.tar.gz" }
