@@ -5,9 +5,7 @@ from pprint import pprint as pp
 import ipywidgets as widgets
 from bokeh.io import push_notebook
 from IPython.display import display
-from network_analysis import adjust_node_label_offset, create_party_network, setup_node_size, slice_network_datasource
-from network_analysis_gui import NETWORK_PLOT_OPTS
-from network_analysis_plot import get_palette, plot_network
+from loguru import logger
 
 import common.color_utility as color_utility
 import common.config as config
@@ -15,13 +13,19 @@ import common.network.layout as network_layout
 import common.network.networkx_utility as networkx_utility
 import common.utility as utility
 import common.widgets_config as widgets_config
+from common.network_analysis.network_analysis import (
+    adjust_node_label_offset,
+    create_party_network,
+    setup_node_size,
+    slice_network_datasource,
+)
+from common.network_analysis.network_analysis_gui import NETWORK_PLOT_OPTS
+from common.network_analysis.network_analysis_plot import get_palette, plot_network
 
 sys.path = sys.path if ".." in sys.path else sys.path + [".."]
 
 
-
 NETWORK_LAYOUT_OPTIONS = {x.name: x.key for x in network_layout.layout_setups}
-logger = utility.getLogger("network_analysis")
 warnings.filterwarnings("ignore")
 
 NETWORK_PLOT_OPTS = dict(
@@ -40,7 +44,7 @@ NODE_SIZE_OPTIONS = {
     "Eigenvector centrality": "eigenvector",
 }
 
-PALETTE_OPTIONS = {
+PALETTE_OPTIONS: dict[str, str] = {
     palette_name: palette_name
     for palette_name in color_utility.DEFAULT_ALL_PALETTES.keys()
     if any([len(x) > 7 for x in color_utility.DEFAULT_ALL_PALETTES[palette_name].values()])
@@ -50,8 +54,6 @@ OUTPUT_OPTIONS = {"Network": "network", "Table": "table", "Arguments": "print_ar
 
 COMMUNITY_OPTIONS = {"(default)": None, "Louvain": "louvain"}
 SLICE_TYPE_OPTIONS, SLICE_TYPE_DEFAULT = {"Sequence": 1, "Year": 2}, 1
-
-
 
 
 def display_partial_party_network(plot_data, slice_range_type, slice_range, slice_changed_callback):
@@ -116,7 +118,7 @@ def display_party_network(
     try:
 
         if output == "print_args":
-            args = utility.filter_dict(locals(), ["progress", "done_callback"], filter_out=True)
+            args = utility.filter_dict(locals(), {"progress", "done_callback"}, filter_out=True)
             args["wti_index"] = None
             args["plot_data"] = None
             args["output"] = "network"

@@ -1,19 +1,18 @@
 import datetime
-from typing import Any
 import types
 from pprint import pprint as pp
+from typing import Any
 
-from  common.quantative_analysis import analysis_data
-from  common.quantative_analysis import analysis_plot
 import ipywidgets as widgets
 import pandas as pd
 from IPython.display import display
+from loguru import logger
 
 import common.config as config
 import common.utility as utility
 import common.widgets_config as widgets_config
+from common.quantative_analysis import analysis_data, analysis_plot
 from common.treaty_state import TreatyState
-from loguru import logger
 
 
 def display_topic_quantity(
@@ -61,7 +60,9 @@ def display_topic_quantity(
 
         progress()
 
-        pivot: pd.DataFrame = pd.pivot_table(data, index=["Period"], values=["Count"], columns=["Category"], fill_value=0)
+        pivot: pd.DataFrame = pd.pivot_table(
+            data, index=["Period"], values=["Count"], columns=["Category"], fill_value=0
+        )
         pivot.columns = [x[-1] for x in pivot.columns]
 
         if normalize_values is True:
@@ -72,11 +73,13 @@ def display_topic_quantity(
             columns = pivot.columns
             pivot = pivot.reset_index()[columns]
 
-            kwargs: dict[str, Any] = analysis_plot.prepare_plot_kwargs(pivot, chart_type, normalize_values, period_group, vmax=vmax)
+            kwargs: dict[str, Any] = analysis_plot.prepare_plot_kwargs(
+                pivot, chart_type, normalize_values, period_group, vmax=vmax
+            )
             progress()
             # kwargs.update(dict(overlay=False, colors=colors))
-            kwargs.update({'title': party_group["label"]})
-            kwargs.update({'legend': legend})
+            kwargs.update({"title": party_group["label"]})
+            kwargs.update({"legend": legend})
 
             ax = analysis_plot.quantity_plot(data, pivot, chart_type, plot_style, **kwargs)
 
@@ -114,7 +117,7 @@ def display_topic_quantity_groups(
     chart_type_name: str | None = None,
     plot_style: str = "classic",
     chart_per_category: bool = False,
-    target_quantity: str="topic",
+    target_quantity: str = "topic",
     treaty_sources=None,
     progress=utility.noop,
     print_args=False,
@@ -137,7 +140,7 @@ def display_topic_quantity_groups(
     if target_quantity in ["party", "region"]:
         party_groups = [{"label": topic_group_name, "parties": wti_parties}]
         if chart_per_category:
-            topic_groups = [{k: {k: v}} for k,v in topic_group.items()]
+            topic_groups = [{k: {k: v}} for k, v in topic_group.items()]
     else:
         if not chart_per_category:
             if "ALL" in parties:

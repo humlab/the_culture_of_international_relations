@@ -14,32 +14,30 @@ def create_party_network(df_party_data, K, node_partition, palette):  # , multig
 
     edges_data = df_to_nx_edge_format(df_party_data)
 
-    G = nx.MultiGraph(K=K)
-    G.add_edges_from(edges_data)
+    graph: nx.MultiGraph = nx.MultiGraph(K=K)
+    graph.add_edges_from(edges_data)
 
     if node_partition is not None:
-        partition = community.best_partition(G)
+        partition = community.best_partition(graph)
         partition_color = {n: palette[p % len(palette)] for n, p in partition.items()}
-        nx.set_node_attributes(G, partition, "community")
-        nx.set_node_attributes(G, partition_color, "fill_color")
+        nx.set_node_attributes(graph, partition, "community")
+        nx.set_node_attributes(graph, partition_color, "fill_color")
     else:
         # nx.set_node_attributes(G, 0, 'community')
-        nx.set_node_attributes(G, palette[0], "fill_color")
+        nx.set_node_attributes(graph, palette[0], "fill_color")
 
-    nx.set_node_attributes(G, dict(G.degree()), name="degree")
+    nx.set_node_attributes(graph, dict(graph.degree()), name="degree")
     try:
-        nx.set_node_attributes(G, dict(nx.betweenness_centrality(G, weight=None)), name="betweenness")
-    except nx.NetworkXNotImplemented as ex:
-        # print("warning: data does not support betweenness_centrality")
-        # print(ex)
-        pass
+        nx.set_node_attributes(graph, dict(nx.betweenness_centrality(graph, weight=None)), name="betweenness")
+    except:  # type: ignore ; pylint: disable=bare-except ; noqa
+        ...
 
-    nx.set_node_attributes(G, dict(nx.closeness_centrality(G)), name="closeness")
+    nx.set_node_attributes(graph, dict(nx.closeness_centrality(graph)), name="closeness")
 
-    return G
+    return graph
 
 
-def slice_network_datasource(edges, nodes, slice_range, slice_range_type):
+def slice_network_datasource(edges, nodes, slice_range, slice_range_type) -> tuple[dict, dict]:
     """Retrieves slice of network data defined by range of sequence's index (low, high)
 
     Parameters
@@ -68,15 +66,15 @@ def slice_network_datasource(edges, nodes, slice_range, slice_range_type):
     if slice_range_type == 1:  # sequence
         df_edges = df_edges.loc[slice_range[0] : slice_range[1]]
     else:
-        lower = np.datetime64("{}-01-01".format(slice_range[0]))
-        upper = np.datetime64("{}-01-01".format(slice_range[1] + 1))
+        lower = np.datetime64(f"{slice_range[0]}-01-01")
+        upper = np.datetime64(f"{slice_range[1] + 1}-01-01")
         df_edges = df_edges[(df_edges.signed >= lower) & (df_edges.signed < upper)]
 
-    nodes_indices = set(df_edges.source.unique()) | set(df_edges.target.unique())
-    df_nodes = pd.DataFrame(nodes).set_index("node_id").loc[nodes_indices].reset_index()
+    nodes_indices: set[str] = set(df_edges.source.unique()) | set(df_edges.target.unique())
+    df_nodes: pd.DataFrame = pd.DataFrame(nodes).set_index("node_id").loc[nodes_indices].reset_index()
 
-    sliced_edges = df_edges.to_dict(orient="list")
-    sliced_nodes = df_nodes.to_dict(orient="list")
+    sliced_edges: dict = df_edges.to_dict(orient="list")
+    sliced_nodes: dict = df_nodes.to_dict(orient="list")
 
     return sliced_nodes, sliced_edges
 
