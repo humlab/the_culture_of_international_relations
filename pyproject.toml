@@ -25,6 +25,7 @@ dependencies = [
     "pydotplus>=2.0.2",
     "python-louvain>=0.16",
     "scipy>=1.16.3",
+    "seaborn>=0.13.2",
     "spacy>=3.8.8",
     "textacy>=0.13.0",
     "wordcloud>=1.9.4",
