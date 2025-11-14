@@ -6,7 +6,6 @@ import ipywidgets as widgets
 from bokeh.models import ColumnDataSource, CustomJS
 from IPython.display import Javascript
 
-
 from common import config, extend
 
 # if __package__:
