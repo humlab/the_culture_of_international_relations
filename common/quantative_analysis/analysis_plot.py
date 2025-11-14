@@ -1,32 +1,34 @@
+from collections.abc import Sequence
 from typing import Any
 
 import matplotlib
+from matplotlib import pyplot as plt
 import pandas as pd
 
 from common import color_utility, config
 
 
 def quantity_plot(
-    data,
-    pivot,
-    chart_type,
-    plot_style,
+    data: pd.DataFrame,
+    pivot: pd.DataFrame,
+    chart_type: config.KindOfChart,
+    plot_style: str,
     overlay: bool = True,
-    figsize=(1000, 600),
+    figsize: tuple[int, int] = (1000, 600),
     xlabel: str = "",
     ylabel: str = "",
-    xticks=None,
+    xticks: list | None = None,
     yticks=None,
-    xticklabels=None,
+    xticklabels: list[str] | None = None,
     yticklabels=None,
     xlim=None,
     ylim=None,
-    dpi=48,
-    colors=color_utility.DEFAULT_PALETTE,
+    dpi: int = 48,
+    colors: Sequence[str]=color_utility.DEFAULT_PALETTE,
     **kwargs,
 ):  # pylint: disable=W0613
 
-    matplotlib.style.use(plot_style)  # type: ignore ; noqa
+    plt.style.use(plot_style)  # type: ignore ; noqa
 
     figsize = (figsize[0] / dpi, figsize[1] / dpi)
 
@@ -127,7 +129,7 @@ def prepare_plot_kwargs(
     vstep: int = vstepper(vmax)
 
     if not normalize_values:
-        kwargs.setdefault(f"{v}ticks", list(range(0, vmax + vstep, vstep)))  # type: ignore ; noqa
+        kwargs.setdefault(f"{v}ticks", list(range(0, int(vmax) + vstep, vstep)))  # type: ignore ; noqa
 
     if ticklabels is not None:
         kwargs.setdefault(f"{c}ticklabels", ticklabels)  # type: ignore ; noqa
