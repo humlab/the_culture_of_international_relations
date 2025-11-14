@@ -1,7 +1,6 @@
 import functools
 import glob
 import inspect
-import logging
 import os
 import platform
 import re
@@ -12,7 +11,7 @@ import types
 import zipfile
 from collections.abc import Callable, Iterable
 from typing import Any
-
+from loguru import logger
 import matplotlib.pyplot as plt
 import pandas as pd
 import wordcloud
@@ -20,18 +19,6 @@ import yaml
 
 # pylint: disable=redefined-builtin
 
-
-def getLogger(name: str = "cultural_treaties", level=logging.INFO) -> logging.Logger:
-    logging.basicConfig(
-        format="%(asctime)s : %(levelname)s : %(filename)s.%(funcName)s() : %(message)s",
-        level=level,
-    )
-    _logger: logging.Logger = logging.getLogger(name=name)
-    _logger.setLevel(level=level)
-    return _logger
-
-
-logger: logging.Logger = getLogger(name=__name__)
 
 __cwd__: str = os.path.abspath(path=__file__) if "__file__" in globals() else os.getcwd()
 

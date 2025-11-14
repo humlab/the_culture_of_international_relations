@@ -15,8 +15,6 @@ from common.utility import remove_snake_case
 sys.path = sys.path if ".." in sys.path else sys.path + [".."]
 
 
-logger = utility.getLogger(name="title_analysis")
-
 OUTPUT_OPTIONS: dict[str, str] = {
     "Table": "table",
     "Table, grid": "tabular",
