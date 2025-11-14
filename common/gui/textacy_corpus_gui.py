@@ -103,7 +103,7 @@ def display_corpus_load_gui(data_folder: str, wti_index: TreatyState, container:
 
     treaty_source_options: list[str] = wti_index.unique_sources
     treaty_default_source_options: list[str] = ["LTS", "UNTS", "UNXX"]
-    language_mapping: dict[str, str] = ConfigValue("data.treaty_index.language.mapping").resolve()
+    language_mapping: dict[str, str] = ConfigValue("data.treaty_index.language.columns").resolve()
     language_options: dict[str, str] = {v.title(): k for k, v in language_mapping.items() if k in ["en", "fr"]}
 
     period_group_options: dict[str, Any] = {v["title"]: k for k, v in config.PERIOD_GROUPS_ID_MAP.items()}
