@@ -17,13 +17,6 @@ def project_root(folder: str) -> str:
 
 DATA_FOLDER: str = os.path.join(project_root(os.getcwd()), "data")
 
-LANGUAGE_MAP: dict[str, str] = {
-    "en": "english",
-    "fr": "french",
-    "it": "other",
-    "de": "other",
-}
-
 
 _tag_set: pd.DataFrame | None = None
 

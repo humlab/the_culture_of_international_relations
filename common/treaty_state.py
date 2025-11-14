@@ -642,6 +642,10 @@ class TreatyState:
 
         return self._party_preset_options
 
+    def get_language_column(self, language: str) -> str:
+        language_column: str = ConfigValue("data.treaty_index.language.columns").resolve()[language]
+        return language_column
+    
     def get_treaties(
         self,
         language: str,
@@ -657,8 +661,7 @@ class TreatyState:
             parties=parties,
             treaty_sources=treaty_sources,
         )
-
-        treaties = treaties[treaties[config.LANGUAGE_MAP[language]] == language]
+        treaties = treaties[treaties[self.get_language_column(language)] == language]
         treaties = treaties.sort_values("signed_year", ascending=True)
         return treaties
 

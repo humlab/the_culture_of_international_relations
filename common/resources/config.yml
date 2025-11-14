@@ -11,12 +11,6 @@ wti_index:
   excel: "WTI_Treaties_Master_List.xlsx"
   data_folder: "data"
 
-language:
-  mapping:
-    en: english
-    fr: french
-    it: other
-    de: other
 
 plotting:
   styles:
@@ -91,6 +85,14 @@ data:
       - force
       - group1
       - group2
+      
+    language:
+      columns:
+        en: english
+        fr: french
+        it: other
+        de: other
+
   party_corrections:
     ABLANI: ALBANI
     AMBASS: IGNORE

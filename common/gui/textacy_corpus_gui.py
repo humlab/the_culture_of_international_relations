@@ -2,6 +2,7 @@ import glob
 import os
 import types
 from collections.abc import Callable, Iterable, Sequence
+from typing import Any
 
 import ipywidgets as widgets
 import pandas as pd
@@ -14,7 +15,7 @@ from textacy.spacier.utils import merge_spans
 from common import config, domain_logic, utility, widgets_config
 from common.corpus import textacy_corpus_utility as textacy_utility
 from common.corpus.utility import CompressedFileReader
-from common.treaty_state import TreatyState
+from common.treaty_state import ConfigValue, TreatyState
 
 
 def generate_textacy_corpus(
@@ -100,12 +101,12 @@ def display_corpus_load_gui(data_folder: str, wti_index: TreatyState, container:
     def lw(w):
         return widgets.Layout(width=w)
 
-    treaty_source_options = wti_index.unique_sources
+    treaty_source_options: list[str] = wti_index.unique_sources
     treaty_default_source_options: list[str] = ["LTS", "UNTS", "UNXX"]
+    language_mapping: dict[str, str] = ConfigValue("data.treaty_index.language.mapping").resolve()
+    language_options: dict[str, str] = {v.title(): k for k, v in language_mapping.items() if k in ["en", "fr"]}
 
-    language_options: dict[str, str] = {v.title(): k for k, v in config.LANGUAGE_MAP.items() if k in ["en", "fr"]}
-
-    period_group_options = {v["title"]: k for k, v in config.PERIOD_GROUPS_ID_MAP.items()}
+    period_group_options: dict[str, Any] = {v["title"]: k for k, v in config.PERIOD_GROUPS_ID_MAP.items()}
 
     corpus_files: list[str] = list(
         sorted(
