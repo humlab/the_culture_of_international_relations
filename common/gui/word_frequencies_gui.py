@@ -358,7 +358,6 @@ def word_frequency_gui(wti_index, corpus) -> SimpleNamespace:
                 display_list_of_most_frequent_words(gui, df_counts)
             except Exception as ex:
                 logger.error(ex)
-                raise
             finally:
                 gui.progress.value = 0
                 gui.compute.disabled = False
