@@ -43,7 +43,6 @@ DFLT_LABEL_OPTS: dict[str, str] = {
     "level": "overlay",
     "text_align": "center",
     "text_baseline": "middle",
-    "render_mode": "canvas",
     "text_font": "Tahoma",
     "text_font_size": "9pt",
     "text_color": "black",
@@ -55,7 +54,7 @@ def get_palette(name):
     if name not in bokeh.palettes.all_palettes:
         return bokeh.palettes.RdYlBu[11]
 
-    key = max(bokeh.palettes.all_palettes[name].keys())
+    key: int = max(bokeh.palettes.all_palettes[name].keys())
 
     return bokeh.palettes.all_palettes[name][key]
 

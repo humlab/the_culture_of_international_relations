@@ -1,6 +1,8 @@
+from collections.abc import Sequence
 from typing import Any
 
 import pandas as pd
+from bokeh.io.notebook import CommsHandle
 from bokeh.models import ColumnDataSource, HoverTool, LabelSet
 from bokeh.palettes import RdYlBu, Set1, all_palettes  # pylint: disable=E0611
 from bokeh.plotting import figure, show
@@ -34,7 +36,6 @@ DFLT_LABEL_OPTS: dict[str, str] = {
     "level": "overlay",
     "text_align": "center",
     "text_baseline": "middle",
-    "render_mode": "canvas",
     "text_font": "Tahoma",
     "text_font_size": "9pt",
     "text_color": "black",
@@ -42,29 +43,29 @@ DFLT_LABEL_OPTS: dict[str, str] = {
 
 
 def plot_network(
-    nodes,
-    edges,
-    node_description=None,
-    node_size=5,
-    node_opts=None,
-    line_opts=None,
-    element_id="nx_id3",
-    figsize=(900, 900),
-    node_label="name",
-    node_label_opts=None,
-    edge_label="name",
-    edge_label_opts=None,
-    tools=None,
+    nodes: pd.DataFrame,
+    edges: pd.DataFrame,
+    node_description: pd.Series | None = None,
+    node_size: int = 5,
+    node_opts: dict[str, Any] | None = None,
+    line_opts: dict[str, Any] | None = None,
+    element_id: str = "nx_id3",
+    figsize: tuple[int, int] = (900, 900),
+    node_label: str = "name",
+    node_label_opts: dict[str, Any] | None = None,
+    edge_label: str = "name",
+    edge_label_opts: dict[str, Any] | None = None,
+    tools: str | None = None,
     **figkwargs,
-):
+) -> dict[str, Any]:
 
-    edges_source = ColumnDataSource(edges)
-    nodes_source = ColumnDataSource(nodes)
+    edges_source: ColumnDataSource = ColumnDataSource(edges)
+    nodes_source: ColumnDataSource = ColumnDataSource(nodes)
 
-    node_opts = extend(DFLT_NODE_OPTS, node_opts or {})
-    line_opts = extend(DFLT_EDGE_OPTS, line_opts or {})
+    node_opts = DFLT_NODE_OPTS | (node_opts or {})
+    line_opts = DFLT_EDGE_OPTS | (line_opts or {})
 
-    p = figure(width=figsize[0], height=figsize[1], tools=tools or TOOLS, **figkwargs)
+    p: figure = figure(width=figsize[0], height=figsize[1], tools=tools or TOOLS, **figkwargs)
 
     p.xgrid.grid_line_color = None
     p.ygrid.grid_line_color = None
@@ -94,14 +95,14 @@ def plot_network(
         )
 
     if node_label is not None and node_label in nodes:
-        label_opts = extend({}, DFLT_LABEL_OPTS, node_label_opts or {})
+        label_opts: dict[str, Any] = {} | DFLT_LABEL_OPTS | (node_label_opts or {})
         p.add_layout(LabelSet(source=nodes_source, x="x", y="y", text=node_label, **label_opts))
 
     if edge_label is not None and edge_label in edges:
-        label_opts = extend({}, DFLT_LABEL_OPTS, edge_label_opts or {})
+        label_opts: dict[str, Any] = {} | DFLT_LABEL_OPTS | (edge_label_opts or {})
         p.add_layout(LabelSet(source=edges_source, x="m_x", y="m_y", text=edge_label, **label_opts))
 
-    handle = show(p, notebook_handle=True)
+    handle: CommsHandle | None = show(p, notebook_handle=True)
 
     return {
         "handle": handle,
