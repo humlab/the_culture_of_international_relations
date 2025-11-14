@@ -158,23 +158,10 @@ def filename_whitelist(filename: str) -> str:
     return filename
 
 
-def cpif_deprecated(source: dict, target: dict, name: str) -> dict:
-    logger.debug(msg="use of cpif is deprecated")
-    if name in source:
-        target[name] = source[name]
-    return target
-
-
 def dict_subset(d: dict, keys: set) -> dict:
     if keys is None:
         return d
     return {k: v for (k, v) in d.items() if k in keys}
-
-
-# def dict_split(d: dict, fn: Callable[[dict], bool]) -> tuple[dict[Any, Any], dict[Any, Any]]:
-#     """Splits a dictionary into two parts based on predicate"""
-#     true_keys = {k for k in d.keys() if fn(d, k)}
-#     return {k: d[k] for k in true_keys}, {k: d[k] for k in set(d.keys()) - true_keys}
 
 
 def list_of_dicts_to_dict_of_lists(
@@ -199,20 +186,12 @@ def ls_sorted(path: str) -> list[str]:
     return sort_chained(list(filter(os.path.isfile, glob.glob(pathname=path))), f=os.path.getmtime)
 
 
-# def split(delimiters: list[str], string: str, maxsplit: int = 0) -> list[str]:
-#     regexPattern = "|".join(map(re.escape, delimiters))
-#     return re.split(regexPattern, string, maxsplit)
-
-
 HYPHEN_REGEXP: re.Pattern = re.compile(r"\b(\w+)-\s*\r?\n\s*(\w+)\b", flags=re.UNICODE)
 
 
 def dehyphen(text: str) -> str:
     result: str = re.sub(pattern=HYPHEN_REGEXP, repl=r"\1\2\n", string=text)
     return result
-
-
-# path = types.SimpleNamespace()
 
 
 def path_add_suffix(path: str, suffix: str, new_extension: str | None = None) -> str:
