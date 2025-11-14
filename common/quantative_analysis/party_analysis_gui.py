@@ -229,6 +229,9 @@ def display_gui(wti_index, print_args=False):
         wti_index=widgets.fixed(wti_index),
         print_args=widgets.fixed(print_args),
         treaty_sources=gui.sources,
+        vmax=widgets.fixed(None),
+        legend=widgets.fixed(True),
+        output_filename=widgets.fixed(None),
     )
 
     def on_party_preset_change(change):  # pylint: disable=W0613
@@ -244,7 +247,7 @@ def display_gui(wti_index, print_args=False):
             else:
                 gui.parties.value = gui.party_preset.value
 
-            if gui.top_n_parties.value > 0:  # pylint: disable=consider-using-min-builtin
+            if gui.top_n_parties.value > 0: 
                 gui.top_n_parties.value = 0
         except Exception as ex:  # pylint: disable=W0703
             logger.info(ex)

@@ -243,6 +243,9 @@ def display_gui(wti_index, print_args=False) -> types.NoneType:
         wti_index=widgets.fixed(wti_index),
         treaty_sources=gui.treaty_sources,
         print_args=widgets.fixed(print_args),
+        vmax=widgets.fixed(None),
+        legend=widgets.fixed(True),
+        output_filename=widgets.fixed(None),
     )
 
     boxes = widgets.HBox(
