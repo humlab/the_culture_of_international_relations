@@ -10,11 +10,11 @@ from common.treaty_state import TreatyState, get_treaties_skip_column_names
 
 
 @dataclass
-class WTIIndexContainer:
+class WTI_IndexContainer:
     value: TreatyState | None = None
 
 
-WTI_INDEX_CONTAINER = WTIIndexContainer()
+WTI_INDEX_CONTAINER = WTI_IndexContainer()
 
 WTI_OPTIONS: list[tuple[str, str]] = [
     ("WTI 7CULT Old", "is_cultural_yesno_org"),
