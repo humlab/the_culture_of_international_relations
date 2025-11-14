@@ -378,7 +378,7 @@ class Registry:
             if args.get("type") == "function":
                 fn_or_class = fn_or_class()
             else:
-                fn_or_class._registry_key = key
+                fn_or_class._registry_key = key  # pylint: disable=protected-access
                 fn_or_class = _ensure_key_property(fn_or_class)
 
             cls.items[key] = fn_or_class
