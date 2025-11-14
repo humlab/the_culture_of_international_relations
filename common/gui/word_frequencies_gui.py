@@ -44,7 +44,7 @@ utility.setup_default_pd_display()
 
 def corpus_size_by_grouping(corpus, treaty_time_groups, group_by_column):
 
-    data = ((doc._.meta["treaty_id"], doc._.meta["signed_year"], doc._.meta['n_tokens']) for doc in corpus)
+    data = ((doc._.meta["treaty_id"], doc._.meta["signed_year"], doc._.meta["n_tokens"]) for doc in corpus)
     df_sizes = pd.DataFrame(data, columns=["treaty_id", "signed_year", "n_tokens"])
     if group_by_column not in df_sizes.columns:
         df_sizes[group_by_column] = (treaty_time_groups[group_by_column]["fx"])(df_sizes)
