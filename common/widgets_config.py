@@ -7,6 +7,7 @@ from bokeh.models import ColumnDataSource, CustomJS
 from IPython.display import Javascript
 
 from common import config, extend
+from common.configuration.resolve import ConfigValue
 
 # if __package__:
 #    print('Package named {!r}; __name__ is {!r}'.format(__package__, __name__))
@@ -216,9 +217,10 @@ def topic_groups_widget2(**kwopts):
 
 
 def plot_style_widget(**kwopts):
+    styles: list[str] = [x for x in ConfigValue("plotting.styles").resolve() if "seaborn" in x]
     default_opts: dict[str, Any] = {
-        "options": [x for x in config.MATPLOTLIB_PLOT_STYLES if "seaborn" in x],
-        "value": "seaborn-pastel",
+        "options": styles,
+        "value": "seaborn-v0_8-pastel",
         "description": "Style:",
         "layout": widgets.Layout(width="200px"),
     }

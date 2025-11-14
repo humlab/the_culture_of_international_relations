@@ -1,9 +1,8 @@
 from collections.abc import Sequence
 from typing import Any
 
-import matplotlib
-from matplotlib import pyplot as plt
 import pandas as pd
+from matplotlib import pyplot as plt
 
 from common import color_utility, config
 
@@ -14,7 +13,7 @@ def quantity_plot(
     chart_type: config.KindOfChart,
     plot_style: str,
     overlay: bool = True,
-    figsize: tuple[int, int] = (1000, 600),
+    figsize: tuple[int | float, int | float] = (1000, 600),
     xlabel: str = "",
     ylabel: str = "",
     xticks: list | None = None,
@@ -24,17 +23,18 @@ def quantity_plot(
     xlim=None,
     ylim=None,
     dpi: int = 48,
-    colors: Sequence[str]=color_utility.DEFAULT_PALETTE,
+    colors: Sequence[str] = color_utility.DEFAULT_PALETTE,
     **kwargs,
 ):  # pylint: disable=W0613
 
-    plt.style.use(plot_style)  # type: ignore ; noqa
+    if plot_style in plt.style.available:
+        plt.style.use(plot_style)  # type: ignore ; noqa
 
     figsize = (figsize[0] / dpi, figsize[1] / dpi)
 
     kind: str = f'{chart_type.kind}{"h" if chart_type.horizontal else ""}'
 
-    ax = pivot.plot(kind=kind, stacked=chart_type.stacked, figsize=figsize, color=colors, **kwargs)
+    ax = pivot.plot(kind=kind, stacked=chart_type.stacked, figsize=figsize, color=colors, **kwargs)  # type: ignore ; noqa
 
     if xticks is not None:
         ax.set_xticks(xticks)
@@ -93,7 +93,7 @@ def create_party_name_map(parties, palette=color_utility.DEFAULT_PALETTE):
     return party_name_map, party_color_map
 
 
-def vstepper(vmax) -> int:
+def vstepper(vmax: int) -> int:
     for step, value in [(1, 15), (5, 30), (10, 250), (25, 500), (100, 2000)]:
         if vmax < value:
             return step
@@ -110,7 +110,7 @@ def prepare_plot_kwargs(
 
     kwargs: dict[str, tuple[int, int]] = {"figsize": (1000, 500)}
 
-    label = "Number of treaties" if not normalize_values else "Share%"
+    label: str = "Number of treaties" if not normalize_values else "Share%"
 
     c, v = ("x", "y") if not chart_type.horizontal else ("y", "x")
 
@@ -126,7 +126,7 @@ def prepare_plot_kwargs(
     if vmax is None:
         vmax = data.sum(axis=1).max() if chart_type.stacked else data.max().max()
 
-    vstep: int = vstepper(vmax)
+    vstep: int = vstepper(vmax)  # type: ignore ; noqa
 
     if not normalize_values:
         kwargs.setdefault(f"{v}ticks", list(range(0, int(vmax) + vstep, vstep)))  # type: ignore ; noqa

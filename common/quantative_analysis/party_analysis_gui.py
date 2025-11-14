@@ -247,7 +247,7 @@ def display_gui(wti_index, print_args=False):
             else:
                 gui.parties.value = gui.party_preset.value
 
-            if gui.top_n_parties.value > 0: 
+            if gui.top_n_parties.value > 0:
                 gui.top_n_parties.value = 0
         except Exception as ex:  # pylint: disable=W0703
             logger.info(ex)

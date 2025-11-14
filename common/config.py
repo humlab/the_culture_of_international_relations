@@ -293,34 +293,6 @@ TOPIC_GROUP_MAPS: dict[str, dict[str, str]] = {
 
 default_graph_tools: str = "pan,wheel_zoom,box_zoom,reset,hover,save"
 
-MATPLOTLIB_PLOT_STYLES: list[str] = [
-    "ggplot",
-    "bmh",
-    "seaborn-notebook",
-    "seaborn-whitegrid",
-    "_classic_test",
-    "seaborn",
-    "fivethirtyeight",
-    "seaborn-white",
-    "seaborn-dark",
-    "seaborn-talk",
-    "seaborn-colorblind",
-    "seaborn-ticks",
-    "seaborn-poster",
-    "seaborn-pastel",
-    "fast",
-    "seaborn-darkgrid",
-    "seaborn-bright",
-    "Solarize_Light2",
-    "seaborn-dark-palette",
-    "grayscale",
-    "seaborn-muted",
-    "dark_background",
-    "seaborn-deep",
-    "seaborn-paper",
-    "classic",
-]
-
 output_formats: dict[str, str] = {
     "Plot vertical bar": "plot_bar",
     "Plot horisontal bar": "plot_barh",
