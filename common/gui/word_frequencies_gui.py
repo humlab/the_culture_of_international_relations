@@ -44,7 +44,7 @@ utility.setup_default_pd_display()
 
 def corpus_size_by_grouping(corpus, treaty_time_groups, group_by_column):
 
-    data = ((doc._.meta["treaty_id"], doc._.meta["signed_year"], doc._.n_tokens) for doc in corpus)
+    data = ((doc._.meta["treaty_id"], doc._.meta["signed_year"], doc._.meta['n_tokens']) for doc in corpus)
     df_sizes = pd.DataFrame(data, columns=["treaty_id", "signed_year", "n_tokens"])
     if group_by_column not in df_sizes.columns:
         df_sizes[group_by_column] = (treaty_time_groups[group_by_column]["fx"])(df_sizes)
@@ -67,7 +67,7 @@ def compute_list_of_most_frequent_words(
 
     stop_words = set(stop_words or set())
     include_pos = set(include_pos) if include_pos is not None and len(include_pos) > 0 else None
-    target_keys = {"lemma": LEMMA, "lower": LOWER, "orth": ORTH}
+    target_keys: dict[str, int] = {"lemma": LEMMA, "lower": LOWER, "orth": ORTH}
 
     def exclude(x) -> bool:
 
@@ -82,9 +82,7 @@ def compute_list_of_most_frequent_words(
 
         return len(x.lemma_) < 2
 
-    df_counts = pd.DataFrame({"treaty_id": [], "signed_year": [], "word_id": [], "word": [], "word_count": []})
-
-    parties_set = set(parties or [])
+    parties_set: set[str] = set(parties or [])
 
     docs: Iterable[spacy.tokens.Doc] = (
         corpus.docs
@@ -93,7 +91,7 @@ def compute_list_of_most_frequent_words(
     )
 
     gui.progress.max = len(corpus)
-
+    dfs: list[pd.DataFrame] = []
     for doc in docs:
 
         # f doc._.meta['signed_year'] != 1956:
@@ -101,7 +99,7 @@ def compute_list_of_most_frequent_words(
 
         spacy_store = doc.vocab.strings
 
-        word_counts = doc.count_by(target_keys[target], exclude=exclude)
+        word_counts: dict[int, int] = doc.count_by(target_keys[target], exclude=exclude)
 
         df = pd.DataFrame(
             {
@@ -113,10 +111,11 @@ def compute_list_of_most_frequent_words(
             }
         )
 
-        df_counts = df_counts.append(df)  # type: ignore
+        dfs.append(df)
 
         gui.progress.value = gui.progress.value + 1
 
+    df_counts: pd.DataFrame = pd.concat(dfs, ignore_index=True)
     df_counts["signed_year"] = df_counts.signed_year.astype(int)
     df_counts["word_count"] = df_counts.word_count.astype(int)
 
