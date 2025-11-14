@@ -252,7 +252,7 @@ class TreatyState:
             }
         ).assign(reversed=True)
 
-        treaties: pd.DataFrame = df1.append(df2)  # type: ignore
+        treaties: pd.DataFrame = pd.concat([df1, df2], axis=0)
 
         # Add fields for party's name, country, continent and WTI group
         parties: pd.DataFrame = self.parties[
