@@ -125,7 +125,7 @@ class TreatyState:
         data: dict[str, pd.DataFrame] = {}
         # na_values: list[str] = ["#N/A", "N/A", "NULL", "NaN", "-NaN"]
         for filename, key, xls_filename, xls_sheet in self.csv_files:
-            logger.debug(f"Reading file: {filename}...")
+            # logger.debug(f"Reading file: {filename}...")
             path: str = os.path.join(self.data_folder, filename)
             if not os.path.exists(path):
                 assert xls_filename is not None
