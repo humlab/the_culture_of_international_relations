@@ -36,6 +36,7 @@ dev = [
     "black>=25.9.0",
     "isort>=7.0.0",
     "jupytext>=1.18.1",
+    "nbstripout>=0.8.1",
     "pylint>=4.0.2",
     "pytest>=9.0.1",
     "ruff>=0.14.4",
