@@ -8,7 +8,7 @@ from textacy.corpus import Corpus
 
 from common import config, utility
 from common.corpus.utility import CompressedFileReader
-from common.treaty_state import current_wti_index
+from common.gui.load_wti_index_gui import current_wti_index
 
 DATA_FOLDER: str = config.DATA_FOLDER
 SUBSTITUTION_FILENAME: str = os.path.join(DATA_FOLDER, "term_substitutions.txt")
