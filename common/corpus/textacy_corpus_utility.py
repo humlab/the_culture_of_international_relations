@@ -401,7 +401,7 @@ def create_textacy_corpus(
     counter: int = 0
 
     for filename, document_id, text, metadata in corpus_reader:
-        
+
         metadata: dict[str, Any] = metadata | {"filename": filename, "document_id": document_id}
 
         if len(text) > n_chunk_threshold:
@@ -412,14 +412,14 @@ def create_textacy_corpus(
             corpus.add((text, metadata))  # type: ignore
 
         doc = corpus.docs[-1]
-        doc._.meta['n_tokens'] = len(doc)
+        doc._.meta["n_tokens"] = len(doc)
 
         counter += 1
         if counter % 100 == 0:
-            logger.info("%s documents added...", counter)
+            logger.info(f"{counter} documents added...")
         tick(counter)
 
-    logger.info("Done! %s documents added!", counter)
+    logger.info(f"Done! {counter} documents added!")
 
     return corpus
 
@@ -460,6 +460,7 @@ def keep_hyphen_tokenizer(nlp: Language) -> spacy.tokenizer.Tokenizer:
         token_match=None,
     )
 
+
 @Language.factory("remove_whitespace_entities")
 class RemoveWhitespaceEntities:
     def __init__(self, nlp, name):  # pylint: disable=unused-argument; noqa
@@ -476,12 +477,12 @@ def setup_nlp_language_model(language: str, **nlp_args) -> Language:
         nlp_args.pop("disable")
 
     model_name: str = ConfigValue(f"spacy.models.{language}").resolve()
-    logger.info('using model "%s"', model_name)
+    logger.info(f'using model "{model_name}"')
 
     try:
         importlib.import_module(model_name)
     except ModuleNotFoundError:
-        logger.warning('spaCy model "%s" not found — downloading...', model_name)
+        logger.warning(f'spaCy model "{model_name}" not found — downloading...')
         spacy_download(model_name)
 
     nlp: Language = textacy.load_spacy_lang(model_name, **nlp_args)  # type: ignore
@@ -556,7 +557,7 @@ def textacy_doc_to_bow(
     assert target in target_keys
 
     target_weights: dict[int, int] = doc.count_by(target_keys[target], exclude=exclude)
-    n_tokens = doc._.n_tokens
+    n_tokens = doc._.meta["n_tokens"]
 
     if weighting == "freq":
         target_weights = {id_: weight / n_tokens for id_, weight in target_weights.items()}
