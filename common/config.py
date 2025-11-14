@@ -29,7 +29,7 @@ _tag_set: pd.DataFrame | None = None
 
 
 def get_tag_set() -> pd.DataFrame:
-    global _tag_set
+    global _tag_set  # pylint: disable=global-statement
     if _tag_set is None:
         _tag_set = pd.read_csv(os.path.join(DATA_FOLDER, "tagset.csv"), sep="\t").fillna("")
     return _tag_set
