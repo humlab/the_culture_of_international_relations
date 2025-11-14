@@ -5,3 +5,136 @@ spacy:
     fr: "fr_core_news_lg"
     it: "it_core_web_sm"
     de: "de_core_web_sm"
+
+wti_index:
+  csv: "Treaties_Master_List_Treaties.csv"
+  excel: "WTI_Treaties_Master_List.xlsx"
+  data_folder: "data"
+
+data:
+  treaty_index:
+    columns:
+      - sequence
+      - treaty_id
+      - is_cultural_yesno_org
+      - is_cultural_yesno_plus
+      - is_cultural_yesno_gen
+      - english
+      - french
+      - other
+      - source
+      - vol
+      - page
+      - signed
+      - force
+      - regis
+      - regisant
+      - party1
+      - group1
+      - party2
+      - group2
+      - laterality
+      - headnote
+      - topic
+      - topic1
+      - topic2
+      - title
+      - extra_entry
+      - dbflag
+      - ispartyof4
+    skip_columns:
+      - extra_entry
+      - dbflag
+      - regis
+      - regisant
+      - vol
+      - page  
+      - force
+      - group1
+      - group2
+  party_corrections:
+    ABLANI: ALBANI
+    AMBASS: IGNORE
+    AMBASS CONF: IGNORE
+    AMBASS. CONF.: IGNORE
+    ASIAN BANK: IGNORE
+    BARBBAD: BARBAD
+    BEGIU: BELGIU
+    BEL-LUX. EC U: BNLXEC
+    BEL-LUX. EC. U: BNLXEC
+    BEL. LUX. EC. U: BNLXEC
+    BELGIUM: BELGIU
+    BLEGIU: BELGIU
+    BRIT. INDIA: BRIT.INDIA
+    BULGARI: BULGAR
+    CAMBOD: KAMPUC
+    CAMBODIA: KAMPUC
+    CANDA: CANADA
+    CAPEVER: CAPVER
+    CENTRAL-AMERICAN COMMISSION ON ENVIRONMENT AND DEVELOPMENT: IGNORE
+    CEZCHO: CZECHO
+    COLOLMB: COLOMB
+    COMMISSION FOR THE CONSERVATION OF SOUTHERN BLUEFIN TUNA: IGNORE
+    EAST ATLANTIC FISHERIES COMMISSION: IGNORE
+    ESTONIA: ESTONI
+    EUROPEAN COMMUNITIES AND THEIR MEMBER STATES: IGNORE
+    EUROPEAN MONETARY INSTITUTE: IGNORE
+    GERM W*: GERMW
+    HUNGARY: HUNGAR
+    INTER-AMERICAN INSTITUTE FOR GLOBAL CHANGE RESEARCH: IGNORE
+    INTERGOVERNMENTAL AUTHORITY ON DEVELOPMENT: IGNORE
+    INTERGOVERNMENTAL AUTHORITY ON DROUGHT AND DEVELOPMENT: IGNORE
+    INTERPOL: IGNORE
+    IRELAND: IRELAN
+    LATVI: LATVIA
+    MACAU: MACAO
+    MULTINATIONAL FORCE AND OBSERVERS: MFO
+    NEGERI: NIGERI
+    NETHR: NETHER
+    PALISTINE: PALESTINE
+    PARAGUA: PARAGU
+    PORTUGAL: PORTUG
+    PROTUG: PORTUG
+    RELIEF BONDS: IGNORE
+    SECRETARIAT OF THE CONVENTION ON BIOLOGICAL DIVERSITY: IGNORE
+    SOUTH AFRICAN DEVELOPMENT COMMUNITY: IGNORE
+    SOUTHERN AFRICAN DEVELOPMENT COMMUNITY: IGNORE
+    ST. LUCIA: STLUC
+    STRAITS: STRAIT
+    SWEDE: SWEDEN
+    TERKME: TURKME
+    TJIKI: TAJIKI
+    TRANS- JORDAN: TJORD
+    TUKEY: TURKEY
+    UN ECONOMIC COMMISSION FOR AFRICA: IGNORE
+    UN UNIVERSITY: IGNORE
+    "UN*": IGNORE
+    "UNEP*": UNEP
+    UNTAET: IGNORE
+    "UPEACE*": IGNORE
+    US: USA
+    "VIETS(N)": VIETN
+    W ALLIES: IGNORE
+
+  default_extra_parties:
+    ALL OTHER:
+      country: All other parties
+      country_code: "88"
+      country_code3: "888"
+      group_name: All other parties
+      group_no: 1
+      party_name: All other
+      processed: 1
+      reverse_name: All other parties
+      short_name: Rest
+
+    ALL:
+      country: All parties
+      country_code: "99"
+      country_code3: "999"
+      group_name: All parties
+      group_no: 1
+      party_name: All parties
+      processed: 1
+      reverse_name: All parties
+      short_name: All

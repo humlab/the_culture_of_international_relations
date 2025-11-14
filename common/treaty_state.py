@@ -1,155 +1,35 @@
 import datetime
 import os
 import re
-import types
 import warnings
 from collections.abc import Sequence
-from dataclasses import dataclass
 from typing import Any
 
-import ipywidgets as widgets
 import numpy as np
 import pandas as pd
-from IPython.display import display
 from loguru import logger
 
 from common import config, utility
+from common.configuration import ConfigValue
 from common.treaty_utility import QueryUtility
 
 warnings.simplefilter(action="ignore", category=FutureWarning)
 
-default_treaties_skip_columns: list[str] = [
-    "extra_entry",
-    "dbflag",
-    "regis",
-    "regisant",
-    "vol",
-    "page",
-    "force",
-    "group1",
-    "group2",
-]
 
-treaties_column_names: list[str] = [
-    "sequence",
-    "treaty_id",
-    "is_cultural_yesno_org",
-    "is_cultural_yesno_plus",
-    "is_cultural_yesno_gen",
-    "english",
-    "french",
-    "other",
-    "source",
-    "vol",
-    "page",
-    "signed",
-    "force",
-    "regis",
-    "regisant",
-    "party1",
-    "group1",
-    "party2",
-    "group2",
-    "laterality",
-    "headnote",
-    "topic",
-    "topic1",
-    "topic2",
-    "title",
-    "extra_entry",
-    "dbflag",
-    "ispartyof4",
-]
+def get_treaties_column_names() -> list[str]:
+    return ConfigValue("data.treaty_index.columns").resolve()
 
-default_extra_parties = {
-    "ALL OTHER": {
-        "country": "All other parties",
-        "country_code": "88",
-        "country_code3": "888",
-        "group_name": "All other parties",
-        "group_no": 1,
-        "party_name": "All other",
-        "processed": 1,
-        "reverse_name": "All other parties",
-        "short_name": "Rest",
-    },
-    "ALL": {
-        "country": "All parties",
-        "country_code": "99",
-        "country_code3": "999",
-        "group_name": "All parties",
-        "group_no": 1,
-        "party_name": "All parties",
-        "processed": 1,
-        "reverse_name": "All parties",
-        "short_name": "All",
-    },
-}
 
-party_correction_map: dict[str, str] = {
-    "ABLANI": "ALBANI",
-    "AMBASS": "IGNORE",
-    "AMBASS CONF": "IGNORE",
-    "AMBASS. CONF.": "IGNORE",
-    "ASIAN BANK": "IGNORE",
-    "BARBBAD": "BARBAD",
-    "BEGIU": "BELGIU",
-    "BEL-LUX. EC U": "BNLXEC",
-    "BEL-LUX. EC. U": "BNLXEC",
-    "BEL. LUX. EC. U": "BNLXEC",
-    "BELGIUM": "BELGIU",
-    "BLEGIU": "BELGIU",
-    "BRIT. INDIA": "BRIT.INDIA",
-    "BULGARI": "BULGAR",
-    "CAMBOD": "KAMPUC",
-    "CAMBODIA": "KAMPUC",
-    "CANDA": "CANADA",
-    "CAPEVER": "CAPVER",
-    "CENTRAL-AMERICAN COMMISSION ON ENVIRONMENT AND DEVELOPMENT": "IGNORE",
-    "CEZCHO": "CZECHO",
-    "COLOLMB": "COLOMB",
-    "COMMISSION FOR THE CONSERVATION OF SOUTHERN BLUEFIN TUNA": "IGNORE",
-    "EAST ATLANTIC FISHERIES COMMISSION": "IGNORE",
-    "ESTONIA": "ESTONI",
-    "EUROPEAN COMMUNITIES AND THEIR MEMBER STATES": "IGNORE",
-    "EUROPEAN MONETARY INSTITUTE": "IGNORE",
-    "GERMW*": "GERMW",
-    "HUNGARY": "HUNGAR",
-    "INTER-AMERICAN INSTITUTE FOR GLOBAL CHANGE RESEARCH": "IGNORE",
-    "INTERGOVERNMENTAL AUTHORITY ON DEVELOPMENT": "IGNORE",
-    "INTERGOVERNMENTAL AUTHORITY ON DROUGHT AND DEVELOPMENT": "IGNORE",
-    "INTERPOL": "IGNORE",
-    "IRELAND": "IRELAN",
-    "LATVI": "LATVIA",
-    "MACAU": "MACAO",
-    "MULTINATIONAL FORCE AND OBSERVERS": "MFO",
-    "NEGERI": "NIGERI",
-    "NETHR": "NETHER",
-    "PALISTINE": "PALESTINE",
-    "PARAGUA": "PARAGU",
-    "PORTUGAL": "PORTUG",
-    "PROTUG": "PORTUG",
-    "RELIEF BONDS": "IGNORE",
-    "SECRETARIAT OF THE CONVENTION ON BIOLOGICAL DIVERSITY": "IGNORE",
-    "SOUTH AFRICAN DEVELOPMENT COMMUNITY": "IGNORE",
-    "SOUTHERN AFRICAN DEVELOPMENT COMMUNITY": "IGNORE",
-    "ST. LUCIA": "STLUC",
-    "STRAITS": "STRAIT",
-    "SWEDE": "SWEDEN",
-    "TERKME": "TURKME",
-    "TJIKI": "TAJIKI",
-    "TRANS- JORDAN": "TJORD",
-    "TUKEY": "TURKEY",
-    "UN ECONOMIC COMMISSION FOR AFRICA": "IGNORE",
-    "UN UNIVERSITY": "IGNORE",
-    "UN*": "IGNORE",
-    "UNEP*": "UNEP",
-    "UNTAET": "IGNORE",
-    "UPEACE*": "IGNORE",
-    "US": "USA",
-    "VIETS(N)": "VIETN",
-    "W ALLIES": "IGNORE",
-}
+def get_treaties_skip_column_names() -> list[str]:
+    return ConfigValue("data.treaty_index.skip_columns").resolve()
+
+
+def get_default_extra_parties() -> dict[str, Any]:
+    return ConfigValue("data.default_extra_parties").resolve()
+
+
+def get_party_correction_map() -> dict[str, str]:
+    return ConfigValue("data.party_corrections").resolve()
 
 
 class TreatyState:
@@ -165,11 +45,11 @@ class TreatyState:
         filename = filename or "Treaties_Master_List_Treaties.csv"
         self.data_folder: str = data_folder
         self.period_groups: list[dict[str, Any]] = period_groups or config.DEFAULT_PERIOD_GROUPS
-        self.treaties_skip_columns: list[str] = (skip_columns or default_treaties_skip_columns or []) + [
+        self.treaties_skip_columns: list[str] = (skip_columns or get_treaties_skip_column_names() or []) + [
             "sequence",
             "is_cultural_yesno",
         ]
-        self.treaties_columns: list[str] = treaties_column_names
+        self.treaties_columns: list[str] = get_treaties_column_names()
         self.is_cultural_yesno_column: str = is_cultural_yesno_column
         self.csv_files: list[tuple[str, str, str | None, str | None]] = [
             (filename, "treaties", "Treaties_Master_List.xlsx", "Treaties"),
@@ -331,6 +211,7 @@ class TreatyState:
         treaties["party1"] = treaties.party1.fillna("").astype(str).str.upper()
         treaties["party2"] = treaties.party2.fillna("").astype(str).str.upper()
 
+        party_correction_map: dict[str, str] = get_party_correction_map()
         treaties["party1"] = treaties.party1.apply(lambda x: party_correction_map.get(x, x))
         treaties["party2"] = treaties.party2.apply(lambda x: party_correction_map.get(x, x))
 
@@ -445,7 +326,7 @@ class TreatyState:
         return df
 
     def get_parties(self, extra_parties: dict[str, Any] | None = None) -> pd.DataFrame:  # pylint: disable=W0102
-        extra_parties = extra_parties or default_extra_parties
+        extra_parties = extra_parties or get_default_extra_parties()
         parties: pd.DataFrame = (
             self.data["parties"]
             .drop(["Unnamed: 0"], axis=1)
@@ -809,93 +690,3 @@ class TreatyState:
             },
         }
         return groups
-
-
-WTI_OPTIONS: list[tuple[str, str]] = [
-    ("WTI 7CULT Old", "is_cultural_yesno_org"),
-    ("WTI 7CULT+", "is_cultural_yesno_plus"),
-    ("WTI 7CULTGen", "is_cultural_yesno_gen"),
-]
-
-WTI_INFO: dict[str, str] = {x[1]: x[0] for x in WTI_OPTIONS}
-
-
-def load_wti_index(
-    data_folder: str | None = None,
-    skip_columns: list[str] | None = None,
-    period_groups=None,
-    filename: str | None = None,
-    is_cultural_yesno_column: str = "is_cultural_yesno_org",
-) -> TreatyState | None:
-    try:
-        skip_columns = skip_columns or default_treaties_skip_columns
-        data_folder = data_folder or config.DATA_FOLDER
-        period_groups = period_groups or config.DEFAULT_PERIOD_GROUPS
-
-        state = TreatyState(
-            data_folder,
-            skip_columns,
-            period_groups,
-            filename=filename,
-            is_cultural_yesno_column=is_cultural_yesno_column,
-        )
-
-        print(
-            f'WTI index loaded! Current index "{WTI_INFO[is_cultural_yesno_column]}" has {len(state.treaties[state.treaties.is_cultural])} treaties ({len(state.treaties.loc[(state.treaties.is_cultural) & (state.treaties.english == "en")])} in English).'
-        )
-
-        return state
-    except Exception as ex:  # pylint: disable=broad-exception-caught
-        logger.error(ex)
-        raise
-        logger.info("Load failed! Have you run setup cell above?")
-        return None
-
-
-# load_treaty_state = load_wti_index
-
-
-@dataclass
-class WTIIndexContainer:
-    value: TreatyState | None = None
-
-
-WTI_INDEX_CONTAINER = WTIIndexContainer()
-
-
-def current_wti_index() -> TreatyState:
-    if WTI_INDEX_CONTAINER.value is None:
-        raise AttributeError(
-            "WTI Index not loaded. Please call load_wti_index or load_wti_index_with_gui prior to calling this method"
-        )
-    return WTI_INDEX_CONTAINER.value
-
-
-def load_wti_index_with_gui(data_folder: str | None = None) -> None:
-
-    global WTI_INDEX_CONTAINER  # pylint: disable=W0603,global-variable-not-assigned
-
-    data_folder = data_folder or config.DATA_FOLDER
-
-    def lw(w):
-        return widgets.Layout(width=w)
-
-    gui = types.SimpleNamespace(
-        output=widgets.Output(),
-        wti=widgets.Dropdown(
-            description="Load index",
-            options=WTI_OPTIONS,
-            value="is_cultural_yesno_gen",
-            layout=lw("300px"),
-        ),
-    )
-
-    display(widgets.VBox([gui.wti, gui.output]))
-
-    def compute_callback(*_args):
-        gui.output.clear_output()
-        with gui.output:
-            WTI_INDEX_CONTAINER.value = load_wti_index(data_folder, is_cultural_yesno_column=gui.wti.value)
-
-    gui.wti.observe(compute_callback, names="value")
-    compute_callback()
