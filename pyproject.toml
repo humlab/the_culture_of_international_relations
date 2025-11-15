@@ -40,6 +40,7 @@ dev = [
     "pylint>=4.0.2",
     "pytest>=9.0.1",
     "ruff>=0.14.4",
+    "vulture>=2.14",
 ]
 
 # [tool.uv.venv]
