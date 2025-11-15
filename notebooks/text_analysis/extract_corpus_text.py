@@ -25,9 +25,10 @@ from loguru import logger
 
 from common import config, treaty_state
 from common.corpus import textacy_corpus_utility as textacy_utility
+from common.gui.load_wti_index_gui import current_wti_index
 from notebooks.text_analysis.src.extract_text_gui import display_generate_tokenized_corpus_gui
 
-treaty_state.load_wti_index_with_gui(data_folder=config.DATA_FOLDER)
+load_wti_index_with_gui(data_folder=config.DATA_FOLDER)
 
 # %matplotlib inline
 
@@ -44,7 +45,7 @@ from common.gui import textacy_corpus_gui
 
 try:
     container = current_corpus_container()
-    textacy_corpus_gui.display_corpus_load_gui(config.DATA_FOLDER, treaty_state.current_wti_index(), container)
+    textacy_corpus_gui.display_corpus_load_gui(config.DATA_FOLDER, current_wti_index(), container)
 except Exception as ex:
     raise
 

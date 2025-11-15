@@ -1,26 +1,39 @@
 
+import collections
 import types
 
-from common import domain_logic
+import bokeh.plotting
+import ipywidgets as widgets
+import pandas as pd
+from IPython.display import display
+from textacy.corpus import Corpus
+
+from common import treaty_utility
+from common.corpus import textacy_corpus_utility as textacy_utility
+from common.treaty_state import TreatyState
 
 # %matplotlib inline
 
 def compute_corpus_statistics(
-    data_folder,
-    wti_index,
-    container,
+    data_folder: str,
+    wti_index: TreatyState,
+    *,
+    parties: list[str],
+    container: textacy_utility.CorpusContainer,
     gui,
-    group_by_column='signed_year',
-    parties=None,
-    target='lemma',
-    include_pos=None,
-    stop_words=None
-):
-    corpus = container.textacy_corpus
+    group_by_column: str = 'signed_year',
+    target: str ='lemma',
+    include_pos: list[str] | None = None,
+    stop_words: list[str] | None = None
+) -> pd.DataFrame:
 
-    value_columns = list(textacy_utility.POS_NAMES) if (len(include_pos or [])) == 0 else list(include_pos)
+    assert container.textacy_corpus is not None, "Corpus not generated"
+
+    corpus: Corpus = container.textacy_corpus
+
+    value_columns: list[str] = list(textacy_utility.POS_NAMES) if (len(include_pos or [])) == 0 else list(include_pos)
         
-    documents = domain_logic.get_corpus_documents(corpus)
+    documents: pd.DataFrame = treaty_utility.get_corpus_documents(corpus)
     
     if len(parties or []) > 0:
         documents = documents[documents.party1.isin(parties)|documents.party2.isin(parties)]
@@ -30,12 +43,12 @@ def compute_corpus_statistics(
     documents['total'] = documents[value_columns].apply(sum, axis=1)
 
     #documents = documents.groupby(group_by_column).agg(sum) #.reset_index()
-    aggregates = { x: ['sum'] for x in value_columns }
+    aggregates: dict[str, list[str]] = { x: ['sum'] for x in value_columns }
     aggregates['total'] = ['sum', 'mean', 'min', 'max', 'size' ]
     #if group_by_column != 'treaty_id':
     documents = documents.groupby(group_by_column).agg(aggregates)
     documents.columns = [ ('Total, ' + x[1].lower()) if x[0] == 'total' else x[0] for x in documents.columns ]
-    columns = sorted(value_columns) + sorted([ x for x in documents.columns if x.startswith('Total')])
+    columns: list[str] = sorted(value_columns) + sorted([ x for x in documents.columns if x.startswith('Total')])
     return documents[columns]
         
 def corpus_statistics_gui(data_folder, wti_index, container, compute_callback, display_callback):

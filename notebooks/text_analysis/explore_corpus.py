@@ -21,25 +21,29 @@
 
 import os
 
-import pandas as pd
-import spacy
 from loguru import logger
 
-from common import config, treaty_state, utility
+from common import config, utility
 from common.corpus import textacy_corpus_utility as textacy_utility
 from common.gui import textacy_corpus_gui
+from common.gui.load_wti_index_gui import current_wti_index, load_wti_index_with_gui
+from notebooks.text_analysis.src.cleanup_gui import display_cleanup_text_gui
+from common.gui import most_discriminating_terms_gui
+from common import setup_config
+
+await setup_config()
 
 utility.setup_default_pd_display()
 
 PATTERN = '*.txt'
 PERIOD_GROUP = 'years_1945-1972'
 
-treaty_state.load_wti_index_with_gui(data_folder=config.DATA_FOLDER)
+load_wti_index_with_gui(data_folder=config.DATA_FOLDER)
 
 # %matplotlib inline
 
-current_corpus_container = lambda: textacy_utility.CorpusContainer.container()
-current_corpus = lambda: textacy_utility.CorpusContainer.corpus()
+current_corpus_container = lambda: textacy_utility.CorpusContainer.container()  # type: ignore
+current_corpus = lambda: textacy_utility.CorpusContainer.corpus()  # type: ignore
 
 
 # %% [markdown]
@@ -48,12 +52,8 @@ current_corpus = lambda: textacy_utility.CorpusContainer.corpus()
 #
 
 # %%
-
-try:
-    container: textacy_utility.CorpusContainer = current_corpus_container()
-    textacy_corpus_gui.display_corpus_load_gui(config.DATA_FOLDER, treaty_state.current_wti_index(), container)
-except Exception as ex:
-    logger.error(ex)
+container: textacy_utility.CorpusContainer = current_corpus_container()
+textacy_corpus_gui.display_corpus_load_gui(config.DATA_FOLDER, current_wti_index(), container)
 
 
 # %% [markdown]
@@ -76,13 +76,9 @@ except Exception as ex:
 #
 
 # %% code_folding=[0]
-# Document Key Terms
 from notebooks.text_analysis.src import rake_gui
 
-try:
-    rake_gui.display_rake_gui(current_corpus(), language='english')
-except Exception as ex:
-    logger.error(ex)
+rake_gui.display_rake_gui(current_corpus(), language="english")
 
 
 # %% [markdown]
@@ -94,23 +90,14 @@ except Exception as ex:
 # %% code_folding=[0]
 from notebooks.text_analysis.src.rake_key_terms_gui import display_document_key_terms_gui
 
-try:
-    display_document_key_terms_gui(current_corpus(), treaty_state.current_wti_index())
-except Exception as ex:
-    logger.error(ex)
+display_document_key_terms_gui(current_corpus(), current_wti_index())
 
 
 # %% [markdown]
 # ## <span style='color: green'>PREPARE/DESCRIBE </span> Clean Up the Text <span style='float: right; color: green'>TRY IT</span>
 
 # %% code_folding=[]
-from notebooks.text_analysis.src.cleanup_gui import display_cleanup_text_gui
-
-try:
-    xgui, xuix = display_cleanup_text_gui(current_corpus_container(), treaty_state.current_wti_index())
-except Exception as ex:
-    raise
-    logger.error(ex)
+xgui, xuix = display_cleanup_text_gui(current_corpus_container(), current_wti_index())
 
 
 # %% [markdown]
@@ -125,12 +112,7 @@ except Exception as ex:
 # <b>Closed region</b> If checked, then <u>both</u> treaty parties must be within selected region
 
 # %%
-from common.gui import most_discriminating_terms_gui
-
-try:
-    most_discriminating_terms_gui.display_gui(treaty_state.current_wti_index(), current_corpus())
-except Exception as ex:
-    logger.error(ex)
+most_discriminating_terms_gui.display_gui(current_wti_index(), current_corpus())
 
 # %% [markdown]
 # ## <span style='color: green;'>DESCRIBE</span> Corpus Statistics<span style='color: blue; float: right'>OPTIONAL</span>
@@ -141,26 +123,25 @@ except Exception as ex:
 # %%
 from common.gui import word_frequencies_gui
 
-try:
-    word_frequencies_gui.word_frequency_gui(treaty_state.current_wti_index(), current_corpus())
-except Exception as ex:
-    logger.error(ex)
+word_frequencies_gui.word_frequency_gui(current_wti_index(), current_corpus())
 
 # %% [markdown]
 # ### <span style='color: green;'>DESCRIBE</span> Corpus and Document Sizes<span style='color: blue; float: right'>OPTIONAL</span>
 
 # %%
-
 from notebooks.text_analysis.src.corpus_statistics_gui import (
     compute_corpus_statistics,
     corpus_statistics_gui,
     display_corpus_statistics,
 )
 
-try:
-    gui = corpus_statistics_gui(config.DATA_FOLDER, treaty_state.current_wti_index(), current_corpus_container(), compute_callback=compute_corpus_statistics, display_callback=display_corpus_statistics)
-except Exception as ex:
-    logger.error(ex)
+gui = corpus_statistics_gui(
+    config.DATA_FOLDER,
+    current_wti_index(),
+    current_corpus_container(),
+    compute_callback=compute_corpus_statistics,
+    display_callback=display_corpus_statistics,
+)
 
 # %%
 # Create and export region vs region MDT files as Excel Spreadsheets
@@ -168,12 +149,12 @@ except Exception as ex:
 import spacy
 
 
-def create_mdt(group1, group2, include_pos, closed_region):  
+def create_mdt(group1, group2, include_pos, closed_region):
     corpus = current_corpus()
-    assert corpus is not None, 'Please load corpus!'
-    
+    assert corpus is not None, "Please load corpus!"
+
     most_discriminating_terms_gui.compute_most_discriminating_terms(
-        treaty_state.current_wti_index(),
+        current_wti_index(),
         corpus,
         group1=config.get_region_parties(*group1),
         group2=config.get_region_parties(*group2),
@@ -184,23 +165,23 @@ def create_mdt(group1, group2, include_pos, closed_region):
         period2=(1945, 1972),
         closed_region=closed_region,
         normalize=spacy.attrs.LEMMA,  # type: ignore
-        output_filename = os.path.join(config.DATA_FOLDER,
-            'MDT_{}_vs_{}_({})_{}.xlsx'.format(
-                '+'.join(['R{}'.format(x) for x in group1]),
-                '+'.join(['R{}'.format(x) for x in group2]),
-                ','.join(include_pos),
-                'CLOSED' if closed_region else 'OPEN')
-            )
+        output_filename=os.path.join(
+            config.DATA_FOLDER,
+            "MDT_{}_vs_{}_({})_{}.xlsx".format(
+                "+".join(["R{}".format(x) for x in group1]),
+                "+".join(["R{}".format(x) for x in group2]),
+                ",".join(include_pos),
+                "CLOSED" if closed_region else "OPEN",
+            ),
+        ),
     )
 
 
+include_pos: list[str] = ["ADJ", "VERB", "NOUN"]
 
-# %%
-include_pos=['ADJ', 'VERB', 'NOUN']
-
-create_mdt((1,), (2,3), include_pos, True)
-create_mdt((2,), (1,3), include_pos, True)
-create_mdt((3,), (1,2), include_pos, True)
-create_mdt((1,), (2,3), include_pos, False)
-create_mdt((2,), (1,3), include_pos, False)
-create_mdt((3,), (1,2), include_pos, False)
+create_mdt((1,), (2, 3), include_pos, True)
+create_mdt((2,), (1, 3), include_pos, True)
+create_mdt((3,), (1, 2), include_pos, True)
+create_mdt((1,), (2, 3), include_pos, False)
+create_mdt((2,), (1, 3), include_pos, False)
+create_mdt((3,), (1, 2), include_pos, False)
