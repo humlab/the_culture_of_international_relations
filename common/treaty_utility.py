@@ -13,6 +13,7 @@ from common.gui.load_wti_index_gui import current_wti_index
 
 DATA_FOLDER: str = config.DATA_FOLDER
 
+
 def get_tagset() -> pd.DataFrame | None:
     filepath: str = os.path.join(DATA_FOLDER, "tagset.csv")
     if os.path.isfile(filepath):
