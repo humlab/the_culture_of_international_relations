@@ -154,18 +154,6 @@ class QueryUtility:
     def period_group_mask(pg):
         return lambda df: df.signed_year.isin(period_group_years(pg))
 
-    # @staticmethod
-    # def is_cultural_mask():
-    #     def fx(df):
-    #         df.loc[df.is_cultural, "topic1"] = "7CORR"
-    #         return True
-
-    #     return fx
-
-    # @staticmethod
-    # def is_cultural_mask():
-    #     return lambda df: (df.is_cultural)
-
     @staticmethod
     def years_mask(ys):
         return lambda df: (
@@ -175,12 +163,7 @@ class QueryUtility:
         )
 
     @staticmethod
-    def topic_7cult_mask():
-        return lambda df: (df.topic1 == "7CULT")
-
-    @staticmethod
-    def query_treaties(treaties, filter_masks):
-        """NOT USED but could perhaps replace functions above"""
+    def query_treaties(treaties, filter_masks) -> pd.DataFrame:
         #  period_group=None, treaty_filter='', recode_is_cultural=False, parties=None, year_limit=None):
         if not isinstance(filter_masks, list):
             filter_masks = [filter_masks]
