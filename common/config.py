@@ -305,55 +305,15 @@ class BunchOfStuff:
 KindOfChart = collections.namedtuple("KindOfChart", "description name kind stacked horizontal")
 
 CHART_TYPES: list[KindOfChart] = [
-    KindOfChart(
-        description="Area",
-        name="plot_area",
-        kind="area",
-        stacked=False,
-        horizontal=False,
-    ),
-    KindOfChart(
-        description="Area (stacked)",
-        name="plot_stacked_area",
-        kind="area",
-        stacked=True,
-        horizontal=False,
-    ),
+    KindOfChart(description="Area", name="plot_area", kind="area", stacked=False, horizontal=False),
+    KindOfChart(description="Area (stacked)", name="plot_stacked_area", kind="area", stacked=True, horizontal=False),
     KindOfChart(description="Bar", name="plot_bar", kind="bar", stacked=False, horizontal=False),
+    KindOfChart(description="Line", name="plot_line", kind="line", stacked=False, horizontal=False),
+    KindOfChart(description="Bar (stacked)", name="plot_stacked_bar", kind="bar", stacked=True, horizontal=False),
+    KindOfChart(description="Line (stacked)", name="plot_stacked_line", kind="line", stacked=True, horizontal=False),
+    KindOfChart(description="Bar (horizontal)", name="plot_barh", kind="bar", stacked=False, horizontal=True),
     KindOfChart(
-        description="Line",
-        name="plot_line",
-        kind="line",
-        stacked=False,
-        horizontal=False,
-    ),
-    KindOfChart(
-        description="Bar (stacked)",
-        name="plot_stacked_bar",
-        kind="bar",
-        stacked=True,
-        horizontal=False,
-    ),
-    KindOfChart(
-        description="Line (stacked)",
-        name="plot_stacked_line",
-        kind="line",
-        stacked=True,
-        horizontal=False,
-    ),
-    KindOfChart(
-        description="Bar (horizontal)",
-        name="plot_barh",
-        kind="bar",
-        stacked=False,
-        horizontal=True,
-    ),
-    KindOfChart(
-        description="Bar (horizontal, stacked)",
-        name="plot_stacked_barh",
-        kind="bar",
-        stacked=True,
-        horizontal=True,
+        description="Bar (horizontal, stacked)", name="plot_stacked_barh", kind="bar", stacked=True, horizontal=True
     ),
     # KindOfChart(description='Scatter', name='plot_scatter', kind='scatter', stacked=False, horizontal=False),
     # KindOfChart(description='Histogram', name='plot_hist', kind='hist', stacked=False, horizontal=False),
