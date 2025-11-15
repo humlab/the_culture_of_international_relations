@@ -11,11 +11,12 @@ import types
 import zipfile
 from collections.abc import Callable, Iterable
 from typing import Any
-from loguru import logger
+
 import matplotlib.pyplot as plt
 import pandas as pd
 import wordcloud
 import yaml
+from loguru import logger
 
 # pylint: disable=redefined-builtin
 
