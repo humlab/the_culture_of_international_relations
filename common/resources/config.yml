@@ -44,8 +44,33 @@ plotting:
     - seaborn-v0_8-whitegrid
     - tableau-colorblind10
 
+continents:
+  AS: ASIA
+  AF: AFRICA
+  EU: EUROPA
+  SA: SOUTH AMERICA
+  OC: OCEANIA
+  NA: NORTH AMERICA
+
 data:
   treaty_index:
+    # source:
+    #   treaties:
+    #     filename: "Treaties_Master_List.xlsx"
+    #     sheet: "Treaties"
+    #     csv: "Treaties_Master_List_Treaties.csv"
+    #   parties:
+    #     filename: "parties_curated.xlsx"
+    #     sheet: "parties"
+    #     csv: "parties_curated_parties.csv"
+    #   continent:
+    #     filename: "parties_curated.xlsx"
+    #     sheet: "continent"
+    #     csv: "parties_curated_continent.csv"
+    #   group:
+    #     filename: "parties_curated.xlsx"
+    #     sheet: "group"
+    #     csv: "parties_curated_group.csv"
     columns:
       - sequence
       - treaty_id
