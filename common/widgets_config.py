@@ -227,16 +227,6 @@ def plot_style_widget(**kwopts):
     return widgets.Dropdown(**extend(default_opts, kwopts))
 
 
-# def chart_type_name_widget(**kwopts):
-#     default_opts = dict(
-#         description='Output',
-#         options=config.CHART_TYPE_NAME_OPTIONS,
-#         value="plot_stacked_bar",
-#         layout=widgets.Layout(width='200px')
-#     )
-#     return widgets.Dropdown(**extend(default_opts, kwopts))
-
-
 def recode_7corr_widget(**kwopts):
     default_opts: dict[str, Any] = {
         "description": "Recode 7CORR",
@@ -245,16 +235,6 @@ def recode_7corr_widget(**kwopts):
         "layout": widgets.Layout(width="120px"),
     }
     return widgets.ToggleButton(**extend(default_opts, kwopts))
-
-
-# def add_other_category_widget(**kwopts):
-#     default_opts = dict(
-#         description='Add OTHER topics',
-#         tooltip='Add summed up category "OTHER" for all other topic (and for selected parties)',
-#         layout=widgets.Layout(width='120px'),
-#         value=False
-#     )
-#     return widgets.ToggleButton(**extend(default_opts, kwopts))
 
 
 def increment_button(target_control, max_value, label=">>", increment=1):
