@@ -13,7 +13,6 @@ dependencies = [
     "dotenv>=0.9.9",
     "en-core-web-lg",
     "ftfy>=6.3.1",
-    "gensim>=4.4.0",
     "ipydatagrid>=1.4.0",
     "ipywidgets>=8.1.8",
     "jupyterlab>=4.4.10",
@@ -125,7 +124,10 @@ disable = [
     "c-extension-no-member",
     "logging-not-lazy",
     "too-many-branches",
-    "too-many-statements"
+    "too-many-statements",
+    "unnecessary-lambda-assignment",
+    "await-outside-async",
+    "consider-using-f-string"
 ]
 
 [tool.setuptools.packages.find]
