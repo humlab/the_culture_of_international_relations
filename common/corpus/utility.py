@@ -3,11 +3,13 @@ import os
 import re
 import zipfile
 from collections.abc import Callable, Generator
-from typing import Any, Self
-
-import gensim
+from typing import Any, AnyStr, Self
 
 HYPHEN_REGEXP: re.Pattern = re.compile(r"\b(\w+)-\s*\r?\n\s*(\w+)\b", re.UNICODE)
+
+
+def any_to_unicode(raw_text: AnyStr, encoding: str = "utf8", errors: str = "strict") -> str:
+    return raw_text if isinstance(raw_text, str) else str(raw_text, encoding, errors=errors)
 
 
 def dehyphen(text: str) -> str:
@@ -76,6 +78,6 @@ class CompressedFileReader:
     def _read_content(self, zip_file: zipfile.ZipFile, filename: str) -> str:
         with zip_file.open(filename, "r") as text_file:
             byte_str: bytes = text_file.read()
-            content: str = gensim.utils.to_unicode(byte_str, "utf8", errors="ignore")
+            content: str = any_to_unicode(byte_str, encoding="utf8", errors="ignore")
             content = dehyphen(content)
             return content
