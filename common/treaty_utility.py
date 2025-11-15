@@ -12,22 +12,6 @@ from common.corpus.utility import CompressedFileReader
 from common.gui.load_wti_index_gui import current_wti_index
 
 DATA_FOLDER: str = config.DATA_FOLDER
-SUBSTITUTION_FILENAME: str = os.path.join(DATA_FOLDER, "term_substitutions.txt")
-
-CORPUS_NAME_PATTERN: str = "tCoIR_*.txt.zip"
-CORPUS_TEXT_FILES_PATTERN: str = "*.txt"
-
-WTI_INDEX_FOLDER: str = DATA_FOLDER  # os.path.join(DATA_FOLDER, 'wti_index')
-
-GROUP_BY_OPTIONS: list[tuple[str, list[str]]] = [
-    ("Year", ["signed_year"]),
-    ("Party1", ["party1"]),
-    ("Party1, Year", ["party1", "signed_year"]),
-    ("Party2, Year", ["party2", "signed_year"]),
-    ("Group1, Year", ["group1", "signed_year"]),
-    ("Group2, Year", ["group2", "signed_year"]),
-]
-
 
 def get_tagset() -> pd.DataFrame | None:
     filepath: str = os.path.join(DATA_FOLDER, "tagset.csv")
