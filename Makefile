@@ -1,4 +1,4 @@
-SOURCE_FOLDERS = common
+SOURCE_FOLDERS = common notebooks
 # 1_quantitative_analysis 2_network_analysis 3_text_analysis
 
 lint: tidy pylint
@@ -23,3 +23,9 @@ clean-notebooks:
 ruff:
 	@uv run ruff --version
 	@uv run ruff check --fix --output-format concise  $(SOURCE_FOLDERS)
+
+dead-code:
+	@uv run vulture $(SOURCE_FOLDERS)
+dead-code2:
+	@uv run ruff --version
+	@uv run ruff check --select D --output-format grouped $(SOURCE_FOLDERS)
