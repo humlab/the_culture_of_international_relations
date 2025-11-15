@@ -186,8 +186,8 @@ def display_party_network(
 
             progress(4)
 
-            edges = networkx_utility.get_positioned_edges2(G, layout, sort_attr="signed")
-            nodes = networkx_utility.get_positioned_nodes(G, layout)
+            edges: dict[str, list[Any]] = networkx_utility.get_positioned_edges2(G, layout, sort_attr="signed")
+            nodes: dict[str, list[Any]] = networkx_utility.get_positioned_nodes(G, layout)
 
             edges = {k: list(edges[k]) for k in edges}
             nodes = {k: list(nodes[k]) for k in nodes}
@@ -196,7 +196,7 @@ def display_party_network(
 
             x_offset, y_offset = adjust_node_label_offset(nodes, node_size)
 
-            plot_opts = utility.extend(
+            plot_opts: dict[str, Any] = utility.extend(
                 NETWORK_PLOT_OPTS,
                 figsize=(width, height),
                 node_size=node_size,
@@ -206,7 +206,7 @@ def display_party_network(
 
             progress(5)
 
-            data = plot_network(nodes=nodes, edges=edges, node_label="name", edge_label="edge_label", **plot_opts)
+            data: dict[str, Any] = plot_network(nodes=nodes, edges=edges, node_label="name", edge_label="edge_label", **plot_opts)  # type: ignore
 
             plot_data.update(**data)
 

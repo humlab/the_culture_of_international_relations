@@ -1,4 +1,3 @@
-from collections.abc import Sequence
 from typing import Any
 
 import pandas as pd
@@ -87,8 +86,8 @@ def plot_network(
                 callback=glyph_hover_callback2(
                     nodes_source,
                     "node_id",
-                    text_ids=node_description.index,
-                    text_source=node_description,
+                    text_ids=node_description.index,  # type: ignore
+                    text_source=node_description,  # type: ignore
                     element_id=element_id,
                 ),
             )

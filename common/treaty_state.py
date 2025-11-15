@@ -645,7 +645,7 @@ class TreatyState:
     def get_language_column(self, language: str) -> str:
         language_column: str = ConfigValue("data.treaty_index.language.columns").resolve()[language]
         return language_column
-    
+
     def get_treaties(
         self,
         language: str,
