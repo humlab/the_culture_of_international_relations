@@ -18,11 +18,11 @@ def get_palette(palette_name: str) -> list[str]:
     return all_palettes[palette_name][key]
 
 
-def get_line_color(data: pd.DataFrame, topic_group_name: str) -> pd.Series:
-    line_palette = Set1[8]
-    group_keys = config.DEFAULT_TOPIC_GROUPS[topic_group_name].keys()
-    line_palette_map: dict[str, int] = {k: i % len(line_palette) for i, k in enumerate(group_keys)}
-    return data.category.apply(lambda x: line_palette[line_palette_map[x]])
+# def get_line_color(data: pd.DataFrame, topic_group_name: str) -> pd.Series:
+#     line_palette = Set1[8]
+#     group_keys = config.DEFAULT_TOPIC_GROUPS[topic_group_name].keys()
+#     line_palette_map: dict[str, int] = {k: i % len(line_palette) for i, k in enumerate(group_keys)}
+#     return data.category.apply(lambda x: line_palette[line_palette_map[x]])
 
 
 TOOLS = "pan,wheel_zoom,box_zoom,reset,save"

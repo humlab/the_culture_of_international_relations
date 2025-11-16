@@ -40,9 +40,6 @@ await setup_config()  # type: ignore
 
 utility.setup_default_pd_display()
 
-PATTERN = "*.txt"
-PERIOD_GROUP = "years_1945-1972"
-
 load_wti_index_with_gui(data_folder=config.DATA_FOLDER)
 
 # %matplotlib inline

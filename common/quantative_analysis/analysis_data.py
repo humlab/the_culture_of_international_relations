@@ -130,23 +130,23 @@ class QuantityByParty:
 
 class QuantityByTopic:
 
-    # FIXME: DEPRECATE THIS FUNCTION!
-    @staticmethod
-    def get_quantity_of_categorized_treaties(
-        treaties: pd.DataFrame, period_group: dict[str, Any], topic_category: dict[str, str], recode_is_cultural: bool
-    ):
+    # # FIXME: DEPRECATE THIS FUNCTION!
+    # @staticmethod
+    # def get_quantity_of_categorized_treaties(
+    #     treaties: pd.DataFrame, period_group: dict[str, Any], topic_category: dict[str, str], recode_is_cultural: bool
+    # ):
 
-        if period_group["column"] != "signed_year":
-            df: pd.DataFrame = treaties[treaties[period_group["column"]] != "OTHER"]
-        else:
-            df = treaties[treaties.signed_year.isin(period_group["periods"])]
+    #     if period_group["column"] != "signed_year":
+    #         df: pd.DataFrame = treaties[treaties[period_group["column"]] != "OTHER"]
+    #     else:
+    #         df = treaties[treaties.signed_year.isin(period_group["periods"])]
 
-        if recode_is_cultural:
-            df.loc[df.is_cultural, "topic1"] = "7CORR"
+    #     if recode_is_cultural:
+    #         df.loc[df.is_cultural, "topic1"] = "7CORR"
 
-        df["topic_category"] = df.apply(lambda x: topic_category.get(x["topic1"], "OTHER"), axis=1)
+    #     df["topic_category"] = df.apply(lambda x: topic_category.get(x["topic1"], "OTHER"), axis=1)
 
-        return df
+    #     return df
 
     @staticmethod
     def get_treaty_topic_quantity_stat(

@@ -77,21 +77,21 @@ def quantity_plot(
     return ax.get_figure()
 
 
-def create_party_name_map(parties, palette=color_utility.DEFAULT_PALETTE):
+# def create_party_name_map(parties, palette=color_utility.DEFAULT_PALETTE):
 
-    def rev_dict(d) -> dict[Any, Any]:
-        return {v: k for k, v in d.items()}
+#     def rev_dict(d) -> dict[Any, Any]:
+#         return {v: k for k, v in d.items()}
 
-    df: pd.DataFrame = parties.rename(columns={"short_name": "party_short_name", "country": "party_country"})
-    df["party"] = df.index
+#     df: pd.DataFrame = parties.rename(columns={"short_name": "party_short_name", "country": "party_country"})
+#     df["party"] = df.index
 
-    rd = df[~df.group_no.isin([0, 8])][["party", "party_short_name", "party_name", "party_country"]].to_dict()
+#     rd = df[~df.group_no.isin([0, 8])][["party", "party_short_name", "party_name", "party_country"]].to_dict()
 
-    party_name_map = {k: rev_dict(rd[k]) for k in rd}
+#     party_name_map = {k: rev_dict(rd[k]) for k in rd}
 
-    party_color_map = {party: palette[i % len(palette)] for i, party in enumerate(parties.index)}
+#     party_color_map = {party: palette[i % len(palette)] for i, party in enumerate(parties.index)}
 
-    return party_name_map, party_color_map
+#     return party_name_map, party_color_map
 
 
 def vstepper(vmax: int) -> int:

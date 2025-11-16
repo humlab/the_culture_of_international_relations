@@ -44,14 +44,14 @@ utility.setup_default_pd_display()
 #     return bow
 
 
-def corpus_size_by_grouping(corpus, treaty_time_groups, group_by_column):
-    """Not used currently."""
-    data = ((doc._.meta["treaty_id"], doc._.meta["signed_year"], doc._.meta["n_tokens"]) for doc in corpus)
-    df_sizes = pd.DataFrame(data, columns=["treaty_id", "signed_year", "n_tokens"])
-    if group_by_column not in df_sizes.columns:
-        df_sizes[group_by_column] = (treaty_time_groups[group_by_column]["fx"])(df_sizes)
-    df_sizes = df_sizes.groupby(group_by_column)["n_tokens"].sum()
-    return df_sizes
+# def corpus_size_by_grouping(corpus, treaty_time_groups, group_by_column):
+#     """Not used currently."""
+#     data = ((doc._.meta["treaty_id"], doc._.meta["signed_year"], doc._.meta["n_tokens"]) for doc in corpus)
+#     df_sizes = pd.DataFrame(data, columns=["treaty_id", "signed_year", "n_tokens"])
+#     if group_by_column not in df_sizes.columns:
+#         df_sizes[group_by_column] = (treaty_time_groups[group_by_column]["fx"])(df_sizes)
+#     df_sizes = df_sizes.groupby(group_by_column)["n_tokens"].sum()
+#     return df_sizes
 
 
 def compute_list_of_most_frequent_words(

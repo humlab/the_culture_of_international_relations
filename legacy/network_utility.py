@@ -16,7 +16,6 @@ if "filter_kwargs" not in globals():
     import inspect
 
     def filter_kwargs(f, args) -> Mapping[str, Any]:
-        # FIXME: getargspec has be deprecated in python 3.11
         return {k: args[k] for k in args if k in inspect.signature(f).parameters}
 
 

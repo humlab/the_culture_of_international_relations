@@ -34,12 +34,12 @@ def noop(*args) -> None:  # pylint: disable=W0613
     pass
 
 
-def isint(s: str) -> bool:
-    try:
-        int(s)
-        return True
-    except:  # pylint: disable=bare-except
-        return False
+# def isint(s: str) -> bool:
+#     try:
+#         int(s)
+#         return True
+#     except:  # pylint: disable=bare-except
+#         return False
 
 
 def filter_dict(d: dict[Any, Any], keys: set[Any] | None = None, filter_out: bool = False) -> dict[Any, Any]:
@@ -69,8 +69,8 @@ def extend(target: dict, *args, **kwargs) -> dict:
     return target
 
 
-def ifextend(target: dict, source: dict, p: bool) -> dict:
-    return extend(target=target, source=source) if p else target
+# def ifextend(target: dict, source: dict, p: bool) -> dict:
+#     return extend(target=target, source=source) if p else target
 
 
 def extend_single(target: dict, source: dict, name: str) -> dict:

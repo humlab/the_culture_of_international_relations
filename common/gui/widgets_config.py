@@ -4,7 +4,7 @@ from typing import Any
 
 import ipywidgets as widgets
 from bokeh.models import ColumnDataSource, CustomJS
-from IPython.display import Javascript
+# from IPython.display import Javascript
 
 from common import config, extend
 from common.configuration.resolve import ConfigValue
@@ -13,12 +13,12 @@ from common.configuration.resolve import ConfigValue
 #    print('Package named {!r}; __name__ is {!r}'.format(__package__, __name__))
 
 
-def get_ipython_clear_output() -> None:
-    Javascript(
-        """
-    Jupyter.notebook.clear_all_output();
-    """
-    )
+# def get_ipython_clear_output() -> None:
+#     Javascript(
+#         """
+#     Jupyter.notebook.clear_all_output();
+#     """
+#     )
 
 
 def kwargser(d) -> dict[str, Any]:
@@ -34,8 +34,8 @@ def toggle(description, value, **kwargs):  # pylint: disable=W0613
     return widgets.ToggleButton(**kwargser(locals()))
 
 
-def toggles(description, options, value, **kwopts):  # pylint: disable=W0613
-    return widgets.ToggleButtons(**kwargser(locals()))
+# def toggles(description, options, value, **kwopts):  # pylint: disable=W0613
+#     return widgets.ToggleButtons(**kwargser(locals()))
 
 
 def select_multiple(description, options, values, **kwopts):
@@ -74,9 +74,9 @@ def itext(min, max, value, **kwargs):  # pylint: disable=W0613, W0622
     return widgets.BoundedIntText(**kwargser(locals()))
 
 
-def wrap_id_text(dom_id, value=""):
-    value = f"<span class='{dom_id}'>{value}</span>" if dom_id is not None else value
-    return value
+# def wrap_id_text(dom_id, value=""):
+#     value = f"<span class='{dom_id}'>{value}</span>" if dom_id is not None else value
+#     return value
 
 
 # def text(dom_id=None, value=""):
@@ -164,24 +164,24 @@ def party_name_widget(**kwopts):
     return widgets.Dropdown(**extend(default_opts, kwopts))
 
 
-def aggregate_function_widget(**kwopts):
-    default_opts: dict[str, Any] = {
-        "options": ["mean", "sum", "std", "min", "max"],
-        "value": "mean",
-        "description": "Aggregate",
-        "layout": widgets.Layout(width="200px"),
-    }
-    return widgets.Dropdown(**extend(default_opts, kwopts))
+# def aggregate_function_widget(**kwopts):
+#     default_opts: dict[str, Any] = {
+#         "options": ["mean", "sum", "std", "min", "max"],
+#         "value": "mean",
+#         "description": "Aggregate",
+#         "layout": widgets.Layout(width="200px"),
+#     }
+#     return widgets.Dropdown(**extend(default_opts, kwopts))
 
 
-def years_widget(**kwopts):
-    default_opts: dict[str, Any] = {
-        "options": [],
-        "value": None,
-        "description": "Year",
-        "layout": widgets.Layout(width="200px"),
-    }
-    return widgets.Dropdown(**extend(default_opts, kwopts))
+# def years_widget(**kwopts):
+#     default_opts: dict[str, Any] = {
+#         "options": [],
+#         "value": None,
+#         "description": "Year",
+#         "layout": widgets.Layout(width="200px"),
+#     }
+#     return widgets.Dropdown(**extend(default_opts, kwopts))
 
 
 def parties_widget(**kwopts):
@@ -237,9 +237,9 @@ def recode_7corr_widget(**kwopts):
     return widgets.ToggleButton(**extend(default_opts, kwopts))
 
 
-def increment_button(target_control, max_value, label=">>", increment=1):
+# def increment_button(target_control, max_value, label=">>", increment=1):
 
-    def f(_):
-        target_control.value = (target_control.value + increment) % max_value
+#     def f(_):
+#         target_control.value = (target_control.value + increment) % max_value
 
-    return widgets.Button(description=label, callback=f)
+#     return widgets.Button(description=label, callback=f)

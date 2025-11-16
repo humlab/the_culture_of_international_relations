@@ -27,7 +27,7 @@ import ipywidgets as widgets
 import types
 
 import matplotlib.pyplot as plt
-from common import utility, widgets_config, config, utility, treaty_state
+from common import utility, config, utility, treaty_state
 from common.corpus import corpus_utility
 from common.corpus.container import CorpusContainer
 from common.gui.load_wti_index_gui import current_wti_index, load_wti_index_with_gui
@@ -38,8 +38,6 @@ from IPython.display import display
 
 utility.setup_default_pd_display()
 
-PATTERN = "*.txt"
-PERIOD_GROUP = "years_1945-1972"
 DF_TAGSET: pd.DataFrame = pd.read_csv("../data/tagset.csv", sep="\t").fillna("")
 load_wti_index_with_gui(data_folder=config.DATA_FOLDER)
 TREATY_TIME_GROUPINGS: dict[str, dict[str, Any]] = get_treaty_time_groupings()

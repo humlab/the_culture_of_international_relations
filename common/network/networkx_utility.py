@@ -59,58 +59,58 @@ def df_to_nx_edges_list(
     return list(edges)
 
 
-def df_to_nx(
-    df: pd.DataFrame,
-    source: str = "source",
-    target: str = "target",
-    bipartite: bool = False,
-    **edge_attributes: Any,
-) -> nx.Graph:
-    """Creates a new networkx graph from values in a dataframe.
+# def df_to_nx(
+#     df: pd.DataFrame,
+#     source: str = "source",
+#     target: str = "target",
+#     bipartite: bool = False,
+#     **edge_attributes: Any,
+# ) -> nx.Graph:
+#     """Creates a new networkx graph from values in a dataframe.
 
-    Parameters
-    ----------
-    df : DataFrame
-        A pandas dataframe that contains edges i.e. source/target/weight columns.
+#     Parameters
+#     ----------
+#     df : DataFrame
+#         A pandas dataframe that contains edges i.e. source/target/weight columns.
 
-    source : str
-        Name of column that contains source nodes.
+#     source : str
+#         Name of column that contains source nodes.
 
-    target : str
-        Name of column that contains target nodes.
+#     target : str
+#         Name of column that contains target nodes.
 
-    edge_attributes : str
-        Name of edge attribute columns.
+#     edge_attributes : str
+#         Name of edge attribute columns.
 
-    Returns
-    -------
-        A networkx Graph.
+#     Returns
+#     -------
+#         A networkx Graph.
 
-    Example:
-    -------
-        df = pd.DataFrame({'A': [1,2,3,4,5], 'B': [6,7,8,9,10], 'W': [1,2,3,3,3]})
-        df_to_nx(df, source_field='A', target_field='B', weight='W')
+#     Example:
+#     -------
+#         df = pd.DataFrame({'A': [1,2,3,4,5], 'B': [6,7,8,9,10], 'W': [1,2,3,3,3]})
+#         df_to_nx(df, source_field='A', target_field='B', weight='W')
 
-    """
-    G: nx.Graph = nx.Graph()
+#     """
+#     G: nx.Graph = nx.Graph()
 
-    if bipartite:
+#     if bipartite:
 
-        source_nodes: set[Any] = set(df[source].values)
-        target_nodes: set[Any] = set(df[target].values)
+#         source_nodes: set[Any] = set(df[source].values)
+#         target_nodes: set[Any] = set(df[target].values)
 
-        assert len(source_nodes.intersection(target_nodes)) == 0, "Bipartite graph cannot have overlapping node names!"
+#         assert len(source_nodes.intersection(target_nodes)) == 0, "Bipartite graph cannot have overlapping node names!"
 
-        G.add_nodes_from(source_nodes, bipartite=0)
-        G.add_nodes_from(target_nodes, bipartite=1)
-    else:
-        G.add_nodes_from(list(set(df[source]).union(set(df[target]))))
+#         G.add_nodes_from(source_nodes, bipartite=0)
+#         G.add_nodes_from(target_nodes, bipartite=1)
+#     else:
+#         G.add_nodes_from(list(set(df[source]).union(set(df[target]))))
 
-    edges = df_to_nx_edges_list(df, source=source, target=target, **edge_attributes)
+#     edges = df_to_nx_edges_list(df, source=source, target=target, **edge_attributes)
 
-    G.add_edges_from(edges)
+#     G.add_edges_from(edges)
 
-    return G
+#     return G
 
 
 def get_subgraph(g: nx.Graph, attribute: str = "weight", threshold: float = 0.0) -> nx.Graph:
@@ -278,46 +278,46 @@ def get_positioned_edges2(network: nx.Graph, layout: dict, sort_attr: str | None
 #    return layedout_edges
 
 
-def get_positioned_nodes_as_dict(
-    graph: nx.Graph,
-    layout: dict,
-    node_size: str,
-    node_size_range: tuple[float, float] | None,
-) -> dict[str, list[Any]]:
-    """Not used currently."""
-    nodes: dict[str, list[Any]] = get_positioned_nodes(graph, layout)
+# def get_positioned_nodes_as_dict(
+#     graph: nx.Graph,
+#     layout: dict,
+#     node_size: str,
+#     node_size_range: tuple[float, float] | None,
+# ) -> dict[str, list[Any]]:
+#     """Not used currently."""
+#     nodes: dict[str, list[Any]] = get_positioned_nodes(graph, layout)
 
-    if node_size in nodes and node_size_range is not None:
-        nodes["clamped_size"] = clamp_values(nodes[node_size], node_size_range)
-        node_size = "clamped_size"
+#     if node_size in nodes and node_size_range is not None:
+#         nodes["clamped_size"] = clamp_values(nodes[node_size], node_size_range)
+#         node_size = "clamped_size"
 
-    label_y_offset = "y_offset" if node_size in nodes else int(node_size) + 8
-    if label_y_offset == "y_offset":
-        nodes["y_offset"] = [y + r for (y, r) in zip(nodes["y"], [r / 2.0 + 8 for r in nodes[node_size]])]
+#     label_y_offset = "y_offset" if node_size in nodes else int(node_size) + 8
+#     if label_y_offset == "y_offset":
+#         nodes["y_offset"] = [y + r for (y, r) in zip(nodes["y"], [r / 2.0 + 8 for r in nodes[node_size]])]
 
-    nodes = {k: list(nodes[k]) for k in nodes}
+#     nodes = {k: list(nodes[k]) for k in nodes}
 
-    return nodes
+#     return nodes
 
 
-def create_bipartite_network(
-    df: pd.DataFrame,
-    source_field: str = "source",
-    target_field: str = "target",
-    weight: str = "weight",
-) -> nx.Graph:
-    graph: nx.Graph = nx.Graph()
-    graph.add_nodes_from(set(df[source_field].values), bipartite=0)
-    graph.add_nodes_from(set(df[target_field].values), bipartite=1)
-    edges = list(
-        zip(
-            df[source_field].values,
-            df[target_field].values,
-            df[weight].apply(lambda x: {"weight": x}),
-        )
-    )
-    graph.add_edges_from(edges)
-    return graph
+# def create_bipartite_network(
+#     df: pd.DataFrame,
+#     source_field: str = "source",
+#     target_field: str = "target",
+#     weight: str = "weight",
+# ) -> nx.Graph:
+#     graph: nx.Graph = nx.Graph()
+#     graph.add_nodes_from(set(df[source_field].values), bipartite=0)
+#     graph.add_nodes_from(set(df[target_field].values), bipartite=1)
+#     edges = list(
+#         zip(
+#             df[source_field].values,
+#             df[target_field].values,
+#             df[weight].apply(lambda x: {"weight": x}),
+#         )
+#     )
+#     graph.add_edges_from(edges)
+#     return graph
 
 
 def get_bipartite_node_set(graph: nx.Graph, bipartite: int = 0) -> tuple[list[str], list[str]]:
@@ -342,4 +342,4 @@ def create_nx_graph_from_weighted_edges(values: list[tuple]) -> nx.Graph:
     return graph
 
 
-create_network_from_xyw_list = create_nx_graph_from_weighted_edges
+# create_network_from_xyw_list = create_nx_graph_from_weighted_edges
