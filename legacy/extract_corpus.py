@@ -30,7 +30,7 @@ import matplotlib.pyplot as plt
 from common import utility, widgets_config, config, utility, treaty_state
 from common.corpus import corpus_utility
 from common.gui.load_wti_index_gui import current_wti_index, load_wti_index_with_gui
-from common.gui import textacy_corpus_gui
+from common.gui import load_corpus_gui
 from common.gui.utility import get_treaty_time_groupings
 from loguru import logger
 from IPython.display import display
@@ -57,7 +57,7 @@ current_corpus = corpus_utility.CorpusContainer.corpus
 
 # %%
 container = current_corpus_container()
-textacy_corpus_gui.display_corpus_load_gui(config.DATA_FOLDER, current_wti_index(), container)
+load_corpus_gui.display_corpus_load_gui(config.DATA_FOLDER, current_wti_index(), container)
 
 
 # %% [markdown]

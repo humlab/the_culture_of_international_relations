@@ -26,7 +26,7 @@ from common import config, setup_config, utility
 from common.corpus import corpus_utility
 
 # %%
-from common.gui import most_discriminating_terms_gui, textacy_corpus_gui
+from common.gui import most_discriminating_terms_gui, load_corpus_gui
 from common.gui.load_wti_index_gui import current_wti_index, load_wti_index_with_gui
 
 # %% code_folding=[0]
@@ -62,7 +62,7 @@ current_corpus = corpus_utility.CorpusContainer.corpus
 
 # %%
 container: corpus_utility.CorpusContainer = current_corpus_container()
-textacy_corpus_gui.display_corpus_load_gui(config.DATA_FOLDER, current_wti_index(), container)
+load_corpus_gui.display_corpus_load_gui(config.DATA_FOLDER, current_wti_index(), container)
 
 
 # %% [markdown]

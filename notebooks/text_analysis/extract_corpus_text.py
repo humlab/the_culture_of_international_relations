@@ -43,7 +43,7 @@ current_corpus = corpus_utility.CorpusContainer.corpus
 #
 #
 #     container = current_corpus_container()
-#     textacy_corpus_gui.display_corpus_load_gui(config.DATA_FOLDER, current_wti_index(), container)
+#     load_corpus_gui.display_corpus_load_gui(config.DATA_FOLDER, current_wti_index(), container)
 # except Exception as ex:
 #     raise
 
