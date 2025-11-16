@@ -276,8 +276,8 @@ display_document_key_terms_gui(current_corpus(), current_wti_index())
 # ## <span style='color: green'>PREPARE/DESCRIBE </span> Clean Up the Text <span style='float: right; color: green'>TRY IT</span>
 
 # %% code_folding=[]
-import gui_utility
-import textacy_corpus_utility as textacy_utility
+import common.gui.utility
+import common.corpus.textacy_corpus_utility as textacy_utility
 
 # %config InlineBackend.print_figure_kwargs = {'bbox_inches':'tight'}
 
@@ -402,7 +402,7 @@ def display_cleanup_text_gui(container, wti_index):
     
     corpus = container.textacy_corpus
     
-    document_options = gui_utility.get_treaty_dropdown_options(wti_index, corpus)
+    document_options = get_treaty_dropdown_options(wti_index, corpus)
         
     logger.info('...loading term substitution mappings...')
     gpe_filename = os.path.join(config.DATA_FOLDER, 'gpe_substitutions.txt')
