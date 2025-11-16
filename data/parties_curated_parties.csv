@@ -1,0 +1,473 @@
+	PartyID	PartyName	ShortName	GroupNo	processed	latitude	longitude	reversename	country	country_code	country_code3
+0	ABUDHA	Abu Dhabi, United Arab Emirates	Abu Dhabi	8	1	24.453884	54.3773438	Al Karamah St - Abu Dhabi - United Arab Emirates		AE	ARE
+1	AFGHAN	Afghanistan, Democratic Republic of	Afghanistan	3	1	33.93911	67.709953	Unnamed Road, Afghanistan	Afghanistan	AF	AFG
+2	AFSAH	Africa Sahara (Commission for Technical Cooperation in Africa South of Sahara)	Africa Sahara (Commission for Technical Cooperation in Africa South of Sahara)	8	1						
+3	ACP	African, Caribbean, and Pacific Group of States	African	8	1	-8.783195	34.508523	Unnamed Road, Tanzania	Tanzania, United Republic of	TZ	TZA
+4	AFMCOF	African and Malagasy Coffee Organization	African and Malagasy Coffee Organization	8	1						
+5	AFCOF	African Coffee Organization	African Coffee Organization	8	1	0.3093216	32.6224101	18 Bazarabusa Dr, Kampala, Uganda	Uganda	UG	UGA
+6	AFBNK	African Development Bank	African Development Bank	8	1	8.487973799999999	-13.2358668	Lamina Sankoh St, Freetown, Sierra Leone	Sierra Leone	SL	SLE
+7	ADF	African Development Fund	African Development Fund	8	1	42.3085932	-71.1079942	555 Amory St, Jamaica Plain, MA 02130, USA			
+8	AEIB	African Export - Import Bank	African Export - Import Bank	1	1	30.0955479	31.31854	Ghernata, El-Montaza, Heliopolis, Cairo Governorate, Egypt			
+9	AFGRO	African Groundnut Council	African Groundnut Council	8	1						
+10	AFINS	African Insurance Organization	African Insurance Organization	8	1						
+11	AFIPO	African Intellectual Property Organization	African Intellectual Property Organization	8	1	-17.7990929	31.0406116	Natal Rd, Harare, Zimbabwe	Zimbabwe	ZW	ZWE
+12	AARRO	Afro-Asian Rural Reconstruction Organization	Afro-Asian Rural Reconstruction Organization	8	1	28.5843487	77.1890668	1, Chanakyapuri, New Delhi, Delhi 110021, India	India	IN	IND
+13	ACTC	Agency for Cultural and Technical Cooperation	Agency for Cultural and Technical Cooperation	8	1						
+14	APNWLA	Agency for the Prohibition of Nuclear Weapons in Latin America	Agency for the Prohibition of Nuclear Weapons in Latin America	8	1						
+15	AJMAN	Ajman, United Arab Emirates	Ajman	2	1	25.4052165	55.5136433	13 شارع حاتم الطائي - Ajman - United Arab Emirates	United Arab Emirates	AE	ARE
+16	ALBANI	Albania, Socialist Peoples Republic of	Albania	5	1	41.153332	20.168331	E852, Albania	Albania	AL	ALB
+17	ALGERI	Algeria, Peoples Democratic Republic of	Algeria	2	1	28.033886	1.659626	Unnamed Road, Algeria	Algeria	DZ	DZA
+18	ADB	Andean Development Bank	Andean Development Bank	8	1						
+19	ADC	Andean Development Corporation	Andean Development Corporation	8	1						
+20	AP	Andean Pact	Andean Pact	8	1						
+21	ANDORR	Andorra	Andorra	7	1	42.506285	1.521801	Carrer Prat de la Creu, 66, AD500 Andorra la Vella, Andorra	Andorra	AD	AND
+22	ANGOLA	Angola, Peoples Republic of	Angola	1	1	-11.202692	17.873887	Quirima, Angola	Angola	AO	AGO
+23	ANTIGU	Antigua and Barbuda	Antigua and Barbuda	6	1	17.060816	-61.796428	Jonas Rd, All Saints, Antigua and Barbuda	Antigua and Barbuda	AG	ATG
+24	AAEA	Arab Atomic Energy Agency	Arab Atomic Energy Agency	8	1	36.83319	10.1886	Rue du Développement, Tunis, Tunisia	Tunisia	TN	TUN
+25	AFSED	Arab Fund for Economic and Social Development	Arab Fund for Economic and Social Development	8	1	29.3478968	47.9411387	Airport Rd, Kuwait	Kuwait	KW	KWT
+26	ALO	Arab Labor Organization	Arab Labor Organization	8	1	30.0356221	31.2146808	Al Mesaha, Ad Doqi A, Ad Doqi, Giza Governorate, Egypt	Egypt	EG	EGY
+27	AOMR	Arab Organization for Mineral Resources	Arab Organization for Mineral Resources	8	1						
+28	ARGENT	Argentina (Argentine Republic)	Argentina (Argentine Republic)	6	1	-38.416097	-63.61667199999999	RP1, La Pampa, Argentina	Argentina	AR	ARG
+29	ARMENI	Armenia (See USSR Before 1991)	Armenia	5	1	40.069099	45.038189	Unnamed Road, Sarnakhpyur, Armenia	Armenia	AM	ARM
+30	ASCENS	Ascension Island	Ascension Island	1	1	-7.946716599999999	-14.3559158	Unnamed Road, ASCN 1ZZ, St Helena, Ascension and Tristan da Cunha	St Helena	SH	SHN
+31	ADBNK	Asian Development Bank	Asian Development Bank	8	1	14.588063	121.058602	Bank Dr, Ortigas Center, Mandaluyong, Metro Manila, Philippines	Philippines	PH	PHL
+32	ASPRO	Asian Productivity Organization	Asian Productivity Organization	8	1						
+33	AIEC	Association of Iron Ore Export Countries	Association of Iron Ore Export Countries	8	1						
+34	ASEAN	Association of South East Asian Nations	Association of South East Asian Nations	8	1	-6.238943099999999	106.7991257	Jl. Sisingamangaraja No.70 A, Selong, Kby. Baru, Kota Jakarta Selatan, Daerah Khusus Ibukota Jakarta 12110, Indonesia	Indonesia	ID	IDN
+35	AUSTRA	Australia, Commonwealth of	Australia	4	1	-25.274398	133.775136	Unnamed Road, Ghan NT 0872, Australia	Australia	AU	AUS
+36	AUSTRI	Austria, Republic of	Austria	7	1	47.516231	14.550072	Mödlinger Hüttenweg II, 8783, Austria	Austria	AT	AUT
+37	AZERBA	Azerbaijan  (See USSR Before 1991)	Azerbaijan	5	1	40.143105	47.576927	Unnamed Road, Azerbaijan	Azerbaijan	AZ	AZE
+38	BAHAMA	Bahamas, Commonwealth of the	Bahamas	6	1	25.03428	-77.39627999999999	Jubilee Boulevard, Nassau, The Bahamas	Bahamas	BS	BHS
+39	BAHRAI	Bahrain, State of	Bahrain	2	1	26.0667	50.5577	Unnamed Road, Bahrain	Bahrain	BH	BHR
+40	BANANA	Banana Exporting Countries, Union of	Banana Exporting Countries	8	1						
+41	BANGLA	Bangladesh, Peoples Republic of	Bangladesh	3	1	23.684994	90.356331	Unnamed Road, Bangladesh	Bangladesh	BD	BGD
+42	BIS	Bank for International Settlements	Bank for International Settlements	8	1	47.548022	7.591717999999999	Bank for International Settlements, Nauenstrasse, 4051 Basel, Switzerland	Switzerland	CH	CHE
+43	BDCAS	Bank of Development of the Central African States	Bank of Development of the Central African States	8	1						
+44	BARBAD	Barbados	Barbados	6	1	13.193887	-59.543198	Highway 3, Coffee Gully, Barbados	Barbados	BB	BRB
+45	BASUTO	Basutoland	Basutoland	1	1						
+46	BECHUA	Bechuanaland	Bechuanaland	1	1	-28.726681	24.7689099	1 Bechuanaland Rd, Bunn, Kimberley, 8345, South Africa	South Africa	ZA	ZAF
+47	BELARU	Belarus (See USSR or Byelorussian SSR before 1991)	Belarus	5	1	53.709807	27.953389	Unnamed Road, Belarus	Belarus	BY	BLR
+48	BELGIU	Belgium, Kingdom of	Belgium	7	1	50.503887	4.469936	Rue du Mitan 4, 6211 Les Bons Villers, Belgium	Belgium	BE	BEL
+49	BELIZE	Belize	Belize	6	1	17.189877	-88.49765	Unnamed Road, Belize	Belize	BZ	BLZ
+50	BNLXEC	Benelux Economic Union (aka Belgo-Luxembourg Economic Union)	Benelux Economic Union (aka Belgo-Luxembourg Economic Union)	8	1						
+51	BENIN	Benin, Peoples Republic of	Benin	1	1	9.30769	2.315834	Unnamed Road, Benin	Benin	BJ	BEN
+52	BERMUD	Bermuda	Bermuda	6	1	32.3078	-64.7505	Oleander Lane, Bermuda	Bermuda	BM	BMU
+53	BHUTAN	Bhutan, Kingdom of	Bhutan	3	1	27.514162	90.433601	Unnamed Road, Bhutan	Bhutan	BT	BTN
+54	BOLIVI	Bolivia, Republic of	Bolivia	6	1	-16.290154	-63.58865299999999	Unnamed Road, Bolivia	Bolivia, Plurinational State of	BO	BOL
+55	BOPHUT	Bophuthatswana, Republic of	Bophuthatswana	1	1	-25.6093705	27.3021879	Bophuthatswana St, Rustenburg Rural, Rustenburg, 0300, South Africa	South Africa	ZA	ZAF
+56	BOSHER	Bosnia-Herzegovina (See Yugoslavia Before April 1992)	Bosnia-Herzegovina	5	1	43.915886	17.679076	Unnamed Road, Bosnia and Herzegovina	Bosnia and Herzegovina	BA	BIH
+57	BOTSWA	Botswana, Republic of	Botswana	1	1	-22.328474	24.684866	Unnamed Road, Botswana	Botswana	BW	BWA
+58	BRAZIL	Brazil, Federative Republic of	Brazil	6	1	-14.235004	-51.92528	Unnamed Road, Água Boa - MT, 78635-000, Brazil	Brazil	BR	BRA
+59	BRUNEI	Brunei, State of	Brunei	3	1	4.535277	114.727669	Unnamed Road, Brunei	Brunei	BN	BRN
+60	BULGAR	Bulgaria, Peoples Republic of	Bulgaria	5	1	42.733883	25.48583	Club Calimera Sunny Beach, 8420, 6184 Слънчев бряг, Bulgaria	Bulgaria	BG	BGR
+61	BURKIN	Burkina Faso (Before 1984 see Upper Volta)	Burkina Faso	1	1	12.238333	-1.561593	Unnamed Road, Burkina Faso	Burkina Faso	BF	BFA
+62	BURMA	Burma, Socialist Republic of the Union of (aka Myanmar)	Burma	3	1	21.916221	95.955974	Mandalay - Shwebo Rd, Sagaing, Myanmar (Burma)	Myanmar	MM	MMR
+63	BURUND	Burundi, Republic of	Burundi	1	1	-3.373056	29.918886	R.N.15, Burundi	Burundi	BI	BDI
+64	BYELOR	Byelorussian Soviet Socialist Republic (See also USSR, or Belarus after 1991)	Byelorussian	5	1	53.709807	27.953389	Unnamed Road, Belarus	Belarus	BY	BLR
+65	CAMERO	Cameroon, United Republic of	Cameroon	1	1	7.369721999999999	12.354722	Unnamed Road, Cameroon	Cameroon	CM	CMR
+66	CANADA	Canada	Canada	4	1	56.130366	-106.346771	Unnamed Road, Division No. 18, Unorganized, SK S0J, Canada	Canada	CA	CAN
+67	CAPVER	Cape Verde, Republic of	Cape Verde	1	1	16.5388	-23.0418	Cape Verde	Cape Verde	CV	CPV
+68	CARDI	Caribbean Agricultural Research and Development Institute	Caribbean Agricultural Research and Development Institute	8	1	17.185838	-89.0028071	Western Hwy, Belize	Belize	BZ	BLZ
+69	CARCTY	Caribbean Community	Caribbean Community	8	1	17.7446256	-64.7224442	Northside Rd, Christiansted, St Croix 00820, USVI			
+70	CARBNK	Caribbean Development Bank	Caribbean Development Bank	8	1	13.0962158	-59.5755747	Sunset Dr N, Bridgetown, Barbados	Barbados	BB	BRB
+71	CAFRI	Central African Republic	Central African Republic	1	1	6.611110999999999	20.939444	Ippy, Central African Republic	Central African Republic	CF	CAF
+72	CASDB	Central African States Development Bank	Central African States Development Bank	8	1						
+73	CABNK	Central American Bank for Economic Integration	Central American Bank for Economic Integration	8	1	14.086594	-87.19441499999999	Boulevard Suyapa, Tegucigalpa, Honduras	Honduras	HN	HND
+74	CAIS	Central American Integration System	Central American Integration System	6	1	41.8833951	-87.62545109999999	The Heritage at Millennium Park, Chicago, IL 60602, USA			
+75	CBWAS	Central Bank of the West African States	Central Bank of the West African States	8	1	12.5875427	-16.2716138	Rue Fargues, Ziguinchor, Senegal	Senegal	SN	SEN
+76	RNAVI	Central Commission for the Navigation on the Rhine	Central Commission for the Navigation on the Rhine	8	1	48.587568	7.75292	Palais du Rhin, 2 Place de la République, 67000 Strasbourg, France	France	FR	FRA
+77	CHAD	Chad, Republic of	Chad	1	1	15.454166	18.732207	Borkou, Chad	Chad	TD	TCD
+78	CHILE	Chile, Republic of	Chile	6	1	-35.675147	-71.542969	L-255, Yerbas Buenas, VII Región, Chile	Chile	CL	CHL
+79	CHINA	China, Peoples Republic of (and pre-1950 China)	China	5	1	35.86166	104.195397	Unnamed Road, Yuzhong Xian, Lanzhou Shi, Gansu Sheng, China	China	CN	CHN
+80	COLOMB	Colombia, Republic of	Colombia	6	1	4.570868	-74.297333	El Colegio - El Charquito, Soacha, Cundinamarca, Colombia	Colombia	CO	COL
+81	CCAMLR	Commission for the Conservation of Antarctic Marine Living Resources	Commission for the Conservation of Antarctic Marine Living Resources	8	1	-42.886491	147.3247316	183B Macquarie St, Hobart TAS 7000, Australia	Australia	AU	AUS
+82	CEC	Commission of the European Communities	Commission of the European Communities	8	1	45.4199249	-75.6950421	150 Metcalfe St, Ottawa, ON K2P 1P1, Canada	Canada	CA	CAN
+83	COMFUN	Common Fund for Commodities	Common Fund for Commodities	8	1	52.3736923	4.9335537	Rietlandpark 301, 1019 Amsterdam, Netherlands	Netherlands	NL	NLD
+84	COMAGB	Commonwealth Agricultural Bureaux (See CABI after 1987)	Commonwealth Agricultural Bureaux (See CABI after 1987)	8	1						
+85	COMFON	Commonwealth Foundation	Commonwealth Foundation	8	1	40.263356	-76.885458	225 State St, Harrisburg, PA 17101, USA			
+86	COMINS	Commonwealth of Independent States (See USSR Before 1991)	Commonwealth of Independent States	5	1						
+87	COMOL	Commonwealth of Learning	Commonwealth of Learning	8	1	49.2261555	-123.001286	4700 Kingsway, Burnaby, BC V5H 4M1, Canada	Canada	CA	CAN
+88	COMSEC	Commonwealth Secretariat	Commonwealth Secretariat	8	1	51.5048507	-0.1361395	Marlborough House, Pall Mall, St. James's, London SW1Y 5HX, UK	United Kingdom	GB	GBR
+89	COMTEL	Commonwealth Telecommunications Board	Commonwealth Telecommunications Board	8	1	51.4945518	-0.2316551	Anns House, 1 Banim St, London W6 0DN, UK	United Kingdom	GB	GBR
+90	COMORO	Comoros, Islamic Federal Republic of the	Comoros	1	1	-11.6455	43.3333	RN 4, Comoros	Comoros	KM	COM
+91	CONGO	Congo, Peoples Republic of	Congo	1	1	-4.038333	21.758664	Kasai, Democratic Republic of the Congo	Colombia	CO	COL
+92	COOKI	Cook Islands	Cook Islands	4	1	-21.236736	-159.777671	Happy Valley Rd, Avarua District, Cook Islands	Cook Islands	CK	COK
+93	COSTA	Costa Rica, Republic of	Costa Rica	6	1	9.748916999999999	-83.753428	Parque Nacional Tapantí, Cartago Province, Costa Rica	Costa Rica	CR	CRI
+94	SOVEC	Council for Mutual Economic Assistance	Council for Mutual Economic Assistance	8	1						
+95	CLEUR	Council of Europe (See also EEC, EURUN, or EURCOM)	Council of Europe (See also EEC	8	1						
+96	AFENT	Council of the Entente (Council of the Entente States)	Council of the Entente (Council of the Entente States)	8	1						
+97	CEUCOM	Council of the European Communities	Council of the European Communities	8	1	50.8420034	4.382409	Rue de la Loi 175B, 1000 Bruxelles, Belgium	Belgium	BE	BEL
+98	CROATI	Croatia (See Yugoslavia Before October 1991)	Croatia	5	1	45.1	15.2000001	Unnamed Road, Jezerane, Croatia	Croatia	HR	HRV
+99	CUBA	Cuba, Republic of	Cuba	5	1	21.521757	-77.781167	Unnamed Road, Cuba	Cuba	CU	CUB
+100	CUSTOM	Customs Cooperation Council	Customs Cooperation Council	8	1	50.856879	4.3572178	Rue du Marché 30, 1210 Saint-Josse-ten-Noode, Belgium	Belgium	BE	BEL
+101	CYPRUS	Cyprus, Republic of	Cyprus	7	1	35.126413	33.429859	Cyprus	Cyprus	CY	CYP
+102	CZECHO	Czechoslovakia ( use for Czechoslovak Socialist Republic)	Czechoslovakia 	5	1	14.4803708	121.0390178	18 Czechoslovakia, Parañaque, 1711 Metro Manila, Philippines	Philippines	PH	PHL
+103	DENMAR	Denmark, Kingdom of	Denmark	7	1	56.26392	9.501785	Tingskrivervej 7, 8620 Kjellerup, Denmark	Denmark	DK	DNK
+104	DJIBOU	Djibouti, Republic of	Djibouti	1	1	11.825138	42.590275	RN12, Djibouti	Djibouti	DJ	DJI
+105	DOMINI	Dominica, Commonwealth of	Dominica	6	1	15.414999	-61.37097600000001	Unnamed Road, Dominica	Dominica	DM	DMA
+106	DOMREP	Dominican Republic	Dominican Republic	6	1	18.735693	-70.162651	Carretera Bulla, Cruce de Rio Verde 92000, Dominican Republic	Dominican Republic	DO	DOM
+107	DUBAI	Dubai, United Arab Emirates	Dubai	2	1	25.2048493	55.2707828	Al Safa St - Dubai - United Arab Emirates	United Arab Emirates	AE	ARE
+108	EAFC	East African Common Services Organization	East African Common Services Organization	8	1						
+109	EAC	East African Community	East African Community	8	1						
+110	EADB	East African Development Bank	East African Development Bank	8	1	0.3149193	32.5798729	Plot 4 Nile Avenue, P. O Box,7128, Kampala, Uganda	Uganda	UG	UGA
+111	CEPGL	Economic Community of the Great Lakes Countries	Economic Community of the Great Lakes Countries	8	1						
+112	ECOWAS	Economic Community of West African States	Economic Community of West African States	8	1	9.053839	7.5007761	816 Ahmadu Bello Way, Central Business Dis, Abuja, Nigeria	Nigeria	NG	NGA
+113	ECUADO	Ecuador, Republic of	Ecuador	6	1	-1.831239	-78.18340599999999	Unnamed Road, Ecuador	Ecuador	EC	ECU
+114	EGYPT	Egypt, Arab Republic of	Egypt	2	1	26.820553	30.802498	60M, Qesm Al Wahat Al Khargah, New Valley Governorate, Egypt	Egypt	EG	EGY
+115	ELSALV	El Salvador, Republic of	El Salvador	6	1	13.794185	-88.89653	Unnamed Road, El Salvador	El Salvador	SV	SLV
+116	EQGIN	Equatorial Guinea, Republic of	Equatorial Guinea	1	1	1.650801	10.267895	Unnamed Road, Equatorial Guinea	Equatorial Guinea	GQ	GNQ
+117	ERITRE	Eritrea (See Ethiopia Before 5/93)	Eritrea	1	1	15.179384	39.782334	P-6, Eritrea	Eritrea	ER	ERI
+118	ESTONI	Estonia (See USSR Before 1991)	Estonia	5	1	58.595272	25.0136071	Lubjapõllu, Vihtra, 87603 Pärnu maakond, Estonia	Estonia	EE	EST
+119	ETHIOP	Ethiopia	Ethiopia	1	1	9.145000000000001	40.489673	10, Ethiopia	Ethiopia	ET	ETH
+120	EPPO	European and Mediterranean Plant Protection Organization	European and Mediterranean Plant Protection Organization	8	1	48.8566697	2.370266	21 Boulevard Richard Lenoir, 75011 Paris, France	France	FR	FRA
+121	EURAT	European Atomic Energy Community	European Atomic Energy Community	8	1						
+122	EBRD	European Bank for Reconstruction and Development (European Bank)	European Bank for Reconstruction and Development (European Bank)	8	1	51.5195593	-0.0797601	Steak Exchange, Primrose St, London EC2A 2EH, UK	United Kingdom	GB	GBR
+123	ECMWF	European Centre for Medium-Range Weather Forecasts	European Centre for Medium-Range Weather Forecasts	8	1	51.41967080000001	-0.9501611000000001	23 Aphelion Way, Shinfield, Reading RG2 9FR, UK	United Kingdom	GB	GBR
+124	ECSC	European Coal and Steel Community	European Coal and Steel Community	8	1	41.2993608	-75.7543171	144 Centerpoint Blvd, Jenkins Township, PA 18640, USA			
+125	EURCOM	European Community  (See also European Union post-1993 and European Economic Community pre-1993)	European Community  (See also European Union post-1993 and European Economic Community pre-1993)	8	1						
+126	ECPTA	European Conference of Posts and Telecommunication	European Conference of Posts and Telecommunication	0	1						
+127	EEC	European Economic Community (See European Union after 1993; see also CLEUR or EURCOM)	European Economic Community (See European Union after 1993; see also CLEUR or EURCOM)	8	1						
+128	EEA	European Environment Agency	European Environment Agency	7	1						
+129	EFTA	European Free Trade Association	European Free Trade Association	8	1	50.8463852	4.3702849	Rue Joseph II 12, 1000 Bruxelles, Belgium	Belgium	BE	BEL
+130	EURIB	European Investment Bank	European Investment Bank	8	1	51.5147219	-0.0861324	125 Old Broad Street, 125 Old Broad St, London EC2R 8, UK	United Kingdom	GB	GBR
+131	EMBL	European Molecular Biology Laboratory	European Molecular Biology Laboratory	8	1	49.38406	8.710757	Meyerhofstraße 1, 69117 Heidelberg, Germany	Germany	DE	DEU
+132	EOASTS	European Organization for Astronomical Research in the Southern Hemisphere	European Organization for Astronomical Research in the Southern Hemisphere	8	1	48.2595829	11.6709547	Karl-Schwarzschild-Straße 2, 85748 Garching bei München, Germany	Germany	DE	DEU
+133	CERN	European Organization for Nuclear Research	European Organization for Nuclear Research	8	1	46.2340816	6.0528073	Route de Meyrin 385, 1217 Meyrin, Switzerland	Switzerland	CH	CHE
+134	EURCON	European Organization for the Safety of Air Navigation (EuroControl)	European Organization for the Safety of Air Navigation (EuroControl)	8	1	50.08204869999999	14.4132215	Smetanovo nábř. 334/4, Staré Město, 110 00 Praha-Praha 1, Czechia	Czechia	CZ	CZE
+135	EPO	European Patent Organization	European Patent Organization	8	1						
+136	EURSCH	European Schools Committee	European Schools Committee	8	1						
+137	EURSAG	European Space Agency (cf. ESRO)	European Space Agency (cf. ESRO)	8	1						
+138	ESRO	European Space Research Organization (cf. EURSAG)	European Space Research Organization (cf. EURSAG)	8	1						
+139	ELDO	European Space Vehicle Launcher Development Organization	European Space Vehicle Launcher Development Organization	8	1						
+140	EURTEL	European Telecommunications Satellite Organization	European Telecommunications Satellite Organization	8	1						
+141	EURUN	European Union  (See European Economic Community Before 1993; see also CLEUR or EURCOM)	European Union  (See European Economic Community Before 1993; see also CLEUR or EURCOM)	8	1						
+142	EUI	European University Institute	European University Institute	8	1	43.8028574	11.2827323	Strada Provinciale 53, 7, 50014 Fiesole FI, Italy	Italy	IT	ITA
+143	EXHIBI	Exhibition Bureau, International	Exhibition Bureau	8	1	48.8660811	2.2951454	34 Avenue d'Iéna, 75116 Paris, France	France	FR	FRA
+144	EXIMBK	Export Import Bank (USA)	Export Import Bank (USA)	8	1	37.7917046	-122.402331	250 Montgomery St, San Francisco, CA 94104, USA			
+145	FRHOD	Federation of Rhodesia and Nyasaland	Federation of Rhodesia and Nyasaland	1	1						
+146	FIJI	Fiji	Fiji	3	1	-17.713371	178.065032	Unnamed Road, Fiji	Fiji	FJ	FJI
+147	FONPLA	Financial Fund for the Development of the River Plate Basin	Financial Fund for the Development of the River Plate Basin	8	1						
+148	FINLAN	Finland, Republic of	Finland	7	1	61.92410999999999	25.7481511	Lehmustie 104, 41880 Jyväskylä, Finland	Finland	FI	FIN
+149	FAO	Food and Agricultural Organization, UN	Food and Agricultural Organization	8	1	40.7484913	-73.9683104	United Nations Secretariat Building, 405 E 42nd St, New York, NY 10017, USA			
+150	FRANCE	France (French Republic)	France (French Republic)	7	1	43.1200577	5.9376533	83000 Toulon, France	France	FR	FRA
+151	FUJAIR	Fujairan, United Arab Emirates	Fujairan	2	1	25.4110762	56.24822769999999	Unnamed Road - Fujairah - United Arab Emirates	United Arab Emirates	AE	ARE
+152	GABON	Gabonese Republic	Gabonese Republic	1	1	-0.803689	11.609444	Lolo-Bouenguidi, Gabon	Gabon	GA	GAB
+153	GAMBIA	Gambia, Republic of the	Gambia	1	1	13.443182	-15.310139	S Bank Rd, The Gambia	Gambia	GM	GMB
+154	GATT	General Agreement on Tariffs and Trade, UN	General Agreement on Tariffs and Trade	8	1						
+155	GEORGI	Georgia (See USSR Before 1991)	Georgia	5	1				Georgia	GE	GEO
+156	GERME	Germany, East (German Democratic Republic)	Germany	5	1	51.165691	10.451526	Höngedaer Weg 8E, 99986 Niederdorla, Germany	Germany	DE	DEU
+157	GERMA	Germany, Allied Occupation after 1945	Germany	7	1	51.165691	10.451526	Höngedaer Weg 8E, 99986 Niederdorla, Germany	Germany	DE	DEU
+158	GERMU	Germany, after 1991 (United)	Germany	7	1	51.165691	10.451526	Höngedaer Weg 8E, 99986 Niederdorla, Germany	Germany	DE	DEU
+159	GERMW	Germany, West (Federal Republic of Germany)	Germany	7	1	51.165691	10.451526	Höngedaer Weg 8E, 99986 Niederdorla, Germany	Germany	DE	DEU
+160	GERMAN	Germany, Before 1945	Germany	7	1	51.165691	10.451526	Höngedaer Weg 8E, 99986 Niederdorla, Germany	Germany	DE	DEU
+161	GHANA	Ghana, Republic of	Ghana	1	1	7.946527	-1.023194	Unnamed Road, Ghana	Ghana	GH	GHA
+162	GREECE	Greece (Hellenic Republic)	Greece (Hellenic Republic)	7	1	39.074208	21.824312	Epar.Od. Karpenisiou - Neraidas, Karpenisi 360 80, Greece	Greece	GR	GRC
+163	GRENAD	Grenada	Grenada	6	1	12.1165	-61.67899999999999	Beauregard, Morne Longue, Grenada	Grenada	GD	GRD
+164	GUATEM	Guatemala, Republic of	Guatemala	6	1	15.783471	-90.23075899999999	Unnamed Road, Chisec, Guatemala	Guatemala	GT	GTM
+165	GUINEA	Guinea, Revolutionary Peoples Republic of	Guinea	1	1	9.945587	-9.696645	Unnamed Road, Guinea	Guinea	GN	GIN
+166	GUINB	Guinea-Bissau, Republic of	Guinea-Bissau	1	1	11.803749	-15.180413	Unnamed Road, Guinea-Bissau	Guinea-Bissau	GW	GNB
+167	GULFCC	Gulf Cooperation Council	Gulf Cooperation Council	8	1	50.8080865	4.3850899	Franklin Rooseveltlaan 98, 1000 Brussel, Belgium	Belgium	BE	BEL
+168	GUYANA	Guyana, Republic of	Guyana	6	1	4.860416	-58.93018	Rupununi Rd, Guyana	Guyana	GY	GUY
+169	HAGUE	Hague Conference on Private International Law	Hague Conference on Private International Law	8	1	52.0936532	4.282801099999999	Churchillplein 6B, 2517 JW Den Haag, Netherlands	Netherlands	NL	NLD
+170	HAITI	Haiti, Republic of	Haiti	6	1	18.971187	-72.285215	Unnamed Road, Durocher, Haiti	Haiti	HT	HTI
+171	HONDUR	Honduras, Republic of	Honduras	6	1	15.199999	-86.241905	Olancho Department, Honduras	Honduras	HN	HND
+172	HONGKO	Hong Kong	Hong Kong	3	1	22.396428	114.109497	Rte Twisk, Tai Mo Shan, Hong Kong	Hong Kong	HK	HKG
+173	HUNGAR	Hungary, Republic of	Hungary	5	1	47.162494	19.5033041	Pusztavacs, 4607, 2378 Hungary	Hungary	HU	HUN
+174	IAOE	Ibero-American Office of Education	Ibero-American Office of Education	8	1						
+175	IAOSS	Ibero-American Office of Social Security	Ibero-American Office of Social Security	8	1	46.89022	-114.044925	3701 American Way, Missoula, MT 59808, USA			
+176	ICELAN	Iceland, Republic of	Iceland	7	1	64.963051	-19.020835	Sveitarfélagið Skagafjörður, Iceland	Iceland	IS	ISL
+177	INDIA	India, Republic of	India	3	1	20.593684	78.96288	RR Palace, Nagchoon Rd, Khattalwada, Kasal Pura, Khandwa, Madhya Pradesh 450001, India	India	IN	IND
+178	INDONE	Indonesia, Republic of	Indonesia	3	1	-0.789275	113.921327	Gg. Garuda Cipinang No.15, Sei Pinang, Mandau Talawang, Kabupaten Kapuas, Kalimantan Tengah 74511, Indonesia	Indonesia	ID	IDN
+179	IPOESA	Industrial Property Organization for English-Speaking Africa	Industrial Property Organization for English-Speaking Africa	8	1						
+180	IPU	Inter Parliamentary Union	Inter Parliamentary Union	8	1	40.750846	-73.96919299999999	336 E 45th St, New York, NY 10017, USA			
+181	IABNK	Inter-American Development Bank	Inter-American Development Bank	8	1	38.8992832	-77.0303808	1300 New York Ave NW, Washington, DC 20577, USA			
+182	IAAGR	Inter-American Institute for Cooperation on Agriculture	Inter-American Institute for Cooperation on Agriculture	8	1	9.9704061	-84.01723810000001	Calle Fresas, San José, Guadalupe, Costa Rica	Costa Rica	CR	CRI
+183	IANEC	Inter-American Nuclear Energy Commission	Inter-American Nuclear Energy Commission	8	1						
+184	ICCEC	Intergovermental Council of Copper Exporting Count	Intergovermental Council of Copper Exporting Count	8	1						
+185	IBI	Intergovernmental Bureau of Informatics	Intergovernmental Bureau of Informatics	8	1						
+186	ICITO	Interim commission for the International Trade Organization	Interim commission for the International Trade Organization	8	1						
+187	IAEA	International Atomic Energy Agency	International Atomic Energy Agency	8	1	48.234342	16.4159583	Vienna International Centre, 1220 Wien, Austria	Austria	AT	AUT
+188	IBRD	International Bank for Reconstruction and Development (World Bank)	International Bank for Reconstruction and Development (World Bank)	8	1	38.8989548	-77.0424472	1818 H St NW, Washington, DC 20433, USA			
+189	IBA	International Bauxite Association	International Bauxite Association	8	1						
+190	IBE	International Bureau of Education	International Bureau of Education	8	1	46.2316328	6.1314924	Route des Morillons 15, 1218 Le Grand-Saconnex, Switzerland	Switzerland	CH	CHE
+191	ICCROM	International Center for Study of Preservation and Restoration of Cultural Property	International Center for Study of Preservation and Restoration of Cultural Property	8	1						
+192	CIAT	International Center for Tropical Agriculture	International Center for Tropical Agriculture	8	1	3.50259	-76.355046	Unnamed Road, Palmira, Valle del Cauca, Colombia	Colombia	CO	COL
+193	ICMPD	International Centre for Migration and Policy Development	International Centre for Migration and Policy Development	8	1						
+194	ICAO	International Civil Aviation Organization (provisional)	International Civil Aviation Organization (provisional)	8	1						
+195	ICDO	International Civil Defense Organization	International Civil Defense Organization	8	1	46.191593	6.124202299999999	Chemin de Surville 10, 1213 Petit-Lancy, Switzerland	Switzerland	CH	CHE
+196	ICOCO	International Cocoa Organization	International Cocoa Organization	8	1	51.5313122	-0.2957566	Westgate House, W Gate, London W5 1YY, UK	United Kingdom	GB	GBR
+197	ICO	International Coffee Organization	International Coffee Organization	8	1	51.5239256	-0.1149755	222 Grays Inn Rd, London WC1X 8HB, UK	United Kingdom	GB	GBR
+198	ICCAT	International Commission for the Conservation of Atlantic	International Commission for the Conservation of Atlantic	8	1						
+199	ICWM	International Committee of Weights and Measures	International Committee of Weights and Measures	8	1						
+200	ICC	International Computation Center	International Computation Center	8	1	32.1132612	34.8061732	Sderot Federman, Tel Aviv-Yafo, Israel	Israel	IL	ISR
+201	ICAC	International Cotton Advisory Committee	International Cotton Advisory Committee	8	1						
+202	ICES	International Council for the Exploration of the Sea	International Council for the Exploration of the Sea	8	1	55.671484	12.575673	H. C. Andersens Blvd. 44, 1553 København V, Denmark	Denmark	DK	DNK
+203	ICJ	International Court of Justice	International Court of Justice	8	1	52.0866122	4.2956883	Carnegieplein 1, 2517 KJ Den Haag, Netherlands	Netherlands	NL	NLD
+204	IDA	International Development Association	International Development Association	8	1	38.8989407	-77.0424546	1818 H St NW, Washington, DC 20433, USA			
+205	IFC	International Finance Corporation	International Finance Corporation	8	1	38.902006	-77.0476431	2121 Pennsylvania Ave NW, Washington, DC 20433, USA			
+206	INFISH	International Fisheries Council	International Fisheries Council	8	1	45.5793172	-122.5709018	7700 NE Ambassador Pl, Portland, OR 97220, USA			
+207	IFAD	International Fund for Agricultural Development	International Fund for Agricultural Development	8	1	38.9029064	-77.04124569999999	1775 K St NW, Washington, DC 20036, USA			
+208	IHO	International Hydrographic Organization (aka International Hydrographic Bureau)	International Hydrographic Organization (aka International Hydrographic Bureau)	8	1						
+209	ICOTIN	International Institute for Cotton	International Institute for Cotton	8	1	21.0368507	79.0560122	Mancherial - Chandrapur - Nagpur Rd, Maharashtra 441108, India	India	IN	IND
+210	IIUPL	International Institute for the Unification of Private Law	International Institute for the Unification of Private Law	8	1	41.8961213	12.4883562	Via Panisperna, 21-23, 00184 Roma RM, Italy	Italy	IT	ITA
+211	IIR	International Institute of Refrigeration	International Institute of Refrigeration	8	1	48.88649119999999	2.3050864	177 Boulevard Malesherbes, 75017 Paris, France	France	FR	FRA
+212	ILO	International Labor Organization	International Labor Organization	8	1	38.90101629999999	-77.0421051	1808 I St NW, Washington, DC 20006, USA			
+213	ILZ	International Lead and Zinc Study Group	International Lead and Zinc Study Group	8	1	38.7313848	-9.142841299999999	R. Alm. Barroso 38, 1000-012 Lisboa, Portugal	Portugal	PT	PRT
+214	IMCO	International Maritime Organization	International Maritime Organization	8	1	51.4931861	-0.1209791	The Windmill, 44 Lambeth High St, Lambeth, London SE1 7JS, UK	United Kingdom	GB	GBR
+215	IMSO	International Maritime Satellite Organization	International Maritime Satellite Organization	8	1	51.5255719	-0.0863443	99 City Rd, London EC1Y 1BJ, UK	United Kingdom	GB	GBR
+216	IMF	International Monetary Fund	International Monetary Fund	8	1	38.8989396	-77.0441015	700 19th St NW, Washington, DC 20431, USA			
+217	IOEPIZ	International Office of Epizootics	International Office of Epizootics	8	1						
+218	IOPC	International Oil Pollution Compensation Fund	International Oil Pollution Compensation Fund	8	1	51.493257	-0.1212143	The Windmill, 44 Lambeth High St, Lambeth, London SE1 7JS, UK	United Kingdom	GB	GBR
+219	IOOC	International Olive Oil Council	International Olive Oil Council	8	1	40.447995	-3.677551	Calle Aragón, 154, 28002 Madrid, Spain	Spain	ES	ESP
+220	EURMIG	International Organization for Migration (aka European Migration / Intergov)	International Organization for Migration (aka European Migration / Intergov)	8	1						
+221	IOLM	International Organization of Legal Metrology	International Organization of Legal Metrology	8	1						
+222	IPI	International Patent Institute	International Patent Institute	8	1	13.049025	80.211388	15, Desigar St, Ottagapalayam, Somasundara Bharathi Nagar, Vadapalani, Chennai, Tamil Nadu 600026, India	India	IN	IND
+223	INTPEP	International Pepper Community	International Pepper Community	8	1	-6.209972899999999	106.8299282	Lina, Jl. H. R. Rasuna Said Blok B7, Setia Budi, Kota Jakarta Selatan, Daerah Khusus Ibukota Jakarta 12910, Indonesia	Indonesia	ID	IDN
+224	IRO	International Refugee Organization	International Refugee Organization	8	1	38.9143475	-77.045186	2001 S St NW, Washington, DC 20009, USA			
+225	IRU	International Relief Union	International Relief Union	8	1						
+226	IRTO	International Road Traffic Organization	International Road Traffic Organization	8	1	52.2035294	0.1198867	1-6 Corn Exchange St, Cambridge CB2 3QF, UK	United Kingdom	GB	GBR
+227	IRSG	International Rubber Study Group	International Rubber Study Group	8	1	1.3349482	103.965101	51 Changi Business Park Central 2, Singapore 486066	Singapore	SG	SGP
+228	ISNAR	International Service for National Agricultural Resources	International Service for National Agricultural Resources	8	1						
+229	ISO	International Sugar Organization	International Sugar Organization	8	1	51.5049549	-0.0194234	One Canada Square, 1 Canada Square, Canary Wharf, London E14 5AB, UK	United Kingdom	GB	GBR
+230	INTEA	International Tea Promotion Association	International Tea Promotion Association	8	1						
+231	ITSO	International Telecommunications Satellite Organization	International Telecommunications Satellite Organization	8	1	51.5255719	-0.0863443	99 City Rd, London EC1Y 1BJ, UK	United Kingdom	GB	GBR
+232	ITU	International Telecommunications Union (UN)	International Telecommunications Union (UN)	8	1	46.2212148	6.1369052	Avenue Giuseppe-Motta, 1202 Genève, Switzerland	Switzerland	CH	CHE
+233	ITC	International Tin Council	International Tin Council	8	1						
+234	ITTO	International Tropical Timber Organization	International Tropical Timber Organization	8	1	35.4579321	139.6372653	1 Chome-1-1 Minatomirai, Nishi-ku, Yokohama-shi, Kanagawa-ken 220-0012, Japan	Japan	JP	JPN
+235	IUPNVP	International Union for Protection of New Varieties of Plants	International Union for Protection of New Varieties of Plants	8	1						
+236	IUPIP	International Union for the Protection of Industrial Property	International Union for the Protection of Industrial Property	8	1						
+237	UIPI	International Union for the Protection of Infants	International Union for the Protection of Infants	8	1						
+238	IWHAC	International Whaling Commission	International Whaling Commission	8	1	52.244101	0.110493	135 Station Rd, Impington, Cambridge CB24 9NP, UK	United Kingdom	GB	GBR
+239	IWC	International Wheat Council (See IWHAC for International Whaling Commission)	International Wheat Council (See IWHAC for International Whaling Commission)	8	1						
+240	ICDCS	Inter-State Committee for Drought in the Sahel	Inter-State Committee for Drought in the Sahel	8	1						
+241	IRAN	Iran, Islamic Republic of	Iran	3	1	32.427908	53.688046	Yazd Province, Unnamed Road, Iran	Iran, Islamic Republic of	IR	IRN
+242	IUSCT	Iran- U. S. Claims Tribunal	Iran- U. S. Claims Tribunal	0	1	52.1003877	4.2858895	Parkweg 13, 2585 JH Den Haag, Netherlands			
+243	IRAQ	Iraq, Republic of	Iraq	2	1	33.223191	43.679291	Unnamed Road, Iraq	Iraq	IQ	IRQ
+244	IRELAN	Ireland	Ireland	7	1	53.1423672	-7.692053599999999	Unnamed Road, Coolfin Glebe, Co. Offaly, Ireland	Ireland	IE	IRL
+245	ISLAM	Islamic Conference	Islamic Conference	8	1						
+246	IDBNK	Islamic Development Bank	Islamic Development Bank	8	1	21.4752476	39.2022738	8111 King Khalid, An Nazlah Al Yamaniyah District, Jeddah 22332 2444, Saudi Arabia	Saudi Arabia	SA	SAU
+247	ISRAEL	Israel, State of	Israel	3	1	31.046051	34.851612	224, Israel	Israel	IL	ISR
+248	ITALY	Italy (Italian Republic)	Italy (Italian Republic)	7	1	41.87194	12.56738	Viale Palmiro Togliatti, 487b, 00172 Roma RM, Italy	Italy	IT	ITA
+249	IVORYC	Ivory Coast, Republic of (aka Cote D'Ivoire)	Ivory Coast	1	1	7.539988999999999	-5.547079999999999	Unnamed Road, Côte d'Ivoire	Côte d'Ivoire	CI	CIV
+250	JAMAIC	Jamaica	Jamaica	6	1	18.109581	-77.297508	B3, Summerfield, Jamaica	Jamaica	JM	JAM
+251	JAPAN	Japan	Japan	3	1	36.204824	138.252924	Unnamed Road, Daimon, Nagawa-machi, Chiisagata-gun, Nagano-ken 386-0601, Japan	Japan	JP	JPN
+252	JVI	Joint Vienna Institute	Joint Vienna Institute	8	1	48.1967463	16.3464435	Mariahilfer Str. 97, 1060 Wien, Austria	Austria	AT	AUT
+253	JORDAN	Jordan, Hashemite Kingdom of	Jordan	2	1	30.585164	36.238414	مطار الملكه علياء الدولي، Jordan	Jordan	JO	JOR
+254	KAMPUC	Kampuchea, Democratic (aka Cambodia)	Kampuchea	3	1	40.7204716	-73.9893263	84 Rivington St, New York, NY 10002, USA	Cambodia	KH	KHM
+255	KENYA	Kenya, Republic of	Kenya	1	1	-0.023559	37.906193	Unnamed Road, Kenya	Kenya	KE	KEN
+256	KAZAKH	Khazakhstan (See USSR Before 1991)	Khazakhstan	5	1	48.019573	66.923684	Unnamed Road, 100000, Kazakhstan	Kazakhstan	KZ	KAZ
+257	KIRIBA	Kiribati, Republic of	Kiribati	3	1	-3.370417	-168.734039	Kiribati	Kiribati	KI	KIR
+258	KORES	Korea, Republic of (South)	Korea	3	1	37.66399759999999	127.9784585	54 Sokcho-ri, Dong-myeon, Hongcheon, Gangwon-do, South Korea	Korea, Republic of	KR	KOR
+259	KOREN	Korea, Democratic Peoples Republic of (North)	Korea	5	1	37.66399759999999	127.9784585	54 Sokcho-ri, Dong-myeon, Hongcheon, Gangwon-do, South Korea	Korea, Republic of	KR	KOR
+260	KUWAIT	Kuwait, State of	Kuwait	2	1	29.31166	47.481766	Unnamed Road, Kuwait	Kuwait	KW	KWT
+261	KFAD	Kuwait Fund for Arab Economic Development	Kuwait Fund for Arab Economic Development	8	1	29.3478968	47.9411387	Airport Rd, Kuwait	Kuwait	KW	KWT
+262	KYRGYZ	Kyrgyzstan (See USSR Before 1991)	Kyrgyzstan	5	1	41.20438	74.766098	Unnamed Road, Kyrgyzstan	Kyrgyzstan	KG	KGZ
+263	LPBC	La Plata Basin Commission	La Plata Basin Commission	8	1						
+264	LCBC	Lake Chad Basin Commission	Lake Chad Basin Commission	8	1	13.1078947	14.4490398	Lac, Chad	Chad	TD	TCD
+265	LAOS	Laos (Lao People's Democratic Republic)	Laos (Lao People's Democratic Republic)	3	1	19.85627	102.495496	Unnamed Road, Laos	Laos	LA	LAO
+266	LACP	Latin American Center for Physics	Latin American Center for Physics	8	1	38.9702577	-76.9292313	1 Physics Ellipse Dr, Riverdale, MD 20737, USA			
+267	LAES	Latin American Economic System	Latin American Economic System	8	1						
+268	LAFSS	Latin American Faculty of Social Sciences	Latin American Faculty of Social Sciences	8	1	14.6112407	-90.5107165	3A Calle, Guatemala	Guatemala	GT	GTM
+269	LACRIM	Latin American Institute for the Prevention of Crime and the Treatment of Offenders (ILANUD)	Latin American Institute for the Prevention of Crime and the Treatment of Offenders (ILANUD)	8	1						
+270	LAFTA	Latin American Integration Association	Latin American Integration Association	8	1						
+271	LATUN	Latin Union	Latin Union	8	1	38.9009036	-77.0359418	815 16th St NW, Washington, DC 20006, USA			
+272	LATVIA	Latvia (See USSR Before 1991)	Latvia 	5	1	56.879635	24.603189	Unnamed Road, Ikšķiles lauku teritorija, LV-5015, Latvia	Latvia	LV	LVA
+273	ARABL	League of Arab States (aka Arab League)	League of Arab States (aka Arab League)	8	1						
+274	LEAGUE	League of Nations	League of Nations	8	1	46.2266244	6.1404279	Palais des Nations, 1202 Genève, Switzerland	Switzerland	CH	CHE
+275	LEBANO	Lebanon (Lebanese Republic)	Lebanon (Lebanese Republic)	2	1	33.854721	35.862285	Unnamed Road, Zahlé, Lebanon	Lebanon	LB	LBN
+276	LESOTH	Lesotho, Kingdom of	Lesotho	1	1	-29.609988	28.233608	Unnamed Road, Lesotho	Lesotho	LS	LSO
+277	LIBERI	Liberia, Republic of	Liberia	1	1	6.428055	-9.429499000000002	Unnamed Road, Kpleto, Liberia	Liberia	LR	LBR
+278	LIBYA	Libya (Socialist Peoples Libyan Arab Jamahiriya)	Libya	2	1	26.3351	17.228331	Jufra District, Libya	Libya	LY	LBY
+279	LIECHT	Liechtenstein, Principality of	Liechtenstein	7	1	47.166	9.555373	Plankenstrasse, 9494 Schaan, Liechtenstein	Liechtenstein	LI	LIE
+280	LIPTAK	Liptako-Gourma Authority (aka Liptako-Gourma Integrated Development Authority)	Liptako-Gourma Authority (aka Liptako-Gourma Integrated Development Authority)	8	1						
+281	LITHUA	Lithuania (See USSR Before 1991)	Lithuania	7	1	55.169438	23.881275	1916, 54320, Lithuania	Lithuania	LT	LTU
+282	LUXEMB	Luxembourg, Grand Duchy of	Luxembourg	7	1	49.815273	6.129582999999999	CR346, 9184 Schrondweiler, Luxembourg	Luxembourg	LU	LUX
+283	MACAO	Macao	Macao	3	1	22.198745	113.543873	Edificio Parkway Mansion (bloco 2), 146 R. do Alm. Costa Cabral, Macau	Macau	MO	MAC
+284	MACEDO	Macedonia	Macedonia	5	1	41.608635	21.745275	Unnamed Road, Vojnica, Macedonia (FYROM)	Macedonia	MK	MKD
+285	MADAGA	Madagascar, Democratic Republic of	Madagascar	1	1	-18.766947	46.869107	Unnamed Road, Madagascar	Madagascar	MG	MDG
+286	MALAWI	Malawi, Republic of	Malawi	1	1	-13.254308	34.301525	Unnamed Road, Malawi	Malawi	MW	MWI
+287	MALAYS	Malaysia	Malaysia	3	1	4.210484	101.975766	Jalan Berembang - Kg Gua, Kampung Telemin, 27100 Padang Tengku, Pahang, Malaysia	Malaysia	MY	MYS
+288	MALDIV	Maldives, Republic of	Maldives	3	1	3.202778	73.22068	Maldives	Maldives	MV	MDV
+289	MALI	Mali, Republic of	Mali	1	1	17.570692	-3.996166	Goundam, Mali	Mali	ML	MLI
+290	MALTA	Malta, Republic of	Malta	7	1	35.937496	14.375416	Unnamed Road, Mgarr, Malta	Malta	MT	MLT
+291	MANOR	Mano River Union	Mano River Union	8	1	6.9294578	-11.5006548	Unnamed Road, Sierra Leone	Sierra Leone	SL	SLE
+292	MARSHA	Marshall Islands, Republic of the	Marshall Islands	3	1	7.131474	171.184478	Lagoon Rd, Majuro Atoll, RMI	Marshall Islands	MH	MHL
+293	MAURIT	Mauritania, Islamic Republic of	Mauritania	2	1	21.00789	-10.940835	Chinguetti, Mauritania	Mauritania	MR	MRT
+294	MAURUS	Mauritius	Mauritius	3	1	-20.348404	57.55215200000001	A 10, Mauritius	Mauritius	MU	MUS
+295	MEXICO	Mexico (United Mexican States)	Mexico (United Mexican States)	6	1	19.4326077	-99.133208	José María Pino Suárez 29, Centro Histórico, Centro, 06000 Ciudad de México, CDMX, Mexico	Mexico	MX	MEX
+296	MICRON	Micronesia, Federated States of	Micronesia	3	1	7.425554	150.550812	Federated States of Micronesia	Micronesia, Federated States of	FM	FSM
+297	MOLDOV	Moldova (See USSR Before 1991)	Moldova	5	1	47.411631	28.369885	R22, Moldova	Moldova, Republic of	MD	MDA
+298	MONACO	Monaco, Principality of	Monaco	7	1	43.73841760000001	7.424615799999999	1 Avenue Henry Dunant, 98000 Monaco	Monaco	MC	MCO
+299	MONGOL	Mongolia (Mongolian Peoples Republic)	Mongolia (Mongolian Peoples Republic)	5	1	40.7752206	-73.9641647	6 E 77th St, New York, NY 10075, USA	Mongolia	MN	MNG
+300	MONTSE	Montserrat (Island)	Montserrat (Island)	7	1	16.742498	-62.187366	Unnamed Road, Montserrat	Montserrat	MS	MSR
+301	ZZPLUR	More than two treaty registrants	More than two treaty registrants	0	1						
+302	MOROCC	Morocco, Kingdom of	Morocco	2	1	31.791702	-7.092619999999999	R208, Ouled Khellouf, Morocco	Morocco	MA	MAR
+303	MOZAMB	Mozambique, Peoples Republic of	Mozambique	1	1	-18.665695	35.529562	Cheringoma, Mozambique	Mozambique	MZ	MOZ
+304	MIGA	Multilateral Investment Guarantee Agency	Multilateral Investment Guarantee Agency	8	1	38.8980803	-77.04256	1800 G St NW, Washington, DC 20006, USA			
+305	MFO	Multinational Force and Observers (aka Sinai MFO)	Multinational Force and Observers (aka Sinai MFO)	8	1						
+306	MUSCAT	Muscat and Oman, Sultanate of  (See also OMAN)	Muscat and Oman	2	1	23.58589	58.4059227	Sultan Qaboos St, Muscat, Oman	Oman	OM	OMN
+307	NAMIBI	Namibia, Republic of	Namibia	1	1	-22.95764	18.49041	Unnamed Road, Namibia	Namibia		NAM
+308	NAURU	Nauru, Republic of	Nauru	3	1	-0.522778	166.931503	Unnamed Road, Nauru	Nauru	NR	NRU
+309	NEPAL	Nepal, Kingdom of	Nepal	3	1	28.394857	84.12400799999999	Unnamed Road, Parche 33700, Nepal	Nepal	NP	NPL
+310	NETHER	Netherlands, Kingdom of	Netherlands	7	1	52.132633	5.291265999999999	Van Weerden Poelmanweg 220, 3768 Soest, Netherlands	Netherlands	NL	NLD
+311	NEWZEA	New Zealand	New Zealand	4	1	-40.900557	174.885971	Unnamed Road, Queen Elizabeth Park, Paraparaumu 5034, New Zealand	New Zealand	NZ	NZL
+312	NEWFOU	Newfoundland	Newfoundland	4	1	53.1355091	-57.6604364	Trans-Labrador Hwy, Division No. 10, Subd. B, NL A0P, Canada	Canada	CA	CAN
+313	NEVIS	Nevis	Nevis	6	1	17.1553558	-62.57960259999999	Unnamed Road, Mannings, St Kitts & Nevis	St Kitts & Nevis	KN	KAN
+314	NICARA	Nicaragua, Republic of	Nicaragua	6	1	12.865416	-85.207229	NIC-13B, Nicaragua	Nicaragua	NI	NIC
+315	NIGER	Niger, Republic of the	Niger	1	1	17.607789	8.081666	Unnamed Road, Niger	Niger	NE	NER
+316	NIGERI	Nigeria, Federal Republic of	Nigeria	1	1	9.081999	8.675277	Unnamed Road, Nigeria	Nigeria	NG	NGA
+317	NORSAD	NORSAD Agency	NORSAD Agency	8	1	51.045145	-0.8993310000000001	Brows Cottage, Farnham Rd, Liss GU33 6JG, UK	United Kingdom	GB	GBR
+318	NORSAF	NORSAD Fund	NORSAD Fund	8	1						
+319	NASCO	North Atlantic Salmon Conservation Organization	North Atlantic Salmon Conservation Organization	8	1	55.9483235	-3.2088742	10 Rutland Square, Edinburgh EH1 2AS, UK	United Kingdom	GB	GBR
+320	NATO	North Atlantic Treaty Organization	North Atlantic Treaty Organization	8	1	34.730137	-86.675276	620 Discovery Dr NW, Huntsville, AL 35806, USA			
+321	NPMSO	North Pacific Marine Science Organization	North Pacific Marine Science Organization	8	1						
+322	NRHOD	Northern Rhodesia (See also ZAMBIA)	Northern Rhodesia	1	1	-17.7813039	31.0928127	Northern Rd, Harare, Zimbabwe	Zimbabwe	ZW	ZWE
+323	NORWAY	Norway, Kingdom of	Norway	7	1	60.47202399999999	8.468945999999999	Unnamed Road, 3580 Geilo, Norway	Norway	NO	NOR
+324	COIRT	Office of International Rail Transport	Office of International Rail Transport	8	1	25.6479123	85.0838153	1, Danapur Main Road, Birla Colony, Patna, Bihar 800011, India	India	IN	IND
+325	OMAN	Oman, Sultanate of	Oman	2	1	21.4735329	55.975413	Unnamed Road, Oman	Oman	OM	OMN
+326	OPECF	OPEC Fund for International Development	OPEC Fund for International Development	8	1	48.2058697	16.3785037	Parkring 10, 1010 Wien, Austria	Austria	AT	AUT
+327	OECD	Organization for Economic Cooperation and Development	Organization for Economic Cooperation and Development	8	1	48.8616038	2.2701051	25-33 Rue de Franqueville, 75116 Paris, France	France	FR	FRA
+328	ODSR	Organization for the Development of the Senegal River	Organization for the Development of the Senegal River	8	1						
+329	OAU	Organization of African Unity	Organization of African Unity	8	1	40.753995	-73.96703800000002	346 E 50th St, New York, NY 10022, USA			
+330	OAS	Organization of American States	Organization of American States	8	1	38.8928441	-77.0403808	200 17th St NW, Washington, DC 20006, USA			
+331	OCAS	Organization of Central American States	Organization of Central American States	8	1	21.3760275	-157.9282746	99-370 Moanalua Rd, Aiea, HI 96701, USA			
+332	OPEC	Organization of Petroleum Exporting Countries	Organization of Petroleum Exporting Countries	8	1	48.21427389999999	16.3660009	Helferstorferstraße 17, 1010 Wien, Austria	Austria	AT	AUT
+333	PAKIST	Pakistan, Islamic Republic of	Pakistan	3	1	30.375321	69.34511599999999	N-70, Pakistan	Pakistan	PK	PAK
+334	PLO	Palestinian Liberation Organization	Palestinian Liberation Organization	2	1						
+335	PATU	Pan African Telecommunication Union	Pan African Telecommunication Union	8	1						
+336	PASAN	Pan American Health Organization	Pan American Health Organization	8	1	38.8963005	-77.0496567	525 23rd St NW, Washington, DC 20037, USA			
+337	PANAMA	Panama, Republic of	Panama	6	1	8.537981	-80.782127	Unnamed Road, Panama	Panama	PA	PAN
+338	PAPUA	Papua New Guinea	Papua New Guinea	3	1	-6.314992999999999	143.95555	Unnamed Road, Papua New Guinea	Papua New Guinea	PG	PNG
+339	PARAGU	Paraguay, Republic of	Paraguay	6	1	-23.442503	-58.443832	5, Paraguay	Paraguay	PY	PRY
+340	CILSS	Permanent Inter-State Committee for Drought Control in the Sahel	Permanent Inter-State Committee for Drought Control in the Sahel	8	1						
+341	SIECA	Permanent Secretariat of the General Treaty on Central American Economic Integration	Permanent Secretariat of the General Treaty on Central American Economic Integration	8	1						
+342	PERU	Peru, Republic of	Peru	6	1	-9.189967	-75.015152	5N, Peru	Peru	PE	PER
+343	PHILIP	Philippines, Republic of the	Philippines	3	1	12.879721	121.774017	Poblacion-Dalajican Rd, Municipality of Concepcion, Romblon, Philippines	Philippines	PH	PHL
+344	POLAND	Poland, Republic of	Poland	5	1	51.919438	19.145136	Skórka 13, 95-045 Skórka, Poland	Poland	PL	POL
+345	PORTUG	Portugal (Portuguese Republic)	Portugal (Portuguese Republic)	7	1	39.39987199999999	-8.224454	Ponte de Barcelos, 2205 São Miguel do Rio Torto, Portugal	Portugal	PT	PRT
+346	CTBTO	Preparatory Commission for the Comprehensive Nuclear Test-Ban Treaty Organization	Preparatory Commission for the Comprehensive Nuclear Test-Ban Treaty Organization	8	1						
+347	QATAR	Qatar, State of	Qatar	2	1	25.354826	51.183884	Unnamed Road, Qatar	Qatar	QA	QAT
+348	SOVRR	Rail Collaboration Organization	Rail Collaboration Organization	8	1						
+349	RAKHAI	Ras al-Khaimah, United Arab Emirates	Ras al-Khaimah	2	1	25.8006926	55.9761994	Al Mamourah Rd - Ras al Khaimah - United Arab Emirates	United Arab Emirates	AE	ARE
+350	REDCRO	Red Cross (International)	Red Cross (International)	8	1	38.9040879	-77.04060009999999	1100 Connecticut Ave NW, Washington, DC 20036, USA			
+351	BELAU	Republic of Belau (Palau)	Republic of Belau (Palau)	3	1	7.514979999999999	134.58252	Unnamed Road, Ngiwal, Palau	Palau	PW	PLW
+352	ROMANI	Romania, Republic of	Romania	5	1	45.943161	24.96676	DJ105A, Romania	Romania	RO	ROU
+353	RUSSIA	Russia, Russian Federation (See USSR Before 1991)	Russia	5	1	61.52401	105.318756	ул. Сущевский вал, 43 строение 2, 35/4, Москва, Krasnoyarskiy kray, Russia, 648591	Russian Federation	RU	RUS
+354	RWANDA	Rwanda (Rwandese Republic)	Rwanda (Rwandese Republic)	1	1	-1.940278	29.873888	Unnamed Road, Rwanda	Rwanda	RW	RWA
+355	STCRI	Saint Christopher	Saint Christopher	6	1	18.4180414	-70.1065849	Carr. Sanchez, San Cristóbal 91000, Dominican Republic	Dominican Republic	DO	DOM
+356	STKIT	Saint Kitts and Nevis, Federation of (See St. Christopher or Nevis Before Sept. 1983)	Saint Kitts and Nevis	6	1	17.357822	-62.782998	Unnamed Road, Mansion, St Kitts & Nevis	St Kitts & Nevis	KN	KAN
+357	STLUC	Saint Lucia	Saint Lucia	6	1	13.909444	-60.978893	Unnamed Road, Millet, St Lucia	St Lucia	LC	LCA
+358	STVIN	Saint Vincent and the Grenadines	Saint Vincent and the Grenadines	6	1	12.984305	-61.287228	Unnamed Road, St Vincent and the Grenadines	St Vincent and the Grenadines	VC	VCT
+359	SAMOA	Samoa (See also Western Samoa)	Samoa	3	1	-13.759029	-172.104629	Main West Coast Rd, Samoa	Samoa	WS	WSM
+360	SANMAR	San Marino, Republic of	San Marino	7	1	43.94236	12.457777	Via Fiordalisio, 3, 47893, San Marino	San Marino	SM	SMR
+361	SAOTOM	Sao Tome and Principe, Democratic Republic of	Sao Tome and Principe	1	1	0.18636	6.613080999999999	EN nº 2, São Tomé and Príncipe	Sao Tome and Principe	ST	STP
+362	SAUDI	Saudi Arabia, Kingdom of	Saudi Arabia	2	1	23.885942	45.079162	Unnamed Road 19212, Saudi Arabia	Saudi Arabia	SA	SAU
+363	SECAB	"Secretariat of the ""Andres Bello"" Convention"	"Secretariat of the ""Andres Bello"" Convention"	8	1						
+364	SENEGA	Senegal, Republic of	Senegal	1	1	14.497401	-14.452362	Unnamed Road, Senegal	Senegal	SN	SEN
+365	SENGAM	Senegal-Gambia Federation (Senegambia)	Senegal-Gambia	1	1	13.2229202	-16.5819789	Unnamed Road, Basori, The Gambia	Gambia	GM	GMB
+366	SEYCHE	Seychelles, Republic of	Seychelles	1	1	-4.679574	55.491977	Unnamed Road, Victoria, Seychelles	Seychelles	SC	SYC
+367	SHARJA	Sharjah, United Arab Emirates	Sharjah	2	1	25.3462553	55.4209317	523 Sheikh Rashid Bin Saqr Al Qasimi St - Sharjah - United Arab Emirates	United Arab Emirates	AE	ARE
+368	SIERRA	Sierra Leone, Republic of	Sierra Leone	1	1	8.460555	-11.779889	Unnamed Road, Sierra Leone	Sierra Leone	SL	SLE
+369	SINGAP	Singapore, Republic of	Singapore	3	1	1.352083	103.819836	114 Windsor Park Rd, Singapore 574178	Singapore	SG	SGP
+370	SLOVAK	Slovakia	Slovakia	5	1	48.669026	19.699024	Páleničné 2266, 976 52 Čierny Balog, Slovakia	Slovakia	SK	SVK
+371	SLOVEN	Slovenia, Slovenian Republic (See Yugoslavia Before 1991)	Slovenia	5	1	46.151241	14.995463	Zavine 23, 1410 Zagorje ob Savi, Slovenia	Slovenia	SI	SVN
+372	SOLOI	Solomon Islands.	Solomon Islands.	3	1	-9.64571	160.156194	Unnamed Road, Solomon Islands	Solomon Islands	SB	SLB
+373	SOMALI	Somali Democratic Republic (Somalia)	Somalia	2	1	5.152149	46.199616	Unnamed Road, Somalia	Somalia	SO	SOM
+374	SAFRI	South Africa, Republic of	South Africa	4	1	-30.559482	22.937506	Unnamed Road, South Africa	South Africa	ZA	ZAF
+375	SATO	South American Travel Organization	South American Travel Organization	8	1	-33.420097	-70.603793	Holanda 100-128, Providencia, Región Metropolitana, Chile	Chile	CL	CHL
+376	SPBECO	South Pacific Bureau for Economic Cooperation	South Pacific Bureau for Economic Cooperation	8	1						
+377	SPACI	South Pacific Commission	South Pacific Commission	8	1	-18.1213012	178.4590602	Ratu Mara Road, Suva, Fiji	Fiji	FJ	FJI
+378	SPFFA	South Pacific Forum Fisheries Agency	South Pacific Forum Fisheries Agency	8	1						
+379	SEATO	Southeast Asia Treaty Organization	Southeast Asia Treaty Organization	8	1						
+380	SRHOD	Southern Rhodesia (See also ZIMBAB)	Southern Rhodesia	1	1	-16.9620634	26.419389	Unnamed Road, Zambia	Zambia	ZM	ZMB
+381	ORMAL	Sovereign Order of the Knights of Malta	Sovereign Order of the Knights of Malta	8	1						
+382	SPAIN	Spain	Spain	7	1	40.46366700000001	-3.74922	Empresa Sociedad Cooperativa Industrial de Transportes El Prat, C/Principat D'Andorra 63-65 Viladecans, 28023 Madrid, Spain	Spain	ES	ESP
+383	SRILAN	Sri Lanka, Democratic Socialist Republic of	Sri Lanka	3	1	7.873053999999999	80.77179699999999	Unnamed Road, Dambulla, Sri Lanka	Sri Lanka	LK	LKA
+384	SUDAN	Sudan, Democratic Republic of	Sudan	2	1	12.862807	30.217636	Unnamed Road, Sudan	Sudan	SD	SDN
+385	SCAPJ	Supreme Command, Allied Powers in Japan	Supreme Command	3	1	13.88632	100.5649502	108 แจ้งวัฒนะ แขวง Khwaeng Thung Song Hong, Khet Lak Si, Krung Thep Maha Nakhon 10210, Thailand	Thailand	TH	THA
+386	SURINA	Suriname, Republic of	Suriname	6	1	3.919305	-56.027783	Boven Saramacca, Suriname	Suriname	SR	SUR
+387	SWAZIL	Swaziland, Republic of	Swaziland	1	1	-26.522503	31.465866	Unnamed Road, Swaziland	Swaziland	SZ	SWZ
+388	SWEDEN	Sweden, Kingdom of	Sweden	7	1	60.12816100000001	18.643501	Gruvvägen 2, 760 49 Herräng, Sweden	Sweden	SE	SWE
+389	SWITZE	Switzerland (Swiss Confederation)	Switzerland (Swiss Confederation)	7	1	46.818188	8.227511999999999	Unnamed Road, 6072 Sachseln, Switzerland	Switzerland	CH	CHE
+390	SYRIA	Syria (Syrian Arab Republic)	Syria (Syrian Arab Republic)	2	1	34.80207499999999	38.996815	M20, Syria	Syrian Arab Republic	SY	SYR
+391	TAIWAN	Taiwan (Republic of China after 1949)	Taiwan (Republic of China after 1949)	3	1	24.806964	121.781436	No. 1, Lane 95, Qiwulan Road, Jiaoxi Township, Yilan County, Taiwan 262	Taiwan	TW	TWN
+392	TAJIKI	Tajikistan (See USSR Before 1991)	Tajikistan	5	1	38.861034	71.276093	Tavildara, Tajikistan	Tajikistan	TJ	TJK
+393	TANGAN	Tanganyika	Tanganyika	1	1	37.672167	-97.55854	1000 S Hawkins Ln, Goddard, KS 67052, USA	Tanzania	TZ	TZA
+394	TANZAN	Tanzania, United Republic of	Tanzania	1	1	-6.369028	34.888822	Unnamed Road, Tanzania	Tanzania, United Republic of	TZ	TZA
+395	TAB	Technical Assistance Board, UN	Technical Assistance Board	8	1	33.7811419	-84.4065868	592 10th St NW, Atlanta, GA 30318, USA			
+396	TECAG	Technical Center for Agricultural and Rural Cooperation (CTA-ACP/EU)	Technical Center for Agricultural and Rural Cooperation (CTA-ACP/EU)	8	1	51.977769	5.647915999999999	Agro Business Park 2, 6708 PW Wageningen, Netherlands	Netherlands	NL	NLD
+397	THAILA	Thailand	Thailand	3	1	15.870032	100.992541	357 ตำบล หนองแจง Tambon Nong Chaeng, Amphoe Bueng Sam Phan, Chang Wat Phetchabun 67160, Thailand	Thailand	TH	THA
+398	TIBET	Tibet	Tibet	3	1	30.1533605	88.7878678	Unnamed Road, Xietongmen Xian, Rikaze Shi, Xizang Zizhiqu, China	China	CN	CHN
+399	TOGO	Togo (Togolese Republic)	Togo (Togolese Republic)	1	1	8.619543	0.824782	Unnamed Road, Togo	Togo	TG	TGO
+400	TONGA	Tonga, Kingdom of	Tonga	3	1	-21.178986	-175.198242	Unnamed Road, Tonga	Tonga	TO	TON
+401	TJORD	Trans-Jordan	Trans-Jordan	2	1	31.939512	35.842402	Al-Ommal St., Amman, Jordan	Jordan	JO	JOR
+402	TRANSK	Transkei, Republic of	Transkei	1	1	-31.4631617	29.2320784	Unnamed Road, Vilo, South Africa	South Africa	ZA	ZAF
+403	TRIEST	Trieste, Free Territory of	Trieste	7	1	45.6495264	13.7768182	Piazza Carlo Goldoni, 5, 34122 Trieste TS, Italy	Italy	IT	ITA
+404	TRINT	Trinidad and Tobago, Republic of	Trinidad and Tobago	6	1	10.691803	-61.222503	Aripo Rd, Trinidad and Tobago	Trinidad and Tobago	TT	TTO
+405	TUNISI	Tunisia, Republic of	Tunisia	2	1	33.886917	9.537499	Unnamed Road, El Hamma, Tunisia	Tunisia	TN	TUN
+406	TURKEY	Turkey, Republic of	Turkey	2	1	38.963745	35.243322	Eskiömerler Mahallesi, Unnamed Road, 38100 Kocasinan/Kayseri, Turkey	Turkey	TR	TUR
+407	TURKME	Turkmenistan (See USSR Before 1991)	Turkmenistan	5	1	38.969719	59.556278	Ahal, Turkmenistan	Turkmenistan	TM	TKM
+408	TUVALU	Tuvalu	Tuvalu	3	1	-7.109534999999999	177.64933	Tuvalu	Tuvalu	TV	TUV
+409	UGANDA	Uganda, Republic of	Uganda	1	1	1.373333	32.290275	Unnamed Road, Uganda	Uganda	UG	UGA
+410	UKRAIN	Ukraine (Pre-1991, Ukrainian Soviet Socialist Republic)	Ukraine (Pre-1991	5	1	49.5256819	26.231854	Volochysk Holocaust Memorial and Pre-World War I Jewish Cemetery, вулиця Котляревського, Khmel'nyts'ka oblast, Ukraine	Ukraine	UA	UKR
+411	UAQAIW	Umm al-Qawain, United Arab Emirates	Umm al-Qawain	2	1	25.5204824	55.7133909	Sheikh Mohammed Bin Zayed Rd - Umm Al Quwain - United Arab Emirates	United Arab Emirates	AE	ARE
+412	UNCDF	UN Capital Development Fund	UN Capital Development Fund	8	1	0.3383607	32.5962991	49 Mackenzie Vale Rd, Kampala, Uganda	Uganda	UG	UGA
+413	UNCHS	UN Center for Human Settlements	UN Center for Human Settlements	8	1	-1.2326911	36.8178785	New Office Facility, Nairobi, Kenya	Kenya	KE	KEN
+414	UNICEF	UN Children's Fund	UN Children's Fund	8	1	40.7504019	-73.96991659999999	3 United Nations Plaza, New York, NY 10017, USA			
+415	UNCTAD	UN Conference on Trade and Development	UN Conference on Trade and Development	8	1	46.2281329	6.1422856	The New Building, 1202 Genève, Switzerland	Switzerland	CH	CHE
+416	UNDP	UN Development Program	UN Development Program	8	1	40.7504701	-73.96912209999999	Millennium UN Plaza, 1 United Nations Plaza, New York, NY 10017, USA			
+417	UNDRC	UN Disaster Relief Coordinator, Office of	UN Disaster Relief Coordinator	8	1						
+418	UNESCP	UN Economic and Social Commission for Asia and the Pacific	UN Economic and Social Commission for Asia and the Pacific	8	1	13.7634029	100.5082958	United Nations Building, Khwaeng Bang Khun Phrom, Khet Phra Nakhon, Krung Thep Maha Nakhon 10200, Thailand	Thailand	TH	THA
+419	UNECLA	UN Economic Commission for Latin America	UN Economic Commission for Latin America	8	1	-33.401701	-70.6003922	Dag Hammarskjold 3427-3461, Vitacura, Región Metropolitana, Chile	Chile	CL	CHL
+420	UNESCO	UN Educational, Scientific and Cultural Organization	UN Educational	8	1	40.7503558	-73.9699445	3 United Nations Plaza, New York, NY 10017, USA			
+421	UNEP	UN Environmental Program	UN Environmental Program	8	1	-1.2323616	36.816411	New Office Facility, Nairobi, Kenya	Kenya	KE	KEN
+422	UNFDAC	UN Fund for Drug Abuse Control	UN Fund for Drug Abuse Control	8	1						
+423	UNFPA	UN Fund for Population Activities	UN Fund for Population Activities	8	1	40.749004	-73.97515159999999	605 3rd Ave, New York, NY 10158, USA			
+424	UNHCR	UN High Commissioner for Refugees	UN High Commissioner for Refugees	8	1	7.2415764	-70.7302466	Carrera Rondón, Guasdualito, Apure, Venezuela	Venezuela, Bolivarian Republic of	VE	VEN
+425	UNIDO	UN Industrial Development Organization	UN Industrial Development Organization	8	1	48.23495639999999	16.4167421	Vienna International Centre, 1220 Wien, Austria	Austria	AT	AUT
+426	UNJSPF	UN Joint Staff Pension Fund	UN Joint Staff Pension Fund	8	1						
+427	UNKRA	UN Korean Reconstruction Agency	UN Korean Reconstruction Agency	8	1						
+428	UNRWA	UN Palestine Refugees Relief and Works Agency	UN Palestine Refugees Relief and Works Agency	8	1						
+429	UNRRA	UN Relief and Rehabilitation Agency	UN Relief and Rehabilitation Agency	8	1						
+430	UNFNRE	UN Revolving Fund for National Resources Exploration	UN Revolving Fund for National Resources Exploration	8	1						
+431	UNTAG	UN Transition Assistance Group	UN Transition Assistance Group	8	1						
+432	USSR	Union of Soviet Socialist Republics (See individual republics after 1991)	Soviet Union	5	1	31.788345	35.208487	Gesher HaHayim 10, Jerusalem, Israel	Israel	IL	ISR
+433	UARABE	United Arab Emirates (individual emirates separately listed)	United Arab Emirates	2	1	23.424076	53.847818	Unnamed Road - Abu Dhabi - United Arab Emirates	United Arab Emirates	AE	ARE
+434	UK	United Kingdom of Great Britain and Northern Ireland.	United Kingdom of Great Britain and Northern Ireland.	4	1	55.378051	-3.435973	39-41 high streets peterport, Moffat GY1 2JT, UK	United Kingdom	GB	GBR
+435	UN	United Nations	United Nations	8	1	40.7488758	-73.9680091	United Nations Secretariat Building, 405 E 42nd St, New York, NY 10017, USA			
+436	USA	United States of America	United States of America	9	1	37.09024	-95.712891	5000 Estate Enighed, Independence, KS 67301, USA	United States	US	USA
+437	UPU	Universal Postal Union	Universal Postal Union	8	1	46.9389163	7.4734617	Weltpoststrasse 4, 3015 Bern, Switzerland	Switzerland	CH	CHE
+438	UPEACE	University for Peace	University for Peace	8	1	9.9218089	-84.2777377	Unnamed Road, San José, Costa Rica	Costa Rica	CR	CRI
+439	UPVOL	Upper Volta, Republic of the	Upper Volta	1	1	37.0974999	-120.925	24038 Ingomar Grade, Los Banos, CA 93635, USA	Burkina Faso	BF	BFA
+440	URUGUA	Uruguay, Eastern Republic of	Uruguay	6	1	-32.522779	-55.765835	Unnamed Road, Tacuarembó, Uruguay	Uruguay	UY	URY
+441	UZBEKI	Uzbekistan (See USSR Before 1991)	Uzbekistan	5	1	41.377491	64.585262	Unnamed Road, Uzbekistan	Uzbekistan	UZ	UZB
+442	VANUAT	Vanuatu, Republic of	Vanuatu	3	1	-15.376706	166.959158	Unnamed Road, Vanuatu	Vanuatu	VU	VUT
+443	VATICA	Vatican City State	Vatican City State	7	1	41.902916	12.453389	Via del Governatorato, 00120 Città del Vaticano, Vatican City	Holy See (Vatican City State)	VA	VAT
+444	VENEZU	Venezuela, Republic of	Venezuela	6	1	6.42375	-66.58973	Cedeno, Bolívar, Venezuela	Venezuela, Bolivarian Republic of	VE	VEN
+445	WAFDA	West African Development Association	West African Development Association	8	1	5.5579893	-0.2236245	Graphic Rd, Accra, Ghana	Ghana	GH	GHA
+446	WAFDB	West African Development Bank (aka WADB)	West African Development Bank (aka WADB)	8	1						
+447	WAEC	West African Economic Community	West African Economic Community	8	1	9.0422621	7.525232000000001	102 Yakubu Gowon Cres, Asokoro, Abuja, Nigeria	Nigeria	NG	NGA
+448	WAFMU	West African Monetary Union	West African Monetary Union	8	1	5.627146499999999	-0.1784102	Legon E Rd, Accra, Ghana	Ghana	GH	GHA
+449	WARDA	West African Rice Development Association	West African Rice Development Association	8	1						
+450	WINDI	West Indies (See individual countries after 1969)	West Indies	6	1	18.2345027	-66.4108475	Cll Gregorio, Orocovis, 00720, Puerto Rico	Puerto Rico	PR	PRI
+451	WEU	Western European Union	Western European Union	8	1	13.077093	-59.60316899999999	Highway 7, Bridgetown, Barbados	Barbados	BB	BRB
+452	WSAMO	Western Samoa, Independent State of	Western Samoa	3	1	-13.759029	-172.104629	Main West Coast Rd, Samoa	Samoa	WS	WSM
+453	VIET	Vietcong (Provisional Revolutionary Government of South Vietnam)	Vietcong (Provisional Revolutionary Government of South Vietnam)	0	1						
+454	VIETS	Vietnam, Republic of (South)	Vietnam	3	1	14.058324	108.277199	Tran Hung Dao Street, Mang Yang, Gia Lai, Vietnam	Viet Nam	VN	VNM
+455	VIETN	Vietnam, Socialist Republic of (North)	Vietnam	5	1	14.058324	108.277199	Tran Hung Dao Street, Mang Yang, Gia Lai, Vietnam	Viet Nam	VN	VNM
+456	VINE	Vine and Wine Office (International)	Vine and Wine Office (International)	8	1						
+457	WFP	World Food Program	World Food Program	8	1	40.7528577	-73.97228460000001	733 3rd Ave, New York, NY 10017, USA			
+458	WHO	World Health Organization	World Health Organization	8	1	46.232727	6.134357	Avenue Appia 20, 1202 Genève, Switzerland	Switzerland	CH	CHE
+459	WIPO	World Intellectual Property Organization	World Intellectual Property Organization	8	1	51.8890426	5.662994299999999	Paulusstraat 12, 6653 BP Deest, Netherlands	Netherlands	NL	NLD
+460	WMO	World Meteorological Organization	World Meteorological Organization	8	1	46.223396	6.146612999999999	OMM, 1202 Genève, Switzerland	Switzerland	CH	CHE
+461	WTO	World Tourism Organization	World Tourism Organization	8	1	40.4605029	-3.691647999999999	Calle del Poeta Joan Maragall, 42, 28020 Madrid, Spain	Spain	ES	ESP
+462	YEMES	Yemen, Peoples Democratic Republic of (South)	Yemen	2	1	15.552727	48.516388	540, Yemen	Yemen	YE	YEM
+463	YEMEN	Yemen, Republic of (Jamhiuriya al Yamaniya) (after May 1990)	Yemen	2	1	15.552727	48.516388	540, Yemen	Yemen	YE	YEM
+464	YEMENA	Yemen Arab Republic (North)	Yemen Arab Republic (North)	2	1	31.9586026	35.925352	Ibrahim Tukan St., Amman, Jordan	Jordan	JO	JOR
+465	YUGOSL	Yugoslavia, Socialist Federal Republic of	Yugoslavia	5	1				Yugoslavia	YU	YUG
+466	ZAIRE	Zaire, Republic of	Zaire	1	1	-4.038333	21.758664	Kasai, Democratic Republic of the Congo	Colombia	CO	COL
+467	ZAMBIA	Zambia, Republic of (Before 1964 See NRHOD)	Zambia	1	1	-13.133897	27.849332	Unnamed Road, Zambia	Zambia	ZM	ZMB
+468	ZANZIB	Zanzibar	Zanzibar	1	1	-6.165916999999999	39.202641	Karume Rd, Zanzibar Town, Tanzania	Tanzania, United Republic of	TZ	TZA
+469	ZIMBAB	Zimbabwe (Before 1979 See SRHOD)	Zimbabwe	1	1	-19.015438	29.154857	Unnamed Road, Zimbabwe	Zimbabwe	ZW	ZWE
+470	ZZMULT	Z-Multilateral Treaty (more than two parties)	Z-Multilateral Treaty (more than two parties)	0	1						
+471	ZZBOTH	Z-Two treaty registrants	Z-Two treaty registrants	0	1						
