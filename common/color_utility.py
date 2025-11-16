@@ -46,35 +46,7 @@ class ColorGradient:
             # Add it to our list of output colors
             RGB_list.append(curr_vector)
 
-        return ColorGradient.color_dict(RGB_list)
-
-    @staticmethod
-    def rand_hex_color(num: int = 1) -> str | list[str]:
-        """Generate random hex colors, default is one, returning a string. If num is greater than 1, an array of strings is returned."""
-        colors: list[str] = [
-            ColorGradient.RGB_to_hex([random.random() * 255, random.random() * 255, random.random() * 255])
-            for i in range(num)
-        ]
-        return colors[0] if num == 1 else colors
-
-    @staticmethod
-    def polylinear_gradient(colors: list[str], n: int) -> dict[str, Any]:
-        """returns a list of colors forming linear gradients between
-        all sequential pairs of colors. "n" specifies the total
-        number of desired output colors"""
-        # The number of colors per individual linear gradient
-        n_out = int(float(n) / (len(colors) - 1))
-        # returns dictionary defined by color_dict()
-        gradient_dict: dict[str, Any] = ColorGradient.linear_gradient(colors[0], colors[1], n_out)
-
-        if len(colors) > 1:
-            for col in range(1, len(colors) - 1):
-                v: dict[str, Any] = ColorGradient.linear_gradient(colors[col], colors[col + 1], n_out)
-                for k in ("hex", "r", "g", "b"):
-                    # Exclude first point to avoid duplicates
-                    gradient_dict[k] += v[k][1:]
-
-        return gradient_dict
+    #     return ColorGradient.color_dict(RGB_list)
 
 
 class StaticColorMap:
@@ -93,14 +65,6 @@ class StaticColorMap:
         if len(unseen_categories) == 0:
             return self
         self.color_map.update({v: self.next_color() for v in unseen_categories})
-        return self
-
-    def add_categories2(self, categories: Sequence[str]) -> Self:
-        categories = list(set(categories) - set(self.color_map.keys() - {np.nan}))
-        if len(categories) == 0:
-            return self
-        colors: list[str] = list(islice(cycle(self.palette), None, len(categories)))
-        self.color_map.update({v: colors[i] for i, v in enumerate(categories)})
         return self
 
     def get_palette(self, categories: Sequence[str]) -> list[str]:
