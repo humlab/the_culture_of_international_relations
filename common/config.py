@@ -3,7 +3,6 @@ import os
 import re
 from typing import Any
 
-import numpy as np
 import pandas as pd
 
 from common.resources import get_region_parties
@@ -28,7 +27,25 @@ def get_tag_set() -> pd.DataFrame:
     return _tag_set
 
 
-AGGREGATES: dict[str, np.ufunc] = {"mean": np.mean, "sum": np.sum, "max": np.max, "std": np.std}  # type: ignore
+POS_TO_COUNT: dict[str, int] = {
+    "SYM": 0,
+    "PART": 0,
+    "ADV": 0,
+    "NOUN": 0,
+    "CCONJ": 0,
+    "ADJ": 0,
+    "DET": 0,
+    "ADP": 0,
+    "INTJ": 0,
+    "VERB": 0,
+    "NUM": 0,
+    "PRON": 0,
+    "PROPN": 0,
+}
+
+POS_NAMES: list[str] = list(sorted(POS_TO_COUNT.keys()))
+
+# AGGREGATES: dict[str, np.ufunc] = {"mean": np.mean, "sum": np.sum, "max": np.max, "std": np.std}  # type: ignore
 
 HYPHEN_REGEXP: re.Pattern[str] = re.compile(r"\b(\w+)-\s*\r?\n\s*(\w+)\b", re.UNICODE)
 
@@ -284,22 +301,22 @@ TOPIC_GROUP_MAPS: dict[str, dict[str, str]] = {
     for group_name in DEFAULT_TOPIC_GROUPS
 }
 
-default_graph_tools: str = "pan,wheel_zoom,box_zoom,reset,hover,save"
+# default_graph_tools: str = "pan,wheel_zoom,box_zoom,reset,hover,save"
 
-output_formats: dict[str, str] = {
-    "Plot vertical bar": "plot_bar",
-    "Plot horisontal bar": "plot_barh",
-    "Plot vertical bar, stacked": "plot_bar_stacked",
-    "Plot horisontal bar, stacked": "plot_barh_stacked",
-    "Plot line": "plot_line",
-    "Table": "table",
-    "Pivot": "pivot",
-}
+# output_formats: dict[str, str] = {
+#     "Plot vertical bar": "plot_bar",
+#     "Plot horisontal bar": "plot_barh",
+#     "Plot vertical bar, stacked": "plot_bar_stacked",
+#     "Plot horisontal bar, stacked": "plot_barh_stacked",
+#     "Plot line": "plot_line",
+#     "Table": "table",
+#     "Pivot": "pivot",
+# }
 
 
-class BunchOfStuff:
-    def __init__(self, **kwds) -> None:
-        self.__dict__.update(kwds)
+# class BunchOfStuff:
+#     def __init__(self, **kwds) -> None:
+#         self.__dict__.update(kwds)
 
 
 KindOfChart = collections.namedtuple("KindOfChart", "description name kind stacked horizontal")
@@ -322,7 +339,7 @@ CHART_TYPES: list[KindOfChart] = [
 ]
 
 CHART_TYPE_MAP: dict[str, KindOfChart] = {x.name: x for x in CHART_TYPES}
-CHART_TYPE_OPTIONS: dict[str, str] = {x.name: x.name for x in CHART_TYPES}
+# CHART_TYPE_OPTIONS: dict[str, str] = {x.name: x.name for x in CHART_TYPES}
 CHART_TYPE_NAME_OPTIONS: list[tuple[str, str]] = [(x.description, x.name) for x in CHART_TYPES]
 
 # output_charts = ([x.description for x in CHART_TYPES], CHART_TYPES)
