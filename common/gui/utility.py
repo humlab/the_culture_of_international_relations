@@ -3,7 +3,7 @@ from typing import Any
 import pandas as pd
 from textacy.corpus import Corpus
 
-from common.corpus.textacy_corpus_utility import get_corpus_documents
+from common.corpus.corpus_utility import get_corpus_documents
 from common.utility import trunc_year_by
 
 

@@ -18,10 +18,11 @@
 # ### <span style='color: green'>SETUP </span> Prepare and Setup Notebook <span style='float: right; color: red'>MANDATORY</span>
 
 # %% code_folding=[]
-from common import config, setup_config
-from common.corpus.textacy_corpus_utility import CorpusContainer
+from common import setup_config
+from common import config
+from common.corpus.corpus_utility import CorpusContainer
 from common.gui import textacy_corpus_gui, word_frequencies_gui
-from common.gui.load_wti_index_gui import current_wti_index, load_wti_index_with_gui
+from common.gui.load_wti_index_gui import load_wti_index_with_gui, current_wti_index
 
 await setup_config()
 
@@ -38,12 +39,12 @@ current_corpus = lambda: CorpusContainer.corpus()
 
 # %%
 container: CorpusContainer = current_corpus_container()
-textacy_corpus_gui.display_corpus_load_gui(config.DATA_FOLDER, current_wti_index(), container)
+textacy_corpus_gui.display_corpus_load_gui(config.DATA_FOLDER, current_wti_index(), container);
 
 # %% [markdown]
 # ### <span style='color: green;'>DESCRIBE</span> List of Most Frequent Words<span style='color: blue; float: right'>OPTIONAL</span>
 
 # %%
-word_frequencies_gui.word_frequency_gui(current_wti_index(), current_corpus())
+word_frequencies_gui.word_frequency_gui(current_wti_index(), current_corpus());
 
 # %%

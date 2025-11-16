@@ -18,13 +18,12 @@
 # ### <span style='color: green'>SETUP </span> Prepare and Setup Notebook <span style='float: right; color: red'>MANDATORY</span>
 
 # %% code_folding=[]
-
 import os
 
 from loguru import logger
 
 from common import config
-from common.corpus import textacy_corpus_utility as textacy_utility
+from common.corpus import corpus_utility as corpus_utility
 
 # %%
 from common.gui.load_wti_index_gui import load_wti_index_with_gui
@@ -34,8 +33,8 @@ load_wti_index_with_gui(data_folder=config.DATA_FOLDER)
 
 # %matplotlib inline
 
-current_corpus_container = textacy_utility.CorpusContainer.container
-current_corpus = textacy_utility.CorpusContainer.corpus
+current_corpus_container = corpus_utility.CorpusContainer.container
+current_corpus = corpus_utility.CorpusContainer.corpus
 
 
 # %% [markdown]
@@ -53,8 +52,6 @@ current_corpus = textacy_utility.CorpusContainer.corpus
 # ## <span style='color: green'>PREPARE </span> Extract Text From Corpus <span style='float: right; color: green'>TRY IT</span>
 
 # %% code_folding=[]
-
-
 subst_filename = os.path.join(config.DATA_FOLDER, "term_substitutions.txt")
 corpus = current_corpus_container().textacy_corpus
 corpus_path = current_corpus_container().prepped_source_path
@@ -62,6 +59,5 @@ if corpus is None:
     logger.info("Please load corpus!")
 else:
     display_generate_tokenized_corpus_gui(corpus, corpus_path)
-
 
 # %%

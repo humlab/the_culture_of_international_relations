@@ -7,7 +7,7 @@ from IPython.display import display
 from rake_nltk import Metric, Rake 
 
 from common import treaty_state
-from common.corpus import textacy_corpus_utility as textacy_utility
+from common.corpus import corpus_utility
 from common.gui import utility as gui_utility
 
 
@@ -65,7 +65,7 @@ def display_rake_gui(corpus, language):
     def compute_textacy_rake(corpus, treaty_id, language, normalize, n_keyterms, metric):
         gui.output.clear_output()
         with gui.output:
-            doc = textacy_utility.get_document_by_id(corpus, treaty_id)
+            doc = corpus_utility.get_document_by_id(corpus, treaty_id)
             phrases = textacy_rake(
                 doc, language=language, normalize=normalize, n_keyterms=n_keyterms, stopwords=None, metric=metric
             )

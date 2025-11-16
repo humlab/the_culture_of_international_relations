@@ -28,7 +28,7 @@ import types
 
 import matplotlib.pyplot as plt
 from common import utility, widgets_config, config, utility, treaty_state
-from common.corpus import textacy_corpus_utility as textacy_utility
+from common.corpus import corpus_utility
 from common.gui.load_wti_index_gui import current_wti_index, load_wti_index_with_gui
 from common.gui import textacy_corpus_gui
 from common.gui.utility import get_treaty_time_groupings
@@ -47,8 +47,8 @@ TREATY_TIME_GROUPINGS: dict[str, dict[str, Any]] = get_treaty_time_groupings()
 # set_matplotlib_formats('svg')   
 #bokeh.plotting.output_notebook()
 
-current_corpus_container = textacy_utility.CorpusContainer.container
-current_corpus = textacy_utility.CorpusContainer.corpus
+current_corpus_container = corpus_utility.CorpusContainer.container
+current_corpus = corpus_utility.CorpusContainer.corpus
 
 
 # %% [markdown]
@@ -124,7 +124,7 @@ def display_rake_gui(corpus, language):
     def compute_textacy_rake(corpus, treaty_id, language, normalize, n_keyterms, metric):
         gui.output.clear_output()
         with gui.output:
-            doc = textacy_utility.get_treaty_doc(corpus, treaty_id)
+            doc = corpus_utility.get_treaty_doc(corpus, treaty_id)
             phrases = textacy_rake(doc, language=language, normalize=normalize, n_keyterms=n_keyterms, stopwords=None, metric=metric)
             df = pd.DataFrame(phrases, columns=['phrase', 'score'])
             display(df.set_index('phrase'))
@@ -209,7 +209,7 @@ def display_document_key_terms_gui(corpus, wti_index):
         gui.progress.value = 0
         gui.progress.max = len(treaty_ids)
         keyterms = [
-            get_keyterms(method, textacy_utility.get_treaty_doct(corpus, treaty_id), normalize, n_keyterms) for treaty_id in treaty_ids
+            get_keyterms(method, corpus_utility.get_treaty_doct(corpus, treaty_id), normalize, n_keyterms) for treaty_id in treaty_ids
         ]
         df = pd.DataFrame({ 'treaty_id': treaty_ids, 'keyterms': keyterms}).set_index('treaty_id')
         
@@ -274,7 +274,7 @@ display_document_key_terms_gui(current_corpus(), current_wti_index())
 
 # %% code_folding=[]
 import common.gui.utility
-import common.corpus.textacy_corpus_utility as textacy_utility
+from common.corpus import corpus_utility
 
 # %config InlineBackend.print_figure_kwargs = {'bbox_inches':'tight'}
 
@@ -301,7 +301,7 @@ def display_cleaned_up_text(container, gui, display_type, treaty_id, gpe_substit
 
         corpus = container.textacy_corpus
                 
-        doc = textacy_utility.get_treaty_doc(corpus, treaty_id)
+        doc = corpus_utility.get_treaty_doc(corpus, treaty_id)
 
         if doc is None:
             return
@@ -356,7 +356,7 @@ def display_cleaned_up_text(container, gui, display_type, treaty_id, gpe_substit
                 substitutions=(gpe_substitutions if opts['mask_gpe'] else None),
             )
             
-            terms = [ x for x in textacy_utility.extract_document_terms(doc, extract_args)]
+            terms = [ x for x in corpus_utility.extract_document_terms(doc, extract_args)]
 
             if len(terms) == 0:
                 print("No text. Please change selection.")
@@ -403,7 +403,7 @@ def display_cleanup_text_gui(container, wti_index):
         
     logger.info('...loading term substitution mappings...')
     gpe_filename = os.path.join(config.DATA_FOLDER, 'gpe_substitutions.txt')
-    gpe_substitutions = { x: '_gpe_' for x in textacy_utility.get_gpe_names(filename=gpe_filename, corpus=corpus) }
+    gpe_substitutions = { x: '_gpe_' for x in corpus_utility.get_gpe_names(filename=gpe_filename, corpus=corpus) }
 
     #pos_options = [ x for x in DF_TAGSET.POS.unique() if x not in ['PUNCT', '', 'DET', 'X', 'SPACE', 'PART', 'CONJ', 'SYM', 'INTJ', 'PRON']]  # groupby(['POS'])['DESCRIPTION'].apply(list).apply(lambda x: ', '.join(x)).to_dict()
     pos_tags = DF_TAGSET.groupby(['POS'])['DESCRIPTION'].apply(list).apply(lambda x: ', '.join(x[:1])).to_dict()
@@ -440,15 +440,15 @@ def display_cleanup_text_gui(container, wti_index):
     
     logger.info('...word counts...')
     word_count_scores = dict(
-        lemma=textacy_utility.generate_word_count_score(corpus, 'lemma', gui.min_freq.max),
-        lower=textacy_utility.generate_word_count_score(corpus, 'lower', gui.min_freq.max),
-        orth=textacy_utility.generate_word_count_score(corpus, 'orth', gui.min_freq.max)
+        lemma=corpus_utility.generate_word_count_score(corpus, 'lemma', gui.min_freq.max),
+        lower=corpus_utility.generate_word_count_score(corpus, 'lower', gui.min_freq.max),
+        orth=corpus_utility.generate_word_count_score(corpus, 'orth', gui.min_freq.max)
     )
     logger.info('...word document count...')
     word_document_count_scores = dict(
-        lemma=textacy_utility.generate_word_document_count_score(corpus, 'lemma', gui.max_doc_freq.min),
-        lower=textacy_utility.generate_word_document_count_score(corpus, 'lower', gui.max_doc_freq.min),
-        orth=textacy_utility.generate_word_document_count_score(corpus, 'orth', gui.max_doc_freq.min)
+        lemma=corpus_utility.generate_word_document_count_score(corpus, 'lemma', gui.max_doc_freq.min),
+        lower=corpus_utility.generate_word_document_count_score(corpus, 'lower', gui.max_doc_freq.min),
+        orth=corpus_utility.generate_word_document_count_score(corpus, 'orth', gui.max_doc_freq.min)
     )
 
     logger.info('...done!')
@@ -589,7 +589,7 @@ def compute_list_of_most_frequent_words(
                                                    
     for doc in docs:
         
-        doc_freqs = textacy_utility.textacy_doc_to_bow(doc, target=target, weighting=weighting, as_strings=True, include=include)
+        doc_freqs = corpus_utility.textacy_doc_to_bow(doc, target=target, weighting=weighting, as_strings=True, include=include)
         
         df = pd.DataFrame({
             'treaty_id': doc.metadata['treaty_id'],
@@ -647,7 +647,7 @@ def word_frequency_gui(wti_index, corpus, compute_callback, display_callback):
     
     counter = collections.Counter(corpus.word_freqs(normalize='lemma', weighting='count', as_strings=True))
     default_include_pos = ['NOUN', 'PROPN']
-    frequent_words = [ x[0] for x in textacy_utility.get_most_frequent_words(corpus, 100, include_pos=default_include_pos) ]
+    frequent_words = [ x[0] for x in corpus_utility.get_most_frequent_words(corpus, 100, include_pos=default_include_pos) ]
 
     group_by_options = { TREATY_TIME_GROUPINGS[k]['title']: k for k in TREATY_TIME_GROUPINGS }
     output_type_options = [ ( 'List', 'table' ), ( 'Rank', 'rank' ), ( 'Excel', 'excel' ), ]
@@ -711,7 +711,7 @@ def word_frequency_gui(wti_index, corpus, compute_callback, display_callback):
             gui.compute.disabled = True
             selected = set(gui.stop_words.value)
             frequent_words = [
-                x[0] for x in textacy_utility.get_most_frequent_words(
+                x[0] for x in corpus_utility.get_most_frequent_words(
                     corpus,
                     100,
                     normalize=gui.normalize.value,

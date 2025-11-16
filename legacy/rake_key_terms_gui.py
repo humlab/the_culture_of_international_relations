@@ -4,7 +4,7 @@ import gui_utility
 import ipywidgets as widgets
 import pandas as pd
 import textacy.keyterms
-import textacy_corpus_utility as textacy_utility
+from common.corpus import corpus_utility
 from IPython.display import display
 
 
@@ -44,7 +44,7 @@ def display_document_key_terms_gui(corpus, wti_index):
         gui.progress.value = 0
         gui.progress.max = len(treaty_ids)
         keyterms = [
-            get_keyterms(method, textacy_utility.get_treaty_doc(corpus, treaty_id), normalize, n_keyterms)
+            get_keyterms(method, corpus_utility.get_treaty_doc(corpus, treaty_id), normalize, n_keyterms)
             for treaty_id in treaty_ids
         ]
         df = pd.DataFrame({"treaty_id": treaty_ids, "keyterms": keyterms}).set_index("treaty_id")

@@ -7,7 +7,7 @@ from IPython.display import display
 from textacy.corpus import Corpus
 
 from common import config, widgets_config
-from common.corpus import textacy_corpus_utility as textacy_utility
+from common.corpus import corpus_utility
 from common.gui.utility import get_treaty_time_groupings
 
 # FROM NOTEBOOK:
@@ -25,9 +25,9 @@ from common.gui.utility import get_treaty_time_groupings
 
 #     corpus = container.textacy_corpus
 
-#     value_columns = list(textacy_utility.POS_NAMES) if (len(include_pos or [])) == 0 else list(include_pos)
+#     value_columns = list(corpus_utility.POS_NAMES) if (len(include_pos or [])) == 0 else list(include_pos)
 
-#     documents = textacy_utility.get_corpus_documents(corpus)
+#     documents = corpus_utility.get_corpus_documents(corpus)
 
 #     if len(parties or []) > 0:
 #         documents = documents[documents.party1.isin(parties)|documents.party2.isin(parties)]
@@ -51,11 +51,11 @@ from common.gui.utility import get_treaty_time_groupings
 
 #     corpus = container.textacy_corpus
 
-#     include_pos_tags =  list(textacy_utility.POS_NAMES)
+#     include_pos_tags =  list(corpus_utility.POS_NAMES)
 #     pos_options = include_pos_tags
 
 #     counter = collections.Counter(corpus.word_freqs(normalize='lemma', weighting='count', as_strings=True))
-#     frequent_words = [ x[0] for x in textacy_utility.get_most_frequent_words(corpus, 100) ]
+#     frequent_words = [ x[0] for x in corpus_utility.get_most_frequent_words(corpus, 100) ]
 
 #     group_by_options = { TREATY_TIME_GROUPINGS[k]['title']: k for k in TREATY_TIME_GROUPINGS }
 #     # output_type_options = [ ( 'Table', 'table' ), ( 'Pivot', 'pivot' ), ( 'Excel', 'excel' ), ]
@@ -143,7 +143,7 @@ def compute_corpus_statistics(
     # wti_index: TreatyState,
     *,
     parties: list[str],
-    container: textacy_utility.CorpusContainer,
+    container: corpus_utility.CorpusContainer,
     include_pos: list[str],
     # gui,
     group_by_column: str = "signed_year",
@@ -157,7 +157,7 @@ def compute_corpus_statistics(
 
     value_columns: list[str] = list(config.POS_NAMES) if (len(include_pos or [])) == 0 else list(include_pos or [])
 
-    documents: pd.DataFrame = textacy_utility.get_corpus_documents(corpus)
+    documents: pd.DataFrame = corpus_utility.get_corpus_documents(corpus)
 
     if len(parties or []) > 0:
         documents = documents[documents.party1.isin(parties) | documents.party2.isin(parties)]
@@ -186,7 +186,7 @@ def corpus_statistics_gui(data_folder, wti_index, container, compute_callback, d
     pos_options = include_pos_tags
 
     # counter = collections.Counter(corpus.word_counts(normalize="lemma", weighting="count", as_strings=True))
-    # frequent_words = [x[0] for x in textacy_utility.get_most_frequent_words(corpus, 100)]
+    # frequent_words = [x[0] for x in corpus_utility.get_most_frequent_words(corpus, 100)]
 
     group_by_options = {v["title"]: k for k, v in get_treaty_time_groupings().items()}
     # output_type_options = [ ( 'Table', 'table' ), ( 'Pivot', 'pivot' ), ( 'Excel', 'excel' ), ]

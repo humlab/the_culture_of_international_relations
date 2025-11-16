@@ -18,13 +18,12 @@
 # ### <span style='color: green'>SETUP </span> Prepare and Setup Notebook <span style='float: right; color: red'>MANDATORY</span>
 
 # %% code_folding=[]
-
 import os
 
 import spacy
 
 from common import config, setup_config, utility
-from common.corpus import textacy_corpus_utility as textacy_utility
+from common.corpus import corpus_utility as corpus_utility
 
 # %%
 from common.gui import most_discriminating_terms_gui, textacy_corpus_gui
@@ -41,7 +40,6 @@ from notebooks.text_analysis.src.cleanup_gui import display_cleanup_text_gui
 # )
 
 # %% code_folding=[0]
-
 await setup_config()  # type: ignore
 
 utility.setup_default_pd_display()
@@ -53,8 +51,8 @@ load_wti_index_with_gui(data_folder=config.DATA_FOLDER)
 
 # %matplotlib inline
 
-current_corpus_container = textacy_utility.CorpusContainer.container
-current_corpus = textacy_utility.CorpusContainer.corpus
+current_corpus_container = corpus_utility.CorpusContainer.container
+current_corpus = corpus_utility.CorpusContainer.corpus
 
 
 # %% [markdown]
@@ -63,7 +61,7 @@ current_corpus = textacy_utility.CorpusContainer.corpus
 #
 
 # %%
-container: textacy_utility.CorpusContainer = current_corpus_container()
+container: corpus_utility.CorpusContainer = current_corpus_container()
 textacy_corpus_gui.display_corpus_load_gui(config.DATA_FOLDER, current_wti_index(), container)
 
 

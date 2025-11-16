@@ -13,7 +13,7 @@ from textacy.extract.basics import entities as extract_entities
 from textacy.spacier.utils import merge_spans
 
 from common import config, utility, widgets_config
-from common.corpus import textacy_corpus_utility as textacy_utility
+from common.corpus import corpus_utility as corpus_utility
 from common.corpus.utility import CompressedFileReader, get_document_stream
 from common.treaty_state import ConfigValue, TreatyState
 
@@ -21,7 +21,7 @@ from common.treaty_state import ConfigValue, TreatyState
 def generate_textacy_corpus(
     data_folder: str,  # noqa pylint: disable=unused-argument
     wti_index: TreatyState,
-    container: textacy_utility.CorpusContainer,
+    container: corpus_utility.CorpusContainer,
     source_path: str,
     language: str,
     merge_entities: bool,
@@ -45,16 +45,16 @@ def generate_textacy_corpus(
     container.prepped_source_path = utility.path_add_suffix(source_path, "_preprocessed")
 
     if overwrite or not os.path.isfile(container.prepped_source_path):
-        textacy_utility.preprocess_text(container.source_path, container.prepped_source_path, tick=tick)
+        corpus_utility.preprocess_text(container.source_path, container.prepped_source_path, tick=tick)
 
-    container.textacy_corpus_path = textacy_utility.generate_corpus_filename(
+    container.textacy_corpus_path = corpus_utility.generate_corpus_filename(
         container.prepped_source_path,
         container.language,
         nlp_args=nlp_args,
         period_group=period_group,
     )
 
-    container.nlp = textacy_utility.setup_nlp_language_model(container.language, **nlp_args)
+    container.nlp = corpus_utility.setup_nlp_language_model(container.language, **nlp_args)
 
     if overwrite or not os.path.isfile(container.textacy_corpus_path):
 
@@ -73,7 +73,7 @@ def generate_textacy_corpus(
         logger.info("Working: Stream created...")
 
         tick(0, len(treaties))
-        container.textacy_corpus = textacy_utility.create_textacy_corpus(stream, container.nlp, tick)
+        container.textacy_corpus = corpus_utility.create_textacy_corpus(stream, container.nlp, tick)
         container.textacy_corpus.save(container.textacy_corpus_path)
         tick(0, 0)
 
@@ -96,7 +96,7 @@ def generate_textacy_corpus(
     logger.info("Done!")
 
 
-def display_corpus_load_gui(data_folder: str, wti_index: TreatyState, container: textacy_utility.CorpusContainer):
+def display_corpus_load_gui(data_folder: str, wti_index: TreatyState, container: corpus_utility.CorpusContainer):
 
     def lw(w):
         return widgets.Layout(width=w)

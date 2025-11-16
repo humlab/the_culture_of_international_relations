@@ -14,7 +14,7 @@ from spacy.attrs import LEMMA, LOWER, ORTH  # pylint: disable=no-name-in-module
 from textacy.corpus import Corpus
 
 from common import utility, widgets_config
-from common.corpus import textacy_corpus_utility as textacy_utility
+from common.corpus import corpus_utility as corpus_utility
 from common.gui.utility import get_treaty_time_groupings
 
 utility.setup_default_pd_display()
@@ -215,7 +215,7 @@ def word_frequency_gui(wti_index, corpus) -> SimpleNamespace:
     pos_options: list[str] = include_pos_tags
     default_include_pos: list[str] = ["NOUN", "PROPN"]
     frequent_words: list[str] = [
-        x[0].lower() for x in textacy_utility.get_most_frequent_words(corpus, 100, include_pos=default_include_pos)
+        x[0].lower() for x in corpus_utility.get_most_frequent_words(corpus, 100, include_pos=default_include_pos)
     ]
 
     group_by_options: dict[str, str] = {v["title"]: k for k, v in get_treaty_time_groupings().items()}
@@ -322,7 +322,7 @@ def word_frequency_gui(wti_index, corpus) -> SimpleNamespace:
             selected: set[str] = set(gui.stop_words.value)
             frequent_words: list[str] = [
                 x[0].lower()
-                for x in textacy_utility.get_most_frequent_words(
+                for x in corpus_utility.get_most_frequent_words(
                     corpus,
                     100,
                     normalize=gui.normalize.value,

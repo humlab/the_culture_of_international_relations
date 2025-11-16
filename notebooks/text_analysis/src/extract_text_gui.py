@@ -7,7 +7,7 @@ from IPython.display import display
 from loguru import logger
 
 from common import config, utility
-from common.corpus import textacy_corpus_utility as textacy_utility
+from common.corpus import corpus_utility
 
 
 def chunks(l, n):
@@ -58,7 +58,7 @@ def tokenize_docs(docs, **opts):
 
     for document_name, doc in docs:
 
-        terms: list[str] = list(textacy_utility.extract_document_terms(doc, extract_args))
+        terms: list[str] = list(corpus_utility.extract_document_terms(doc, extract_args))
 
         chunk_size = opts.get("chunk_size", 0)
         chunk_index = 0
@@ -108,7 +108,7 @@ def display_generate_tokenized_corpus_gui(corpus, corpus_source_filepath, subst_
 
     if subst_filename is not None:
         logger.info("Loading term substitution mappings...")
-        term_substitutions = textacy_utility.load_term_substitutions(
+        term_substitutions = corpus_utility.load_term_substitutions(
             subst_filename, default_term="_masked_", delim=";", vocab=corpus.spacy_vocab
         )
 
@@ -169,12 +169,12 @@ def display_generate_tokenized_corpus_gui(corpus, corpus_source_filepath, subst_
     logger.info("Preparing corpus statistics...")
     logger.info("...word counts...")
     word_counts: dict[str, dict[int, set[str]]] = {
-        k: textacy_utility.generate_word_count_score(corpus, k, gui.min_freq.max) for k in ["lemma", "lower", "orth"]
+        k: corpus_utility.generate_word_count_score(corpus, k, gui.min_freq.max) for k in ["lemma", "lower", "orth"]
     }
 
     logger.info("...word document count...")
     word_document_counts: dict[str, dict[int, set[str]]] = {
-        k: textacy_utility.generate_word_document_count_score(corpus, k, gui.max_doc_freq.min)
+        k: corpus_utility.generate_word_document_count_score(corpus, k, gui.max_doc_freq.min)
         for k in ["lemma", "lower", "orth"]
     }
 

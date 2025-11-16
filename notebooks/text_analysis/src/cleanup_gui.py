@@ -9,7 +9,7 @@ from loguru import logger
 from matplotlib import pyplot as plt
 
 from common import config, utility
-from common.corpus import textacy_corpus_utility as textacy_utility
+from common.corpus import corpus_utility
 from common.gui.utility import get_treaty_dropdown_options
 
 # %config InlineBackend.print_figure_kwargs = {'bbox_inches':'tight'}
@@ -42,7 +42,7 @@ def display_cleaned_up_text(
 
         corpus = container.textacy_corpus
 
-        doc = textacy_utility.get_document_by_id(corpus, treaty_id)
+        doc = corpus_utility.get_document_by_id(corpus, treaty_id)
 
         if doc is None:
             return
@@ -108,7 +108,7 @@ def display_cleaned_up_text(
                 "substitutions": (gpe_substitutions if opts["mask_gpe"] else None),
             }
 
-            terms: list[str] = list(textacy_utility.extract_document_terms(doc, extract_args))
+            terms: list[str] = list(corpus_utility.extract_document_terms(doc, extract_args))
 
             if len(terms) == 0:
                 print("No text. Please change selection.")
@@ -156,7 +156,7 @@ def display_cleanup_text_gui(container, wti_index):
 
     logger.info("...loading term substitution mappings...")
     gpe_filename = os.path.join(config.DATA_FOLDER, "gpe_substitutions.txt")
-    gpe_substitutions = textacy_utility.load_term_substitutions(filepath=gpe_filename)
+    gpe_substitutions = corpus_utility.load_term_substitutions(filepath=gpe_filename)
 
     pos_tags = (
         config.get_tag_set().groupby(["POS"])["DESCRIPTION"].apply(list).apply(lambda x: ", ".join(x[:1])).to_dict()
@@ -221,15 +221,15 @@ def display_cleanup_text_gui(container, wti_index):
 
     logger.info("...word counts...")
     word_count_scores: dict[str, dict[int, set[str]]] = {
-        "lemma": textacy_utility.generate_word_count_score(corpus, "lemma", gui.min_freq.max),
-        "lower": textacy_utility.generate_word_count_score(corpus, "lower", gui.min_freq.max),
-        "orth": textacy_utility.generate_word_count_score(corpus, "orth", gui.min_freq.max),
+        "lemma": corpus_utility.generate_word_count_score(corpus, "lemma", gui.min_freq.max),
+        "lower": corpus_utility.generate_word_count_score(corpus, "lower", gui.min_freq.max),
+        "orth": corpus_utility.generate_word_count_score(corpus, "orth", gui.min_freq.max),
     }
     logger.info("...word document count...")
     word_document_count_scores: dict[str, dict[int, set[str]]] = {
-        "lemma": textacy_utility.generate_word_document_count_score(corpus, "lemma", gui.max_doc_freq.min),
-        "lower": textacy_utility.generate_word_document_count_score(corpus, "lower", gui.max_doc_freq.min),
-        "orth": textacy_utility.generate_word_document_count_score(corpus, "orth", gui.max_doc_freq.min),
+        "lemma": corpus_utility.generate_word_document_count_score(corpus, "lemma", gui.max_doc_freq.min),
+        "lower": corpus_utility.generate_word_document_count_score(corpus, "lower", gui.max_doc_freq.min),
+        "orth": corpus_utility.generate_word_document_count_score(corpus, "orth", gui.max_doc_freq.min),
     }
 
     logger.info("...done!")
