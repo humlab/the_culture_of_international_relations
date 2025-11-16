@@ -4,7 +4,8 @@ from typing import Any
 import pandas as pd
 from matplotlib import pyplot as plt
 
-from common import color_utility, config
+from common import config
+from common.utils import color_utility
 
 
 def quantity_plot(

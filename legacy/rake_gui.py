@@ -8,7 +8,7 @@ from rake_nltk import Metric, Rake
 
 from common import treaty_state
 from common.corpus import textacy_corpus_utility as textacy_utility
-from common.gui import gui_utility
+from common.gui import utility as gui_utility
 
 
 def textacy_rake(
@@ -35,7 +35,7 @@ def display_rake_gui(corpus, language):
 
     lw = lambda width: widgets.Layout(width=width)
 
-    document_options = gui_utility.get_treaty_dropdown_options(treaty_state.current_wti_index(), corpus)
+    document_options = gui_utility.get_treaty_dropdown_options(current_wti_index(), corpus)
     metric_options = [
         ("Degree / Frequency", Metric.DEGREE_TO_FREQUENCY_RATIO),
         ("Degree", Metric.WORD_DEGREE),

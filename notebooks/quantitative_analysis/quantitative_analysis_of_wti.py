@@ -46,7 +46,7 @@ from common.quantative_analysis import party_analysis_gui, topic_analysis_gui
 warnings.filterwarnings("ignore")
 
 
-await setup_config()
+await setup_config()  # type: ignore
 
 load_wti_index_with_gui(config.DATA_FOLDER)
 

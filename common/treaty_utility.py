@@ -25,20 +25,6 @@ def get_corpus_documents(corpus: Corpus) -> pd.DataFrame:
     return df
 
 
-def get_treaty_dropdown_options(wti_index: pd.DataFrame, corpus: Corpus):
-
-    def format_treaty_name(x) -> str:
-
-        return f'{x.name}: {x["signed_year"]} {x["topic"]} {x["party1"]} {x["party2"]}'
-
-    documents: pd.Series = wti_index.treaties.loc[get_corpus_documents(corpus).treaty_id]
-
-    options = [(v, k) for k, v in documents.apply(format_treaty_name, axis=1).to_dict().items()]
-    options = sorted(options, key=lambda x: x[0])
-
-    return options
-
-
 def trim_period_group(period_group, year_limit):
     pg = dict(period_group)
     low, high = year_limit

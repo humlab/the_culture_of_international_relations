@@ -10,7 +10,7 @@ from bokeh.io import push_notebook
 from IPython.display import display
 from loguru import logger
 
-from common import color_utility, config, utility, widgets_config
+from common import config, utility, widgets_config
 from common.network import layout as network_layout
 from common.network import networkx_utility
 from common.network_analysis.network_analysis import (
@@ -21,6 +21,7 @@ from common.network_analysis.network_analysis import (
 )
 from common.network_analysis.network_analysis_plot import get_palette, plot_network
 from common.treaty_state import TreatyState
+from common.utils import color_utility
 
 sys.path = sys.path if ".." in sys.path else sys.path + [".."]
 

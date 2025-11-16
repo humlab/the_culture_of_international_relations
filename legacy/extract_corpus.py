@@ -82,7 +82,7 @@ textacy_corpus_gui.display_corpus_load_gui(config.DATA_FOLDER, current_wti_index
 
 # %% code_folding=[0]
 # Document Key Terms
-from common.treaty_utility import get_treaty_dropdown_options
+from common.gui.utility import get_treaty_dropdown_options
 from rake_nltk import Rake, Metric
 import string
 

@@ -4,12 +4,12 @@
 import os
 
 from . import resources
-from .color_utility import *  # noqa
 from .configuration import setup_config_store
 
 # from .file_utility import FileUtility  # noqa
 from .utility import *  # noqa
 from .utility import plot_wordcloud  # noqa
+from .utils.color_utility import *  # noqa
 
 
 async def setup_config() -> None:
