@@ -7,13 +7,13 @@ import ipywidgets as widgets
 from IPython.display import display
 
 from common import config
-from common.corpus import corpus_utility
+from common.corpus.container import CorpusContainer
 from common.corpus.generate_corpus import generate_corpus
 from common.gui import widgets_config
 from common.treaty_state import ConfigValue, TreatyState
 
 
-def display_corpus_load_gui(data_folder: str, wti_index: TreatyState, container: corpus_utility.CorpusContainer):
+def display_corpus_load_gui(data_folder: str, wti_index: TreatyState, container: CorpusContainer):
 
     def lw(w):
         return widgets.Layout(width=w)

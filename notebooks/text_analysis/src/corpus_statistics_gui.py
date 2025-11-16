@@ -7,8 +7,9 @@ from IPython.display import display
 from textacy.corpus import Corpus
 
 from common import config
-from common.gui import widgets_config
 from common.corpus import corpus_utility
+from common.corpus.container import CorpusContainer
+from common.gui import widgets_config
 from common.gui.utility import get_treaty_time_groupings
 
 # FROM NOTEBOOK:
@@ -144,7 +145,7 @@ def compute_corpus_statistics(
     # wti_index: TreatyState,
     *,
     parties: list[str],
-    container: corpus_utility.CorpusContainer,
+    container: CorpusContainer,
     include_pos: list[str],
     # gui,
     group_by_column: str = "signed_year",

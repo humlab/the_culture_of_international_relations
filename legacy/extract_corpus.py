@@ -29,6 +29,7 @@ import types
 import matplotlib.pyplot as plt
 from common import utility, widgets_config, config, utility, treaty_state
 from common.corpus import corpus_utility
+from common.corpus.container import CorpusContainer
 from common.gui.load_wti_index_gui import current_wti_index, load_wti_index_with_gui
 from common.gui import load_corpus_gui
 from common.gui.utility import get_treaty_time_groupings
@@ -47,8 +48,8 @@ TREATY_TIME_GROUPINGS: dict[str, dict[str, Any]] = get_treaty_time_groupings()
 # set_matplotlib_formats('svg')
 # bokeh.plotting.output_notebook()
 
-current_corpus_container = corpus_utility.CorpusContainer.container
-current_corpus = corpus_utility.CorpusContainer.corpus
+current_corpus_container = CorpusContainer.container
+current_corpus = CorpusContainer.corpus
 
 
 # %% [markdown]

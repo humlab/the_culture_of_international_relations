@@ -23,7 +23,7 @@ import os
 from loguru import logger
 
 from common import config
-from common.corpus import corpus_utility
+from common.corpus.container import CorpusContainer
 
 # %%
 from common.gui.load_wti_index_gui import load_wti_index_with_gui
@@ -33,8 +33,8 @@ load_wti_index_with_gui(data_folder=config.DATA_FOLDER)
 
 # %matplotlib inline
 
-current_corpus_container = corpus_utility.CorpusContainer.container
-current_corpus = corpus_utility.CorpusContainer.corpus
+current_corpus_container = CorpusContainer.container
+current_corpus = CorpusContainer.corpus
 
 
 # %% [markdown]

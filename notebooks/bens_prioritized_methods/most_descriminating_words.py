@@ -21,14 +21,14 @@ from loguru import logger
 
 # %% code_folding=[]
 from common import config, setup_config, utility
-from common.corpus.corpus_utility import CorpusContainer
+from common.corpus.container import CorpusContainer
 
 # %%
 # %%
 from common.gui import load_corpus_gui, most_discriminating_terms_gui
 from common.gui.load_wti_index_gui import current_wti_index, load_wti_index_with_gui
 
-await setup_config()
+await setup_config()  # type: ignore
 
 utility.setup_default_pd_display()
 
@@ -36,8 +36,8 @@ load_wti_index_with_gui(data_folder=config.DATA_FOLDER)
 
 # %matplotlib inline
 
-current_corpus_container = lambda: CorpusContainer.container()
-current_corpus = lambda: CorpusContainer.corpus()
+current_corpus_container = CorpusContainer.container
+current_corpus = CorpusContainer.corpus
 
 # %% [markdown]
 # ## <span style='color: green'>PREPARE </span> Load and Prepare Corpus <span style='float: right; color: red'>MANDATORY</span>

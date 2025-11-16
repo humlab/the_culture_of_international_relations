@@ -7,16 +7,17 @@ from textacy.corpus import Corpus
 from textacy.extract.basics import entities as extract_entities
 from textacy.spacier.utils import merge_spans
 
-from common import utility
 from common.corpus import corpus_utility
+from common.corpus.container import CorpusContainer
 from common.corpus.utility import CompressedFileReader, get_document_stream
 from common.treaty_state import TreatyState
+from common.utility import noop, path_add_suffix
 
 
 def generate_corpus(
     data_folder: str,  # noqa pylint: disable=unused-argument
     wti_index: TreatyState,
-    container: corpus_utility.CorpusContainer,
+    container: CorpusContainer,
     source_path: str,
     language: str,
     merge_entities: bool,
@@ -25,7 +26,7 @@ def generate_corpus(
     treaty_filter: str = "",
     parties: list[str] | None = None,
     disabled_pipes: Sequence[str] | None = None,
-    tick: Callable[[int, int], None] = utility.noop,
+    tick: Callable[[int, int], None] = noop,
     treaty_sources: list[str] | None = None,
 ):
 
@@ -37,7 +38,7 @@ def generate_corpus(
     container.source_path = source_path
     container.language = language
     container.textacy_corpus = None
-    container.prepped_source_path = utility.path_add_suffix(source_path, "_preprocessed")
+    container.prepped_source_path = path_add_suffix(source_path, "_preprocessed")
 
     if overwrite or not os.path.isfile(container.prepped_source_path):
         corpus_utility.preprocess_text(container.source_path, container.prepped_source_path, tick=tick)

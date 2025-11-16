@@ -19,7 +19,7 @@
 
 # %% code_folding=[]
 from common import config, setup_config
-from common.corpus.corpus_utility import CorpusContainer
+from common.corpus.container import CorpusContainer
 from common.gui import load_corpus_gui, word_frequencies_gui
 from common.gui.load_wti_index_gui import current_wti_index, load_wti_index_with_gui
 
@@ -29,8 +29,8 @@ load_wti_index_with_gui(data_folder=config.DATA_FOLDER)
 
 # %matplotlib inline
 
-current_corpus_container = lambda: CorpusContainer.container()
-current_corpus = lambda: CorpusContainer.corpus()
+current_corpus_container = CorpusContainer.container
+current_corpus = CorpusContainer.corpus
 
 # %% [markdown]
 # ## <span style='color: green'>PREPARE </span> Load and Prepare Corpus <span style='float: right; color: red'>MANDATORY</span>

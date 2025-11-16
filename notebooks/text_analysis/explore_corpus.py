@@ -23,13 +23,9 @@ import os
 import spacy
 
 from common import config, setup_config, utility
-from common.corpus import corpus_utility
-
-# %%
+from common.corpus.container import CorpusContainer
 from common.gui import load_corpus_gui, most_discriminating_terms_gui
 from common.gui.load_wti_index_gui import current_wti_index, load_wti_index_with_gui
-
-# %% code_folding=[0]
 from notebooks.text_analysis.src.cleanup_gui import display_cleanup_text_gui
 
 # %%
@@ -51,8 +47,8 @@ load_wti_index_with_gui(data_folder=config.DATA_FOLDER)
 
 # %matplotlib inline
 
-current_corpus_container = corpus_utility.CorpusContainer.container
-current_corpus = corpus_utility.CorpusContainer.corpus
+current_corpus_container = CorpusContainer.container
+current_corpus = CorpusContainer.corpus
 
 
 # %% [markdown]
@@ -61,7 +57,7 @@ current_corpus = corpus_utility.CorpusContainer.corpus
 #
 
 # %%
-container: corpus_utility.CorpusContainer = current_corpus_container()
+container: CorpusContainer = current_corpus_container()
 load_corpus_gui.display_corpus_load_gui(config.DATA_FOLDER, current_wti_index(), container)
 
 
@@ -75,28 +71,6 @@ load_corpus_gui.display_corpus_load_gui(config.DATA_FOLDER, current_wti_index(),
 # https://github.com/vgrabovets/multi_rake
 #
 #
-
-# %% [markdown]
-# #### <span style='color: green'>PREPARE/DESCRIBE </span>RAKE <span style='float: right; color: green'>WORK IN PROGRESS</span>
-#
-# https://github.com/JRC1995/RAKE-Keyword-Extraction
-# https://github.com/JRC1995/TextRank-Keyword-Extraction
-#
-#
-#
-#
-# rake_gui.display_rake_gui(current_corpus(), language="english")
-
-
-# %% [markdown]
-# #### <span style='color: green'>PREPARE/DESCRIBE </span>TextRank/SingleRank <span style='float: right; color: green'>OPTIONAL</span>
-#
-# https://github.com/JRC1995/TextRank-Keyword-Extraction
-#
-#
-#
-# display_document_key_terms_gui(current_corpus(), current_wti_index())
-
 
 # %% [markdown]
 # ## <span style='color: green'>PREPARE/DESCRIBE </span> Clean Up the Text <span style='float: right; color: green'>TRY IT</span>
