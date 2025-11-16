@@ -132,8 +132,6 @@ class TreatyState:
         self._unique_sources: list[str] = []
 
     def check_party(self) -> str:
-        # party1 = self.treaties[~self.treaties.group1.isin([0, 8])].party1.unique().tolist()
-        # party2 = self.treaties[~self.treaties.group2.isin([0, 8])].party2.unique().tolist()
         party1: list[str] = self.treaties.party1.unique().tolist()
         party2: list[str] = self.treaties.party2.unique().tolist()
         df_party: pd.DataFrame = pd.DataFrame(data={"party": list(set(party1 + party2))})

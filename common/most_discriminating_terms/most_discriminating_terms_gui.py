@@ -10,8 +10,8 @@ from spacy.attrs import LEMMA, LOWER, ORTH  # noqa ; pylint: disable=no-name-in-
 from textacy.corpus import Corpus
 
 from common.gui import widgets_config
+from common.most_discriminating_terms.most_discriminating_terms_patch import most_discriminating_terms
 from common.treaty_state import TreatyState
-from common.utils import most_discriminating_terms
 
 # from .most_discriminating_terms_patch import most_discriminating_terms
 
@@ -65,7 +65,7 @@ def compute_most_discriminating_terms(
 
     docs = docs1 + docs2
 
-    in_group1 = [True] * len(docs1) + [False] * len(docs2)
+    in_group1: list[bool] = [True] * len(docs1) + [False] * len(docs2)
 
     terms = most_discriminating_terms(docs, in_group1, top_n_terms=top_n_terms, max_n_terms=max_n_terms)
     # terms = most_discriminating_terms(docs, in_group1, top_n_terms=top_n_terms, max_n_terms=max_n_terms)
@@ -174,15 +174,7 @@ def display_gui(wti_index, corpus):
                     widgets.VBox(
                         [gui.top_n_terms, gui.max_n_terms, gui.normalize, gui.compute],
                         layout=widgets.Layout(align_items="flex-end"),
-                    ),  # layout=widgets.Layout(align_items='flex-end')),
-                    #    widgets.VBox([
-                    #        gui.compute,
-                    #        widgets.HTML(
-                    #            '<b>#terms</b> is the  number of most discriminating<br>terms to return for each group.<br>' +
-                    #            '<b>#top</b> Consider only terms with a frequency<br>within the top #top terms out of all terms<br>'
-                    #            '<b>Closed region</b> If checked, then <u>both</u> treaty parties<br>must be within selected region'
-                    #        )
-                    #    ])
+                    ),
                 ]
             ),
             gui.output,

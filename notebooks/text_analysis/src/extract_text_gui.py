@@ -10,13 +10,13 @@ from common import config, utility
 from common.corpus import corpus_utility
 
 
-def chunks(l, n):
-    """Returns list l in n-sized chunks"""
+def chunks(lst, n):
+    """Returns list lst in n-sized chunks"""
     if (n or 0) == 0:
-        yield l
+        yield lst
     else:
-        for i in range(0, len(l), n):
-            yield l[i : i + n]
+        for i in range(0, len(lst), n):
+            yield lst[i : i + n]
 
 
 def tokenize_docs(docs, **opts):

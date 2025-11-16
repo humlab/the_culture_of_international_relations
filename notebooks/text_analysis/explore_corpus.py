@@ -22,8 +22,9 @@
 
 from common import config, setup_config, utility
 from common.corpus.container import CorpusContainer
-from common.gui import load_corpus_gui, most_discriminating_terms_gui
+from common.gui import load_corpus_gui
 from common.gui.load_wti_index_gui import current_wti_index, load_wti_index_with_gui
+from common.most_discriminating_terms import most_discriminating_terms_gui
 from notebooks.text_analysis.src.cleanup_gui import display_cleanup_text_gui
 
 # %%
@@ -71,7 +72,7 @@ load_corpus_gui.display_corpus_load_gui(config.DATA_FOLDER, current_wti_index(),
 # ## <span style='color: green'>PREPARE/DESCRIBE </span> Clean Up the Text <span style='float: right; color: green'>TRY IT</span>
 
 # %% code_folding=[]
-display_cleanup_text_gui(current_corpus_container(), current_wti_index()) 
+display_cleanup_text_gui(current_corpus_container(), current_wti_index())
 
 
 # %% [markdown]
