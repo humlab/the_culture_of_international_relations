@@ -61,27 +61,7 @@ def timecall(f):
 
 
 def extend(target: dict, *args, **kwargs) -> dict:
-    """Returns dictionary 'target' extended by supplied dictionaries (args) or named keywords
-
-    Parameters
-    ----------
-    target : dict
-        Default dictionary (to be extended)
-
-    args: [dict]
-        Optional. List of dicts to use when updating target
-
-    args: [key=value]
-        Optional. List of key-value pairs to use when updating target
-
-    Returns
-    -------
-    [dict]
-        Target dict updated with supplied dicts/key-values.
-        Multiple keys are overwritten inorder of occrence i.e. keys to right have higher precedence
-
-    """
-
+    """Returns dictionary 'target' extended by supplied dictionaries (args) or named keywords"""
     target = dict(target)
     for source in args:
         target.update(source)
@@ -130,21 +110,7 @@ def clamp_values(values: list[float], low_high: tuple[float, float]) -> list[flo
 
 
 def filter_kwargs(f, args) -> dict[Any, Any] | Any:
-    """Removes keys in dict arg that are invalid arguments to function f
-
-    Parameters
-    ----------
-    f : [fn]
-        Function to introspect
-    args : dict
-        List of parameter names to test validity of.
-
-    Returns
-    -------
-    dict
-        Dict with invalid args filtered out.
-    """
-
+    """Removes keys in dict arg that are invalid arguments to function f"""
     try:
         return {k: args[k] for k in args if k in inspect.signature(f).parameters}
     except:  # pylint: disable=W0702
