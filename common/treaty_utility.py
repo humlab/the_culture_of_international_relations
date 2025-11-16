@@ -1,10 +1,7 @@
 import collections
-import os
-import re
 from typing import Any
 
 import pandas as pd
-from loguru import logger
 from textacy.corpus import Corpus
 
 from common import config, utility
@@ -13,16 +10,18 @@ from common import config, utility
 def _get_pos_statistics(doc) -> dict[str, int]:
     pos_iter = (x.pos_ for x in doc if x.pos_ not in ["NUM", "PUNCT", "SPACE"])
     pos_counts: dict[str, int] = dict(collections.Counter(pos_iter))
-    stats: dict[str, int] = utility.extend(dict(POS_TO_COUNT), pos_counts)
+    stats: dict[str, int] = utility.extend(dict(config.POS_TO_COUNT), pos_counts)
     return stats
 
 
 def get_corpus_documents(corpus: Corpus) -> pd.DataFrame:
     metadata = [utility.extend({}, doc._.meta, _get_pos_statistics(doc)) for doc in corpus.docs]
-    df: pd.DataFrame = pd.DataFrame(metadata)[["treaty_id", "filename", "signed_year", "party1", "party2"] + POS_NAMES]
+    df: pd.DataFrame = pd.DataFrame(metadata)[
+        ["treaty_id", "filename", "signed_year", "party1", "party2"] + config.POS_NAMES
+    ]
     df["title"] = df.treaty_id
     df["lang"] = df.filename.str.extract(r"\w{4,6}\_(\w\w)")
-    df["words"] = df[POS_NAMES].apply(sum, axis=1)
+    df["words"] = df[config.POS_NAMES].apply(sum, axis=1)
     return df
 
 
