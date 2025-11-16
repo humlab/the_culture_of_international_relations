@@ -92,6 +92,7 @@ class CorpusContainer:
         self.document_index: pd.DataFrame | None = None
 
     # def get_word_count(self, normalize: str) -> dict[int, set[str]]:
+    #     """Not used currently."""
     #     key: str = "word_count_" + normalize
     #     self.word_count_scores = self.word_count_scores or {}
     #     if key not in self.word_count_scores:
@@ -99,13 +100,14 @@ class CorpusContainer:
     #         self.word_count_scores[key] = generate_word_count_score(self.textacy_corpus, normalize, 100)
     #     return self.word_count_scores[key]
 
-    def get_word_document_count(self, normalize: str) -> dict[int, set[str]]:
-        key: str = "word_document_count_" + normalize
-        self.word_count_scores = self.word_count_scores or {}
-        if key not in self.word_count_scores:
-            assert self.textacy_corpus is not None
-            self.word_count_scores[key] = generate_word_document_count_score(self.textacy_corpus, normalize, 75)
-        return self.word_count_scores[key]
+    # def get_word_document_count(self, normalize: str) -> dict[int, set[str]]:
+    #     """Not used currently."""
+    #     key: str = "word_document_count_" + normalize
+    #     self.word_count_scores = self.word_count_scores or {}
+    #     if key not in self.word_count_scores:
+    #         assert self.textacy_corpus is not None
+    #         self.word_count_scores[key] = generate_word_document_count_score(self.textacy_corpus, normalize, 75)
+    #     return self.word_count_scores[key]
 
     @staticmethod
     def container() -> "CorpusContainer":

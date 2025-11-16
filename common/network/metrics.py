@@ -1,24 +1,8 @@
 import community  # pip3 install python-louvain packages
 import networkx as nx
 
-DISTANCE_METRICS = {
-    # 'Mahalanobis': 'mahalanobis',
-    # 'Minkowski': 'minkowski',
-    # 'Bray-Curtis': 'braycurtis',
-    # 'Canberra': 'canberra',
-    # 'Chebyshev': 'chebyshev',
-    # 'Manhattan': 'cityblock',
-    "Correlation": "correlation",
-    "Cosine": "cosine",
-    "Euclidean": "euclidean",
-    "Normalized Euclidean": "seuclidean",
-    "Squared Euclidean": "sqeuclidean",
-    "Kullback-Leibler": "kullback–leibler",
-    "Kullback-Leibler (SciPy)": "scipy.stats.entropy",
-}
-
-
 def compute_centrality(network):
+    """Not used currently."""
     centrality = nx.algorithms.centrality.betweenness_centrality(network)
     _, nodes_centrality = zip(*sorted(centrality.items()))
     max_centrality = max(nodes_centrality)
@@ -63,6 +47,7 @@ def partition_colors(nodes_community, color_palette=None):
 
 
 def compute_alpha_vector(value_vector):
+    """Not used currently."""
     max_value = max(value_vector)
     alphas = list(map(lambda h: 0.1 + 0.6 * (h / max_value), value_vector))
     return alphas

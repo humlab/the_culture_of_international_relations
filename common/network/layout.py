@@ -32,7 +32,7 @@ def adjust_edge_endpoint(p, q, d):
 
 
 def adjust_edge_lengths(edges, nodes):
-
+    """Not used currently."""
     node2id = {x: i for i, x in enumerate(nodes["name"])}
 
     for i in range(0, len(edges["xs"])):

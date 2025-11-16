@@ -19,7 +19,7 @@ from common.corpus import textacy_corpus_utility as textacy_utility
 utility.setup_default_pd_display()
 
 # def count_words_by(doc, target='lemma', include=None):
-
+#     """Not used currently."""    
 #     spacy_store = doc.vocab.strings
 
 #     default_exclude = lambda x: x.is_stop or x.is_punct or x.is_space
@@ -43,7 +43,7 @@ utility.setup_default_pd_display()
 
 
 def corpus_size_by_grouping(corpus, treaty_time_groups, group_by_column):
-
+    """Not used currently."""
     data = ((doc._.meta["treaty_id"], doc._.meta["signed_year"], doc._.meta["n_tokens"]) for doc in corpus)
     df_sizes = pd.DataFrame(data, columns=["treaty_id", "signed_year", "n_tokens"])
     if group_by_column not in df_sizes.columns:

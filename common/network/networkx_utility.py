@@ -7,14 +7,6 @@ import pandas as pd
 
 from common.utility import clamp_values, extend, list_of_dicts_to_dict_of_lists
 
-# def create_nx_graph(df, source_field='source', target_field='target', weight='weight'):
-#    G = nx.Graph()
-#    nodes = list(set(list(df[source_field].values) + list(df[target_field].values)))
-#    edges = [ (x, y, { weight: z }) for x, y, z in [ tuple(x) for x in df[[source_field, target_field, weight]].values]]
-#    G.add_nodes_from(nodes)
-#    G.add_edges_from(edges)
-#    return G
-
 
 def df_to_nx_edge_format(
     data: pd.DataFrame, source_index: int = 0, target_index: int = 1
@@ -121,9 +113,6 @@ def df_to_nx(
     return G
 
 
-create_nx_graph = df_to_nx
-
-
 def get_subgraph(g: nx.Graph, attribute: str = "weight", threshold: float = 0.0) -> nx.Graph:
     """Creates a subgraph of g of all edges having a attribute value equal to or above threshold.
 
@@ -151,7 +140,7 @@ get_sub_network = get_subgraph
 
 def get_positioned_nodes(network: nx.Graph, layout: dict, nodes: list[str] | None = None) -> dict[str, list[Any]]:
     """Returns nodes assigned position from given layout.
-
+    NOT USED CURRENTLY
     Parameters
     ----------
     network : nx.Graph
@@ -298,7 +287,7 @@ def get_positioned_nodes_as_dict(
     node_size: str,
     node_size_range: tuple[float, float] | None,
 ) -> dict[str, list[Any]]:
-
+    """Not used currently."""
     nodes: dict[str, list[Any]] = get_positioned_nodes(graph, layout)
 
     if node_size in nodes and node_size_range is not None:

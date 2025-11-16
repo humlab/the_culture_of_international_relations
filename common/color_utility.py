@@ -21,6 +21,7 @@ class ColorGradient:
 
     @staticmethod
     def color_dict(gradient) -> dict[str, Any]:
+        """Not used currently."""
         return {
             "hex": [ColorGradient.RGB_to_hex(RGB) for RGB in gradient],
             "r": [RGB[0] for RGB in gradient],
