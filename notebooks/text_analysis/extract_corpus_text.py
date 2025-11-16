@@ -23,7 +23,7 @@ import os
 from loguru import logger
 
 from common import config
-from common.corpus import corpus_utility as corpus_utility
+from common.corpus import corpus_utility
 
 # %%
 from common.gui.load_wti_index_gui import load_wti_index_with_gui

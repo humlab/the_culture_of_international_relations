@@ -14,7 +14,7 @@ from spacy.attrs import LEMMA, LOWER, ORTH  # pylint: disable=no-name-in-module
 from textacy.corpus import Corpus
 
 from common import utility, widgets_config
-from common.corpus import corpus_utility as corpus_utility
+from common.corpus import corpus_utility
 from common.gui.utility import get_treaty_time_groupings
 
 utility.setup_default_pd_display()

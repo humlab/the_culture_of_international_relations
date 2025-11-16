@@ -23,7 +23,7 @@ import os
 import spacy
 
 from common import config, setup_config, utility
-from common.corpus import corpus_utility as corpus_utility
+from common.corpus import corpus_utility
 
 # %%
 from common.gui import most_discriminating_terms_gui, textacy_corpus_gui

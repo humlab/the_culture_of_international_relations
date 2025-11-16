@@ -13,7 +13,7 @@ from textacy.extract.basics import entities as extract_entities
 from textacy.spacier.utils import merge_spans
 
 from common import config, utility, widgets_config
-from common.corpus import corpus_utility as corpus_utility
+from common.corpus import corpus_utility
 from common.corpus.utility import CompressedFileReader, get_document_stream
 from common.treaty_state import ConfigValue, TreatyState
 
