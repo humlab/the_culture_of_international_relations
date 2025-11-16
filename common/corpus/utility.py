@@ -5,6 +5,9 @@ import zipfile
 from collections.abc import Callable, Generator
 from typing import Any, AnyStr, Self
 
+from loguru import logger
+import pandas as pd
+
 HYPHEN_REGEXP: re.Pattern = re.compile(r"\b(\w+)-\s*\r?\n\s*(\w+)\b", re.UNICODE)
 
 
@@ -81,3 +84,56 @@ class CompressedFileReader:
             content: str = any_to_unicode(byte_str, encoding="utf8", errors="ignore")
             content = dehyphen(content)
             return content
+
+
+def get_document_stream(source: CompressedFileReader | str, lang: str, document_index: pd.DataFrame | None = None):
+
+    assert document_index is not None
+
+    if "document_id" not in document_index.columns:
+        document_index["document_id"] = document_index.index
+
+    def id_extractor(filename: str) -> str:
+        match: re.Match | None = re.match(r"^(\w*)\_" + lang + r"([\_\-]corr)?\.txt$", filename)
+        if match:
+            return match.group(1)
+        return ""
+
+    lang_pattern: re.Pattern = re.compile(rf"^(\w*)_{lang}([_-]corr)?\.txt$")
+
+    def item_filter(x):
+        return lang_pattern.match(x)  # and id_extractor(x) in document_index.index
+
+    if isinstance(source, str):
+        print(f"Opening archive: {source}")
+        reader: CompressedFileReader = CompressedFileReader(source, pattern=lang_pattern, itemfilter=item_filter)
+    else:
+        reader = source
+
+    id_map: dict[str, str] = {
+        filename: id_extractor(filename) for filename in reader.filenames if item_filter(filename)
+    }
+
+    if len(set(document_index.index) - set(id_map.values())) > 0:
+        logger.warning(
+            "Treaties not found in archive: " + ", ".join(list(set(document_index.index) - set(id_map.values())))
+        )
+
+    columns: list[str] = ["signed_year", "party1", "party2"]
+
+    df: pd.DataFrame = document_index[columns]
+
+    for filename, text in reader:
+
+        document_id: str | None = id_map.get(filename)
+
+        if document_id not in df.index:
+            continue
+
+        metadata = df.loc[document_id].to_dict()
+
+        metadata["filename"] = filename
+        metadata["document_id"] = document_id
+        metadata["treaty_id"] = document_id
+
+        yield filename, document_id, text, metadata
