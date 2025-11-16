@@ -7,8 +7,9 @@ import pandas as pd
 from ipydatagrid import DataGrid
 from IPython.display import display
 
-from common import config, utility, widgets_config
+from common import config, utility
 from common.corpus import headnote_corpus
+from common.gui import widgets_config
 from common.treaty_state import TreatyState
 from common.utility import remove_snake_case
 

@@ -6,7 +6,8 @@ import pandas as pd
 from IPython.display import display
 from textacy.corpus import Corpus
 
-from common import config, widgets_config
+from common import config
+from common.gui import widgets_config
 from common.corpus import corpus_utility
 from common.gui.utility import get_treaty_time_groupings
 

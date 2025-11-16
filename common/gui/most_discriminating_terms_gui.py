@@ -9,7 +9,7 @@ from loguru import logger
 from spacy.attrs import LEMMA, LOWER, ORTH  # noqa ; pylint: disable=no-name-in-module ; type: ignore
 from textacy.corpus import Corpus
 
-from common import widgets_config
+from common.gui import widgets_config
 from common.treaty_state import TreatyState
 from common.utils import most_discriminating_terms
 

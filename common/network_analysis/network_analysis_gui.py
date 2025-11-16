@@ -10,7 +10,8 @@ from bokeh.io import push_notebook
 from IPython.display import display
 from loguru import logger
 
-from common import config, utility, widgets_config
+from common import config, utility
+from common.gui import widgets_config
 from common.network import layout as network_layout
 from common.network import networkx_utility
 from common.network_analysis.network_analysis import (

@@ -6,9 +6,10 @@ from typing import Any
 import ipywidgets as widgets
 from IPython.display import display
 
-from common import config, widgets_config
+from common import config
 from common.corpus import corpus_utility
 from common.corpus.generate_corpus import generate_corpus
+from common.gui import widgets_config
 from common.treaty_state import ConfigValue, TreatyState
 
 

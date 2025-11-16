@@ -7,8 +7,8 @@ from bokeh.palettes import RdYlBu, Set1, all_palettes  # pylint: disable=E0611
 from bokeh.plotting import figure, show
 
 from common import config
+from common.gui.widgets_config import glyph_hover_callback2
 from common.utility import extend
-from common.widgets_config import glyph_hover_callback2
 
 
 def get_palette(palette_name: str) -> list[str]:

@@ -10,7 +10,8 @@ import pandas as pd
 from IPython.display import display
 from loguru import logger
 
-from common import config, utility, widgets_config
+from common import config, utility
+from common.gui import widgets_config
 from common.treaty_state import TreatyState, trim_period_group
 from common.utils import color_utility
 

@@ -26,7 +26,7 @@ from common import config, setup_config, utility
 from common.corpus import corpus_utility
 
 # %%
-from common.gui import most_discriminating_terms_gui, load_corpus_gui
+from common.gui import load_corpus_gui, most_discriminating_terms_gui
 from common.gui.load_wti_index_gui import current_wti_index, load_wti_index_with_gui
 
 # %% code_folding=[0]
