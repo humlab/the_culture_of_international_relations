@@ -8,41 +8,6 @@ from loguru import logger
 from textacy.corpus import Corpus
 
 from common import config, utility
-from common.corpus.utility import CompressedFileReader
-from common.gui.load_wti_index_gui import current_wti_index
-
-DATA_FOLDER: str = config.DATA_FOLDER
-
-
-def get_tagset() -> pd.DataFrame | None:
-    filepath: str = os.path.join(DATA_FOLDER, "tagset.csv")
-    if os.path.isfile(filepath):
-        return pd.read_csv(filepath, sep="\t").fillna("")
-    return None
-
-
-def get_parties() -> pd.DataFrame:
-    parties: pd.DataFrame = current_wti_index().get_parties()
-    return parties
-
-
-POS_TO_COUNT: dict[str, int] = {
-    "SYM": 0,
-    "PART": 0,
-    "ADV": 0,
-    "NOUN": 0,
-    "CCONJ": 0,
-    "ADJ": 0,
-    "DET": 0,
-    "ADP": 0,
-    "INTJ": 0,
-    "VERB": 0,
-    "NUM": 0,
-    "PRON": 0,
-    "PROPN": 0,
-}
-
-POS_NAMES: list[str] = list(sorted(POS_TO_COUNT.keys()))
 
 
 def _get_pos_statistics(doc) -> dict[str, int]:
