@@ -51,6 +51,7 @@ class TreatyState:
         ]
         self.treaties_columns: list[str] = get_treaties_column_names()
         self.is_cultural_yesno_column: str = is_cultural_yesno_column
+        # self.csv_data_files = ConfigValue("data.treaty_index.source").resolve()
         self.csv_files: list[tuple[str, str, str | None, str | None]] = [
             (filename, "treaties", "Treaties_Master_List.xlsx", "Treaties"),
             ("country_continent.csv", "country_continent", None, None),
@@ -299,14 +300,7 @@ class TreatyState:
 
         if "Unnamed: 0" in df.columns:
             df = df.drop(["Unnamed: 0"], axis=1)
-        name_map: dict[str, str] = {
-            "AS": "ASIA",
-            "AF": "AFRICA",
-            "EU": "EUROPA",
-            "SA": "SOUTH AMERICA",
-            "OC": "OCEANIA",
-            "NA": "NORTH AMERICA",
-        }
+        name_map: dict[str, str] = ConfigValue("continents").resolve()
         df["continent"] = df.continent_code.apply(lambda x: name_map.get(x, x))
         return df
 
@@ -540,7 +534,7 @@ class TreatyState:
         df["topic_category"] = self.get_topic_category(df, topic_category, topic_column="topic1")
         return df
 
-    def get_party_network(self, party_name: str, topic_category, parties: list[str], **kwargs):
+    def get_party_network(self, party_name: str, topic_category, parties: list[str], **kwargs) -> None | pd.DataFrame:
 
         treaty_ids = self.get_treaties_within_division(parties=parties, **kwargs).index
 
@@ -565,7 +559,7 @@ class TreatyState:
 
         return treaties.sort_values("signed")
 
-    def get_treaty_text_languages(self):
+    def get_treaty_text_languages(self) -> pd.DataFrame:
         """Returns avaliable treaty text languages for treaties having a language mark in the wti-index.
 
             The languages of the compiled text are marked in columns 'english', 'french' and 'other'
@@ -586,8 +580,8 @@ class TreatyState:
             DataFrame: index = treaty_id, columns = { 'language': 'en|fr|de|it' }
 
         """
-        treaties = self.treaties
-        treaty_langs = (
+        treaties: pd.DataFrame = self.treaties
+        treaty_langs: pd.DataFrame = (
             pd.concat([treaties.english, treaties.french, treaties.other], axis=0)
             .dropna()
             .apply(lambda x: x.lower().replace(" ", "").split(","))
