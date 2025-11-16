@@ -39,26 +39,26 @@ def tokenize_docs(docs, **opts):
         )
         extra_stop_words.update(stop_words)
 
-    extract_args = dict(
-        args=dict(
-            ngrams=opts["ngrams"],
-            named_entities=opts["named_entities"],
-            normalize=opts["normalize"],
-            as_strings=True,
-        ),
-        kwargs=dict(
-            min_freq=opts["min_freq"],
-            include_pos=opts["include_pos"],
-            filter_stops=opts["filter_stops"],
-            filter_punct=opts["filter_punct"],
-        ),
-        extra_stop_words=extra_stop_words,
-        substitutions=(term_substitutions if opts.get("substitute_terms", False) else None),
-    )
+    extract_args = {
+        "args": {
+            "ngrams": opts["ngrams"],
+            "named_entities": opts["named_entities"],
+            "normalize": opts["normalize"],
+            "as_strings": True,
+        },
+        "kwargs": {
+            "min_freq": opts["min_freq"],
+            "include_pos": opts["include_pos"],
+            "filter_stops": opts["filter_stops"],
+            "filter_punct": opts["filter_punct"],
+        },
+        "extra_stop_words": extra_stop_words,
+        "substitutions": (term_substitutions if opts.get("substitute_terms", False) else None),
+    }
 
     for document_name, doc in docs:
 
-        terms: list[str] = [x for x in textacy_utility.extract_document_terms(doc, extract_args)]
+        terms: list[str] = list(textacy_utility.extract_document_terms(doc, extract_args))
 
         chunk_size = opts.get("chunk_size", 0)
         chunk_index = 0
@@ -207,22 +207,22 @@ def display_generate_tokenized_corpus_gui(corpus, corpus_source_filepath, subst_
     def compute_callback(*_args):
         gui.compute.disabled = True
         filepath = ""
-        opts = dict(
-            min_freq=gui.min_freq.value,
-            max_doc_freq=gui.max_doc_freq.value,
-            substitute_terms=gui.substitute_terms.value,
-            ngrams=gui.ngrams.value,
-            min_word=gui.min_word.value,
-            normalize=gui.normalize.value,
-            filter_stops=gui.filter_stops.value,
-            filter_punct=gui.filter_punct.value,
-            named_entities=gui.named_entities.value,
-            include_pos=gui.include_pos.value,
-            chunk_size=gui.chunk_size.value,
-            term_substitutions=term_substitutions,
-            word_counts=word_counts,
-            word_document_counts=word_document_counts,
-        )
+        opts = {
+            "min_freq": gui.min_freq.value,
+            "max_doc_freq": gui.max_doc_freq.value,
+            "substitute_terms": gui.substitute_terms.value,
+            "ngrams": gui.ngrams.value,
+            "min_word": gui.min_word.value,
+            "normalize": gui.normalize.value,
+            "filter_stops": gui.filter_stops.value,
+            "filter_punct": gui.filter_punct.value,
+            "named_entities": gui.named_entities.value,
+            "include_pos": gui.include_pos.value,
+            "chunk_size": gui.chunk_size.value,
+            "term_substitutions": term_substitutions,
+            "word_counts": word_counts,
+            "word_document_counts": word_document_counts,
+        }
 
         with gui.output:
             docs = ((doc.user_data["textacy"]["meta"]["filename"], doc) for doc in corpus)

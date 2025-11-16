@@ -69,7 +69,7 @@ def display_cleaned_up_text(
 
             source_filename = source_files[display_type]["filename"]
             description = source_files[display_type]["description"]
-            text = utility.zip_get_text(source_filename, doc._.meta["filename"])
+            text: str = utility.zip_get_text(source_filename, doc._.meta["filename"])
 
             with gui.output_text:
                 print("[ " + description.upper() + " ]")
@@ -90,25 +90,25 @@ def display_cleaned_up_text(
                     get_merged_words(word_document_count_scores[normalize], opts["max_doc_freq"], 100)
                 )
 
-            extract_args = dict(
-                args=dict(
-                    ngrams=opts["ngrams"],
-                    named_entities=opts["named_entities"],
-                    normalize=opts["normalize"],
-                    as_strings=True,
-                ),
-                kwargs=dict(
-                    min_freq=opts["min_freq"],
-                    include_pos=opts["include_pos"],
-                    filter_stops=opts["filter_stops"],
-                    filter_punct=opts["filter_punct"],
-                ),
-                min_length=opts["min_word"],
-                extra_stop_words=extra_stop_words,
-                substitutions=(gpe_substitutions if opts["mask_gpe"] else None),
-            )
+            extract_args = {
+                "args": {
+                    "ngrams": opts["ngrams"],
+                    "named_entities": opts["named_entities"],
+                    "normalize": opts["normalize"],
+                    "as_strings": True,
+                },
+                "kwargs": {
+                    "min_freq": opts["min_freq"],
+                    "include_pos": opts["include_pos"],
+                    "filter_stops": opts["filter_stops"],
+                    "filter_punct": opts["filter_punct"],
+                },
+                "min_length": opts["min_word"],
+                "extra_stop_words": extra_stop_words,
+                "substitutions": (gpe_substitutions if opts["mask_gpe"] else None),
+            }
 
-            terms = [x for x in textacy_utility.extract_document_terms(doc, extract_args)]
+            terms: list[str] = list(textacy_utility.extract_document_terms(doc, extract_args))
 
             if len(terms) == 0:
                 print("No text. Please change selection.")
@@ -207,7 +207,7 @@ def display_cleanup_text_gui(container, wti_index):
             value=False, description="Merge entities", tooltip="Merge entities", icon="check"
         ),
         include_pos=widgets.SelectMultiple(
-            description="POS", options=pos_options, value=list(), rows=10, layout=widgets.Layout(width="400px")
+            description="POS", options=pos_options, value=[], rows=10, layout=widgets.Layout(width="400px")
         ),
         display_type=widgets.Dropdown(
             description="Show", value="statistics", options=display_options, layout=widgets.Layout(width="180px")
@@ -220,31 +220,31 @@ def display_cleanup_text_gui(container, wti_index):
     )
 
     logger.info("...word counts...")
-    word_count_scores: dict[str, dict[int, set[str]]] = dict(
-        lemma=textacy_utility.generate_word_count_score(corpus, "lemma", gui.min_freq.max),
-        lower=textacy_utility.generate_word_count_score(corpus, "lower", gui.min_freq.max),
-        orth=textacy_utility.generate_word_count_score(corpus, "orth", gui.min_freq.max),
-    )
+    word_count_scores: dict[str, dict[int, set[str]]] = {
+        "lemma": textacy_utility.generate_word_count_score(corpus, "lemma", gui.min_freq.max),
+        "lower": textacy_utility.generate_word_count_score(corpus, "lower", gui.min_freq.max),
+        "orth": textacy_utility.generate_word_count_score(corpus, "orth", gui.min_freq.max),
+    }
     logger.info("...word document count...")
-    word_document_count_scores: dict[str, dict[int, set[str]]] = dict(
-        lemma=textacy_utility.generate_word_document_count_score(corpus, "lemma", gui.max_doc_freq.min),
-        lower=textacy_utility.generate_word_document_count_score(corpus, "lower", gui.max_doc_freq.min),
-        orth=textacy_utility.generate_word_document_count_score(corpus, "orth", gui.max_doc_freq.min),
-    )
+    word_document_count_scores: dict[str, dict[int, set[str]]] = {
+        "lemma": textacy_utility.generate_word_document_count_score(corpus, "lemma", gui.max_doc_freq.min),
+        "lower": textacy_utility.generate_word_document_count_score(corpus, "lower", gui.max_doc_freq.min),
+        "orth": textacy_utility.generate_word_document_count_score(corpus, "orth", gui.max_doc_freq.min),
+    }
 
     logger.info("...done!")
-    opts = dict(
-        min_freq=gui.min_freq,
-        max_doc_freq=gui.max_doc_freq,
-        mask_gpe=gui.mask_gpe,
-        ngrams=gui.ngrams,
-        min_word=gui.min_word,
-        normalize=gui.normalize,
-        filter_stops=gui.filter_stops,
-        filter_punct=gui.filter_punct,
-        named_entities=gui.named_entities,
-        include_pos=gui.include_pos,
-    )
+    opts = {
+        "min_freq": gui.min_freq,
+        "max_doc_freq": gui.max_doc_freq,
+        "mask_gpe": gui.mask_gpe,
+        "ngrams": gui.ngrams,
+        "min_word": gui.min_word,
+        "normalize": gui.normalize,
+        "filter_stops": gui.filter_stops,
+        "filter_punct": gui.filter_punct,
+        "named_entities": gui.named_entities,
+        "include_pos": gui.include_pos,
+    }
     uix = widgets.interactive(
         display_cleaned_up_text,
         container=widgets.fixed(container),

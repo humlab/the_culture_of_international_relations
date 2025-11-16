@@ -39,7 +39,7 @@
 # %% code_folding=[]
 import warnings
 
-from common import config, setup_config, treaty_state
+from common import config, setup_config
 from common.gui.load_wti_index_gui import current_wti_index, load_wti_index_with_gui
 from common.quantative_analysis import party_analysis_gui, topic_analysis_gui
 

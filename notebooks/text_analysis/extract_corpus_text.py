@@ -23,20 +23,19 @@ import os
 
 from loguru import logger
 
-from common import config, treaty_state
+from common import config
 from common.corpus import textacy_corpus_utility as textacy_utility
 
 # %%
-from common.gui import textacy_corpus_gui
-from common.gui.load_wti_index_gui import current_wti_index
+from common.gui.load_wti_index_gui import load_wti_index_with_gui
 from notebooks.text_analysis.src.extract_text_gui import display_generate_tokenized_corpus_gui
 
 load_wti_index_with_gui(data_folder=config.DATA_FOLDER)
 
 # %matplotlib inline
 
-current_corpus_container = lambda: textacy_utility.CorpusContainer.container()
-current_corpus = lambda: textacy_utility.CorpusContainer.corpus()
+current_corpus_container = textacy_utility.CorpusContainer.container
+current_corpus = textacy_utility.CorpusContainer.corpus
 
 
 # %% [markdown]
@@ -56,16 +55,13 @@ current_corpus = lambda: textacy_utility.CorpusContainer.corpus()
 # %% code_folding=[]
 
 
-try:
-    subst_filename = os.path.join(config.DATA_FOLDER, "term_substitutions.txt")
-    corpus = current_corpus_container().textacy_corpus
-    corpus_path = current_corpus_container().prepped_source_path
-    if corpus is None:
-        logger.info("Please load corpus!")
-    else:
-        display_generate_tokenized_corpus_gui(corpus, corpus_path)
-except Exception as ex:
-    raise
+subst_filename = os.path.join(config.DATA_FOLDER, "term_substitutions.txt")
+corpus = current_corpus_container().textacy_corpus
+corpus_path = current_corpus_container().prepped_source_path
+if corpus is None:
+    logger.info("Please load corpus!")
+else:
+    display_generate_tokenized_corpus_gui(corpus, corpus_path)
 
 
 # %%
