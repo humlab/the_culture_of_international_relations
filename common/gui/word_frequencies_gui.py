@@ -19,7 +19,7 @@ from common.corpus import textacy_corpus_utility as textacy_utility
 utility.setup_default_pd_display()
 
 # def count_words_by(doc, target='lemma', include=None):
-#     """Not used currently."""    
+#     """Not used currently."""
 #     spacy_store = doc.vocab.strings
 
 #     default_exclude = lambda x: x.is_stop or x.is_punct or x.is_space
