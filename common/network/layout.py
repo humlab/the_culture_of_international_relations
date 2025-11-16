@@ -1,11 +1,8 @@
-import sys
-
 from common.network.layout_graphviz import layout_setups as gv_layout_setups
 from common.network.layout_networkx import layout_setups as nx_layout_setups
 
-
 try:
-    layout_setups = nx_layout_setups  + gv_layout_setups
+    layout_setups = nx_layout_setups + gv_layout_setups
 except ImportError:
     layout_setups = nx_layout_setups + gv_layout_setups
     # print(ex)
