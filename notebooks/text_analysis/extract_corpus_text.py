@@ -25,6 +25,9 @@ from loguru import logger
 
 from common import config, treaty_state
 from common.corpus import textacy_corpus_utility as textacy_utility
+
+# %%
+from common.gui import textacy_corpus_gui
 from common.gui.load_wti_index_gui import current_wti_index
 from notebooks.text_analysis.src.extract_text_gui import display_generate_tokenized_corpus_gui
 
@@ -39,15 +42,12 @@ current_corpus = lambda: textacy_utility.CorpusContainer.corpus()
 # %% [markdown]
 # ## <span style='color: green'>PREPARE </span> Load and Prepare Corpus <span style='float: right; color: red'>MANDATORY</span>
 #
-
-# %%
-from common.gui import textacy_corpus_gui
-
-try:
-    container = current_corpus_container()
-    textacy_corpus_gui.display_corpus_load_gui(config.DATA_FOLDER, current_wti_index(), container)
-except Exception as ex:
-    raise
+#
+#
+#     container = current_corpus_container()
+#     textacy_corpus_gui.display_corpus_load_gui(config.DATA_FOLDER, current_wti_index(), container)
+# except Exception as ex:
+#     raise
 
 
 # %% [markdown]
@@ -57,11 +57,11 @@ except Exception as ex:
 
 
 try:
-    subst_filename = os.path.join(config.DATA_FOLDER, 'term_substitutions.txt')
+    subst_filename = os.path.join(config.DATA_FOLDER, "term_substitutions.txt")
     corpus = current_corpus_container().textacy_corpus
-    corpus_path =  current_corpus_container().prepped_source_path
+    corpus_path = current_corpus_container().prepped_source_path
     if corpus is None:
-        logger.info('Please load corpus!')
+        logger.info("Please load corpus!")
     else:
         display_generate_tokenized_corpus_gui(corpus, corpus_path)
 except Exception as ex:
