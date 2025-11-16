@@ -1,4 +1,3 @@
-from ast import Index
 import glob
 import os
 import types
@@ -108,10 +107,8 @@ def display_corpus_load_gui(data_folder: str, wti_index: TreatyState, container:
                     + (() if gui.compute_dep.value else ("parser",))
                     + (() if gui.compute_ner.value else ("ner",))
                 )
-                if f'_{gui.language.value}' not in gui.source_path.value:
-                    logger.warning(
-                        f"selected corpus may not match selected language '{gui.language.value}'"
-                    )
+                if f"_{gui.language.value}" not in gui.source_path.value:
+                    logger.warning(f"selected corpus may not match selected language '{gui.language.value}'")
 
                 generate_corpus(
                     data_folder=data_folder,

@@ -72,7 +72,6 @@ wti_index = load_wti_index(
     config.DATA_FOLDER, filename="Treaties_Master_List_Treaties.csv", is_cultural_yesno_column="is_cultural_yesno_gen"
 )
 
-
 # %% [markdown]
 # ### <span style='color:blue'>**Chart 1: Cultural Treaties (broadly defined), 1919-1972**</span>
 # This chart shows the number of new treaties signed per year in each of the sub-categories classified un the WTI as "cultural" (that is, under the heading 7Culture). This category, like the others used in the WTI, corresponds closely to those used by the United Nations and its institutions. “The term bilateral general cultural agreements,” according to a 1962 UNESCO publication, “is used to denote cultural conventions between two States or governments, dealing with all or several aspects of international relations in the field of education, science and culture” (UNESCO 1962, 65). Somewhat confusingly, this grouping includes one sub-category called 7CULT. This category covers both "general cultural agreements" as well as "specialized agreements" addressing such things as "cultural institutes; artistic exhibitions; protection of literary and artistic property,” regulating exchanges among the class of persons that includes "Artists (general); writers; musicians (composers, conductors, singers and instrumentalists); painters and sculptors; actors; film actors; dancers; artistes; architects; librarians; museum archivists; archaeologists" (UNESCO 1962, 18).

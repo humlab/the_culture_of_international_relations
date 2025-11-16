@@ -23,7 +23,7 @@ from common.corpus.container import CorpusContainer
 from common.gui import load_corpus_gui, word_frequencies_gui
 from common.gui.load_wti_index_gui import current_wti_index, load_wti_index_with_gui
 
-await setup_config()
+await setup_config()  # type: ignore
 
 load_wti_index_with_gui(data_folder=config.DATA_FOLDER)
 
@@ -45,5 +45,3 @@ load_corpus_gui.display_corpus_load_gui(config.DATA_FOLDER, current_wti_index(),
 
 # %%
 word_frequencies_gui.word_frequency_gui(current_wti_index(), current_corpus())
-
-# %%

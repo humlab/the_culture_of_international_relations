@@ -50,7 +50,6 @@ current_wti_index().check_party()
 
 output_notebook()
 
-
 # %% [markdown]
 # ### Party Network
 #
