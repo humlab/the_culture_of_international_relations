@@ -6,8 +6,9 @@ import pandas as pd
 from IPython.display import display
 from textacy.corpus import Corpus
 
-from common import config, treaty_utility, widgets_config
+from common import config, widgets_config
 from common.corpus import textacy_corpus_utility as textacy_utility
+from common.gui.utility import get_treaty_time_groupings
 
 # FROM NOTEBOOK:
 # def compute_corpus_statistics(
@@ -156,7 +157,7 @@ def compute_corpus_statistics(
 
     value_columns: list[str] = list(config.POS_NAMES) if (len(include_pos or [])) == 0 else list(include_pos or [])
 
-    documents: pd.DataFrame = treaty_utility.get_corpus_documents(corpus)
+    documents: pd.DataFrame = textacy_utility.get_corpus_documents(corpus)
 
     if len(parties or []) > 0:
         documents = documents[documents.party1.isin(parties) | documents.party2.isin(parties)]
@@ -187,8 +188,7 @@ def corpus_statistics_gui(data_folder, wti_index, container, compute_callback, d
     # counter = collections.Counter(corpus.word_counts(normalize="lemma", weighting="count", as_strings=True))
     # frequent_words = [x[0] for x in textacy_utility.get_most_frequent_words(corpus, 100)]
 
-    treaty_time_groupings = wti_index.get_treaty_time_groupings()
-    group_by_options = {treaty_time_groupings[k]["title"]: k for k in treaty_time_groupings}
+    group_by_options = {v["title"]: k for k, v in get_treaty_time_groupings().items()}
     # output_type_options = [ ( 'Table', 'table' ), ( 'Pivot', 'pivot' ), ( 'Excel', 'excel' ), ]
     # ngrams_options = {"1": [1], "1,2": [1, 2], "1,2,3": [1, 2, 3]}
     party_preset_options = wti_index.get_party_preset_options()
