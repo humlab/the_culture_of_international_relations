@@ -18,6 +18,7 @@ from loguru import logger
 from spacy.attrs import LEMMA, LOWER, ORTH  # pylint: disable=no-name-in-module
 from spacy.cli import download as spacy_download  # type: ignore
 from spacy.language import Language
+from spacy.tokens import Doc
 from textacy.corpus import Corpus
 from textacy.spacier.utils import make_doc_from_text_chunks
 
@@ -309,7 +310,7 @@ def extract_document_terms(doc: spacy.tokens.Doc, extract_args: dict[str, Any]):
 #     return (extract_document_terms(doc, extract_args) for doc in corpus.docs)
 
 
-def get_document_by_id(corpus: Corpus, document_id: str, field_name: str = "document_id") -> spacy.tokens.Doc:
+def get_document_by_id(corpus: Corpus, document_id: str, field_name: str = "document_id") -> Doc:
 
     for doc in corpus.get(lambda x: x._.meta[field_name] == document_id, limit=1):
         return doc
@@ -418,15 +419,16 @@ def keep_hyphen_tokenizer(nlp: Language) -> spacy.tokenizer.Tokenizer:
     )
 
 
-def _get_pos_statistics(doc) -> dict[str, int]:
+def _get_pos_statistics(doc: Doc) -> dict[str, int]:
     pos_iter = (x.pos_ for x in doc if x.pos_ not in ["NUM", "PUNCT", "SPACE"])
     pos_counts: dict[str, int] = dict(collections.Counter(pos_iter))
     stats: dict[str, int] = utility.extend(dict(config.POS_TO_COUNT), pos_counts)
     return stats
 
 
-def get_corpus_documents(corpus: Corpus) -> pd.DataFrame:
-    metadata = [utility.extend({}, doc._.meta, _get_pos_statistics(doc)) for doc in corpus.docs]
+def get_corpus_documents(corpus: Corpus | list[Doc]) -> pd.DataFrame:
+    documents: list[Doc] = corpus.docs if isinstance(corpus, Corpus) else corpus
+    metadata = [utility.extend({}, doc._.meta, _get_pos_statistics(doc)) for doc in documents]
     df: pd.DataFrame = pd.DataFrame(metadata)[
         ["treaty_id", "filename", "signed_year", "party1", "party2"] + config.POS_NAMES
     ]
@@ -520,15 +522,20 @@ def to_bow(
 
 
 def get_most_frequent_words(
-    corpus, n_top: int, normalize: str = "lemma", include_pos: list[str] | None = None, weighting: str = "count"
+    corpus: Corpus | list[Doc],
+    n_top: int,
+    normalize: str = "lemma",
+    include_pos: list[str] | None = None,
+    weighting: str = "count",
 ):
+    documents: list[Doc] = corpus.docs if isinstance(corpus, Corpus) else corpus
     include_pos = include_pos or ["VERB", "NOUN", "PROPN"]
 
     def include(x) -> bool:
         return x.pos_ in include_pos
 
     word_counts = collections.Counter()
-    for doc in corpus:
+    for doc in documents:
         bow: dict[str, int] | dict[int, int] = to_bow(
             doc, target=normalize, weighting=weighting, as_strings=True, include=include
         )
