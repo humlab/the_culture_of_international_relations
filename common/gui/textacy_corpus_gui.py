@@ -12,9 +12,9 @@ from textacy.corpus import Corpus
 from textacy.extract.basics import entities as extract_entities
 from textacy.spacier.utils import merge_spans
 
-from common import config, treaty_utility, utility, widgets_config
+from common import config, utility, widgets_config
 from common.corpus import textacy_corpus_utility as textacy_utility
-from common.corpus.utility import CompressedFileReader
+from common.corpus.utility import CompressedFileReader, get_document_stream
 from common.treaty_state import ConfigValue, TreatyState
 
 
@@ -68,7 +68,7 @@ def generate_textacy_corpus(
         )
         reader: CompressedFileReader = CompressedFileReader(container.prepped_source_path)
 
-        stream = treaty_utility.get_document_stream(reader, container.language, document_index=treaties)
+        stream = get_document_stream(reader, container.language, document_index=treaties)
 
         logger.info("Working: Stream created...")
 
