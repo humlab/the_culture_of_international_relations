@@ -10,7 +10,7 @@ from matplotlib import pyplot as plt
 
 from common import config, utility
 from common.corpus import textacy_corpus_utility as textacy_utility
-from common.gui import gui_utility
+from common.gui.utility import get_treaty_dropdown_options
 
 # %config InlineBackend.print_figure_kwargs = {'bbox_inches':'tight'}
 
@@ -152,7 +152,7 @@ def display_cleanup_text_gui(container, wti_index):
 
     corpus = container.textacy_corpus
 
-    document_options = gui_utility.get_treaty_dropdown_options(wti_index, corpus)
+    document_options = get_treaty_dropdown_options(wti_index, corpus)
 
     logger.info("...loading term substitution mappings...")
     gpe_filename = os.path.join(config.DATA_FOLDER, "gpe_substitutions.txt")
