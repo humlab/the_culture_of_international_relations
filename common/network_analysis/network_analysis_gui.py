@@ -277,9 +277,6 @@ def display_network_analyis_gui(wti_index: TreatyState, plot_data):
     time_travel_label_widget = widgets.Label(value="")
 
     label_map: dict[str, dict[str, str]] = {
-        "graphtool_sfdp": {"K": "K", "C": "C", "p": "gamma"},
-        "graphtool_arf": {"K": "d", "C": "a", "p": "_"},
-        "graphtool_fr": {"K": "a/(2*N)", "C": "r/2", "p": "_"},
         "nx_spring_layout": {"K": "k", "C": "_", "p": "_"},
         "nx_spectral_layout": {"K": "_", "C": "_", "p": "_"},
         "nx_circular_layout": {"K": "_", "C": "_", "p": "_"},
@@ -292,13 +289,11 @@ def display_network_analyis_gui(wti_index: TreatyState, plot_data):
         layout = change["new"]
         opts: dict[str, str] = label_map.get(layout, label_map.get("other", {}))
         gv: list[str] = ["graphviz_neato", "graphviz_dot", "graphviz_circo", "graphviz_fdp", "graphviz_sfdp"]
-        C_widget.disabled = layout not in ["graphtool_sfdp", "graphtool_arf", "graphtool_fr"]
+        C_widget.disabled = True
         C_widget.description = " " if C_widget.disabled else opts.get("C")
-        K_widget.disabled = layout not in ["graphtool_sfdp", "graphtool_arf", "graphtool_fr", "nx_spring_layout"] + gv
+        K_widget.disabled = layout not in ["nx_spring_layout"] + gv
         K_widget.description = " " if K_widget.disabled else opts.get("K", " ")
-        p_widget.disabled = layout not in [
-            "graphtool_sfdp",
-        ]
+        p_widget.disabled = True
         p_widget.description = " " if p_widget.disabled else opts.get("p", " ")
 
     def on_simple_mode_value_change(change):
