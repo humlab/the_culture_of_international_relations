@@ -447,24 +447,24 @@ class TreatyState:
             return self.tagged_headnotes
         return self.tagged_headnotes.loc[(self.tagged_headnotes.pos.isin(tags))]
 
-    def get_treaty_subset(self, options: dict[str, Any], language: str) -> pd.DataFrame:
-        lang_field: str = {
-            "en": "english",
-            "fr": "french",
-            "de": "other",
-            "it": "other",
-        }[language]
-        df: pd.DataFrame = self.treaties
-        df = df.loc[df[lang_field] == language]
-        if options.get("source") is not None:
-            df = df.loc[df.source.isin(options.get("source"))]  # type: ignore
-        if options.get("from_year") is not None:
-            df = df.loc[df.signed >= datetime.date(options["from_year"], 1, 1)]
-        if options.get("to_year") is not None:
-            df = df.loc[df.signed < datetime.date(options["to_year"] + 1, 1, 1)]
-        if options.get("parties") is not None:
-            df = df.loc[df.party1.isin(options["parties"]) | df.party2.isin(options["parties"])]
-        return df  # .set_index('treaty_id')
+    # def get_treaty_subset(self, options: dict[str, Any], language: str) -> pd.DataFrame:
+    #     lang_field: str = {
+    #         "en": "english",
+    #         "fr": "french",
+    #         "de": "other",
+    #         "it": "other",
+    #     }[language]
+    #     df: pd.DataFrame = self.treaties
+    #     df = df.loc[df[lang_field] == language]
+    #     if options.get("source") is not None:
+    #         df = df.loc[df.source.isin(options.get("source"))]  # type: ignore
+    #     if options.get("from_year") is not None:
+    #         df = df.loc[df.signed >= datetime.date(options["from_year"], 1, 1)]
+    #     if options.get("to_year") is not None:
+    #         df = df.loc[df.signed < datetime.date(options["to_year"] + 1, 1, 1)]
+    #     if options.get("parties") is not None:
+    #         df = df.loc[df.party1.isin(options["parties"]) | df.party2.isin(options["parties"])]
+    #     return df  # .set_index('treaty_id')
 
     def filter_by_is_cultural(self, df: pd.DataFrame, treaty_filter: str) -> pd.DataFrame:
 
@@ -610,38 +610,38 @@ class TreatyState:
 
         return treaties.sort_values("signed")
 
-    def get_treaty_text_languages(self) -> pd.DataFrame:
-        """Returns avaliable treaty text languages for treaties having a language mark in the wti-index.
+    # def get_treaty_text_languages(self) -> pd.DataFrame:
+    #     """Returns avaliable treaty text languages for treaties having a language mark in the wti-index.
 
-            The languages of the compiled text are marked in columns 'english', 'french' and 'other'
+    #         The languages of the compiled text are marked in columns 'english', 'french' and 'other'
 
-            The only allowed value for each column are:
-                'english': 'en'
-                'french':  'fr'
-                'other': 'it', 'de' or both
+    #         The only allowed value for each column are:
+    #             'english': 'en'
+    #             'french':  'fr'
+    #             'other': 'it', 'de' or both
 
-            The retrieval needs to handle the case when a treaty has two values in 'other' column.
-            This is solved with the apply(split).apply(pd.Series).stack() chaining.
+    #         The retrieval needs to handle the case when a treaty has two values in 'other' column.
+    #         This is solved with the apply(split).apply(pd.Series).stack() chaining.
 
-        Parameters:
-        -----------
+    #     Parameters:
+    #     -----------
 
-        Returns:
-        -------
-            DataFrame: index = treaty_id, columns = { 'language': 'en|fr|de|it' }
+    #     Returns:
+    #     -------
+    #         DataFrame: index = treaty_id, columns = { 'language': 'en|fr|de|it' }
 
-        """
-        treaties: pd.DataFrame = self.treaties
-        treaty_langs: pd.DataFrame = (
-            pd.concat([treaties.english, treaties.french, treaties.other], axis=0)
-            .dropna()
-            .apply(lambda x: x.lower().replace(" ", "").split(","))
-            .apply(pd.Series)
-            .stack()
-            .reset_index()[["treaty_id", 0]]
-            .rename(columns={0: "language"})
-        )
-        return treaty_langs
+    #     """
+    #     treaties: pd.DataFrame = self.treaties
+    #     treaty_langs: pd.DataFrame = (
+    #         pd.concat([treaties.english, treaties.french, treaties.other], axis=0)
+    #         .dropna()
+    #         .apply(lambda x: x.lower().replace(" ", "").split(","))
+    #         .apply(pd.Series)
+    #         .stack()
+    #         .reset_index()[["treaty_id", 0]]
+    #         .rename(columns={0: "language"})
+    #     )
+    #     return treaty_langs
 
     def get_continent_states(self) -> pd.Series:
         df: pd.DataFrame = self.parties

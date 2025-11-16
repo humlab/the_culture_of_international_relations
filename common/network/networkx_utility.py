@@ -5,7 +5,7 @@ from typing import Any
 import networkx as nx
 import pandas as pd
 
-from common.utility import clamp_values, extend, list_of_dicts_to_dict_of_lists
+from common.utility import extend, list_of_dicts_to_dict_of_lists
 
 
 def df_to_nx_edge_format(
@@ -41,22 +41,22 @@ def df_to_nx_edge_format(
     ]
 
 
-def df_to_nx_edges_list(
-    df: pd.DataFrame,
-    source: str = "source",
-    target: str = "target",
-    **edge_attributes: Any,
-) -> list[tuple[Any, Any, dict[Any, Any]]]:
-    """More generic implementation"""
-    attr_fields: list[Any] = list(edge_attributes.values())
-    attr_names: dict[Any, str] = {v: k for k, v in edge_attributes.items()}
+# def df_to_nx_edges_list(
+#     df: pd.DataFrame,
+#     source: str = "source",
+#     target: str = "target",
+#     **edge_attributes: Any,
+# ) -> list[tuple[Any, Any, dict[Any, Any]]]:
+#     """More generic implementation"""
+#     attr_fields: list[Any] = list(edge_attributes.values())
+#     attr_names: dict[Any, str] = {v: k for k, v in edge_attributes.items()}
 
-    edges = zip(
-        df[source].values,
-        df[target].values,
-        df[attr_fields].apply(lambda x: {attr_names[k]: v for k, v in x.to_dict().items()}, axis=1),
-    )
-    return list(edges)
+#     edges = zip(
+#         df[source].values,
+#         df[target].values,
+#         df[attr_fields].apply(lambda x: {attr_names[k]: v for k, v in x.to_dict().items()}, axis=1),
+#     )
+#     return list(edges)
 
 
 # def df_to_nx(
@@ -326,20 +326,20 @@ def get_bipartite_node_set(graph: nx.Graph, bipartite: int = 0) -> tuple[list[st
     return list(nodes), list(others)
 
 
-def create_nx_graph_from_weighted_edges(values: list[tuple]) -> nx.Graph:
-    """A simple wrapper for networkx factory function add_weighted_edges_from
+# def create_nx_graph_from_weighted_edges(values: list[tuple]) -> nx.Graph:
+#     """A simple wrapper for networkx factory function add_weighted_edges_from
 
-    Parameters
-    ----------
-    values : Edges represented in nx style as a list of (source, target, attributes) triplets
+#     Parameters
+#     ----------
+#     values : Edges represented in nx style as a list of (source, target, attributes) triplets
 
-    Returns
-    -------
-        A new nx.Graph
-    """
-    graph: nx.Graph = nx.Graph()
-    graph.add_weighted_edges_from(values)
-    return graph
+#     Returns
+#     -------
+#         A new nx.Graph
+#     """
+#     graph: nx.Graph = nx.Graph()
+#     graph.add_weighted_edges_from(values)
+#     return graph
 
 
 # create_network_from_xyw_list = create_nx_graph_from_weighted_edges

@@ -73,7 +73,7 @@ load_corpus_gui.display_corpus_load_gui(config.DATA_FOLDER, current_wti_index(),
 # ## <span style='color: green'>PREPARE/DESCRIBE </span> Clean Up the Text <span style='float: right; color: green'>TRY IT</span>
 
 # %% code_folding=[]
-xgui, xuix = display_cleanup_text_gui(current_corpus_container(), current_wti_index())
+display_cleanup_text_gui(current_corpus_container(), current_wti_index()) ;
 
 
 # %% [markdown]
@@ -115,32 +115,32 @@ most_discriminating_terms_gui.display_gui(current_wti_index(), current_corpus())
 # Create and export region vs region MDT files as Excel Spreadsheets
 
 
-def create_mdt(group1, group2, include_pos, closed_region):
-    corpus = current_corpus()
-    assert corpus is not None, "Please load corpus!"
+# def create_mdt(group1, group2, include_pos, closed_region):
+#     corpus = current_corpus()
+#     assert corpus is not None, "Please load corpus!"
 
-    most_discriminating_terms_gui.compute_most_discriminating_terms(
-        current_wti_index(),
-        corpus,
-        group1=config.get_region_parties(*group1),
-        group2=config.get_region_parties(*group2),
-        top_n_terms=100,
-        max_n_terms=2000,
-        include_pos=include_pos,
-        period1=(1945, 1972),
-        period2=(1945, 1972),
-        closed_region=closed_region,
-        normalize=spacy.attrs.LEMMA,  # type: ignore
-        output_filename=os.path.join(
-            config.DATA_FOLDER,
-            "MDT_{}_vs_{}_({})_{}.xlsx".format(  # type: ignore
-                "+".join(["R{}".format(x) for x in group1]),  # type: ignore
-                "+".join(["R{}".format(x) for x in group2]),  # type: ignore
-                ",".join(include_pos),
-                "CLOSED" if closed_region else "OPEN",
-            ),
-        ),
-    )
+#     most_discriminating_terms_gui.compute_most_discriminating_terms(
+#         current_wti_index(),
+#         corpus,
+#         group1=config.get_region_parties(*group1),
+#         group2=config.get_region_parties(*group2),
+#         top_n_terms=100,
+#         max_n_terms=2000,
+#         include_pos=include_pos,
+#         period1=(1945, 1972),
+#         period2=(1945, 1972),
+#         closed_region=closed_region,
+#         normalize=spacy.attrs.LEMMA,  # type: ignore
+#         output_filename=os.path.join(
+#             config.DATA_FOLDER,
+#             "MDT_{}_vs_{}_({})_{}.xlsx".format(  # type: ignore
+#                 "+".join(["R{}".format(x) for x in group1]),  # type: ignore
+#                 "+".join(["R{}".format(x) for x in group2]),  # type: ignore
+#                 ",".join(include_pos),
+#                 "CLOSED" if closed_region else "OPEN",
+#             ),
+#         ),
+#     )
 
 
 # include_pos: list[str] = ["ADJ", "VERB", "NOUN"]

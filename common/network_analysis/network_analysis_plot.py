@@ -3,7 +3,7 @@ from typing import Any
 import pandas as pd
 from bokeh.io.notebook import CommsHandle
 from bokeh.models import ColumnDataSource, HoverTool, LabelSet
-from bokeh.palettes import RdYlBu, Set1, all_palettes  # pylint: disable=E0611
+from bokeh.palettes import RdYlBu, all_palettes  # pylint: disable=E0611
 from bokeh.plotting import figure, show
 
 from common import config
