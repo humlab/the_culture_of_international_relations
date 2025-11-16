@@ -102,7 +102,7 @@ def adjust_node_label_offset(nodes: dict[str, Any], node_size: str | int, defaul
 #     **figkwargs,
 # ):
 #     if threshold > 0:
-#         network = networkx_utility.get_sub_network(network, threshold)
+#         network = networkx_utility.get_subgraph(network, threshold)
 
 #     edges = networkx_utility.get_positioned_edges(network, layout)
 

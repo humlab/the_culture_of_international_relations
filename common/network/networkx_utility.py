@@ -135,9 +135,6 @@ def get_subgraph(g: nx.Graph, attribute: str = "weight", threshold: float = 0.0)
     return tng
 
 
-get_sub_network = get_subgraph
-
-
 def get_positioned_nodes(network: nx.Graph, layout: dict, nodes: list[str] | None = None) -> dict[str, list[Any]]:
     """Returns nodes assigned position from given layout.
     NOT USED CURRENTLY
