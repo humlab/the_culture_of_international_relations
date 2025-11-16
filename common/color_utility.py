@@ -1,6 +1,4 @@
-import random
 from collections.abc import Sequence
-from itertools import cycle, islice
 from typing import Any, Self
 
 import numpy as np
@@ -29,25 +27,6 @@ class ColorGradient:
             "g": [RGB[1] for RGB in gradient],
             "b": [RGB[2] for RGB in gradient],
         }
-
-    @staticmethod
-    def linear_gradient(start_hex: str, finish_hex: str = "#FFFFFF", n: int = 10) -> dict[str, Any]:
-        """returns a gradient list of (n) colors between two hex colors. start_hex and finish_hex should be the full
-        six-digit color string, including the number sign ("#FFFFFF")"""
-        # Starting and ending colors in RGB form
-        s: list[int] = ColorGradient.hex_to_RGB(start_hex)
-        f: list[int] = ColorGradient.hex_to_RGB(finish_hex)
-        # Initilize a list of the output colors with the starting color
-        RGB_list: list[list[int]] = [s]
-        # Calcuate a color at each evenly spaced value of t from 1 to n
-        for t in range(1, n):
-            # Interpolate RGB vector for color at the current value of t
-            curr_vector: list[int] = [int(s[j] + (float(t) / (n - 1)) * (f[j] - s[j])) for j in range(3)]
-            # Add it to our list of output colors
-            RGB_list.append(curr_vector)
-
-    #     return ColorGradient.color_dict(RGB_list)
-
 
 class StaticColorMap:
 
