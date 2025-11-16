@@ -88,7 +88,7 @@ select = [
     # isort
     "I",
 ]
-ignore = ["B905", "E501", "E722" ]
+ignore = ["B905", "E501", "E722", "E731", "F704" ]
 
 # select = ["E4", "E7", "E9", "F"]
 [tool.ruff.format]
