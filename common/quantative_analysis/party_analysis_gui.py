@@ -10,8 +10,8 @@ import pandas as pd
 from IPython.display import display
 from loguru import logger
 
-from common import config, treaty_utility, utility, widgets_config
-from common.treaty_state import TreatyState
+from common import config, utility, widgets_config
+from common.treaty_state import TreatyState, trim_period_group
 from common.utils import color_utility
 
 from . import analysis_data, analysis_plot
@@ -63,7 +63,7 @@ def display_quantity_by_party(
         parties = list(parties or [])
 
         if period_group["type"] == "range":
-            period_group = treaty_utility.trim_period_group(period_group, year_limit)
+            period_group = trim_period_group(period_group, year_limit)
         else:
             year_limit = None
 

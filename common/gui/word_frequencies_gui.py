@@ -15,6 +15,7 @@ from textacy.corpus import Corpus
 
 from common import utility, widgets_config
 from common.corpus import textacy_corpus_utility as textacy_utility
+from common.gui.utility import get_treaty_time_groupings
 
 utility.setup_default_pd_display()
 
@@ -203,7 +204,7 @@ def display_list_of_most_frequent_words(gui, df):
 
 def word_frequency_gui(wti_index, corpus) -> SimpleNamespace:
 
-    treaty_time_groups = wti_index.get_treaty_time_groupings()
+    treaty_time_groups = get_treaty_time_groupings()
 
     def lw(w):
         return widgets.Layout(width=w)
@@ -217,7 +218,7 @@ def word_frequency_gui(wti_index, corpus) -> SimpleNamespace:
         x[0].lower() for x in textacy_utility.get_most_frequent_words(corpus, 100, include_pos=default_include_pos)
     ]
 
-    group_by_options: dict[str, str] = {treaty_time_groups[k]["title"]: k for k in treaty_time_groups}
+    group_by_options: dict[str, str] = {v["title"]: k for k, v in get_treaty_time_groupings().items()}
     output_type_options: list[tuple[str, str]] = [
         ("Sample", "table"),
         ("Rank", "rank"),
