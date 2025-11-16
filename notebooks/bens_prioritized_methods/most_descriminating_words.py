@@ -17,16 +17,12 @@
 # ## The Culture of International Relations - Text Analysis
 # ### <span style='color: green'>SETUP </span> Prepare and Setup Notebook <span style='float: right; color: red'>MANDATORY</span>
 
-from loguru import logger
-
 # %% code_folding=[]
-from common import config, setup_config, utility
+from common import utility, config
 from common.corpus.container import CorpusContainer
-
-# %%
-# %%
-from common.gui import load_corpus_gui, most_discriminating_terms_gui
-from common.gui.load_wti_index_gui import current_wti_index, load_wti_index_with_gui
+from common import setup_config
+from common.gui.load_wti_index_gui import load_wti_index_with_gui, current_wti_index
+from loguru import logger
 
 await setup_config()  # type: ignore
 
@@ -43,24 +39,25 @@ current_corpus = CorpusContainer.corpus
 # ## <span style='color: green'>PREPARE </span> Load and Prepare Corpus <span style='float: right; color: red'>MANDATORY</span>
 #
 
+# %%
+from common.gui import load_corpus_gui
 
-try:
-    container: CorpusContainer = current_corpus_container()
-    load_corpus_gui.display_corpus_load_gui(config.DATA_FOLDER, current_wti_index(), container)
-except Exception as ex:
-    logger.error(ex)
+container: CorpusContainer = current_corpus_container()
+load_corpus_gui.display_corpus_load_gui(config.DATA_FOLDER, current_wti_index(), container)
 
 # %% [markdown]
 # ### <span style='color: green;'>DESCRIBE</span> Most Discriminating Terms<span style='color: blue; float: right'>OPTIONAL</span>
 # References
 # King, Gary, Patrick Lam, and Margaret Roberts. “Computer-Assisted Keyword and Document Set Discovery from Unstructured Text.” (2014). http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.458.1445&rep=rep1&type=pdf.
 #
-# Displays the *most discriminating words* between two sets of treaties. Each treaty group can be filtered by country and period (signed year). In this way, the same group of countries can be studied for different time periods, or different groups of countries can be studied for the same time period. If "Closed region" is checked then **both** parties must be to the selected set of countries, from each region. In this way, one can for instance compare treaties signed between countries within the WTI group "Communists", against treaties signed within "Western Europe".
+# Displays the *most discriminating words* between two sets of treaties. Each treaty group can be filtered by country and period (signed year). In this way, the same group of countries can be studied for different time periods, or different groups of countries can be studied for the same time period. If "Closed region" is checked then **both** parties must be to the selected set of countries, from each region. In this way, one can for instance compare treaties signed between countries within the WTI group "Communists", against treaties signed within "Western Europe". 
 #
 # <b>#terms</b> The number of most discriminating terms to return for each group.<br>
 # <b>#top</b> Only terms with a frequency within the top #top terms out of all terms<br>
 # <b>Closed region</b> If checked, then <u>both</u> treaty parties must be within selected region
 
+# %%
+from common.gui import most_discriminating_terms_gui
 
 try:
     most_discriminating_terms_gui.display_gui(current_wti_index(), current_corpus())

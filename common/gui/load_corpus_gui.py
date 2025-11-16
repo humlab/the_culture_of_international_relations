@@ -1,7 +1,9 @@
+from ast import Index
 import glob
 import os
 import types
 from typing import Any
+from venv import logger
 
 import ipywidgets as widgets
 from IPython.display import display
@@ -97,27 +99,36 @@ def display_corpus_load_gui(data_folder: str, wti_index: TreatyState, container:
         gui.progress.value = gui.progress.value + 1 if step is None else step
 
     def compute_callback(*_args):
-        gui.output.clear_output()
-        with gui.output:
-            disabled_pipes = (
-                (() if gui.compute_pos.value else ("tagger",))
-                + (() if gui.compute_dep.value else ("parser",))
-                + (() if gui.compute_ner.value else ("ner",))
-            )
-            generate_corpus(
-                data_folder=data_folder,
-                wti_index=wti_index,
-                container=container,
-                source_path=os.path.join(data_folder, gui.source_path.value),
-                language=gui.language.value,
-                merge_entities=gui.merge_entities.value,
-                overwrite=gui.overwrite.value,
-                period_group=gui.period_group.value,
-                parties=None,
-                disabled_pipes=tuple(disabled_pipes),
-                tick=tick,
-                treaty_sources=gui.sources.value,
-            )
+
+        try:
+            gui.output.clear_output()
+            with gui.output:
+                disabled_pipes = (
+                    (() if gui.compute_pos.value else ("tagger",))
+                    + (() if gui.compute_dep.value else ("parser",))
+                    + (() if gui.compute_ner.value else ("ner",))
+                )
+                if f'_{gui.language.value}' not in gui.source_path.value:
+                    logger.warning(
+                        f"selected corpus may not match selected language '{gui.language.value}'"
+                    )
+
+                generate_corpus(
+                    data_folder=data_folder,
+                    wti_index=wti_index,
+                    container=container,
+                    source_path=os.path.join(data_folder, gui.source_path.value),
+                    language=gui.language.value,
+                    merge_entities=gui.merge_entities.value,
+                    overwrite=gui.overwrite.value,
+                    period_group=gui.period_group.value,
+                    parties=None,
+                    disabled_pipes=tuple(disabled_pipes),
+                    tick=tick,
+                    treaty_sources=gui.sources.value,
+                )
+        except IndexError as ie:
+            logger.error(f"Did you select correct language? {ie}")
 
     gui.compute.on_click(compute_callback)
 
