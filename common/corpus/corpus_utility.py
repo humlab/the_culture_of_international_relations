@@ -485,7 +485,7 @@ def setup_nlp_language_model(language: str, **nlp_args) -> Language:
 #     return df
 
 
-def textacy_doc_to_bow(
+def to_bow(
     doc: spacy.tokens.Doc,
     target: str = "lemma",
     weighting: str = "count",
@@ -529,7 +529,7 @@ def get_most_frequent_words(
 
     word_counts = collections.Counter()
     for doc in corpus:
-        bow: dict[str, int] | dict[int, int] = textacy_doc_to_bow(
+        bow: dict[str, int] | dict[int, int] = to_bow(
             doc, target=normalize, weighting=weighting, as_strings=True, include=include
         )
         word_counts.update(bow)

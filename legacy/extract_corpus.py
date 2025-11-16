@@ -589,7 +589,7 @@ def compute_list_of_most_frequent_words(
                                                    
     for doc in docs:
         
-        doc_freqs = corpus_utility.textacy_doc_to_bow(doc, target=target, weighting=weighting, as_strings=True, include=include)
+        doc_freqs = corpus_utility.to_bow(doc, target=target, weighting=weighting, as_strings=True, include=include)
         
         df = pd.DataFrame({
             'treaty_id': doc.metadata['treaty_id'],
