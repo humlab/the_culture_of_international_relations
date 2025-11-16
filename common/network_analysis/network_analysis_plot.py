@@ -6,7 +6,6 @@ from bokeh.models import ColumnDataSource, HoverTool, LabelSet
 from bokeh.palettes import RdYlBu, all_palettes  # pylint: disable=E0611
 from bokeh.plotting import figure, show
 
-from common import config
 from common.gui.widgets_config import glyph_hover_callback2
 from common.utility import extend
 

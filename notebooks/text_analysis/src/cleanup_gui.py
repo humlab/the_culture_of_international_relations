@@ -127,7 +127,7 @@ def display_cleaned_up_text(
                 with gui.output_text:
 
                     df = pd.DataFrame(wf.most_common(25), columns=["token", "count"])
-                    print("Token count: {} Vocab count: {}".format(wf.N(), wf.B()))
+                    print(f"Token count: {wf.N()} Vocab count: {wf.B()}")
                     display(df)
 
                 with gui.output_statistics:

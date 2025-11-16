@@ -233,7 +233,7 @@ def display_generate_tokenized_corpus_gui(corpus, corpus_source_filepath, subst_
 
         with gui.output:
             logger.info("Process DONE!")
-            logger.info("Result stored in '{}'".format(filepath))
+            logger.info(f"Result stored in '{filepath}'")
             display(df_summary)
 
         gui.compute.disabled = False
