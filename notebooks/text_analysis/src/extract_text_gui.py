@@ -69,7 +69,6 @@ def tokenize_docs(docs, **opts):
         document_id += 1
 
 
-
 def store_tokenized_corpus(
     tokenized_docs, corpus_source_filepath, **opts  # pylint: disable=unused-argument
 ) -> tuple[str, pd.DataFrame]:

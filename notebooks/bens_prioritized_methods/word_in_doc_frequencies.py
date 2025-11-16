@@ -25,7 +25,7 @@ from common import config, setup_config
 from common.corpus import textacy_corpus_utility as textacy_utility
 from common.gui import textacy_corpus_gui
 from common.gui import word_in_doc_frequencies_gui as widfgui
-from common.gui.load_wti_index_gui import load_wti_index_with_gui, current_wti_index
+from common.gui.load_wti_index_gui import current_wti_index, load_wti_index_with_gui
 
 await setup_config()
 
@@ -37,7 +37,7 @@ current_corpus_container = lambda: textacy_utility.CorpusContainer.container()
 current_corpus = lambda: textacy_utility.CorpusContainer.corpus()
 
 container: textacy_utility.CorpusContainer = current_corpus_container()
-textacy_corpus_gui.display_corpus_load_gui(config.DATA_FOLDER, current_wti_index(), container);
+textacy_corpus_gui.display_corpus_load_gui(config.DATA_FOLDER, current_wti_index(), container)
 
 
 # %% [markdown]

@@ -28,6 +28,7 @@ class ColorGradient:
             "b": [RGB[2] for RGB in gradient],
         }
 
+
 class StaticColorMap:
 
     def __init__(self, palette: Sequence[str]) -> None:

@@ -5,8 +5,8 @@ import zipfile
 from collections.abc import Callable, Generator
 from typing import Any, AnyStr, Self
 
-from loguru import logger
 import pandas as pd
+from loguru import logger
 
 HYPHEN_REGEXP: re.Pattern = re.compile(r"\b(\w+)-\s*\r?\n\s*(\w+)\b", re.UNICODE)
 
