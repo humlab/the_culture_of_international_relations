@@ -16,7 +16,7 @@ black:
 	@uv run black $(SOURCE_FOLDERS)
 
 clean-notebooks:
-	@find documents -name "*.ipynb" -exec uv run nbstripout {} \;
+	@find notebooks -name "*.ipynb" -exec uv run nbstripout {} \;
 
 
 # concise, full, json, json-lines, junit, grouped, github, gitlab, pylint, rdjson, azure, sarif
