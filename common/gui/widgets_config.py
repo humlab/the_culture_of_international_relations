@@ -1,0 +1,245 @@
+# from __future__ import print_function
+from collections.abc import Sequence
+from typing import Any
+
+import ipywidgets as widgets
+from bokeh.models import ColumnDataSource, CustomJS
+
+# from IPython.display import Javascript
+from common import config, extend
+from common.configuration.resolve import ConfigValue
+
+# if __package__:
+#    print('Package named {!r}; __name__ is {!r}'.format(__package__, __name__))
+
+
+# def get_ipython_clear_output() -> None:
+#     Javascript(
+#         """
+#     Jupyter.notebook.clear_all_output();
+#     """
+#     )
+
+
+def kwargser(d) -> dict[str, Any]:
+    args = dict(d)
+    if "kwargs" in args:
+        kwargs = args["kwargs"]
+        del args["kwargs"]
+        args.update(kwargs)
+    return args
+
+
+def toggle(description, value, **kwargs):  # pylint: disable=W0613
+    return widgets.ToggleButton(**kwargser(locals()))
+
+
+# def toggles(description, options, value, **kwopts):  # pylint: disable=W0613
+#     return widgets.ToggleButtons(**kwargser(locals()))
+
+
+def select_multiple(description, options, values, **kwopts):
+    default_opts: dict[str, Any] = {
+        "options": options,
+        "value": values,
+        "rows": 4,
+        "description": description,
+        "disabled": False,
+        "layout": widgets.Layout(width="180px"),
+    }
+    return widgets.SelectMultiple(**extend(default_opts, kwopts))
+
+
+def dropdown(description, options, value, **kwargs):  # pylint: disable=W0613
+    return widgets.Dropdown(**kwargser(locals()))
+
+
+def slider(description, min, max, value, **kwargs):  # pylint: disable=W0613, W0622
+    return widgets.IntSlider(**kwargser(locals()))
+
+
+def rangeslider(description, min, max, value, **kwargs):  # pylint: disable=W0613, W0622
+    return widgets.IntRangeSlider(**kwargser(locals()))
+
+
+def sliderf(description, min, max, step, value, **kwargs):  # pylint: disable=W0613, W0622
+    return widgets.FloatSlider(**kwargser(locals()))
+
+
+def progress(min, max, step, value, **kwargs):  # pylint: disable=W0613, W0622
+    return widgets.IntProgress(**kwargser(locals()))
+
+
+def itext(min, max, value, **kwargs):  # pylint: disable=W0613, W0622
+    return widgets.BoundedIntText(**kwargser(locals()))
+
+
+# def wrap_id_text(dom_id, value=""):
+#     value = f"<span class='{dom_id}'>{value}</span>" if dom_id is not None else value
+#     return value
+
+
+# def text(dom_id=None, value=""):
+#     return widgets.HTML(value=wrap_id_text(dom_id, value), placeholder="", description="")
+
+
+# def button(description: str, **kwargs):  # pylint: disable=W0613
+#     return widgets.Button(**kwargser(locals()))
+
+
+def glyph_hover_js_code(
+    element_id: str, id_name: str, text_name: str, glyph_name: str = "glyph", glyph_data: str = "glyph_data"
+) -> str:
+    return (
+        """
+        var indices = cb_data.index['1d'].indices;
+        var current_id = -1;
+        if (indices.length > 0) {
+            var index = indices[0];
+            var id = parseInt("""
+        + glyph_name
+        + """.data."""
+        + id_name
+        + """[index]);
+            if (id !== current_id) {
+                current_id = id;
+                var text = """
+        + glyph_data
+        + """.data."""
+        + text_name
+        + """[id];
+                $('."""
+        + element_id
+        + """').html('ID ' + id.toString() + ': ' + text);
+            }
+    }
+    """
+    )
+
+
+def glyph_hover_callback(glyph_source, glyph_id, text_source, element_id) -> CustomJS:
+    code = glyph_hover_js_code(element_id, glyph_id, "text", glyph_name="glyph", glyph_data="glyph_data")
+    callback = CustomJS(args={"glyph": glyph_source, "glyph_data": text_source}, code=code)
+    return callback
+
+
+def glyph_hover_callback2(
+    glyph_source, glyph_id, text_ids: Sequence[str], text_source: Sequence[str], element_id: str
+) -> CustomJS:
+    source = ColumnDataSource({"text_id": text_ids, "text": text_source})
+    code = glyph_hover_js_code(element_id, glyph_id, "text", glyph_name="glyph", glyph_data="glyph_data")
+    callback = CustomJS(args={"glyph": glyph_source, "glyph_data": source}, code=code)
+    return callback
+
+
+def treaty_filter_widget(**kwopts):
+    default_opts: dict[str, Any] = {
+        "options": config.TREATY_FILTER_OPTIONS,
+        "description": "Topic filter:",
+        "button_style": "",
+        "tooltips": config.TREATY_FILTER_TOOLTIPS,
+        "value": "is_cultural",
+        "layout": widgets.Layout(width="200px"),
+    }
+    return widgets.ToggleButtons(**extend(default_opts, kwopts))
+
+
+def period_group_widget(index_as_value=False, **kwopts):
+    default_opts: dict[str, Any] = {
+        "options": {x["title"]: i if index_as_value else x for i, x in enumerate(config.DEFAULT_PERIOD_GROUPS)},
+        "value": (len(config.DEFAULT_PERIOD_GROUPS) - 1 if index_as_value else config.DEFAULT_PERIOD_GROUPS[-1]),
+        "description": "Divisions",
+        "layout": widgets.Layout(width="200px"),
+    }
+    return widgets.Dropdown(**extend(default_opts, kwopts))
+
+
+def party_name_widget(**kwopts):
+    default_opts: dict[str, Any] = {
+        "options": config.PARTY_NAME_OPTIONS,
+        "value": "party_name",
+        "description": "Name",
+        "layout": widgets.Layout(width="200px"),
+    }
+    return widgets.Dropdown(**extend(default_opts, kwopts))
+
+
+# def aggregate_function_widget(**kwopts):
+#     default_opts: dict[str, Any] = {
+#         "options": ["mean", "sum", "std", "min", "max"],
+#         "value": "mean",
+#         "description": "Aggregate",
+#         "layout": widgets.Layout(width="200px"),
+#     }
+#     return widgets.Dropdown(**extend(default_opts, kwopts))
+
+
+# def years_widget(**kwopts):
+#     default_opts: dict[str, Any] = {
+#         "options": [],
+#         "value": None,
+#         "description": "Year",
+#         "layout": widgets.Layout(width="200px"),
+#     }
+#     return widgets.Dropdown(**extend(default_opts, kwopts))
+
+
+def parties_widget(**kwopts):
+    default_opts: dict[str, Any] = {
+        "options": [],
+        "value": None,
+        "rows": 12,
+        "description": "Parties",
+        "disabled": False,
+        "layout": widgets.Layout(width="180px"),
+    }
+    return widgets.SelectMultiple(**extend(default_opts, kwopts))
+
+
+def topic_groups_widget(**kwopts):
+    default_opts: dict[str, Any] = {
+        "options": config.TOPIC_GROUP_MAPS.keys(),
+        "description": "Category:",
+        "value": "7CORR",
+        "layout": widgets.Layout(width="200px"),
+    }
+    return widgets.Dropdown(**extend(default_opts, kwopts))
+
+
+def topic_groups_widget2(**kwopts):
+    default_opts: dict[str, Any] = {
+        "options": config.TOPIC_GROUP_MAPS,
+        "value": config.TOPIC_GROUP_MAPS["7CORR"],
+        "description": "Category:",
+        "layout": widgets.Layout(width="200px"),
+    }
+    return widgets.Dropdown(**extend(default_opts, kwopts))
+
+
+def plot_style_widget(**kwopts):
+    styles: list[str] = [x for x in ConfigValue("plotting.styles").resolve() if "seaborn" in x]
+    default_opts: dict[str, Any] = {
+        "options": styles,
+        "value": "seaborn-v0_8-pastel",
+        "description": "Style:",
+        "layout": widgets.Layout(width="200px"),
+    }
+    return widgets.Dropdown(**extend(default_opts, kwopts))
+
+
+def recode_7corr_widget(**kwopts):
+    default_opts: dict[str, Any] = {
+        "description": "Recode 7CORR",
+        "tooltip": "Recode all treaties with cultural=yes as 7CORR",
+        "value": True,
+        "layout": widgets.Layout(width="120px"),
+    }
+    return widgets.ToggleButton(**extend(default_opts, kwopts))
+
+
+# def increment_button(target_control, max_value, label=">>", increment=1):
+
+#     def f(_):
+#         target_control.value = (target_control.value + increment) % max_value
+
+#     return widgets.Button(description=label, callback=f)

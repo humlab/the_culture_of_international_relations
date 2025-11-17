@@ -1,290 +1,343 @@
-# -*- coding: utf-8 -*-
-import os
-import sys
-import logging
-import inspect
-import types
-import glob
-import re
-import time
-import gensim.utils
 import functools
+import glob
+import inspect
+import os
+import platform
+import re
+import string
+import sys
+import time
+import types
+import zipfile
+from collections.abc import Callable, Iterable
+from typing import Any
 
-def getLogger(name='cultural_treaties', level=logging.INFO):
-    logging.basicConfig(format="%(asctime)s : %(levelname)s : %(filename)s.%(funcName)s() : %(message)s", level=level)
-    logger = logging.getLogger(name)
-    logger.setLevel(level)
-    return logger
+import matplotlib.pyplot as plt
+import pandas as pd
+import wordcloud
+import yaml
+from loguru import logger
 
-logger = getLogger(__name__)
+# pylint: disable=redefined-builtin
 
-__cwd__ = os.path.abspath(__file__) if '__file__' in globals() else os.getcwd()
+
+__cwd__: str = os.path.abspath(path=__file__) if "__file__" in globals() else os.getcwd()
 
 sys.path.append(__cwd__)
 
-lazy_flatten = gensim.utils.lazy_flatten
-iter_windows = gensim.utils.iter_windows
-deprecated = gensim.utils.deprecated
 
-def remove_snake_case(snake_str):
-    return ' '.join(x.title() for x in snake_str.split('_'))
+def remove_snake_case(snake_str: str) -> str:
+    return " ".join(x.title() for x in snake_str.split("_"))
 
-def noop(*args):  # pylint: disable=W0613
+
+def noop(*args) -> None:  # pylint: disable=W0613
     pass
 
-def isint(s):
-    try:
-        int(s)
-        return True
-    except:
-        return False
-    
-def filter_dict(d, keys=None, filter_out=False):
-    keys = set(d.keys()) - set(keys or []) if filter_out else (keys or [])
-    return {
-        k: v for k, v in d.items() if k in keys
-    }
+
+# def isint(s: str) -> bool:
+#     try:
+#         int(s)
+#         return True
+#     except:  # pylint: disable=bare-except
+#         return False
 
 
-def timecall(f):
-    
-    @functools.wraps(f)
-    def f_wrapper(*args, **kwargs):
-        start_time = time.perf_counter()
-        value = f(*args, **kwargs)
-        elapsed = time.perf_counter() - start_time
-        logger.info("Call time [{}]: {:.4f} secs".format(f.__name__, elapsed))
-        return value
-    
-    return f_wrapper
+def filter_dict(d: dict[Any, Any], keys: set[Any] | None = None, filter_out: bool = False) -> dict[Any, Any]:
+    keys = set(d.keys()) - set(keys or []) if filter_out else (keys or [])  # type: ignore
+    return {k: v for k, v in d.items() if k in keys}
 
-def extend(target, *args, **kwargs):
-    """Returns dictionary 'target' extended by supplied dictionaries (args) or named keywords
 
-    Parameters
-    ----------
-    target : dict
-        Default dictionary (to be extended)
+# def timecall(f):
 
-    args: [dict]
-        Optional. List of dicts to use when updating target
+#     @functools.wraps(f)
+#     def f_wrapper(*args, **kwargs):
+#         start_time = time.perf_counter()
+#         value = f(*args, **kwargs)
+#         elapsed = time.perf_counter() - start_time
+#         logger.info(f"Call time [{f.__name__}]: {elapsed:.4f} secs")
+#         return value
 
-    args: [key=value]
-        Optional. List of key-value pairs to use when updating target
+#     return f_wrapper
 
-    Returns
-    -------
-    [dict]
-        Target dict updated with supplied dicts/key-values.
-        Multiple keys are overwritten inorder of occrence i.e. keys to right have higher precedence
 
-    """
-
+def extend(target: dict, *args, **kwargs) -> dict:
+    """Returns dictionary 'target' extended by supplied dictionaries (args) or named keywords"""
     target = dict(target)
     for source in args:
         target.update(source)
     target.update(kwargs)
     return target
 
-def ifextend(target, source, p):
-    return extend(target, source) if p else target
 
-def extend_single(target, source, name):
+# def ifextend(target: dict, source: dict, p: bool) -> dict:
+#     return extend(target=target, source=source) if p else target
+
+
+def extend_single(target: dict, source: dict, name: str) -> dict:
     if name in source:
         target[name] = source[name]
     return target
 
+
 class SimpleStruct(types.SimpleNamespace):
-    """A simple value container based on built-in SimpleNamespace.
-    """
-    def update(self, **kwargs):
+    """A simple value container based on built-in SimpleNamespace."""
+
+    def update(self, **kwargs) -> types.NoneType:
         self.__dict__.update(kwargs)
 
-def flatten(l):
+
+def flatten(list_of_lists: list[list[Any]]) -> list[Any]:
     """Returns a flat single list out of supplied list of lists."""
 
-    return [item for sublist in l for item in sublist]
+    return [item for sublist in list_of_lists for item in sublist]
 
-def project_series_to_range(series, low, high):
-    """Project a sequence of elements to a range defined by (low, high)"""
-    norm_series = series / series.max()
-    return norm_series.apply(lambda x: low + (high - low) * x)
 
-def project_to_range(value, low, high):
+# def project_series_to_range(series: pd.Series, low: float, high: float) -> pd.Series:
+#     """Project a sequence of elements to a range defined by (low, high)"""
+#     norm_series: pd.Series = series / series.max()
+#     return norm_series.apply(lambda x: low + (high - low) * x)
+
+
+def project_to_range(value: float, low: float, high: float) -> float:
     """Project a singlevalue to a range (low, high)"""
     return low + (high - low) * value
 
-def clamp_values(values, low_high):
+
+def clamp_values(values: list[float], low_high: tuple[float, float]) -> list[float]:
     """Clamps value to supplied interval."""
-    mw = max(values)
-    return [ project_to_range(w / mw, low_high[0], low_high[1]) for w in values ]
+    mw: float = max(values)
+    return [project_to_range(w / mw, low_high[0], low_high[1]) for w in values]
 
-def filter_kwargs(f, args):
-    """Removes keys in dict arg that are invalid arguments to function f
 
-    Parameters
-    ----------
-    f : [fn]
-        Function to introspect
-    args : dict
-        List of parameter names to test validity of.
-
-    Returns
-    -------
-    dict
-        Dict with invalid args filtered out.
-    """
-
+def filter_kwargs(f, args) -> dict[Any, Any] | Any:
+    """Removes keys in dict arg that are invalid arguments to function f"""
     try:
-        return { k: args[k] for k in args.keys() if k in inspect.getargspec(f).args }
+        return {k: args[k] for k in args if k in inspect.signature(f).parameters}
     except:  # pylint: disable=W0702
         return args
-    
-import string
 
-VALID_CHARS = "-_.() " + string.ascii_letters + string.digits
 
-def filename_whitelist(filename):
-    filename = ''.join(x for x in filename if x in VALID_CHARS)
+VALID_CHARS: str = "-_.() " + string.ascii_letters + string.digits
+
+
+def filename_whitelist(filename: str) -> str:
+    filename = "".join(x for x in filename if x in VALID_CHARS)
     return filename
 
-def cpif_deprecated(source, target, name):
-    logger.debug('use of cpif is deprecated')
-    if name in source:
-        target[name] = source[name]
-    return target
 
-def dict_subset(d, keys):
+def dict_subset(d: dict, keys: set) -> dict:
     if keys is None:
         return d
-    return { k: v for (k, v) in d.items() if k in keys }
+    return {k: v for (k, v) in d.items() if k in keys}
 
-def dict_split(d, fn):
-    """Splits a dictionary into two parts based on predicate """
-    true_keys = { k for k in d.keys() if fn(d, k) }
-    return { k: d[k] for k in true_keys }, { k: d[k] for k in set(d.keys()) - true_keys }
 
-def list_of_dicts_to_dict_of_lists(list_of_dicts):
+def list_of_dicts_to_dict_of_lists(
+    list_of_dicts: list[dict],
+) -> dict[Any, tuple[Any, ...]]:
     dict_of_lists = dict(zip(list_of_dicts[0], zip(*[d.values() for d in list_of_dicts])))
     return dict_of_lists
 
-def uniquify(sequence):
-    """ Removes duplicates from a list whilst still preserving order """
-    seen = set()
-    seen_add = seen.add
-    return [ x for x in sequence if not (x in seen or seen_add(x)) ]
 
-sort_chained = lambda x, f: list(x).sort(key=f) or x
-    
-def ls_sorted(path):
-    return sort_chained(list(filter(os.path.isfile, glob.glob(path))), os.path.getmtime)
+def uniquify(sequence: list[Any]) -> list[Any]:
+    """Removes duplicates from a list whilst still preserving order"""
+    seen: set[Any] = set()
+    seen_add: Callable[[Any], None] = seen.add
+    return [x for x in sequence if not (x in seen or seen_add(x))]
 
-def split(delimiters, string, maxsplit=0):
-    regexPattern = '|'.join(map(re.escape, delimiters))
-    return re.split(regexPattern, string, maxsplit)
 
-HYPHEN_REGEXP = re.compile(r'\b(\w+)-\s*\r?\n\s*(\w+)\b', re.UNICODE)
+def sort_chained(x: list[Any], f: Callable[[Any], Any]) -> list[Any]:
+    return sorted(x, key=f, reverse=True)
 
-def dehyphen(text):
-    result = re.sub(HYPHEN_REGEXP, r"\1\2\n", text)
+
+def ls_sorted(path: str) -> list[str]:
+    return sort_chained(list(filter(os.path.isfile, glob.glob(pathname=path))), f=os.path.getmtime)
+
+
+HYPHEN_REGEXP: re.Pattern = re.compile(r"\b(\w+)-\s*\r?\n\s*(\w+)\b", flags=re.UNICODE)
+
+
+def dehyphen(text: str) -> str:
+    result: str = re.sub(pattern=HYPHEN_REGEXP, repl=r"\1\2\n", string=text)
     return result
 
-path = types.SimpleNamespace()
 
-def path_add_suffix(path, suffix, new_extension=None):
+def path_add_suffix(path: str, suffix: str, new_extension: str | None = None) -> str:
     basename, extension = os.path.splitext(path)
-    suffixed_path = basename + suffix + (extension if new_extension is None else new_extension)
+    suffixed_path: str = basename + suffix + (extension if new_extension is None else new_extension)
     return suffixed_path
 
-def path_add_timestamp(path, format="%Y%m%d%H%M"):
-    suffix = '_{}'.format(time.strftime("%Y%m%d%H%M"))
-    return path_add_suffix(path, suffix) 
 
-def path_add_date(path, format="%Y%m%d"):
-    suffix = '_{}'.format(time.strftime(format))
-    return path_add_suffix(path, suffix) 
+def path_add_timestamp(path: str, fmt: str = "%Y%m%d%H%M") -> str:
+    suffix: str = f"_{time.strftime(fmt)}"
+    return path_add_suffix(path, suffix)
 
-def path_add_sequence(path, i, j=0):
-    suffix = str(i).zfill(j)
-    return path_add_suffix(path, suffix) 
 
-import zipfile
+def path_add_date(path: str, fmt: str = "%Y%m%d") -> str:
+    suffix: str = f"_{time.strftime(fmt)}"
+    return path_add_suffix(path, suffix)
 
-def zip_get_filenames(zip_filename, extension='.txt'):
-    with zipfile.ZipFile(zip_filename, mode='r') as zf:
-        return [ x for x in zf.namelist() if x.endswith(extension) ]
-    
-def zip_get_text(zip_filename, filename):
-    with zipfile.ZipFile(zip_filename, mode='r') as zf:
-        return zf.read(filename).decode(encoding='utf-8')
-    
-def slim_title(x):
+
+def path_add_sequence(path: str, i: int, j: int = 0) -> str:
+    suffix: str = str(i).zfill(j)
+    return path_add_suffix(path, suffix)
+
+
+def zip_get_filenames(zip_filename: str, extension: str = ".txt") -> list[str]:
+    with zipfile.ZipFile(zip_filename, mode="r") as zf:
+        return [x for x in zf.namelist() if x.endswith(extension)]
+
+
+def zip_get_text(zip_filename: str, filename: str) -> str:
+    with zipfile.ZipFile(zip_filename, mode="r") as zf:
+        return zf.read(filename).decode(encoding="utf-8")
+
+
+def slim_title(x: str) -> str:
     try:
-        m = re.match('.*\((.*)\)$', x).groups()
-        if m is not None and len(m) > 0:
-            return m[0]
-        return ' '.join(x.split(' ')[:3]) + '...'
-    except:
+        m: re.Match[str] | types.NoneType = re.match(r".*\((.*)\)$", x)  # pylint: disable=W1401
+        if m is not None:
+            g: tuple[str | Any, ...] = m.groups()
+            return g[0]
+        return " ".join(x.split(" ")[:3]) + "..."
+    except:  # pylint: disable=bare-except
         return x
-    
-def complete_value_range(values, typef=str):
-    """ Create a complete range from min/max range in case values are missing
+
+
+def complete_value_range(values: list[Any], typef: type) -> list[Any] | list[str]:
+    """Create a complete range from min/max range in case values are missing
 
     Parameters
     ----------
     str_values : list
-        List of values to fill 
+        List of values to fill
 
     Returns
     -------
     """
-    
+
     if len(values) == 0:
         return []
-    
-    values = list(map(int, values))
-    values = range(min(values), max(values) + 1)
-    
-    return list(map(typef, values))
+
+    int_values: list[int] = list(map(int, values))
+    int_values = list(range(min(int_values), max(int_values) + 1))
+
+    return list(map(typef, int_values))
+
 
 def is_platform_architecture(xxbit):
-    import platform
-    assert xxbit in [ '32bit', '64bit' ]
+
+    assert xxbit in ["32bit", "64bit"]
     logger.info(platform.architecture()[0])
     return platform.architecture()[0] == xxbit
-    #return xxbit == ('64bit' if sys.maxsize > 2**32 else '32bit')
-    
-def setup_default_pd_display(pd):
+    # return xxbit == ('64bit' if sys.maxsize > 2**32 else '32bit')
+
+
+def setup_default_pd_display(**kargs) -> None:  # pylint: disable=unused-argument
     pd.options.display.max_columns = None
     pd.options.display.max_rows = None
-    #pd.options.display.max_colwidth = -1
-    pd.options.display.colheader_justify = 'left'
-    #pd.options.display.precision = 4
+    # pd.options.display.max_colwidth = -1
+    pd.options.display.colheader_justify = "left"
+    # pd.options.display.precision = 4
+
 
 def trunc_year_by(series, divisor):
-    return (series - series.mod(divisor)).astype(int) 
+    return (series - series.mod(divisor)).astype(int)
 
-def normalize_values(values):
+
+def normalize_values(values: list[float]) -> list[float]:
     if len(values or []) == 0:
         return []
-    max_value = max(values)
+    max_value: float = max(values)
     if max_value == 0:
         return values
-    values = [ x / max_value for x in values ]
+    values = [x / max_value for x in values]
     return values
 
-def extract_counter_items_within_threshold(counter, low, high):
-    item_values = set([])
+
+def extract_counter_items_within_threshold(counter: dict[int, list[str]], low: int, high: int) -> set[str]:
+    item_values: set[str] = set()
     for x, wl in counter.items():
         if low <= x <= high:
             item_values.update(wl)
     return item_values
 
-def chunks(l, n):
-    
+
+def chunks(lst: list[Any], n: int | None) -> Iterable[Any]:
+
     if (n or 0) == 0:
-        yield l
-        
-    for i in range(0, len(l), n):
-        yield l[i:i + n]
-        
+        yield lst
+    n = n or 1
+    for i in range(0, len(lst), n):
+        yield lst[i : i + n]
+
+
+def plot_wordcloud(df_data: pd.DataFrame, token: str = "token", weight: str = "weight", **args):
+    token_weights = dict({tuple(x) for x in df_data[[token, weight]].values})
+    image = wordcloud.WordCloud(
+        **args,
+    )
+    image.fit_words(token_weights)
+    plt.figure(figsize=(12, 12))  # , dpi=100)
+    plt.imshow(image, interpolation="bilinear")
+    plt.axis("off")
+    # plt.set_facecolor('w')
+    # plt.tight_layout()
+    plt.show()
+
+
+# def _ensure_key_property(cls):
+#     if not hasattr(cls, "key"):
+
+#         def key(self) -> str:
+#             return getattr(self, "_registry_key", "unknown")
+
+#         cls.key = property(key)
+#     return cls
+
+
+# class Registry:
+#     items: dict = {}
+
+#     @classmethod
+#     def get(cls, key: str) -> Any | None:
+#         if key not in cls.items:
+#             raise KeyError(f"preprocessor {key} is not registered")
+#         return cls.items.get(key)
+
+#     @classmethod
+#     def register(cls, **args) -> Callable[..., Any]:
+#         def decorator(fn_or_class):
+#             key: str = args.get("key") or fn_or_class.__name__
+#             if args.get("type") == "function":
+#                 fn_or_class = fn_or_class()
+#             else:
+#                 fn_or_class._registry_key = key  # pylint: disable=protected-access
+#                 fn_or_class = _ensure_key_property(fn_or_class)
+
+#             cls.items[key] = fn_or_class
+#             return fn_or_class
+
+#         return decorator
+
+#     @classmethod
+#     def is_registered(cls, key: str) -> bool:
+#         return key in cls.items
+
+
+# def create_db_uri(*, host: str, port: int | str, user: str, dbname: str) -> str:
+#     """
+#     Builds database URI from the individual config elements.
+#     """
+#     return f"postgresql://{user}@{host}:{port}/{dbname}"
+
+
+# def load_resource_yaml(key: str) -> dict[str, Any] | None:
+#     """Loads a resource YAML file from the resources folder."""
+
+#     resource_path = os.path.join(os.path.dirname(__file__), "resources", f"{key}.yaml")
+#     if not os.path.exists(resource_path):
+#         return None
+
+#     with open(resource_path, encoding="utf-8") as f:
+#         data = yaml.safe_load(f)
+#     return data

@@ -1,7 +1,4 @@
-*.xlsx
 temp/
-pyLDAvis/
-nbconvert_output/
 lib/
 lib
 similarity
@@ -60,5 +57,9 @@ venv.bak/
 .ropeproject
 /site
 desktop.ini
-data
-/4_publications
+
+deprecated/
+archive/
+data/*.bz2
+data/*.bin
+data/*_preprocessed.zip

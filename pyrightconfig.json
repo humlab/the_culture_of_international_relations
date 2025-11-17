@@ -1,0 +1,58 @@
+{
+    "include": [
+        "common",
+        "1_quantitative_analysis",
+        "2_network_analysis", 
+        "3_text_analysis",
+        "0_bens_prioritized_methods"
+    ],
+    "exclude": [
+        ".*",
+        ".venv/**",
+        "venv/**",
+        "env/**",
+        "deprecated",
+        "other", 
+        "documents",
+        "backup",
+        "temp",
+        "__pycache__",
+        "*.pyc",
+        "*.svg",
+        "node_modules",
+        ".git",
+        ".vscode",
+        "*.egg-info",
+        "build",
+        "dist"
+    ],
+    "ignore": [
+        ".venv/**/*.py",
+        "venv/**/*.py",
+        "env/**/*.py",
+        "deprecated/**/*.py",
+        "other/**/*.py", 
+        "documents/**/*.py",
+        "backup/**/*.py",
+        "temp/**/*.py"
+    ],
+    "reportMissingImports": true,
+    "reportMissingTypeStubs": false,
+    "pythonVersion": "3.11",
+    "pythonPlatform": "Linux",
+    "typeCheckingMode": "basic",
+    "useLibraryCodeForTypes": false,
+    "autoImportCompletions": true,
+    "indexing": false,
+    "autoSearchPaths": false,
+    "executionEnvironments": [
+        {
+            "root": ".",
+            "pythonVersion": "3.11",
+            "pythonPlatform": "Linux",
+            "extraPaths": [
+                "."
+            ]
+        }
+    ]
+}
