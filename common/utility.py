@@ -47,17 +47,17 @@ def filter_dict(d: dict[Any, Any], keys: set[Any] | None = None, filter_out: boo
     return {k: v for k, v in d.items() if k in keys}
 
 
-def timecall(f):
+# def timecall(f):
 
-    @functools.wraps(f)
-    def f_wrapper(*args, **kwargs):
-        start_time = time.perf_counter()
-        value = f(*args, **kwargs)
-        elapsed = time.perf_counter() - start_time
-        logger.info(f"Call time [{f.__name__}]: {elapsed:.4f} secs")
-        return value
+#     @functools.wraps(f)
+#     def f_wrapper(*args, **kwargs):
+#         start_time = time.perf_counter()
+#         value = f(*args, **kwargs)
+#         elapsed = time.perf_counter() - start_time
+#         logger.info(f"Call time [{f.__name__}]: {elapsed:.4f} secs")
+#         return value
 
-    return f_wrapper
+#     return f_wrapper
 
 
 def extend(target: dict, *args, **kwargs) -> dict:
@@ -92,10 +92,10 @@ def flatten(list_of_lists: list[list[Any]]) -> list[Any]:
     return [item for sublist in list_of_lists for item in sublist]
 
 
-def project_series_to_range(series: pd.Series, low: float, high: float) -> pd.Series:
-    """Project a sequence of elements to a range defined by (low, high)"""
-    norm_series: pd.Series = series / series.max()
-    return norm_series.apply(lambda x: low + (high - low) * x)
+# def project_series_to_range(series: pd.Series, low: float, high: float) -> pd.Series:
+#     """Project a sequence of elements to a range defined by (low, high)"""
+#     norm_series: pd.Series = series / series.max()
+#     return norm_series.apply(lambda x: low + (high - low) * x)
 
 
 def project_to_range(value: float, low: float, high: float) -> float:
@@ -285,59 +285,59 @@ def plot_wordcloud(df_data: pd.DataFrame, token: str = "token", weight: str = "w
     plt.show()
 
 
-def _ensure_key_property(cls):
-    if not hasattr(cls, "key"):
+# def _ensure_key_property(cls):
+#     if not hasattr(cls, "key"):
 
-        def key(self) -> str:
-            return getattr(self, "_registry_key", "unknown")
+#         def key(self) -> str:
+#             return getattr(self, "_registry_key", "unknown")
 
-        cls.key = property(key)
-    return cls
-
-
-class Registry:
-    items: dict = {}
-
-    @classmethod
-    def get(cls, key: str) -> Any | None:
-        if key not in cls.items:
-            raise KeyError(f"preprocessor {key} is not registered")
-        return cls.items.get(key)
-
-    @classmethod
-    def register(cls, **args) -> Callable[..., Any]:
-        def decorator(fn_or_class):
-            key: str = args.get("key") or fn_or_class.__name__
-            if args.get("type") == "function":
-                fn_or_class = fn_or_class()
-            else:
-                fn_or_class._registry_key = key  # pylint: disable=protected-access
-                fn_or_class = _ensure_key_property(fn_or_class)
-
-            cls.items[key] = fn_or_class
-            return fn_or_class
-
-        return decorator
-
-    @classmethod
-    def is_registered(cls, key: str) -> bool:
-        return key in cls.items
+#         cls.key = property(key)
+#     return cls
 
 
-def create_db_uri(*, host: str, port: int | str, user: str, dbname: str) -> str:
-    """
-    Builds database URI from the individual config elements.
-    """
-    return f"postgresql://{user}@{host}:{port}/{dbname}"
+# class Registry:
+#     items: dict = {}
+
+#     @classmethod
+#     def get(cls, key: str) -> Any | None:
+#         if key not in cls.items:
+#             raise KeyError(f"preprocessor {key} is not registered")
+#         return cls.items.get(key)
+
+#     @classmethod
+#     def register(cls, **args) -> Callable[..., Any]:
+#         def decorator(fn_or_class):
+#             key: str = args.get("key") or fn_or_class.__name__
+#             if args.get("type") == "function":
+#                 fn_or_class = fn_or_class()
+#             else:
+#                 fn_or_class._registry_key = key  # pylint: disable=protected-access
+#                 fn_or_class = _ensure_key_property(fn_or_class)
+
+#             cls.items[key] = fn_or_class
+#             return fn_or_class
+
+#         return decorator
+
+#     @classmethod
+#     def is_registered(cls, key: str) -> bool:
+#         return key in cls.items
 
 
-def load_resource_yaml(key: str) -> dict[str, Any] | None:
-    """Loads a resource YAML file from the resources folder."""
+# def create_db_uri(*, host: str, port: int | str, user: str, dbname: str) -> str:
+#     """
+#     Builds database URI from the individual config elements.
+#     """
+#     return f"postgresql://{user}@{host}:{port}/{dbname}"
 
-    resource_path = os.path.join(os.path.dirname(__file__), "resources", f"{key}.yaml")
-    if not os.path.exists(resource_path):
-        return None
 
-    with open(resource_path, encoding="utf-8") as f:
-        data = yaml.safe_load(f)
-    return data
+# def load_resource_yaml(key: str) -> dict[str, Any] | None:
+#     """Loads a resource YAML file from the resources folder."""
+
+#     resource_path = os.path.join(os.path.dirname(__file__), "resources", f"{key}.yaml")
+#     if not os.path.exists(resource_path):
+#         return None
+
+#     with open(resource_path, encoding="utf-8") as f:
+#         data = yaml.safe_load(f)
+#     return data
