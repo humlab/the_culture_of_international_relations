@@ -44,9 +44,9 @@ current_corpus = CorpusContainer.corpus
 # ## <span style='color: green'>PREPARE </span> Load and Prepare Corpus <span style='float: right; color: red'>MANDATORY</span>
 #
 #
-#
-# container: CorpusContainer = current_corpus_container()
-# load_corpus_gui.display_corpus_load_gui(config.DATA_FOLDER, current_wti_index(), container)
+
+container: CorpusContainer = current_corpus_container()
+load_corpus_gui.display_corpus_load_gui(config.DATA_FOLDER, current_wti_index(), container)
 
 # %% [markdown]
 # ### <span style='color: green;'>DESCRIBE</span> Most Discriminating Terms<span style='color: blue; float: right'>OPTIONAL</span>
@@ -59,5 +59,5 @@ current_corpus = CorpusContainer.corpus
 # <b>#top</b> Only terms with a frequency within the top #top terms out of all terms<br>
 # <b>Closed region</b> If checked, then <u>both</u> treaty parties must be within selected region
 #
-#
-# most_discriminating_terms_gui.display_gui(current_wti_index(), current_corpus())
+
+most_discriminating_terms_gui.display_gui(current_wti_index(), current_corpus())
