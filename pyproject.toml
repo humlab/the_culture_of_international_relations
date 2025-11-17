@@ -7,7 +7,7 @@ name = "the-culture-of-international-relations"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = "==3.11.*"
 dependencies = [
     "black[jupyter]>=25.9.0",
     "bokeh>=3.8.1",
@@ -130,6 +130,16 @@ disable = [
     "await-outside-async",
     "consider-using-f-string"
 ]
+
+[tool.vulture]
+exclude = [ "common/configuration", "deprecated", "legacy" ]
+# ignore_decorators = ["@app.route", "@require_*"]
+# ignore_names = ["visit_*", "do_*"]
+# make_whitelist = true
+# min_confidence = 80
+paths = ["common", "notebooks"]
+# sort_by_size = true
+# verbose = true
 
 [tool.setuptools.packages.find]
 include = ["common*", "1_quantitative_analysis*", "2_network_analysis*", "3_text_analysis*"]
