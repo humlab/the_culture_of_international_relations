@@ -19,12 +19,9 @@
 #
 # from loguru import logger
 
-# %% code_folding=[]
+# %%
 from common import config, setup_config, utility
 from common.corpus.container import CorpusContainer
-
-# %%
-# %%
 from common.gui import load_corpus_gui
 from common.most_discriminating_terms import most_discriminating_terms_gui
 from common.gui.load_wti_index_gui import current_wti_index, load_wti_index_with_gui
@@ -44,9 +41,9 @@ current_corpus = CorpusContainer.corpus
 # ## <span style='color: green'>PREPARE </span> Load and Prepare Corpus <span style='float: right; color: red'>MANDATORY</span>
 #
 #
-
+# %%
 container: CorpusContainer = current_corpus_container()
-load_corpus_gui.display_corpus_load_gui(config.DATA_FOLDER, current_wti_index(), container)
+load_corpus_gui.display_corpus_load_gui(config.DATA_FOLDER, current_wti_index(), container) ;
 
 # %% [markdown]
 # ### <span style='color: green;'>DESCRIBE</span> Most Discriminating Terms<span style='color: blue; float: right'>OPTIONAL</span>
@@ -60,4 +57,7 @@ load_corpus_gui.display_corpus_load_gui(config.DATA_FOLDER, current_wti_index(),
 # <b>Closed region</b> If checked, then <u>both</u> treaty parties must be within selected region
 #
 
-most_discriminating_terms_gui.display_gui(current_wti_index(), current_corpus())
+# %%
+most_discriminating_terms_gui.display_gui(current_wti_index(), current_corpus()) ;
+
+# %%
