@@ -23,8 +23,8 @@
 from common import config, setup_config, utility
 from common.corpus.container import CorpusContainer
 from common.gui import load_corpus_gui
-from common.most_discriminating_terms import most_discriminating_terms_gui
 from common.gui.load_wti_index_gui import current_wti_index, load_wti_index_with_gui
+from common.most_discriminating_terms import most_discriminating_terms_gui
 
 await setup_config()  # noqa ; type: ignore
 
@@ -43,7 +43,7 @@ current_corpus = CorpusContainer.corpus
 #
 # %%
 container: CorpusContainer = current_corpus_container()
-load_corpus_gui.display_corpus_load_gui(config.DATA_FOLDER, current_wti_index(), container) ;
+load_corpus_gui.display_corpus_load_gui(config.DATA_FOLDER, current_wti_index(), container)
 
 # %% [markdown]
 # ### <span style='color: green;'>DESCRIBE</span> Most Discriminating Terms<span style='color: blue; float: right'>OPTIONAL</span>
@@ -58,6 +58,6 @@ load_corpus_gui.display_corpus_load_gui(config.DATA_FOLDER, current_wti_index(),
 #
 
 # %%
-most_discriminating_terms_gui.display_gui(current_wti_index(), current_corpus()) ;
+most_discriminating_terms_gui.display_gui(current_wti_index(), current_corpus())
 
 # %%
