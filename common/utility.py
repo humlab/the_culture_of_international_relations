@@ -1,4 +1,3 @@
-import functools
 import glob
 import inspect
 import os
@@ -15,7 +14,6 @@ from typing import Any
 import matplotlib.pyplot as plt
 import pandas as pd
 import wordcloud
-import yaml
 from loguru import logger
 
 # pylint: disable=redefined-builtin
