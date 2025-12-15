@@ -247,10 +247,10 @@ def display_gui(wti_index, print_args=False) -> types.NoneType:
             widgets.VBox([gui.normalize_values, gui.progress]),
         ]
     )
-    
+
     # Display controls and output widget instead of interactive widget's output
     display(widgets.VBox([boxes, output_widget]))
-    
+
     # Manual update function
     def update_display(*args):
         interactive_wrapper(
@@ -272,12 +272,22 @@ def display_gui(wti_index, print_args=False) -> types.NoneType:
             legend=True,
             output_filename=None,
         )
-    
+
     # Attach event handlers to widgets that should trigger updates
-    for widget in [gui.period_group_index, gui.topic_group_name, gui.parties, gui.recode_is_cultural,
-                   gui.normalize_values, gui.include_other_category, gui.chart_type_name, gui.plot_style,
-                   gui.chart_per_category, gui.target_quantity, gui.treaty_sources]:
-        widget.observe(update_display, names='value')
-    
+    for widget in [
+        gui.period_group_index,
+        gui.topic_group_name,
+        gui.parties,
+        gui.recode_is_cultural,
+        gui.normalize_values,
+        gui.include_other_category,
+        gui.chart_type_name,
+        gui.plot_style,
+        gui.chart_per_category,
+        gui.target_quantity,
+        gui.treaty_sources,
+    ]:
+        widget.observe(update_display, names="value")
+
     # Trigger initial update
     update_display()

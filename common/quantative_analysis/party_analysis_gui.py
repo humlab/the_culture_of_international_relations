@@ -6,6 +6,7 @@ from pprint import pprint as pp
 from typing import Any
 
 import ipywidgets as widgets
+import matplotlib.pyplot as plt
 import pandas as pd
 from IPython.display import display
 from loguru import logger
@@ -14,11 +15,6 @@ from common import config, utility
 from common.gui import widgets_config
 from common.treaty_state import TreatyState, trim_period_group
 from common.utils import color_utility
-import matplotlib.pyplot as plt
-
-import threading
-
-
 
 from . import analysis_data, analysis_plot
 
@@ -159,9 +155,6 @@ class PartyAnalysisGUI:
     info: widgets.Label
 
 
-
-
-
 def display_gui(wti_index, print_args=False):
 
     # Helpers
@@ -185,7 +178,9 @@ def display_gui(wti_index, print_args=False):
     # GUI object
     gui = PartyAnalysisGUI(
         year_limit=widgets_config.rangeslider(
-            "Window", min_year, max_year,
+            "Window",
+            min_year,
+            max_year,
             [min_year, max_year],
             layout=lw("900px"),
             continuous_update=False,
@@ -203,12 +198,8 @@ def display_gui(wti_index, print_args=False):
             "Output", config.CHART_TYPE_NAME_OPTIONS, "plot_stacked_bar", layout=lw("200px")
         ),
         plot_style=widgets_config.plot_style_widget(),
-        top_n_parties=widgets_config.slider(
-            "Top #", 0, 10, 0, continuous_update=False, layout=lw("200px")
-        ),
-        party_preset=widgets_config.dropdown(
-            "Presets", party_preset_options, None, layout=lw("200px")
-        ),
+        top_n_parties=widgets_config.slider("Top #", 0, 10, 0, continuous_update=False, layout=lw("200px")),
+        party_preset=widgets_config.dropdown("Presets", party_preset_options, None, layout=lw("200px")),
         parties=widgets_config.parties_widget(
             options=wti_index.get_countries_list(excludes=["ALL", "ALL OTHER"]),
             value=["FRANCE"],
@@ -217,9 +208,7 @@ def display_gui(wti_index, print_args=False):
         treaty_filter=widgets_config.dropdown(
             "Filter", config.TREATY_FILTER_OPTIONS, "is_cultural", layout=lw("200px")
         ),
-        extra_category=widgets_config.dropdown(
-            "Include", OTHER_CATEGORY_OPTIONS, "", layout=lw("200px")
-        ),
+        extra_category=widgets_config.dropdown("Include", OTHER_CATEGORY_OPTIONS, "", layout=lw("200px")),
         progress=widgets.IntProgress(min=0, max=5, value=0, layout=lw("95%")),
         info=widgets.Label("", layout=lw("95%")),
     )
@@ -265,15 +254,12 @@ def display_gui(wti_index, print_args=False):
                 legend=True,
                 output_filename=None,
             )
-            print("DEBUG - THREAD:", threading.current_thread().name)
         except Exception as e:
             print("Error:", e)
         finally:
             run_button.disabled = False
 
     run_button.on_click(lambda _: run())
-
-
 
     # Interaction logic
     def on_party_preset_change(change):
@@ -294,7 +280,6 @@ def display_gui(wti_index, print_args=False):
             gui.parties.observe(on_parties_change, names="value")
             gui.top_n_parties.observe(on_top_n_parties_change, names="value")
 
-
     def on_parties_change(change):
         if gui.top_n_parties.value != 0:
             gui.top_n_parties.value = 0
@@ -313,9 +298,7 @@ def display_gui(wti_index, print_args=False):
         gui.year_limit.min = min_year
         gui.year_limit.max = max_year
         gui.year_limit.value = (min_year, max_year)
-        gui.year_limit.disabled = (
-            config.DEFAULT_PERIOD_GROUPS[change["new"]]["type"] != "range"
-        )
+        gui.year_limit.disabled = config.DEFAULT_PERIOD_GROUPS[change["new"]]["type"] != "range"
 
     # Observers
     gui.parties.observe(on_parties_change, names="value")
@@ -336,20 +319,26 @@ def display_gui(wti_index, print_args=False):
         w.observe(lambda change: run(), names="value")
 
     # Layout
-    boxes = widgets.HBox([
-        widgets.VBox([gui.period_group_index, gui.party_name, gui.top_n_parties, gui.party_preset]),
-        widgets.VBox([gui.parties]),
-        widgets.VBox([
-            widgets.HBox([
-                widgets.VBox([gui.treaty_filter, gui.extra_category, gui.sources]),
-                widgets.VBox([gui.chart_type_name, gui.plot_style]),
-                widgets.VBox([gui.normalize_values]),
-            ]),
-            run_button,
-            gui.progress,
-            gui.info,
-        ]),
-    ])
+    boxes = widgets.HBox(
+        [
+            widgets.VBox([gui.period_group_index, gui.party_name, gui.top_n_parties, gui.party_preset]),
+            widgets.VBox([gui.parties]),
+            widgets.VBox(
+                [
+                    widgets.HBox(
+                        [
+                            widgets.VBox([gui.treaty_filter, gui.extra_category, gui.sources]),
+                            widgets.VBox([gui.chart_type_name, gui.plot_style]),
+                            widgets.VBox([gui.normalize_values]),
+                        ]
+                    ),
+                    run_button,
+                    gui.progress,
+                    gui.info,
+                ]
+            ),
+        ]
+    )
 
     display(widgets.VBox([boxes, gui.year_limit, output_widget]))
 

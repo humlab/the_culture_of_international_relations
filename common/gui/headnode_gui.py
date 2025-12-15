@@ -255,10 +255,10 @@ def display_gui(wti_index, print_args=False):
             widgets.VBox([treaty_filter_widget, output_format_widget, progress_widget]),
         ]
     )
-    
+
     # Display controls and output widget instead of interactive widget's output
     display(widgets.VBox([boxes, output_widget]))
-    
+
     # Manual event handlers to replace interactive widget
     def update_display(*args):
         interactive_wrapper(
@@ -279,13 +279,24 @@ def display_gui(wti_index, print_args=False):
             wti_index=wti_index,
             print_args=print_args,
         )
-    
+
     # Attach event handlers to all widgets
-    for widget in [period_group_index_widget, topic_group_name_widget, recode_7corr_widget, 
-                   treaty_filter_widget, parties_widget, extra_groupbys_widget, n_min_count_widget,
-                   n_top_widget, min_word_size_widget, use_lemma_widget, compute_co_occurance_widget,
-                   remove_stopwords_widget, output_format_widget]:
-        widget.observe(update_display, names='value')
-    
+    for widget in [
+        period_group_index_widget,
+        topic_group_name_widget,
+        recode_7corr_widget,
+        treaty_filter_widget,
+        parties_widget,
+        extra_groupbys_widget,
+        n_min_count_widget,
+        n_top_widget,
+        min_word_size_widget,
+        use_lemma_widget,
+        compute_co_occurance_widget,
+        remove_stopwords_widget,
+        output_format_widget,
+    ]:
+        widget.observe(update_display, names="value")
+
     # Trigger initial update
     update_display()
