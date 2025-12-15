@@ -63,3 +63,7 @@ archive/
 data/*.bz2
 data/*.bin
 data/*_preprocessed.zip
+
+
+.DS_Store
+~$*
