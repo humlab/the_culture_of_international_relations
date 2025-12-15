@@ -228,26 +228,15 @@ def display_gui(wti_index, print_args=False) -> types.NoneType:
 
     gui.party_preset.observe(on_party_preset_change, names="value")
 
-    itw = widgets.interactive(
-        display_topic_quantity_groups,
-        period_group_index=gui.period_group_index,
-        topic_group_name=gui.topic_group_name,
-        parties=gui.parties,
-        recode_is_cultural=gui.recode_is_cultural,
-        normalize_values=gui.normalize_values,
-        include_other_category=gui.include_other_category,
-        chart_type_name=gui.chart_type_name,
-        plot_style=gui.plot_style,
-        chart_per_category=gui.chart_per_category,
-        target_quantity=gui.target_quantity,
-        progress=widgets.fixed(stepper),
-        wti_index=widgets.fixed(wti_index),
-        treaty_sources=gui.treaty_sources,
-        print_args=widgets.fixed(print_args),
-        vmax=widgets.fixed(None),
-        legend=widgets.fixed(True),
-        output_filename=widgets.fixed(None),
-    )
+    # Create output widget to capture and control display
+    output_widget = widgets.Output()
+
+    def interactive_wrapper(**kwargs):
+        with output_widget:
+            output_widget.clear_output(wait=True)
+            display_topic_quantity_groups(**kwargs)
+
+    # Note: Removed interactive widget to prevent output conflicts
 
     boxes = widgets.HBox(
         [
@@ -258,5 +247,37 @@ def display_gui(wti_index, print_args=False) -> types.NoneType:
             widgets.VBox([gui.normalize_values, gui.progress]),
         ]
     )
-    display(widgets.VBox([boxes, itw.children[-1]]))
-    itw.update()
+    
+    # Display controls and output widget instead of interactive widget's output
+    display(widgets.VBox([boxes, output_widget]))
+    
+    # Manual update function
+    def update_display(*args):
+        interactive_wrapper(
+            period_group_index=gui.period_group_index.value,
+            topic_group_name=gui.topic_group_name.value,
+            parties=gui.parties.value,
+            recode_is_cultural=gui.recode_is_cultural.value,
+            normalize_values=gui.normalize_values.value,
+            include_other_category=gui.include_other_category.value,
+            chart_type_name=gui.chart_type_name.value,
+            plot_style=gui.plot_style.value,
+            chart_per_category=gui.chart_per_category.value,
+            target_quantity=gui.target_quantity.value,
+            progress=stepper,
+            wti_index=wti_index,
+            treaty_sources=gui.treaty_sources.value,
+            print_args=print_args,
+            vmax=None,
+            legend=True,
+            output_filename=None,
+        )
+    
+    # Attach event handlers to widgets that should trigger updates
+    for widget in [gui.period_group_index, gui.topic_group_name, gui.parties, gui.recode_is_cultural,
+                   gui.normalize_values, gui.include_other_category, gui.chart_type_name, gui.plot_style,
+                   gui.chart_per_category, gui.target_quantity, gui.treaty_sources]:
+        widget.observe(update_display, names='value')
+    
+    # Trigger initial update
+    update_display()

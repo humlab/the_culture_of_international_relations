@@ -235,26 +235,15 @@ def display_gui(wti_index, print_args=False):
     def progress(x=None):
         progress_widget.value = progress_widget.value + 1 if x is None else x
 
-    iw = widgets.interactive(
-        display_headnote_toplist,
-        period_group_index=period_group_index_widget,
-        topic_group_name=topic_group_name_widget,
-        recode_7corr=recode_7corr_widget,
-        treaty_filter=treaty_filter_widget,
-        parties=parties_widget,
-        extra_groupbys=extra_groupbys_widget,
-        n_min_count=n_min_count_widget,
-        n_top=n_top_widget,
-        min_word_size=min_word_size_widget,
-        use_lemma=use_lemma_widget,
-        compute_co_occurance=compute_co_occurance_widget,
-        remove_stopwords=remove_stopwords_widget,
-        output_format=output_format_widget,
-        progress=widgets.fixed(progress),
-        wti_index=widgets.fixed(wti_index),
-        print_args=widgets.fixed(print_args),
-        # plot_style=plot_style
-    )
+    # Create output widget to capture and control display
+    output_widget = widgets.Output()
+
+    def interactive_wrapper(**kwargs):
+        with output_widget:
+            output_widget.clear_output(wait=True)
+            display_headnote_toplist(**kwargs)
+
+    # Note: Removed interactive widget to prevent output conflicts
 
     boxes = widgets.HBox(
         [
@@ -266,5 +255,37 @@ def display_gui(wti_index, print_args=False):
             widgets.VBox([treaty_filter_widget, output_format_widget, progress_widget]),
         ]
     )
-    display(widgets.VBox([boxes, iw.children[-1]]))
-    iw.update()
+    
+    # Display controls and output widget instead of interactive widget's output
+    display(widgets.VBox([boxes, output_widget]))
+    
+    # Manual event handlers to replace interactive widget
+    def update_display(*args):
+        interactive_wrapper(
+            period_group_index=period_group_index_widget.value,
+            topic_group_name=topic_group_name_widget.value,
+            recode_7corr=recode_7corr_widget.value,
+            treaty_filter=treaty_filter_widget.value,
+            parties=parties_widget.value,
+            extra_groupbys=extra_groupbys_widget.value,
+            n_min_count=n_min_count_widget.value,
+            n_top=n_top_widget.value,
+            min_word_size=min_word_size_widget.value,
+            use_lemma=use_lemma_widget.value,
+            compute_co_occurance=compute_co_occurance_widget.value,
+            remove_stopwords=remove_stopwords_widget.value,
+            output_format=output_format_widget.value,
+            progress=progress,
+            wti_index=wti_index,
+            print_args=print_args,
+        )
+    
+    # Attach event handlers to all widgets
+    for widget in [period_group_index_widget, topic_group_name_widget, recode_7corr_widget, 
+                   treaty_filter_widget, parties_widget, extra_groupbys_widget, n_min_count_widget,
+                   n_top_widget, min_word_size_widget, use_lemma_widget, compute_co_occurance_widget,
+                   remove_stopwords_widget, output_format_widget]:
+        widget.observe(update_display, names='value')
+    
+    # Trigger initial update
+    update_display()

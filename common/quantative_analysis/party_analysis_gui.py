@@ -214,27 +214,15 @@ def display_gui(wti_index, print_args=False):
     def stepper(step=None):
         gui.progress.value = gui.progress.value + 1 if step is None else step
 
-    itw = widgets.interactive(
-        display_quantity_by_party,
-        period_group_index=period_group_index_widget,
-        year_limit=gui.year_limit,
-        party_name=gui.party_name,
-        parties=gui.parties,
-        treaty_filter=gui.treaty_filter,
-        extra_category=gui.extra_category,
-        normalize_values=gui.normalize_values,
-        chart_type_name=gui.chart_type_name,
-        plot_style=gui.plot_style,
-        top_n_parties=gui.top_n_parties,
-        overlay=widgets.fixed(False),  # overlay_option,
-        progress=widgets.fixed(stepper),
-        wti_index=widgets.fixed(wti_index),
-        print_args=widgets.fixed(print_args),
-        treaty_sources=gui.sources,
-        vmax=widgets.fixed(None),
-        legend=widgets.fixed(True),
-        output_filename=widgets.fixed(None),
-    )
+    # Create output widget to capture and control display
+    output_widget = widgets.Output()
+
+    def interactive_wrapper(**kwargs):
+        with output_widget:
+            output_widget.clear_output(wait=True)
+            display_quantity_by_party(**kwargs)
+
+    # Note: Removed interactive widget to prevent output conflicts
 
     def on_party_preset_change(change):  # pylint: disable=W0613
 
@@ -322,5 +310,37 @@ def display_gui(wti_index, print_args=False):
         ]
     )
 
-    display(widgets.VBox([boxes, gui.year_limit, itw.children[-1]]))
-    itw.update()
+    # Display controls and output widget instead of interactive widget's output
+    display(widgets.VBox([boxes, gui.year_limit, output_widget]))
+    
+    # Manual update function
+    def update_display(*args):
+        interactive_wrapper(
+            period_group_index=period_group_index_widget.value,
+            year_limit=gui.year_limit.value,
+            party_name=gui.party_name.value,
+            parties=gui.parties.value,
+            treaty_filter=gui.treaty_filter.value,
+            extra_category=gui.extra_category.value,
+            normalize_values=gui.normalize_values.value,
+            chart_type_name=gui.chart_type_name.value,
+            plot_style=gui.plot_style.value,
+            top_n_parties=gui.top_n_parties.value,
+            overlay=False,
+            progress=stepper,
+            wti_index=wti_index,
+            print_args=print_args,
+            treaty_sources=gui.sources.value,
+            vmax=None,
+            legend=True,
+            output_filename=None,
+        )
+    
+    # Attach event handlers to widgets that should trigger updates
+    for widget in [period_group_index_widget, gui.year_limit, gui.party_name, gui.parties, 
+                   gui.treaty_filter, gui.extra_category, gui.normalize_values, gui.chart_type_name,
+                   gui.plot_style, gui.top_n_parties, gui.sources]:
+        widget.observe(update_display, names='value')
+    
+    # Trigger initial update
+    update_display()
