@@ -14,6 +14,9 @@ from common.quantative_analysis import analysis_data, analysis_plot
 from common.treaty_state import TreatyState
 
 
+import matplotlib.pyplot as plt
+
+
 def display_topic_quantity(
     *,
     wti_index: TreatyState,
@@ -81,10 +84,14 @@ def display_topic_quantity(
             kwargs.update({"legend": legend})
 
             ax = analysis_plot.quantity_plot(data, pivot, chart_type, plot_style, **kwargs)
+            
+            fig = ax.figure
+            display(fig)
+            plt.close(fig)
 
             if output_filename:
                 basename = datetime.datetime.now().strftime("%Y%m%d%H%M%S")
-                ax.savefig(f"{basename}_{output_filename}.eps", format="eps", dpi=300)
+                fig.savefig(f"{basename}_{output_filename}.eps", format="eps", dpi=300)
 
         elif chart_type.name == "table":
             display(data)
