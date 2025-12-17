@@ -67,3 +67,5 @@ data/*_preprocessed.zip
 
 .DS_Store
 ~$*
+.github/
+data/treaty*/
