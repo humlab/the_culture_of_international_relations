@@ -38,7 +38,7 @@ dev = [
     "jupytext>=1.18.1",
     "nbstripout>=0.8.1",
     "pylint>=4.0.2",
-    "pytest>=9.0.1",
+    "pytest>=9.0.3",
     "ruff>=0.14.4",
     "vulture>=2.14",
 ]
